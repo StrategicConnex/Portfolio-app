@@ -5,6 +5,7 @@ import type { Variants } from 'framer-motion'
 import dynamic from 'next/dynamic'
 
 const ParticleCanvas = dynamic(() => import('./ParticleCanvas'), { ssr: false })
+const RadarSweep     = dynamic(() => import('./RadarSweep'),     { ssr: false })
 
 const TEXT_VARIANTS: Variants = {
   hidden: { opacity: 0, y: 30 },
@@ -37,6 +38,11 @@ export default function Hero() {
     >
       {/* Three.js background */}
       <ParticleCanvas />
+
+      {/* Purdue radar — visible md+ */}
+      <div style={{ display: 'none' }} className="hero-radar">
+        <RadarSweep />
+      </div>
 
       {/* Subtle radial glow behind text */}
       <div

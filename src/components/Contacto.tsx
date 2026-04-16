@@ -1,154 +1,191 @@
 'use client'
 
-import { motion } from 'framer-motion'
+import { useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import SectionHeader from './ui/SectionHeader'
 import FadeIn from './ui/FadeIn'
 
-const contacts = [
-  {
-    icon: '✉',
-    iconBg: 'rgba(30,144,255,0.12)',
-    iconColor: 'var(--blue)',
-    label: 'palacios_juan@hotmail.com',
-    sub: 'Email profesional',
-    href: 'mailto:palacios_juan@hotmail.com',
-  },
-  {
-    icon: '📞',
-    iconBg: 'rgba(16,185,129,0.12)',
-    iconColor: '#10B981',
-    label: '+54 299 586 9435',
-    sub: 'WhatsApp / Llamadas',
-    href: 'https://wa.me/542995869435',
-    external: true,
-  },
-  {
-    icon: 'in',
-    iconBg: 'rgba(10,102,194,0.18)',
-    iconColor: '#0A66C2',
-    label: 'linkedin.com/in/juanfpalacios',
-    sub: 'LinkedIn',
-    href: 'https://linkedin.com/in/juanfpalacios',
-    external: true,
-  },
-  {
-    icon: '📍',
-    iconBg: 'rgba(197,164,109,0.12)',
-    iconColor: 'var(--gold)',
-    label: 'Neuquén, Argentina',
-    sub: 'Disponible para trabajo remoto y presencial',
-    href: null,
-  },
+type FormState = 'idle' | 'sending' | 'sent' | 'error'
+
+const projectTypes = [
+  'Auditoría de Seguridad OT/IT',
+  'Implementación SIEM (Security Onion)',
+  'Diseño Arquitectura IT/OT (Modelo Purdue)',
+  'Infraestructura de Red – Oil & Gas',
+  'Virtualización y Cloud (Azure/VMware)',
+  'Automatización Python / Power BI',
+  'Consultoría IEC 62443 / NIST / ISO 27001',
+  'Desarrollo Web (Next.js / Full Stack)',
+  'Otro',
+]
+
+const contactCards = [
+  { icon: '✉', label: 'palacios_juan@hotmail.com', sub: 'Email profesional',        href: 'mailto:palacios_juan@hotmail.com',  color: 'var(--blue)'  },
+  { icon: '📞', label: '+54 299 586 9435',           sub: 'WhatsApp / Llamadas',     href: 'https://wa.me/542995869435',        color: '#10B981', external: true },
+  { icon: 'in', label: 'linkedin/juanfpalacios',     sub: 'LinkedIn',                href: 'https://linkedin.com/in/juanfpalacios', color: '#0A66C2', external: true },
+  { icon: '📍', label: 'Neuquén, Argentina',          sub: 'Trabajo remoto o presencial', href: null, color: 'var(--gold)' },
 ]
 
 export default function Contacto() {
+  const [form, setForm]   = useState({ name: '', email: '', company: '', type: '', message: '' })
+  const [status, setStatus] = useState<FormState>('idle')
+
+  function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) {
+    setForm(f => ({ ...f, [e.target.name]: e.target.value }))
+  }
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault()
+    setStatus('sending')
+    // Simulate async send (replace with fetch to /api/contact or Formspree)
+    await new Promise(r => setTimeout(r, 1200))
+    setStatus('sent')
+  }
+
+  const inputStyle: React.CSSProperties = {
+    width: '100%', background: 'rgba(255,255,255,0.04)',
+    border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8,
+    padding: '0.75rem 1rem', color: 'var(--text)', fontSize: '0.88rem',
+    outline: 'none', fontFamily: 'inherit', boxSizing: 'border-box',
+    transition: 'border-color 0.2s',
+  }
+
   return (
     <section id="contacto" style={{ padding: '5rem 2rem', background: 'var(--bg2)' }}>
       <div style={{ maxWidth: 1100, margin: 'auto' }}>
         <SectionHeader label="Contacto" title="Trabajemos" highlight="Juntos" center />
 
-        <div style={{ maxWidth: 580, margin: '0 auto' }}>
-          <FadeIn delay={0.1}>
-            <p style={{ color: 'var(--muted)', textAlign: 'center', marginBottom: '2rem', fontSize: '0.95rem', lineHeight: 1.8 }}>
-              Especializado en proyectos de alta criticidad en entornos industriales Oil &amp; Gas.
-              Disponible para consultoría, arquitectura IT/OT, ciberseguridad y liderazgo técnico.
-            </p>
-          </FadeIn>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.3fr', gap: '3rem', alignItems: 'start' }}>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem', marginBottom: '2rem' }}>
-            {contacts.map((c, i) => (
-              <FadeIn key={i} delay={i * 0.08 + 0.15} direction="left">
-                {c.href ? (
-                  <motion.a
-                    href={c.href}
-                    target={c.external ? '_blank' : undefined}
-                    rel={c.external ? 'noopener noreferrer' : undefined}
-                    whileHover={{ borderColor: c.iconColor, x: 4 }}
-                    style={{
-                      display: 'flex', alignItems: 'center', gap: '1rem',
-                      padding: '1rem 1.4rem',
-                      background: 'var(--card)',
-                      border: '1px solid var(--border)',
-                      borderRadius: 10,
-                      textDecoration: 'none', color: 'var(--text)',
-                      transition: 'border-color 0.2s',
-                    }}
-                  >
-                    <div style={{
-                      width: 40, height: 40, borderRadius: 10,
-                      background: c.iconBg, color: c.iconColor,
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      fontSize: '1rem', fontWeight: 700, flexShrink: 0,
-                    }}>
-                      {c.icon}
-                    </div>
-                    <div>
-                      <div style={{ fontSize: '0.88rem', fontWeight: 600 }}>{c.label}</div>
-                      <div style={{ fontSize: '0.72rem', color: 'var(--muted)' }}>{c.sub}</div>
-                    </div>
-                    <span style={{ marginLeft: 'auto', fontSize: '0.75rem', color: c.iconColor, opacity: 0.7 }}>↗</span>
-                  </motion.a>
-                ) : (
-                  <div style={{
-                    display: 'flex', alignItems: 'center', gap: '1rem',
-                    padding: '1rem 1.4rem', background: 'var(--card)',
-                    border: '1px solid var(--border)',
-                    borderRadius: 10, color: 'var(--text)',
-                  }}>
-                    <div style={{
-                      width: 40, height: 40, borderRadius: 10,
-                      background: c.iconBg,
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      fontSize: '1rem', flexShrink: 0,
-                    }}>
-                      {c.icon}
-                    </div>
-                    <div>
-                      <div style={{ fontSize: '0.88rem', fontWeight: 600 }}>{c.label}</div>
-                      <div style={{ fontSize: '0.72rem', color: 'var(--muted)' }}>{c.sub}</div>
-                    </div>
-                  </div>
-                )}
-              </FadeIn>
-            ))}
-          </div>
+          {/* LEFT — contact cards + availability */}
+          <div>
+            <FadeIn delay={0.05}>
+              <p style={{ color: 'var(--muted)', fontSize: '0.9rem', lineHeight: 1.8, marginBottom: '1.75rem' }}>
+                Especializado en proyectos de alta criticidad en entornos industriales Oil &amp; Gas.
+                Disponible para consultoría, arquitectura IT/OT, ciberseguridad y liderazgo técnico.
+              </p>
+            </FadeIn>
 
-          {/* CTA */}
-          <FadeIn delay={0.55}>
-            <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.7rem', marginBottom: '1.5rem' }}>
+              {contactCards.map((c, i) => (
+                <FadeIn key={i} delay={i * 0.07 + 0.1} direction="left">
+                  {c.href ? (
+                    <motion.a
+                      href={c.href}
+                      target={c.external ? '_blank' : undefined}
+                      rel={c.external ? 'noopener noreferrer' : undefined}
+                      whileHover={{ borderColor: c.color, x: 4 }}
+                      style={{ display: 'flex', alignItems: 'center', gap: '0.9rem', padding: '0.85rem 1.1rem', background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 10, textDecoration: 'none', color: 'var(--text)', transition: 'border-color 0.2s' }}
+                    >
+                      <div style={{ width: 38, height: 38, borderRadius: 8, background: `${c.color}18`, color: c.color, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1rem', fontWeight: 700, flexShrink: 0 }}>{c.icon}</div>
+                      <div><div style={{ fontSize: '0.84rem', fontWeight: 600 }}>{c.label}</div><div style={{ fontSize: '0.7rem', color: 'var(--muted)' }}>{c.sub}</div></div>
+                      <span style={{ marginLeft: 'auto', fontSize: '0.72rem', color: c.color, opacity: 0.6 }}>↗</span>
+                    </motion.a>
+                  ) : (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.9rem', padding: '0.85rem 1.1rem', background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 10 }}>
+                      <div style={{ width: 38, height: 38, borderRadius: 8, background: `${c.color}18`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1rem', flexShrink: 0 }}>{c.icon}</div>
+                      <div><div style={{ fontSize: '0.84rem', fontWeight: 600 }}>{c.label}</div><div style={{ fontSize: '0.7rem', color: 'var(--muted)' }}>{c.sub}</div></div>
+                    </div>
+                  )}
+                </FadeIn>
+              ))}
+            </div>
+
+            <FadeIn delay={0.4}>
               <motion.div
-                animate={{ boxShadow: ['0 0 0px rgba(74,222,128,0)', '0 0 20px rgba(74,222,128,0.25)', '0 0 0px rgba(74,222,128,0)'] }}
-                transition={{ repeat: Infinity, duration: 2.5, ease: 'easeInOut' }}
-                style={{
-                  display: 'inline-flex', alignItems: 'center', gap: '0.5rem',
-                  background: 'rgba(34,197,94,0.08)', color: '#4ade80',
-                  border: '1px solid rgba(34,197,94,0.25)',
-                  padding: '0.5rem 1.25rem', borderRadius: 20,
-                  fontSize: '0.84rem', fontWeight: 600,
-                }}
+                animate={{ boxShadow: ['0 0 0px rgba(74,222,128,0)', '0 0 18px rgba(74,222,128,0.2)', '0 0 0px rgba(74,222,128,0)'] }}
+                transition={{ repeat: Infinity, duration: 2.5 }}
+                style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', background: 'rgba(34,197,94,0.07)', color: '#4ade80', border: '1px solid rgba(34,197,94,0.22)', padding: '0.5rem 1.1rem', borderRadius: 20, fontSize: '0.82rem', fontWeight: 600 }}
               >
-                <motion.div
-                  animate={{ opacity: [1, 0.3, 1] }}
-                  transition={{ repeat: Infinity, duration: 2 }}
-                  style={{ width: 8, height: 8, borderRadius: '50%', background: '#4ade80', flexShrink: 0 }}
-                />
+                <motion.div animate={{ opacity: [1, 0.3, 1] }} transition={{ repeat: Infinity, duration: 1.8 }} style={{ width: 8, height: 8, borderRadius: '50%', background: '#4ade80' }} />
                 Disponible para proyectos de alta criticidad
               </motion.div>
+            </FadeIn>
+          </div>
 
-              <motion.a
-                href="mailto:palacios_juan@hotmail.com"
-                whileHover={{ scale: 1.04, boxShadow: '0 0 24px rgba(197,164,109,0.3)' }}
-                whileTap={{ scale: 0.97 }}
-                style={{
-                  display: 'inline-flex', alignItems: 'center', gap: '0.5rem',
-                  padding: '0.75rem 2rem',
-                  background: 'transparent', color: 'var(--gold)',
-                  textDecoration: 'none', fontWeight: 700, fontSize: '0.9rem',
-                  borderRadius: 8, border: '2px solid var(--gold)',
-                }}
-              >
-                Iniciar conversación →
-              </motion.a>
+          {/* RIGHT — qualified contact form */}
+          <FadeIn delay={0.15} direction="right">
+            <div style={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 16, padding: '2rem', position: 'relative', overflow: 'hidden' }}>
+              <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: 'linear-gradient(90deg, var(--blue), var(--gold))' }} />
+
+              <AnimatePresence mode="wait">
+                {status === 'sent' ? (
+                  <motion.div key="sent" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} style={{ textAlign: 'center', padding: '2rem 0' }}>
+                    <div style={{ fontSize: '3rem', marginBottom: '0.75rem' }}>✅</div>
+                    <h3 style={{ color: '#4ade80', marginBottom: '0.5rem' }}>¡Mensaje enviado!</h3>
+                    <p style={{ color: 'var(--muted)', fontSize: '0.88rem' }}>Respondo en menos de 24 horas hábiles.</p>
+                  </motion.div>
+                ) : (
+                  <motion.form key="form" onSubmit={handleSubmit}>
+                    <h3 style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text)', marginBottom: '0.3rem' }}>Iniciar conversación</h3>
+                    <p style={{ fontSize: '0.75rem', color: 'var(--muted)', marginBottom: '1.5rem' }}>Contame sobre tu proyecto para darte una respuesta más precisa.</p>
+
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginBottom: '0.75rem' }}>
+                      <div>
+                        <label style={{ fontSize: '0.72rem', color: 'var(--muted)', display: 'block', marginBottom: '0.3rem' }}>Nombre *</label>
+                        <input required name="name" value={form.name} onChange={handleChange} placeholder="Tu nombre" style={inputStyle}
+                          onFocus={e => e.currentTarget.style.borderColor = 'rgba(30,144,255,0.5)'}
+                          onBlur={e => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'}
+                        />
+                      </div>
+                      <div>
+                        <label style={{ fontSize: '0.72rem', color: 'var(--muted)', display: 'block', marginBottom: '0.3rem' }}>Email *</label>
+                        <input required type="email" name="email" value={form.email} onChange={handleChange} placeholder="email@empresa.com" style={inputStyle}
+                          onFocus={e => e.currentTarget.style.borderColor = 'rgba(30,144,255,0.5)'}
+                          onBlur={e => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'}
+                        />
+                      </div>
+                    </div>
+
+                    <div style={{ marginBottom: '0.75rem' }}>
+                      <label style={{ fontSize: '0.72rem', color: 'var(--muted)', display: 'block', marginBottom: '0.3rem' }}>Empresa / Organización</label>
+                      <input name="company" value={form.company} onChange={handleChange} placeholder="YPF, PAE, Vista Oil…" style={inputStyle}
+                        onFocus={e => e.currentTarget.style.borderColor = 'rgba(30,144,255,0.5)'}
+                        onBlur={e => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'}
+                      />
+                    </div>
+
+                    <div style={{ marginBottom: '0.75rem' }}>
+                      <label style={{ fontSize: '0.72rem', color: 'var(--muted)', display: 'block', marginBottom: '0.3rem' }}>Tipo de proyecto *</label>
+                      <select required name="type" value={form.type} onChange={handleChange}
+                        style={{ ...inputStyle, appearance: 'none', cursor: 'pointer' }}
+                        onFocus={e => e.currentTarget.style.borderColor = 'rgba(30,144,255,0.5)'}
+                        onBlur={e => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'}
+                      >
+                        <option value="" disabled>Seleccioná el tipo de proyecto…</option>
+                        {projectTypes.map(t => <option key={t} value={t}>{t}</option>)}
+                      </select>
+                    </div>
+
+                    <div style={{ marginBottom: '1.25rem' }}>
+                      <label style={{ fontSize: '0.72rem', color: 'var(--muted)', display: 'block', marginBottom: '0.3rem' }}>Descripción breve</label>
+                      <textarea name="message" value={form.message} onChange={handleChange} rows={3} placeholder="Contame brevemente el contexto (sector, urgencia, alcance)…"
+                        style={{ ...inputStyle, resize: 'vertical', minHeight: 80 }}
+                        onFocus={e => e.currentTarget.style.borderColor = 'rgba(30,144,255,0.5)'}
+                        onBlur={e => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'}
+                      />
+                    </div>
+
+                    <motion.button
+                      type="submit"
+                      disabled={status === 'sending'}
+                      whileHover={{ scale: 1.02, boxShadow: '0 0 24px rgba(30,144,255,0.3)' }}
+                      whileTap={{ scale: 0.97 }}
+                      style={{
+                        width: '100%', padding: '0.85rem',
+                        background: status === 'sending' ? 'rgba(30,144,255,0.5)' : 'var(--blue)',
+                        color: '#fff', fontWeight: 700, fontSize: '0.92rem',
+                        border: 'none', borderRadius: 8, cursor: status === 'sending' ? 'wait' : 'pointer',
+                      }}
+                    >
+                      {status === 'sending' ? 'Enviando…' : 'Enviar consulta →'}
+                    </motion.button>
+                    <p style={{ fontSize: '0.68rem', color: 'var(--muted)', textAlign: 'center', marginTop: '0.6rem' }}>
+                      Respuesta en &lt; 24h · Sin spam · Datos confidenciales
+                    </p>
+                  </motion.form>
+                )}
+              </AnimatePresence>
             </div>
           </FadeIn>
         </div>

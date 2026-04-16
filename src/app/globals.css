@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+/* ── Hero Purdue radar — desktop only ── */
+.hero-radar { display: none !important; }
+@media (min-width: 960px) { .hero-radar { display: block !important; } }
+
 :root {
   --bg: #0A192F;
   --bg2: #111827;

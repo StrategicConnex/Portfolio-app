@@ -3,6 +3,7 @@ import Hero            from '@/components/Hero'
 import Perfil          from '@/components/Perfil'
 import Arquitectura    from '@/components/Arquitectura'
 import Experiencia     from '@/components/Experiencia'
+import TrustBadges     from '@/components/TrustBadges'
 import SIEMDashboard   from '@/components/SIEMDashboard'
 import Stack           from '@/components/Stack'
 import Certificaciones from '@/components/Certificaciones'
@@ -19,6 +20,7 @@ export default function Home() {
         <Perfil />
         <Arquitectura />
         <Experiencia />
+        <TrustBadges />
         <SIEMDashboard />
         <Stack />
         <Certificaciones />
