@@ -44,7 +44,7 @@ function ScoreBar({ label, score, color, delay }: { label: string; score: number
 
 export default function Proyecto() {
   return (
-    <section id="proyecto" style={{ padding: '5rem 2rem', background: 'var(--bg)' }}>
+    <section id="proyecto" style={{ padding: 'clamp(2rem, 5vw, 5rem) clamp(1rem, 5vw, 2rem)', background: 'var(--bg)' }}>
       <div style={{ maxWidth: 1100, margin: 'auto' }}>
         <SectionHeader label="Proyecto destacado" title="Strategic" highlight="Connex" />
 
@@ -58,17 +58,17 @@ export default function Proyecto() {
             {/* Top accent bar */}
             <div style={{ height: 3, background: 'linear-gradient(90deg, var(--blue), var(--gold))' }} />
 
-            <div style={{ padding: '2.5rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '3rem', alignItems: 'start' }}>
+            <div style={{ padding: 'clamp(1.5rem, 4vw, 2.5rem)', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'clamp(1.5rem, 4vw, 3rem)', alignItems: 'start' }}>
               {/* Left */}
               <div>
-                <div style={{ fontSize: '0.7rem', color: 'var(--gold)', letterSpacing: '2px', textTransform: 'uppercase', marginBottom: '0.5rem', fontWeight: 700 }}>
+                <div style={{ fontSize: 'clamp(0.6rem, 1.2vw, 0.7rem)', color: 'var(--gold)', letterSpacing: '2px', textTransform: 'uppercase', marginBottom: '0.5rem', fontWeight: 700 }}>
                   Plataforma B2B · Full Stack · Vaca Muerta
                 </div>
-                <h3 style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--text)', marginBottom: '0.5rem', lineHeight: 1.15 }}>
+                <h3 style={{ fontSize: 'clamp(1.4rem, 4vw, 1.8rem)', fontWeight: 800, color: 'var(--text)', marginBottom: '0.5rem', lineHeight: 1.15 }}>
                   Inteligencia Comercial<br />
                   <span style={{ color: 'var(--gold)' }}>para Vaca Muerta</span>
                 </h3>
-                <p style={{ color: 'var(--muted)', fontSize: '0.88rem', lineHeight: 1.85, marginBottom: '1.25rem' }}>
+                <p style={{ color: 'var(--muted)', fontSize: 'clamp(0.8rem, 1.8vw, 0.88rem)', lineHeight: 1.85, marginBottom: '1.25rem' }}>
                   Plataforma web de alto rendimiento centrada en la digitalización de servicios para el
                   ecosistema de Vaca Muerta. Dashboard de inteligencia para control documental,
                   seguimiento de KPIs industriales e integración comercial B2B con operadoras como
@@ -76,17 +76,17 @@ export default function Proyecto() {
                 </p>
 
                 {/* Highlight chips */}
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.6rem', marginBottom: '1.5rem' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'clamp(0.4rem, 1vw, 0.6rem)', marginBottom: '1.5rem' }}>
                   {highlights.map(h => (
                     <div key={h.label} style={{
                       background: 'rgba(30,144,255,0.05)',
                       border: '1px solid rgba(30,144,255,0.12)',
                       borderRadius: 10,
-                      padding: '0.75rem 0.9rem',
+                      padding: 'clamp(0.5rem, 1.5vw, 0.75rem) clamp(0.6rem, 1.5vw, 0.9rem)',
                     }}>
-                      <div style={{ fontSize: '1.1rem', marginBottom: '0.25rem' }}>{h.icon}</div>
-                      <div style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--text)', marginBottom: '0.15rem' }}>{h.label}</div>
-                      <div style={{ fontSize: '0.7rem', color: 'var(--muted)', lineHeight: 1.4 }}>{h.desc}</div>
+                      <div style={{ fontSize: 'clamp(0.9rem, 2vw, 1.1rem)', marginBottom: '0.25rem' }}>{h.icon}</div>
+                      <div style={{ fontSize: 'clamp(0.68rem, 1.5vw, 0.78rem)', fontWeight: 700, color: 'var(--text)', marginBottom: '0.15rem' }}>{h.label}</div>
+                      <div style={{ fontSize: 'clamp(0.65rem, 1.2vw, 0.7rem)', color: 'var(--muted)', lineHeight: 1.4 }}>{h.desc}</div>
                     </div>
                   ))}
                 </div>

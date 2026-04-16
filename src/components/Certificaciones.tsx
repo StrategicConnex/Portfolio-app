@@ -20,14 +20,14 @@ export default function Certificaciones() {
   const inView = useInView(ref, { once: true, margin: '-80px' })
 
   return (
-    <section style={{ padding: '4rem 2rem', background: 'var(--bg2)' }}>
+    <section style={{ padding: 'clamp(2rem, 5vw, 4rem) clamp(1rem, 5vw, 2rem)', background: 'var(--bg2)' }}>
       <div ref={ref} style={{ maxWidth: 1100, margin: 'auto' }}>
         <SectionHeader label="Formación" title="Certificaciones &" highlight="Educación" />
 
         <div style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
-          gap: '0.9rem',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(clamp(240px, 100%, 260px), 1fr))',
+          gap: 'clamp(0.6rem, 1.5vw, 0.9rem)',
         }}>
           {certs.map((c, i) => (
             <motion.div
@@ -40,10 +40,10 @@ export default function Certificaciones() {
                 background: 'var(--card)',
                 border: '1px solid var(--border)',
                 borderRadius: 10,
-                padding: '0.9rem 1.2rem',
+                padding: 'clamp(0.7rem, 2vw, 0.9rem) clamp(0.8rem, 2vw, 1.2rem)',
                 display: 'flex',
                 alignItems: 'center',
-                gap: '0.8rem',
+                gap: 'clamp(0.6rem, 1.5vw, 0.8rem)',
                 transition: 'border-color 0.2s',
                 cursor: 'default',
               }}

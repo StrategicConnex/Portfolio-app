@@ -180,18 +180,18 @@ export default function SIEMDashboard() {
   }, [])
 
   return (
-    <section id="siem" style={{ padding: '5rem 2rem', background: 'var(--bg)' }}>
+    <section id="siem" style={{ padding: 'clamp(2rem, 5vw, 5rem) clamp(1rem, 5vw, 2rem)', background: 'var(--bg)' }}>
       <div style={{ maxWidth: 1100, margin: 'auto' }}>
         <SectionHeader label="Security Operations" title="SIEM" highlight="Dashboard" />
 
         <FadeIn delay={0.1}>
-          <p style={{ color: 'var(--muted)', marginBottom: '0.6rem', fontSize: '0.92rem', maxWidth: 640 }}>
+          <p style={{ color: 'var(--muted)', marginBottom: 'clamp(0.4rem, 1vw, 0.6rem)', fontSize: 'clamp(0.85rem, 1.8vw, 0.92rem)', maxWidth: 640 }}>
             Monitoreo en tiempo real bajo el{' '}
             <span style={{ color: 'var(--blue)', fontWeight: 600 }}>Modelo Purdue</span>{' '}
             e implementación{' '}
             <span style={{ color: 'var(--gold)', fontWeight: 600 }}>IEC 62443</span>.
           </p>
-          <p style={{ color: 'rgba(239,68,68,0.8)', fontSize: '0.72rem', letterSpacing: '1px', marginBottom: '2rem', fontFamily: 'monospace' }}>
+          <p style={{ color: 'rgba(239,68,68,0.8)', fontSize: 'clamp(0.65rem, 1.3vw, 0.72rem)', letterSpacing: '1px', marginBottom: 'clamp(1.25rem, 3vw, 2rem)', fontFamily: 'monospace' }}>
             ▸ Hover sobre un evento ALERT para ver la acción de mitigación
           </p>
         </FadeIn>
@@ -200,17 +200,17 @@ export default function SIEMDashboard() {
           {/* Top bar */}
           <div style={{
             background: 'rgba(10,25,47,0.9)', border: '1px solid rgba(30,144,255,0.2)',
-            borderRadius: '14px 14px 0 0', padding: '0.65rem 1.25rem',
+            borderRadius: '14px 14px 0 0', padding: 'clamp(0.5rem, 1.5vw, 0.65rem) clamp(0.8rem, 2vw, 1.25rem)',
             display: 'flex', alignItems: 'center', justifyContent: 'space-between',
             borderBottom: '1px solid rgba(30,144,255,0.12)',
           }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 'clamp(0.4rem, 1vw, 0.6rem)' }}>
               <motion.div
                 animate={{ opacity: [1, 0.3, 1] }}
                 transition={{ repeat: Infinity, duration: 1.5 }}
                 style={{ width: 8, height: 8, borderRadius: '50%', background: '#10B981' }}
               />
-              <span style={{ fontFamily: 'monospace', fontSize: '0.75rem', color: '#10B981', fontWeight: 700 }}>
+              <span style={{ fontFamily: 'monospace', fontSize: 'clamp(0.65rem, 1.3vw, 0.75rem)', color: '#10B981', fontWeight: 700 }}>
                 SECURITY ONION — OT/IT SIEM
               </span>
             </div>

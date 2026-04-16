@@ -55,17 +55,17 @@ export default function Navbar() {
           transition: 'background 0.4s, border-color 0.4s',
         }}
       >
-        <div style={{ maxWidth: 1100, margin: 'auto', padding: '0 2rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 60 }}>
+        <div style={{ maxWidth: 1100, margin: 'auto', padding: 'clamp(0.5rem, 2vw, 1rem) clamp(1rem, 5vw, 2rem)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 'auto', minHeight: 60 }}>
           {/* Logo */}
           <motion.span
             whileHover={{ scale: 1.05 }}
-            style={{ color: 'var(--gold)', fontWeight: 700, fontSize: '1rem', letterSpacing: '2px', cursor: 'default' }}
+            style={{ color: 'var(--gold)', fontWeight: 700, fontSize: 'clamp(0.9rem, 2.5vw, 1.1rem)', letterSpacing: '2px', cursor: 'default' }}
           >
             JFP
           </motion.span>
 
           {/* Desktop links */}
-          <ul style={{ display: 'flex', gap: '1.75rem', listStyle: 'none', margin: 0, padding: 0 }}
+          <ul style={{ display: 'flex', gap: 'clamp(1rem, 3vw, 1.75rem)', listStyle: 'none', margin: 0, padding: 0, flexWrap: 'wrap', justifyContent: 'center' }}
               className="hidden-mobile">
             {links.map(link => (
               <li key={link.href}>
@@ -74,10 +74,11 @@ export default function Navbar() {
                   style={{
                     color: active === link.href.slice(1) ? 'var(--blue)' : 'var(--muted)',
                     textDecoration: 'none',
-                    fontSize: '0.85rem',
+                    fontSize: 'clamp(0.7rem, 1.5vw, 0.85rem)',
                     fontWeight: active === link.href.slice(1) ? 600 : 400,
                     transition: 'color 0.2s',
                     position: 'relative',
+                    whiteSpace: 'nowrap',
                   }}
                   onMouseEnter={e => (e.currentTarget.style.color = 'var(--blue)')}
                   onMouseLeave={e => {
@@ -103,11 +104,11 @@ export default function Navbar() {
           {/* Mobile hamburger */}
           <button
             onClick={() => setMenuOpen(o => !o)}
-            style={{ background: 'none', border: 'none', color: 'var(--text)', cursor: 'pointer', padding: 4 }}
+            style={{ background: 'none', border: 'none', color: 'var(--text)', cursor: 'pointer', padding: '0.5rem', display: 'none' }}
             className="show-mobile"
             aria-label="Toggle menu"
           >
-            {menuOpen ? <X size={22} /> : <Menu size={22} />}
+            {menuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>
       </motion.nav>
@@ -121,11 +122,11 @@ export default function Navbar() {
             exit={{ x: '100%' }}
             transition={{ type: 'spring', stiffness: 300, damping: 35 }}
             style={{
-              position: 'fixed', top: 60, right: 0, bottom: 0, width: 240,
-              background: 'rgba(10,25,47,0.97)', backdropFilter: 'blur(20px)',
+              position: 'fixed', top: 60, right: 0, bottom: 0, width: 'min(280px, 100vw)',
+              background: 'rgba(10,25,47,0.98)', backdropFilter: 'blur(20px)',
               borderLeft: '1px solid rgba(255,255,255,0.08)',
-              zIndex: 99, padding: '2rem 1.5rem',
-              display: 'flex', flexDirection: 'column', gap: '1.5rem',
+              zIndex: 99, padding: 'clamp(1rem, 5vw, 2rem)',
+              display: 'flex', flexDirection: 'column', gap: '1.25rem',
             }}
           >
             {links.map((link, i) => (
@@ -138,7 +139,7 @@ export default function Navbar() {
                 onClick={() => setMenuOpen(false)}
                 style={{
                   color: active === link.href.slice(1) ? 'var(--blue)' : 'var(--muted)',
-                  textDecoration: 'none', fontSize: '0.95rem', fontWeight: 500,
+                  textDecoration: 'none', fontSize: 'clamp(0.9rem, 2vw, 1rem)', fontWeight: 500,
                 }}
               >
                 {link.label}

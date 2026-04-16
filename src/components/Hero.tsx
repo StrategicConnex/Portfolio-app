@@ -30,7 +30,7 @@ export default function Hero() {
         alignItems: 'center',
         justifyContent: 'center',
         textAlign: 'center',
-        padding: '6rem 2rem 4rem',
+        padding: 'clamp(2rem, 5vw, 6rem) clamp(1rem, 5vw, 2rem) clamp(2rem, 5vw, 4rem)',
         position: 'relative',
         overflow: 'hidden',
         background: 'var(--bg)',

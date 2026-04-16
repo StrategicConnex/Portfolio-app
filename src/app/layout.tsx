@@ -85,6 +85,7 @@ export default function RootLayout({
   return (
     <html lang="es" className={inter.variable} style={{ colorScheme: 'dark' }}>
       <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
         <meta name="color-scheme" content="dark" />
         <script
           type="application/ld+json"

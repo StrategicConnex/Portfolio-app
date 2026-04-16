@@ -45,28 +45,28 @@ export default function Contacto() {
   const inputStyle: React.CSSProperties = {
     width: '100%', background: 'rgba(255,255,255,0.04)',
     border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8,
-    padding: '0.75rem 1rem', color: 'var(--text)', fontSize: '0.88rem',
+    padding: 'clamp(0.6rem, 1.5vw, 0.75rem) clamp(0.7rem, 1.5vw, 1rem)', color: 'var(--text)', fontSize: 'clamp(0.8rem, 1.5vw, 0.88rem)',
     outline: 'none', fontFamily: 'inherit', boxSizing: 'border-box',
     transition: 'border-color 0.2s',
   }
 
   return (
-    <section id="contacto" style={{ padding: '5rem 2rem', background: 'var(--bg2)' }}>
+    <section id="contacto" style={{ padding: 'clamp(2rem, 5vw, 5rem) clamp(1rem, 5vw, 2rem)', background: 'var(--bg2)' }}>
       <div style={{ maxWidth: 1100, margin: 'auto' }}>
         <SectionHeader label="Contacto" title="Trabajemos" highlight="Juntos" center />
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.3fr', gap: '3rem', alignItems: 'start' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.3fr', gap: 'clamp(1.5rem, 4vw, 3rem)', alignItems: 'start' }}>
 
           {/* LEFT — contact cards + availability */}
           <div>
             <FadeIn delay={0.05}>
-              <p style={{ color: 'var(--muted)', fontSize: '0.9rem', lineHeight: 1.8, marginBottom: '1.75rem' }}>
+              <p style={{ color: 'var(--muted)', fontSize: 'clamp(0.8rem, 1.8vw, 0.9rem)', lineHeight: 1.8, marginBottom: 'clamp(1rem, 3vw, 1.75rem)' }}>
                 Especializado en proyectos de alta criticidad en entornos industriales Oil &amp; Gas.
                 Disponible para consultoría, arquitectura IT/OT, ciberseguridad y liderazgo técnico.
               </p>
             </FadeIn>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.7rem', marginBottom: '1.5rem' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 'clamp(0.5rem, 1.5vw, 0.7rem)', marginBottom: '1.5rem' }}>
               {contactCards.map((c, i) => (
                 <FadeIn key={i} delay={i * 0.07 + 0.1} direction="left">
                   {c.href ? (

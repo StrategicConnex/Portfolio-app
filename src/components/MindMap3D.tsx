@@ -185,9 +185,12 @@ function Scene() {
 
 /* ── Export ── */
 export default function MindMap3D() {
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768
+  const canvasHeight = isMobile ? 300 : 480
+  
   return (
-    <div style={{ width: '100%', height: 480, borderRadius: 16, overflow: 'hidden', cursor: 'grab' }}>
-      <Canvas camera={{ position: [0, 0, 9], fov: 55 }}>
+    <div style={{ width: '100%', height: canvasHeight, borderRadius: 16, overflow: 'hidden', cursor: 'grab' }}>
+      <Canvas camera={{ position: [0, 0, 9], fov: isMobile ? 70 : 55 }}>
         <Scene />
       </Canvas>
     </div>

@@ -34,15 +34,15 @@ const domainCards = [
 
 export default function Arquitectura() {
   return (
-    <section id="arquitectura" style={{ padding: '5rem 2rem', background: 'var(--bg2)' }}>
+    <section id="arquitectura" style={{ padding: 'clamp(2rem, 5vw, 5rem) clamp(1rem, 5vw, 2rem)', background: 'var(--bg2)' }}>
       <div style={{ maxWidth: 1100, margin: 'auto' }}>
         <SectionHeader label="Visión sistémica" title="Mapa Mental" highlight="Futurista 3D" />
 
         <FadeIn delay={0.05}>
-          <p style={{ color: 'var(--muted)', marginBottom: '0.5rem', fontSize: '0.92rem', maxWidth: 580 }}>
+          <p style={{ color: 'var(--muted)', marginBottom: '0.5rem', fontSize: 'clamp(0.85rem, 2vw, 0.92rem)', maxWidth: 580 }}>
             Mapa interactivo futurista con nodos de partículas y flujos neon. Arrastrá para rotar · Scroll para zoom · Hover para ver detalles.
           </p>
-          <p style={{ color: 'var(--blue)', fontSize: '0.72rem', letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 600, marginBottom: '2rem' }}>
+          <p style={{ color: 'var(--blue)', fontSize: 'clamp(0.65rem, 1.5vw, 0.72rem)', letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 600, marginBottom: '2rem' }}>
             Partículas dinámicas + Flujos neon azul + Efectos pulsantes
           </p>
         </FadeIn>
@@ -56,9 +56,9 @@ export default function Arquitectura() {
         <FadeIn delay={0.2}>
           <div style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
-            gap: '1rem',
-            marginTop: '3rem',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(clamp(240px, 100%, 280px), 1fr))',
+            gap: 'clamp(0.75rem, 2vw, 1rem)',
+            marginTop: 'clamp(2rem, 5vw, 3rem)',
           }}>
             {domainCards.map((card) => (
               <div

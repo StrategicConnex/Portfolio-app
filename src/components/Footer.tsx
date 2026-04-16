@@ -3,9 +3,9 @@ export default function Footer() {
     <footer
       style={{
         textAlign: 'center',
-        padding: '1.75rem 2rem',
+        padding: 'clamp(1rem, 2vw, 1.75rem) clamp(1rem, 5vw, 2rem)',
         color: 'var(--muted)',
-        fontSize: '0.78rem',
+        fontSize: 'clamp(0.7rem, 1.3vw, 0.78rem)',
         borderTop: '1px solid var(--border)',
         background: 'var(--bg)',
         lineHeight: 1.8,
@@ -17,7 +17,7 @@ export default function Footer() {
         {' · '}IT/OT Cybersecurity Architect
         {' · '}Neuquén, Argentina
       </p>
-      <p style={{ marginTop: '0.25rem', opacity: 0.6 }}>
+      <p style={{ marginTop: 'clamp(0.15rem, 0.5vw, 0.25rem)', opacity: 0.6 }}>
         Construido con Next.js 14 · Framer Motion · Three.js
       </p>
     </footer>

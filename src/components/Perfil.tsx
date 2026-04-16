@@ -77,12 +77,12 @@ function MetricCard({ num, label, color, icon, delay }: { num: string; label: st
 
 export default function Perfil() {
   return (
-    <section id="perfil" style={{ padding: '5rem 2rem', background: 'var(--bg)' }}>
+    <section id="perfil" style={{ padding: 'clamp(2rem, 5vw, 5rem) clamp(1rem, 5vw, 2rem)', background: 'var(--bg)' }}>
       <div style={{ maxWidth: 1100, margin: 'auto' }}>
         <SectionHeader label="Sobre mí" title="Perfil" highlight="Profesional" />
 
         <FadeIn delay={0.1}>
-          <p style={{ color: 'var(--muted)', maxWidth: 840, marginBottom: '0.9rem', fontSize: '0.97rem', lineHeight: 1.9 }}>
+          <p style={{ color: 'var(--muted)', maxWidth: 840, marginBottom: '0.9rem', fontSize: 'clamp(0.85rem, 2vw, 0.97rem)', lineHeight: 1.9 }}>
             Profesional en Ciberseguridad y Arquitectura de Redes con{' '}
             <span style={{ color: 'var(--text)', fontWeight: 700 }}>más de 20 años</span>{' '}
             de trayectoria en el sector industrial. Especialista en la convergencia{' '}
@@ -91,7 +91,7 @@ export default function Perfil() {
             <span style={{ color: 'var(--blue)', fontWeight: 700 }}>Modelo Purdue</span>{' '}
             para la protección de infraestructuras críticas en Oil &amp; Gas.
           </p>
-          <p style={{ color: 'var(--muted)', maxWidth: 840, marginBottom: '3rem', fontSize: '0.97rem', lineHeight: 1.9 }}>
+          <p style={{ color: 'var(--muted)', maxWidth: 840, marginBottom: '3rem', fontSize: 'clamp(0.85rem, 2vw, 0.97rem)', lineHeight: 1.9 }}>
             Experto en defensa activa mediante{' '}
             <span style={{ color: 'var(--text)', fontWeight: 600 }}>SIEM (Security Onion)</span>,
             gestión de identidades (IAM) y aseguramiento de la continuidad operativa bajo los estándares{' '}
@@ -101,24 +101,24 @@ export default function Perfil() {
         </FadeIn>
 
         {/* Metrics */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.25rem', marginBottom: '3.5rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(clamp(180px, 100%, 200px), 1fr))', gap: 'clamp(0.75rem, 2vw, 1.25rem)', marginBottom: 'clamp(2rem, 5vw, 3.5rem)' }}>
           {metrics.map((m, i) => <MetricCard key={m.label} {...m} delay={i * 0.1 + 0.2} />)}
         </div>
 
         {/* Competencias grouped */}
         <FadeIn delay={0.3}>
           <div style={{ marginBottom: '1rem' }}>
-            <p style={{ fontSize: '0.72rem', color: 'var(--blue)', letterSpacing: '3px', textTransform: 'uppercase', marginBottom: '1.25rem' }}>
+            <p style={{ fontSize: 'clamp(0.65rem, 1.5vw, 0.72rem)', color: 'var(--blue)', letterSpacing: '3px', textTransform: 'uppercase', marginBottom: 'clamp(0.75rem, 2vw, 1.25rem)' }}>
               Dominio técnico completo
             </p>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '0.9rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(clamp(250px, 100%, 280px), 1fr))', gap: 'clamp(0.75rem, 2vw, 0.9rem)' }}>
               {competencias.map((c) => (
                 <motion.div
                   key={c.grupo}
                   whileHover={{ borderColor: c.color + '66' }}
-                  style={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 10, padding: '1rem 1.2rem', transition: 'border-color 0.3s' }}
+                  style={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 10, padding: 'clamp(0.75rem, 2vw, 1.2rem)', transition: 'border-color 0.3s' }}
                 >
-                  <div style={{ fontSize: '0.72rem', color: c.color, fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', marginBottom: '0.6rem' }}>
+                  <div style={{ fontSize: 'clamp(0.65rem, 1.5vw, 0.72rem)', color: c.color, fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', marginBottom: '0.6rem' }}>
                     {c.grupo}
                   </div>
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.35rem' }}>
@@ -129,7 +129,7 @@ export default function Perfil() {
                         border: `1px solid ${c.color}25`,
                         padding: '0.15rem 0.55rem',
                         borderRadius: 20,
-                        fontSize: '0.72rem',
+                        fontSize: 'clamp(0.65rem, 1.2vw, 0.72rem)',
                         fontWeight: 500,
                       }}>
                         {item}

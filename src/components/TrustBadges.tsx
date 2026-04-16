@@ -71,38 +71,38 @@ function BadgePill({ delay, children }: { delay: number; children: React.ReactNo
 
 export default function TrustBadges() {
   return (
-    <section id="confianza" style={{ padding: '4rem 2rem', background: 'var(--bg2)', borderTop: '1px solid var(--border)' }}>
+    <section id="confianza" style={{ padding: 'clamp(2rem, 5vw, 4rem) clamp(1rem, 5vw, 2rem)', background: 'var(--bg2)', borderTop: '1px solid var(--border)' }}>
       <div style={{ maxWidth: 1100, margin: 'auto' }}>
         <SectionHeader label="Validación profesional" title="Empresas &" highlight="Estándares" />
 
         {/* Companies */}
         <FadeIn delay={0.05}>
-          <p style={{ fontSize: '0.68rem', color: 'var(--muted)', letterSpacing: '2px', textTransform: 'uppercase', marginBottom: '1rem', fontWeight: 600 }}>
+          <p style={{ fontSize: 'clamp(0.63rem, 1.2vw, 0.68rem)', color: 'var(--muted)', letterSpacing: '2px', textTransform: 'uppercase', marginBottom: 'clamp(0.75rem, 1.5vw, 1rem)', fontWeight: 600 }}>
             Historial corporativo
           </p>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '0.9rem', marginBottom: '3rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(clamp(240px, 100%, 260px), 1fr))', gap: 'clamp(0.6rem, 1.5vw, 0.9rem)', marginBottom: 'clamp(2rem, 4vw, 3rem)' }}>
             {companies.map((c, i) => (
               <BadgePill key={c.name} delay={i * 0.08}>
                 <div style={{
                   background: 'rgba(255,255,255,0.03)',
                   border: '1px solid rgba(255,255,255,0.08)',
-                  borderRadius: 12, padding: '1.1rem 1.3rem',
-                  display: 'flex', gap: '1rem', alignItems: 'center',
+                  borderRadius: 12, padding: 'clamp(0.8rem, 2vw, 1.1rem) clamp(0.9rem, 2vw, 1.3rem)',
+                  display: 'flex', gap: 'clamp(0.6rem, 1.5vw, 1rem)', alignItems: 'center',
                   transition: 'border-color 0.2s',
                 }}>
                   <div style={{
-                    width: 52, height: 52, borderRadius: 10, flexShrink: 0,
+                    width: 'clamp(44px, 10vw, 52px)', height: 'clamp(44px, 10vw, 52px)', borderRadius: 10, flexShrink: 0,
                     background: `rgba(${parseInt(c.color.slice(1,3),16)}, ${parseInt(c.color.slice(3,5),16)}, ${parseInt(c.color.slice(5,7),16)}, 0.1)`,
                     border: `1px solid ${c.color}33`,
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    fontSize: '1.5rem',
+                    fontSize: 'clamp(1.2rem, 2.5vw, 1.5rem)',
                   }}>
                     {c.icon}
                   </div>
                   <div>
-                    <div style={{ fontSize: '0.88rem', fontWeight: 700, color: 'var(--text)' }}>{c.full}</div>
-                    <div style={{ fontSize: '0.72rem', color: c.color, fontWeight: 600 }}>{c.years}</div>
-                    <div style={{ fontSize: '0.7rem', color: 'var(--muted)' }}>{c.sector}</div>
+                    <div style={{ fontSize: 'clamp(0.8rem, 1.6vw, 0.88rem)', fontWeight: 700, color: 'var(--text)' }}>{c.full}</div>
+                    <div style={{ fontSize: 'clamp(0.65rem, 1.3vw, 0.72rem)', color: c.color, fontWeight: 600 }}>{c.years}</div>
+                    <div style={{ fontSize: 'clamp(0.63rem, 1.2vw, 0.7rem)', color: 'var(--muted)' }}>{c.sector}</div>
                   </div>
                 </div>
               </BadgePill>
@@ -112,7 +112,7 @@ export default function TrustBadges() {
 
         {/* Standards grid */}
         <FadeIn delay={0.15}>
-          <p style={{ fontSize: '0.68rem', color: 'var(--muted)', letterSpacing: '2px', textTransform: 'uppercase', marginBottom: '1rem', fontWeight: 600 }}>
+          <p style={{ fontSize: 'clamp(0.63rem, 1.2vw, 0.68rem)', color: 'var(--muted)', letterSpacing: '2px', textTransform: 'uppercase', marginBottom: 'clamp(0.75rem, 1.5vw, 1rem)', fontWeight: 600 }}>
             Certificaciones y estándares
           </p>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.6rem', marginBottom: '3rem' }}>

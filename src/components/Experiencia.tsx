@@ -180,12 +180,12 @@ function TimelineItem({ job, index }: { job: typeof jobs[0]; index: number }) {
 
 export default function Experiencia() {
   return (
-    <section id="experiencia" style={{ padding: '5rem 2rem', background: 'var(--bg2)' }}>
+    <section id="experiencia" style={{ padding: 'clamp(2rem, 5vw, 5rem) clamp(1rem, 5vw, 2rem)', background: 'var(--bg2)' }}>
       <div style={{ maxWidth: 1100, margin: 'auto' }}>
         <SectionHeader label="Trayectoria" title="Experiencia" highlight="Laboral" />
 
         <FadeIn delay={0.05}>
-          <div style={{ marginBottom: '2.5rem', display: 'flex', flexWrap: 'wrap', gap: '0.75rem' }}>
+          <div style={{ marginBottom: 'clamp(1.5rem, 3vw, 2.5rem)', display: 'flex', flexWrap: 'wrap', gap: 'clamp(0.5rem, 2vw, 0.75rem)' }}>
             {[
               { label: '20+ años en el sector industrial', color: '#C5A46D' },
               { label: 'Oil & Gas · Neuquén · Argentina', color: '#1E90FF' },
@@ -196,7 +196,7 @@ export default function Experiencia() {
                 color: b.color,
                 border: `1px solid ${b.color}33`,
                 padding: '0.35rem 0.9rem',
-                borderRadius: 20, fontSize: '0.8rem', fontWeight: 600,
+                borderRadius: 20, fontSize: 'clamp(0.7rem, 1.5vw, 0.8rem)', fontWeight: 600,
               }}>✦ {b.label}</span>
             ))}
           </div>

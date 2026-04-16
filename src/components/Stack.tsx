@@ -112,14 +112,14 @@ function StackCard({ item, index }: { item: typeof categories[0]; index: number 
 
 export default function Stack() {
   return (
-    <section id="stack" style={{ padding: '5rem 2rem', background: 'var(--bg)' }}>
+    <section id="stack" style={{ padding: 'clamp(2rem, 5vw, 5rem) clamp(1rem, 5vw, 2rem)', background: 'var(--bg)' }}>
       <div style={{ maxWidth: 1100, margin: 'auto' }}>
         <SectionHeader label="Tecnología" title="Stack" highlight="Tecnológico" />
 
         <div style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(290px, 1fr))',
-          gap: '1.25rem',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(clamp(240px, 100%, 290px), 1fr))',
+          gap: 'clamp(0.75rem, 2vw, 1.25rem)',
         }}>
           {categories.map((item, i) => (
             <StackCard key={item.cat} item={item} index={i} />

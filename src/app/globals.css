@@ -26,6 +26,13 @@ body {
   font-family: 'Inter', system-ui, sans-serif;
   line-height: 1.7;
   overflow-x: hidden;
+  font-size: clamp(14px, 2vw, 16px);
+}
+
+@media (max-width: 768px) {
+  body {
+    font-size: 14px;
+  }
 }
 
 ::selection {
