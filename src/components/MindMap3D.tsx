@@ -145,13 +145,13 @@ function NeonConnections() {
           points.push(start.clone().lerp(end, t))
         }
         
+        const geometry = new THREE.BufferGeometry()
+        geometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array(points.flatMap(p => [p.x, p.y, p.z])), 3))
+        const material = new THREE.LineBasicMaterial({ color: '#00FFFF', linewidth: 2, transparent: true, opacity: 0.8 })
+        const line = new THREE.Line(geometry, material)
+        
         return (
-          <line key={i} ref={(el) => { if (el) lineRefs.current[i] = el }} >
-            <bufferGeometry>
-              <bufferAttribute attach="attributes-position" count={points.length} array={new Float32Array(points.flatMap(p => [p.x, p.y, p.z]))} itemSize={3} />
-            </bufferGeometry>
-            <lineBasicMaterial color="#00FFFF" linewidth={2} transparent opacity={0.8} />
-          </line>
+          <primitive key={i} object={line} ref={(el: THREE.Line) => { if (el) lineRefs.current[i] = el }} />
         )
       })}
     </>
