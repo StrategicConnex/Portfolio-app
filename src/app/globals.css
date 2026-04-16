@@ -1,0 +1,171 @@
+@import "tailwindcss";
+
+:root {
+  --bg: #0A192F;
+  --bg2: #111827;
+  --blue: #1E90FF;
+  --gold: #C5A46D;
+  --text: #E5E7EB;
+  --muted: #94A3B8;
+  --card: rgba(255,255,255,0.04);
+  --border: rgba(255,255,255,0.08);
+}
+
+html {
+  scroll-behavior: smooth;
+  background: var(--bg);
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', system-ui, sans-serif;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+
+::selection {
+  background: rgba(30,144,255,0.3);
+  color: #fff;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: rgba(30,144,255,0.4); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--blue); }
+
+/* Glassmorphism utility */
+.glass {
+  background: rgba(255,255,255,0.04);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+/* Animated gradient text */
+.gradient-text {
+  background: linear-gradient(135deg, var(--blue), var(--gold));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Glow effects */
+.glow-blue {
+  box-shadow: 0 0 20px rgba(30,144,255,0.2), 0 0 40px rgba(30,144,255,0.1);
+}
+.glow-gold {
+  box-shadow: 0 0 20px rgba(197,164,109,0.2), 0 0 40px rgba(197,164,109,0.1);
+}
+
+/* Animated pulse for availability indicator */
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.8); }
+}
+
+/* Data flow animation */
+@keyframes data-flow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Scan line effect */
+@keyframes scan {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100vh); }
+}
+
+/* Tag hover shimmer */
+.tech-tag {
+  background: rgba(30,144,255,0.08);
+  color: var(--blue);
+  border: 1px solid rgba(30,144,255,0.2);
+  padding: 0.2rem 0.65rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  display: inline-block;
+}
+.tech-tag:hover {
+  background: rgba(30,144,255,0.18);
+  border-color: var(--blue);
+  transform: translateY(-1px);
+}
+
+/* Section divider bar */
+.sec-divider {
+  width: 48px;
+  height: 3px;
+  background: linear-gradient(90deg, var(--blue), var(--gold));
+  border-radius: 2px;
+  margin-bottom: 2.5rem;
+}
+
+/* Timeline connector */
+.timeline-line {
+  background: linear-gradient(to bottom, var(--blue), var(--gold), #6366F1);
+}
+
+/* Monospace utility for SIEM dashboard */
+.mono {
+  font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', ui-monospace, monospace;
+  font-feature-settings: 'liga' 1, 'calt' 1;
+}
+
+/* SIEM terminal scanline */
+.siem-terminal {
+  position: relative;
+  overflow: hidden;
+}
+.siem-terminal::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.03) 2px,
+    rgba(0, 0, 0, 0.03) 4px
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Responsive SIEM grid */
+@media (max-width: 800px) {
+  .siem-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .siem-span2 {
+    grid-column: span 1 !important;
+  }
+}
+
+/* Responsive Proyecto grid */
+@media (max-width: 720px) {
+  .proj-2col {
+    grid-template-columns: 1fr !important;
+  }
+  .highlight-2col {
+    grid-template-columns: 1fr 1fr !important;
+  }
+}
+
+/* Focus visible outline reset for buttons */
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* Animated border gradient (for hero CTA hover) */
+@keyframes border-spin {
+  0%   { background-position: 0%   50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0%   50%; }
+}
