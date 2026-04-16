@@ -62,7 +62,7 @@ function ParticleNode({
       {/* Partículas */}
       <points ref={pointsRef}>
         <bufferGeometry>
-          <bufferAttribute attach="attributes-position" count={particleCount} array={positions} itemSize={3} />
+          <bufferAttribute attach="attributes-position" args={[positions, 3]} />
         </bufferGeometry>
         <pointsMaterial size={0.08} color={color} transparent opacity={0.9} />
       </points>
