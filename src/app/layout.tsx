@@ -9,6 +9,7 @@ const inter = Inter({
 })
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://juanfpalacios.vercel.app'),
   title: 'Juan Felipe Palacios – Arquitecto IT/OT | Ciberseguridad Industrial',
   description:
     'Profesional con 20+ años en Ciberseguridad Industrial, Arquitectura IT/OT, IEC 62443, NIST, SCADA y Oil & Gas. Basado en Neuquén, Argentina. Disponible para proyectos de alta criticidad.',
@@ -26,11 +27,22 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'es_AR',
     url: 'https://juanfpalacios.vercel.app',
+    siteName: 'Juan Felipe Palacios Portfolio',
+    images: [
+      {
+        url: 'https://juanfpalacios.vercel.app/JuanPalacios.png',
+        alt: 'Foto de perfil de Juan Felipe Palacios',
+        width: 1200,
+        height: 1200,
+      },
+    ],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Juan Felipe Palacios – Arquitecto IT/OT | Ciberseguridad Industrial',
     description: 'Transformando infraestructura crítica en sistemas resilientes e inteligentes.',
+    creator: '@juanfpalacios',
+    images: ['https://juanfpalacios.vercel.app/JuanPalacios.png'],
   },
   robots: { index: true, follow: true },
   alternates: { canonical: 'https://juanfpalacios.vercel.app' },
@@ -87,6 +99,7 @@ export default function RootLayout({
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
         <meta name="color-scheme" content="dark" />
+        <link rel="canonical" href="https://juanfpalacios.vercel.app" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

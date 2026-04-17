@@ -66,6 +66,35 @@ export default function Contacto() {
               </p>
             </FadeIn>
 
+            <FadeIn delay={0.18} direction="left">
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.85rem', marginBottom: '1.5rem' }}>
+                <motion.a
+                  href="mailto:palacios_juan@hotmail.com"
+                  whileHover={{ y: -2 }}
+                  style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '0.85rem 1.2rem', background: 'var(--blue)', color: '#fff', borderRadius: 999, fontWeight: 700, textDecoration: 'none', boxShadow: '0 14px 30px rgba(15, 23, 42, 0.12)' }}
+                >
+                  Enviar email
+                </motion.a>
+                <motion.a
+                  href="https://linkedin.com/in/juanfpalacios"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  whileHover={{ y: -2 }}
+                  style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '0.85rem 1.2rem', background: 'rgba(10,102,194,0.12)', color: 'var(--text)', borderRadius: 999, fontWeight: 700, textDecoration: 'none', border: '1px solid rgba(10,102,194,0.18)' }}
+                >
+                  LinkedIn
+                </motion.a>
+                <motion.a
+                  href="/CV-JuanFelipePalacios.pdf"
+                  download
+                  whileHover={{ y: -2 }}
+                  style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '0.85rem 1.2rem', background: 'rgba(255,215,0,0.12)', color: 'var(--text)', borderRadius: 999, fontWeight: 700, textDecoration: 'none', border: '1px solid rgba(255,215,0,0.28)' }}
+                >
+                  Descargar CV
+                </motion.a>
+              </div>
+            </FadeIn>
+
             <div style={{ display: 'flex', flexDirection: 'column', gap: 'clamp(0.5rem, 1.5vw, 0.7rem)', marginBottom: '1.5rem' }}>
               {contactCards.map((c, i) => (
                 <FadeIn key={i} delay={i * 0.07 + 0.1} direction="left">

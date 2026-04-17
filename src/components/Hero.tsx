@@ -77,13 +77,24 @@ export default function Hero() {
               boxShadow: '0 24px 60px rgba(0,0,0,0.15)',
             }}
           >
-            <Image
-              src="/JuanPalacios.png"
-              alt="Foto de perfil de Juan Palacios"
-              width={132}
-              height={132}
-              priority
-            />
+            <picture>
+              <source srcSet="/JuanPalacios.webp" type="image/webp" />
+              <source srcSet="/JuanPalacios.jpg" type="image/jpeg" />
+              <Image
+                src="/JuanPalacios.jpg"
+                alt="Foto de perfil de Juan Palacios"
+                width={132}
+                height={132}
+                sizes="(max-width: 640px) 110px, 132px"
+                quality={75}
+                priority
+                loading="eager"
+                placeholder="blur"
+                blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUA
+                AAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0
+                DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg=="
+              />
+            </picture>
           </div>
         </motion.div>
 

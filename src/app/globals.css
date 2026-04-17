@@ -52,6 +52,10 @@ html {
   background: var(--bg);
 }
 
+section {
+  scroll-margin-top: 92px;
+}
+
 body {
   background: var(--bg);
   color: var(--text);

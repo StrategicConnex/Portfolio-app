@@ -82,7 +82,7 @@ export default function Perfil() {
         <SectionHeader label="Sobre mí" title="Perfil" highlight="Profesional" />
 
         <FadeIn delay={0.1}>
-          <p style={{ color: 'var(--muted)', maxWidth: 840, marginBottom: '0.9rem', fontSize: 'clamp(0.85rem, 2vw, 0.97rem)', lineHeight: 1.9 }}>
+          <p style={{ color: 'var(--muted)', maxWidth: 840, marginBottom: '1.4rem', fontSize: 'clamp(0.85rem, 2vw, 0.97rem)', lineHeight: 1.75 }}>
             Profesional en Ciberseguridad y Arquitectura de Redes con{' '}
             <span style={{ color: 'var(--text)', fontWeight: 700 }}>más de 20 años</span>{' '}
             de trayectoria en el sector industrial. Especialista en la convergencia{' '}
@@ -91,7 +91,7 @@ export default function Perfil() {
             <span style={{ color: 'var(--blue)', fontWeight: 700 }}>Modelo Purdue</span>{' '}
             para la protección de infraestructuras críticas en Oil &amp; Gas.
           </p>
-          <p style={{ color: 'var(--muted)', maxWidth: 840, marginBottom: '3rem', fontSize: 'clamp(0.85rem, 2vw, 0.97rem)', lineHeight: 1.9 }}>
+          <p style={{ color: 'var(--muted)', maxWidth: 840, marginBottom: '3rem', fontSize: 'clamp(0.85rem, 2vw, 0.97rem)', lineHeight: 1.75 }}>
             Experto en defensa activa mediante{' '}
             <span style={{ color: 'var(--text)', fontWeight: 600 }}>SIEM (Security Onion)</span>,
             gestión de identidades (IAM) y aseguramiento de la continuidad operativa bajo los estándares{' '}
@@ -107,7 +107,7 @@ export default function Perfil() {
 
         {/* Competencias grouped */}
         <FadeIn delay={0.3}>
-          <div style={{ marginBottom: '1rem' }}>
+          <div style={{ marginTop: '3rem', marginBottom: '1rem' }}>
             <p style={{ fontSize: 'clamp(0.65rem, 1.5vw, 0.72rem)', color: 'var(--blue)', letterSpacing: '3px', textTransform: 'uppercase', marginBottom: 'clamp(0.75rem, 2vw, 1.25rem)' }}>
               Dominio técnico completo
             </p>
@@ -118,19 +118,20 @@ export default function Perfil() {
                   whileHover={{ borderColor: c.color + '66' }}
                   style={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 10, padding: 'clamp(0.75rem, 2vw, 1.2rem)', transition: 'border-color 0.3s' }}
                 >
-                  <div style={{ fontSize: 'clamp(0.65rem, 1.5vw, 0.72rem)', color: c.color, fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', marginBottom: '0.6rem' }}>
+                  <div style={{ fontSize: 'clamp(0.75rem, 1.5vw, 0.82rem)', color: 'var(--text)', fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', marginBottom: '0.8rem' }}>
                     {c.grupo}
                   </div>
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.35rem' }}>
                     {c.items.map(item => (
                       <span key={item} style={{
-                        background: `rgba(${parseInt(c.color.slice(1,3),16)}, ${parseInt(c.color.slice(3,5),16)}, ${parseInt(c.color.slice(5,7),16)}, 0.08)`,
-                        color: c.color,
-                        border: `1px solid ${c.color}25`,
-                        padding: '0.15rem 0.55rem',
-                        borderRadius: 20,
-                        fontSize: 'clamp(0.65rem, 1.2vw, 0.72rem)',
+                        background: 'rgba(255,255,255,0.08)',
+                        color: 'var(--text)',
+                        border: '1px solid rgba(255,255,255,0.12)',
+                        padding: '0.24rem 0.65rem',
+                        borderRadius: 22,
+                        fontSize: 'clamp(0.75rem, 1.2vw, 0.82rem)',
                         fontWeight: 500,
+                        minWidth: 'max-content',
                       }}>
                         {item}
                       </span>

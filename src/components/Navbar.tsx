@@ -18,10 +18,16 @@ export default function Navbar() {
   const [scrolled, setScrolled]   = useState(false)
   const [active,   setActive]     = useState('')
   const [menuOpen, setMenuOpen]   = useState(false)
+  const [progress,  setProgress]  = useState(0)
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20)
+    const onScroll = () => {
+      setScrolled(window.scrollY > 20)
+      const maxScroll = document.documentElement.scrollHeight - window.innerHeight
+      setProgress(maxScroll > 0 ? (window.scrollY / maxScroll) * 100 : 0)
+    }
     window.addEventListener('scroll', onScroll, { passive: true })
+    onScroll()
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
@@ -53,8 +59,10 @@ export default function Navbar() {
           backdropFilter: 'blur(16px)',
           borderBottom: scrolled ? '1px solid rgba(255,255,255,0.08)' : '1px solid transparent',
           transition: 'background 0.4s, border-color 0.4s',
+          overflow: 'hidden',
         }}
       >
+        <div style={{ position: 'absolute', top: 0, left: 0, height: 3, width: `${progress}%`, background: 'linear-gradient(90deg, var(--blue), var(--gold))', transition: 'width 0.15s ease-out', zIndex: 101 }} />
         <div style={{ maxWidth: 1100, margin: 'auto', padding: 'clamp(0.5rem, 2vw, 1rem) clamp(1rem, 5vw, 2rem)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 'auto', minHeight: 60 }}>
           {/* Logo */}
           <motion.span
