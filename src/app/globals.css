@@ -4,6 +4,38 @@
 .hero-radar { display: none !important; }
 @media (min-width: 960px) { .hero-radar { display: block !important; } }
 
+.hero-content {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  justify-items: center;
+}
+.hero-copy {
+  width: min(100%, 640px);
+}
+.hero-avatar {
+  width: 132px;
+}
+
+@media (min-width: 960px) {
+  .hero-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 1100px;
+    margin: 0 auto;
+    text-align: left;
+  }
+  .hero-copy {
+    width: 100%;
+    max-width: 600px;
+    text-align: left;
+  }
+  .hero-avatar {
+    margin-right: 2rem;
+  }
+}
+
 :root {
   --bg: #0A192F;
   --bg2: #111827;

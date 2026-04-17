@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { motion } from 'framer-motion'
 import type { Variants } from 'framer-motion'
 import dynamic from 'next/dynamic'
@@ -60,10 +61,36 @@ export default function Hero() {
       />
 
       {/* Content */}
-      <div style={{ position: 'relative', zIndex: 1, maxWidth: 800 }}>
-        {/* Badge */}
+      <div className="hero-content" style={{ position: 'relative', zIndex: 1, maxWidth: 800 }}>
         <motion.div
+          className="hero-avatar"
           custom={0} variants={TEXT_VARIANTS} initial="hidden" animate="visible"
+          style={{ marginBottom: '2rem', display: 'flex', justifyContent: 'center' }}
+        >
+          <div
+            style={{
+              width: 132,
+              height: 132,
+              borderRadius: '50%',
+              overflow: 'hidden',
+              border: '3px solid rgba(30,144,255,0.2)',
+              boxShadow: '0 24px 60px rgba(0,0,0,0.15)',
+            }}
+          >
+            <Image
+              src="/juanpalacios.png"
+              alt="Foto de perfil de Juan Palacios"
+              width={132}
+              height={132}
+              priority
+            />
+          </div>
+        </motion.div>
+
+        <div className="hero-copy">
+          {/* Badge */}
+          <motion.div
+          custom={1} variants={TEXT_VARIANTS} initial="hidden" animate="visible"
           style={{ marginBottom: '1.5rem' }}
         >
           <span
@@ -84,7 +111,7 @@ export default function Hero() {
 
         {/* Name */}
         <motion.h1
-          custom={1} variants={TEXT_VARIANTS} initial="hidden" animate="visible"
+          custom={2} variants={TEXT_VARIANTS} initial="hidden" animate="visible"
           style={{
             fontSize: 'clamp(2.4rem, 6vw, 4rem)',
             fontWeight: 800,
@@ -109,7 +136,7 @@ export default function Hero() {
 
         {/* Title */}
         <motion.p
-          custom={2} variants={TEXT_VARIANTS} initial="hidden" animate="visible"
+          custom={3} variants={TEXT_VARIANTS} initial="hidden" animate="visible"
           style={{
             fontSize: 'clamp(1rem, 2.5vw, 1.4rem)',
             color: 'var(--blue)',
@@ -123,7 +150,7 @@ export default function Hero() {
 
         {/* Tagline */}
         <motion.p
-          custom={3} variants={TEXT_VARIANTS} initial="hidden" animate="visible"
+          custom={4} variants={TEXT_VARIANTS} initial="hidden" animate="visible"
           style={{
             color: 'var(--muted)',
             fontSize: '1.05rem',
@@ -137,7 +164,7 @@ export default function Hero() {
 
         {/* CTAs */}
         <motion.div
-          custom={4} variants={TEXT_VARIANTS} initial="hidden" animate="visible"
+          custom={5} variants={TEXT_VARIANTS} initial="hidden" animate="visible"
           style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}
         >
           <motion.a
@@ -193,6 +220,7 @@ export default function Hero() {
           />
         </motion.div>
       </div>
+    </div>
     </section>
   )
 }
