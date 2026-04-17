@@ -20,10 +20,12 @@ const projectTypes = [
 ]
 
 const contactCards = [
-  { icon: '✉', label: 'palacios_juan@hotmail.com', sub: 'Email profesional',        href: 'mailto:palacios_juan@hotmail.com',  color: 'var(--blue)'  },
-  { icon: '📞', label: '+54 299 586 9435',           sub: 'WhatsApp / Llamadas',     href: 'https://wa.me/542995869435',        color: '#10B981', external: true },
-  { icon: 'in', label: 'linkedin/juanfpalacios',     sub: 'LinkedIn',                href: 'https://linkedin.com/in/juanfpalacios', color: '#0A66C2', external: true },
-  { icon: '📍', label: 'Neuquén, Argentina',          sub: 'Trabajo remoto o presencial', href: null, color: 'var(--gold)' },
+  { icon: '✉', label: 'palacios_juan@hotmail.com',        sub: 'Email profesional',        href: 'mailto:palacios_juan@hotmail.com',                   color: 'var(--blue)' },
+  { icon: '📞', label: '+54 299 586 9435',                sub: 'WhatsApp / Llamadas',      href: 'https://wa.me/542995869435',                      color: '#10B981', external: true },
+  { icon: 'in', label: 'linkedin/juanfpalacios',          sub: 'LinkedIn',                href: 'https://linkedin.com/in/juanfpalacios',            color: '#0A66C2', external: true },
+  { icon: '🐙', label: 'github/StrategicConnex',           sub: 'GitHub',                  href: 'https://github.com/StrategicConnex/',              color: '#333', external: true },
+  { icon: '🏅', label: 'credly.com/users/juan-palacios',   sub: 'Certificaciones',         href: 'https://www.credly.com/users/juan-palacios.88e7ba6c', color: '#F9B400', external: true },
+  { icon: '📍', label: 'Neuquén, Argentina',               sub: 'Trabajo remoto o presencial', href: null,                                          color: 'var(--gold)' },
 ]
 
 export default function Contacto() {

@@ -14,6 +14,12 @@ const highlights = [
   { icon: '📊', label: 'Dashboard B2B', desc: 'KPIs industriales + control documental + inteligencia comercial' },
 ]
 
+const metrics = [
+  { label: 'Usuarios activos', value: '1.2K+', detail: 'Acceso móvil y desktop', color: '#1E90FF' },
+  { label: 'Disponibilidad', value: '99.8%', detail: 'Uptime del servicio', color: '#10B981' },
+  { label: 'Consultas procesadas', value: '1.5K/mes', detail: 'Trazabilidad B2B', color: '#F59E0B' },
+]
+
 const scores = [
   { label: 'Core Web Vitals', score: 97, color: '#1E90FF' },
   { label: 'Performance',     score: 95, color: '#1E90FF' },
@@ -46,7 +52,7 @@ export default function Proyecto() {
   return (
     <section id="proyecto" style={{ padding: 'clamp(2rem, 5vw, 5rem) clamp(1rem, 5vw, 2rem)', background: 'var(--bg)' }}>
       <div style={{ maxWidth: 1100, margin: 'auto' }}>
-        <SectionHeader label="Proyecto destacado" title="Strategic" highlight="Connex" />
+        <SectionHeader label="Proyecto freelance" title="Strategic" highlight="Connex" />
 
         <FadeIn delay={0.1}>
           <div style={{
@@ -62,16 +68,17 @@ export default function Proyecto() {
               {/* Left */}
               <div>
                 <div style={{ fontSize: 'clamp(0.6rem, 1.2vw, 0.7rem)', color: 'var(--gold)', letterSpacing: '2px', textTransform: 'uppercase', marginBottom: '0.5rem', fontWeight: 700 }}>
-                  Plataforma B2B · Full Stack · Vaca Muerta
+                  Proyecto freelance · Full Stack · Vaca Muerta
                 </div>
                 <h3 style={{ fontSize: 'clamp(1.4rem, 4vw, 1.8rem)', fontWeight: 800, color: 'var(--text)', marginBottom: '0.5rem', lineHeight: 1.15 }}>
-                  Inteligencia Comercial<br />
-                  <span style={{ color: 'var(--gold)' }}>para Vaca Muerta</span>
+                  StrategicConnex<br />
+                  <span style={{ color: 'var(--gold)' }}>Side project freelance</span>
                 </h3>
                 <p style={{ color: 'var(--muted)', fontSize: 'clamp(0.8rem, 1.8vw, 0.88rem)', lineHeight: 1.85, marginBottom: '1.25rem' }}>
-                  Plataforma web de alto rendimiento centrada en la digitalización de servicios para el
-                  ecosistema de Vaca Muerta. Dashboard de inteligencia para control documental,
-                  seguimiento de KPIs industriales e integración comercial B2B con operadoras como
+                  Trabajo freelance desarrollado y gestionado por mí como especialista IT/OT y
+                  ciberseguridad. Plataforma web de alto rendimiento para digitalizar servicios
+                  del ecosistema de Vaca Muerta, con dashboard de control documental, monitoreo
+                  de KPIs industriales e integración B2B con operadoras como
                   <span style={{ color: 'var(--text)' }}> YPF, PAE y Vista Oil</span>.
                 </p>
 
@@ -95,6 +102,15 @@ export default function Proyecto() {
                   {techTags.map(t => <span key={t} className="tech-tag">{t}</span>)}
                 </div>
 
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: '0.9rem', marginBottom: '1.75rem' }}>
+                  {metrics.map(metric => (
+                    <div key={metric.label} style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 14, padding: '1rem' }}>
+                      <div style={{ fontSize: '1.25rem', fontWeight: 800, color: metric.color, marginBottom: '0.35rem' }}>{metric.value}</div>
+                      <div style={{ fontSize: '0.75rem', color: 'var(--muted)', lineHeight: 1.5 }}>{metric.label}</div>
+                    </div>
+                  ))}
+                </div>
+
                 <motion.a
                   href="https://strategicconnex.vercel.app"
                   target="_blank"
@@ -113,8 +129,23 @@ export default function Proyecto() {
                 </motion.a>
               </div>
 
-              {/* Right: Lighthouse panel */}
+              {/* Right: Screenshot + metrics panel */}
               <div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.9rem', marginBottom: '1.25rem' }}>
+                  <div style={{ background: 'linear-gradient(135deg, rgba(14,165,233,0.18), rgba(15,23,42,0.08))', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 16, minHeight: 150, padding: '1rem' }}>
+                    <div style={{ fontSize: '0.72rem', color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '0.75rem' }}>Captura del dashboard</div>
+                    <div style={{ flex: 1, borderRadius: 12, background: 'rgba(255,255,255,0.06)', minHeight: 80, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--muted)', fontSize: '0.85rem' }}>
+                      Interfaz con métricas industriales
+                    </div>
+                  </div>
+                  <div style={{ background: 'linear-gradient(135deg, rgba(234,179,8,0.16), rgba(15,23,42,0.08))', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 16, minHeight: 150, padding: '1rem' }}>
+                    <div style={{ fontSize: '0.72rem', color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '0.75rem' }}>Captura de control documental</div>
+                    <div style={{ flex: 1, borderRadius: 12, background: 'rgba(255,255,255,0.06)', minHeight: 80, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--muted)', fontSize: '0.85rem' }}>
+                      Panel de seguimiento B2B
+                    </div>
+                  </div>
+                </div>
+
                 <div style={{
                   background: 'rgba(30,144,255,0.04)',
                   border: '1px solid rgba(30,144,255,0.14)',

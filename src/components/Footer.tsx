@@ -20,6 +20,11 @@ export default function Footer() {
       <p style={{ marginTop: 'clamp(0.15rem, 0.5vw, 0.25rem)', opacity: 0.6 }}>
         Construido con Next.js 14 · Framer Motion · Three.js
       </p>
+      <p style={{ marginTop: '0.75rem', opacity: 0.72 }}>
+        <a href="https://linkedin.com/in/juanfpalacios" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline', marginRight: '0.75rem' }}>LinkedIn</a>
+        <a href="https://github.com/StrategicConnex/" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline', marginRight: '0.75rem' }}>GitHub</a>
+        <a href="https://www.credly.com/users/juan-palacios.88e7ba6c" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline' }}>Credly</a>
+      </p>
     </footer>
   )
 }
