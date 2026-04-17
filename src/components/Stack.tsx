@@ -4,45 +4,46 @@ import { motion, useInView } from 'framer-motion'
 import { useRef } from 'react'
 import SectionHeader from './ui/SectionHeader'
 import FadeIn from './ui/FadeIn'
+import Icon from './ui/Icon'
 
 const categories = [
   {
-    icon: '🛡️',
+    icon: 'shield',
     cat: 'Seguridad',
     title: 'Ciberseguridad Industrial',
     color: '#1E90FF',
     tags: ['Security Onion (SIEM)', 'Firewalls', 'IAM', 'IEC 62443', 'NIST CSF', 'ISO 27001', 'SOX', 'Modelo Purdue', 'Incident Response'],
   },
   {
-    icon: '🌐',
+    icon: 'network',
     cat: 'Redes',
     title: 'Infraestructura & Conectividad',
     color: '#3B82F6',
     tags: ['Cisco CCNA', 'MPLS', 'MikroTik', 'VSAT', 'Riverbed WAN', 'VPN', 'Fibra Óptica', 'DNS / DHCP'],
   },
   {
-    icon: '☁️',
+    icon: 'cloud',
     cat: 'Cloud & Virtualización',
     title: 'Plataformas & Servidores',
     color: '#06B6D4',
     tags: ['Microsoft Azure', 'AWS', 'VMware vSphere', 'ESXi', 'vCenter', 'Windows Server 2003–2022', 'Active Directory', 'Linux'],
   },
   {
-    icon: '⚙️',
+    icon: 'automation',
     cat: 'OT / Industrial',
     title: 'Sistemas de Control',
     color: '#C5A46D',
     tags: ['SCADA', 'Modbus', 'OPC UA', 'DNP3', 'Edge Computing', 'Veeam Backup', 'Control Industrial'],
   },
   {
-    icon: '💻',
+    icon: 'web',
     cat: 'Desarrollo',
     title: 'Web & Full-Stack',
     color: '#8B5CF6',
     tags: ['Next.js 14', 'React.js', 'Tailwind CSS', 'JavaScript ES6+', 'TypeScript', 'CI/CD', 'Vercel', 'SEO Técnico'],
   },
   {
-    icon: '🤖',
+    icon: 'ai',
     cat: 'Automatización & Datos',
     title: 'Inteligencia Operativa',
     color: '#10B981',
@@ -84,7 +85,7 @@ function StackCard({ item, index }: { item: typeof categories[0]; index: number 
         }}
       />
 
-      <div style={{ fontSize: '1.6rem', marginBottom: '0.6rem' }}>{item.icon}</div>
+      <div style={{ marginBottom: '0.75rem' }}><Icon name={item.icon} label={item.cat} size={34} /></div>
       <div style={{ fontSize: '0.7rem', color: item.color, letterSpacing: '2px', textTransform: 'uppercase', marginBottom: '0.3rem', fontWeight: 600 }}>
         {item.cat}
       </div>

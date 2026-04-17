@@ -21,6 +21,12 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: 'Juan Felipe Palacios', url: 'https://linkedin.com/in/juanfpalacios' }],
   creator: 'Juan Felipe Palacios',
+  applicationName: 'Portfolio - Juan Felipe Palacios',
+  publisher: 'Juan Felipe Palacios',
+  themeColor: [
+    { media: '(prefers-color-scheme: dark)', color: '#0f172a' },
+    { media: '(prefers-color-scheme: light)', color: '#ffffff' },
+  ],
   openGraph: {
     title: 'Juan Felipe Palacios – Arquitecto IT/OT | Ciberseguridad Industrial',
     description: 'Transformando infraestructura crítica en sistemas resilientes e inteligentes. 20+ años en Oil & Gas. Neuquén, Argentina.',
@@ -35,6 +41,12 @@ export const metadata: Metadata = {
         width: 1200,
         height: 1200,
       },
+      {
+        url: 'https://juanfpalacios.vercel.app/JuanPalacios.webp',
+        alt: 'Foto de perfil de Juan Felipe Palacios',
+        width: 1200,
+        height: 1200,
+      },
     ],
   },
   twitter: {
@@ -42,10 +54,11 @@ export const metadata: Metadata = {
     title: 'Juan Felipe Palacios – Arquitecto IT/OT | Ciberseguridad Industrial',
     description: 'Transformando infraestructura crítica en sistemas resilientes e inteligentes.',
     creator: '@juanfpalacios',
+    site: '@juanfpalacios',
     images: ['https://juanfpalacios.vercel.app/JuanPalacios.png'],
   },
   robots: { index: true, follow: true },
-  alternates: { canonical: 'https://juanfpalacios.vercel.app' },
+  alternates: { canonical: 'https://juanfpalacios.vercel.app', languages: { 'es-AR': 'https://juanfpalacios.vercel.app' } },
 }
 
 const jsonLd = {

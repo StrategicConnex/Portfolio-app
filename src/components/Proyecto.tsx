@@ -4,14 +4,15 @@ import { motion, useInView } from 'framer-motion'
 import { useRef } from 'react'
 import SectionHeader from './ui/SectionHeader'
 import FadeIn from './ui/FadeIn'
+import Icon from './ui/Icon'
 
 const techTags = ['Next.js 14', 'Tailwind CSS', 'SSG', 'CI/CD', 'Vercel', 'SEO Semántico', 'TypeScript', 'Core Web Vitals']
 
 const highlights = [
-  { icon: '⚡', label: 'SSG + Next/Image', desc: 'Static Site Generation para tiempos de carga mínimos' },
-  { icon: '🔍', label: 'SEO Semántico', desc: 'Arquitectura de información para YPF, PAE, Vista Oil' },
-  { icon: '🚀', label: 'CI/CD en Vercel', desc: 'SDLC completo con alta disponibilidad y escalabilidad' },
-  { icon: '📊', label: 'Dashboard B2B', desc: 'KPIs industriales + control documental + inteligencia comercial' },
+  { icon: 'speed', label: 'SSG + Next/Image', desc: 'Static Site Generation para tiempos de carga mínimos' },
+  { icon: 'search', label: 'SEO Semántico', desc: 'Arquitectura de información para YPF, PAE, Vista Oil' },
+  { icon: 'deployment', label: 'CI/CD en Vercel', desc: 'SDLC completo con alta disponibilidad y escalabilidad' },
+  { icon: 'dashboard', label: 'Dashboard B2B', desc: 'KPIs industriales + control documental + inteligencia comercial' },
 ]
 
 const metrics = [
@@ -91,7 +92,7 @@ export default function Proyecto() {
                       borderRadius: 10,
                       padding: 'clamp(0.5rem, 1.5vw, 0.75rem) clamp(0.6rem, 1.5vw, 0.9rem)',
                     }}>
-                      <div style={{ fontSize: 'clamp(0.9rem, 2vw, 1.1rem)', marginBottom: '0.25rem' }}>{h.icon}</div>
+                      <div style={{ marginBottom: '0.45rem' }}><Icon name={h.icon} label={h.label} size={28} /></div>
                       <div style={{ fontSize: 'clamp(0.68rem, 1.5vw, 0.78rem)', fontWeight: 700, color: 'var(--text)', marginBottom: '0.15rem' }}>{h.label}</div>
                       <div style={{ fontSize: 'clamp(0.65rem, 1.2vw, 0.7rem)', color: 'var(--muted)', lineHeight: 1.4 }}>{h.desc}</div>
                     </div>

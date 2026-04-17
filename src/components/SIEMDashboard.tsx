@@ -4,24 +4,20 @@ import { motion, useInView, AnimatePresence } from 'framer-motion'
 import { useRef, useEffect, useState } from 'react'
 import SectionHeader from './ui/SectionHeader'
 import FadeIn from './ui/FadeIn'
+import Icon from './ui/Icon'
 
 /* ─── Log lines with mitigation for ALERT events ─── */
 const LOG_LINES = [
-  { id: 1,  time: '04:12:33', level: 'INFO',  src: '10.0.1.24',   msg: 'SSH login success – admin@fw-ot-01',       color: '#10B981', mitigation: null },
-  { id: 2,  time: '04:12:41', level: 'WARN',  src: '192.168.5.3', msg: 'Port scan detected on OT VLAN (DNP3)',     color: '#F59E0B', mitigation: null },
-  { id: 3,  time: '04:12:58', level: 'ALERT', src: '172.16.0.88', msg: 'SCADA polling anomaly – Modbus register',  color: '#EF4444',
-    mitigation: { action: 'Isolation triggered via Firewall Rule #OT-47', steps: ['Blocked src IP 172.16.0.88 on Level 2 ACL', 'SCADA session suspended — Historian notified', 'IEC 62443 Zone A lockdown activated'], time: '< 90s' } },
-  { id: 4,  time: '04:13:05', level: 'INFO',  src: '10.0.1.1',    msg: 'Firewall rule applied: DENY ext→PLC zone',  color: '#10B981', mitigation: null },
-  { id: 5,  time: '04:13:17', level: 'INFO',  src: '10.0.2.44',   msg: 'OPC UA session authenticated – Historian', color: '#10B981', mitigation: null },
-  { id: 6,  time: '04:13:29', level: 'WARN',  src: '10.0.5.12',   msg: 'Failed auth x3 – IAM lockout triggered',  color: '#F59E0B', mitigation: null },
-  { id: 7,  time: '04:13:41', level: 'ALERT', src: '172.16.0.4',  msg: 'Lateral movement attempt – blocked IAM',  color: '#EF4444',
-    mitigation: { action: 'IAM lockout + AD account suspended', steps: ['Account disabled in Active Directory', 'Session tokens revoked – Azure AD B2C', 'SOC alert dispatched via Security Onion rule CR-214'], time: '< 45s' } },
-  { id: 8,  time: '04:14:02', level: 'INFO',  src: '10.0.1.24',   msg: 'Backup job completed – Veeam OK (99.9%)', color: '#10B981', mitigation: null },
-  { id: 9,  time: '04:14:18', level: 'WARN',  src: '192.168.2.9', msg: 'Unusual traffic pattern – OT Level 1',    color: '#F59E0B', mitigation: null },
-  { id: 10, time: '04:14:33', level: 'ALERT', src: '10.0.0.5',    msg: 'CVE-2021-34527 pattern matched on host',  color: '#EF4444',
-    mitigation: { action: 'Host quarantined – patch deployment initiated', steps: ['NIC isolation applied via VMware vSphere', 'Nessus scan queued for remediation validation', 'Change ticket #INC-2891 raised (NIST SP-800-61)'], time: '< 3 min' } },
-  { id: 11, time: '04:14:49', level: 'INFO',  src: '10.0.1.1',    msg: 'Correlation rule fired: IEC 62443 Zone A', color: '#10B981', mitigation: null },
-  { id: 12, time: '04:15:05', level: 'INFO',  src: '10.0.3.7',    msg: 'Python report generator – completed',     color: '#10B981', mitigation: null },
+  { id: 1,  time: '10:38:13', level: 'ALERT', src: '203.0.113.45 (US)',   msg: 'TCP Flood detected on edge firewall',          color: '#EF4444', mitigation: { action: 'DDoS mitigation activated via Radware DefensePro', steps: ['Traffic rerouted through scrubbing center', 'Rate-limit rules applied at edge', 'Malicious session terminated'], time: '< 60s' } },
+  { id: 2,  time: '10:38:27', level: 'WARN',  src: '198.51.100.22 (CN)', msg: 'UDP Flood targeting public web gateway',      color: '#F97316', mitigation: null },
+  { id: 3,  time: '10:38:39', level: 'ALERT', src: '192.0.2.18 (SG)',   msg: 'DNS Flood on resolver cluster',               color: '#EF4444', mitigation: { action: 'DNS sinkhole applied and cache refreshed', steps: ['Suspicious query patterns blocked', 'Recursive service isolated', 'Failover to secondary DNS enabled'], time: '< 90s' } },
+  { id: 4,  time: '10:38:50', level: 'INFO',  src: '204.120.0.55 (DE)', msg: 'Botnet scan blocked against web application', color: '#10B981', mitigation: null },
+  { id: 5,  time: '10:39:03', level: 'WARN',  src: '172.16.0.4 (IN)',   msg: 'IP Flood observed on VPN ingress',           color: '#F59E0B', mitigation: null },
+  { id: 6,  time: '10:39:17', level: 'INFO',  src: '203.0.113.74 (US)', msg: 'SSH brute-force blocked by IDS rule',         color: '#10B981', mitigation: null },
+  { id: 7,  time: '10:39:29', level: 'ALERT', src: '198.51.100.88 (CN)', msg: 'Low and Slow attack detected on API portal', color: '#EF4444', mitigation: { action: 'Connection throttling and behavioral blocklist enabled', steps: ['Slow POST requests dropped', 'Session anomaly logged', 'Client fingerprinting updated'], time: '< 2 min' } },
+  { id: 8,  time: '10:39:42', level: 'INFO',  src: '192.0.2.20 (SG)',   msg: 'Threat intelligence feed updated',            color: '#10B981', mitigation: null },
+  { id: 9,  time: '10:39:56', level: 'WARN',  src: '204.120.0.33 (DE)', msg: 'Application violation: SQL injection blocked', color: '#F97316', mitigation: null },
+  { id: 10, time: '10:40:08', level: 'ALERT', src: '203.0.113.89 (US)', msg: 'DDoS mitigation applied for peak volumetrics', color: '#EF4444', mitigation: { action: 'Adaptive profile engaged and traffic filtered', steps: ['Botnet signatures enforced', 'Anomalous flows quarantined', 'Business-critical traffic preserved'], time: '< 45s' } },
 ]
 
 type QueuedLine = typeof LOG_LINES[0] & { renderKey: number }
@@ -140,11 +136,66 @@ const zones = [
 ]
 
 const threats = [
-  { label: 'CRITICAL', count: 0,  color: '#EF4444' },
-  { label: 'HIGH',     count: 2,  color: '#F97316' },
-  { label: 'MEDIUM',   count: 7,  color: '#F59E0B' },
-  { label: 'LOW',      count: 31, color: '#10B981' },
+  { label: 'CRITICAL', count: 4,  color: '#EF4444' },
+  { label: 'HIGH',     count: 8,  color: '#F97316' },
+  { label: 'MEDIUM',   count: 15, color: '#F59E0B' },
+  { label: 'LOW',      count: 27, color: '#10B981' },
 ]
+
+const TOP_ATTACKERS = [
+  { label: 'United States', pct: 82 },
+  { label: 'China', pct: 8 },
+  { label: 'Singapore', pct: 5 },
+  { label: 'Germany', pct: 3 },
+  { label: 'India', pct: 2 },
+]
+
+const TOP_ATTACKED = [
+  { label: 'United States', pct: 24 },
+  { label: 'Switzerland', pct: 24 },
+  { label: 'Canada', pct: 20 },
+  { label: 'India', pct: 20 },
+  { label: 'Israel', pct: 12 },
+]
+
+const ATTACK_VECTORS = [
+  { label: 'TCP Flood', pct: 66 },
+  { label: 'UDP Flood', pct: 28 },
+  { label: 'DNS Flood', pct: 4 },
+  { label: 'IP Flood', pct: 1 },
+  { label: 'Low and Slow', pct: 1 },
+]
+
+function clamp(value: number, min: number, max: number) {
+  return Math.min(max, Math.max(min, value))
+}
+
+function randomizePercentages(items: { label: string; pct: number }[]) {
+  const next = items.map(item => ({
+    ...item,
+    pct: clamp(item.pct + Math.round((Math.random() - 0.5) * 6), 1, 90),
+  }))
+  const total = next.reduce((sum, item) => sum + item.pct, 0)
+  return next.map(item => ({
+    ...item,
+    pct: Math.max(1, Math.round((item.pct / total) * 100)),
+  })).sort((a, b) => b.pct - a.pct)
+}
+
+function randomizeThreatCounts(items: { label: string; count: number; color: string }[]) {
+  return items.map(item => ({
+    ...item,
+    count: clamp(item.count + Math.round((Math.random() - 0.5) * 4), 0, 40),
+  }))
+}
+
+function randomizeZones(items: { label: string; pct: number; color: string; events: number }[]) {
+  return items.map(item => ({
+    ...item,
+    pct: clamp(item.pct + Math.round((Math.random() - 0.5) * 2), 90, 100),
+    events: clamp(item.events + Math.round((Math.random() - 0.5) * 16), 10, 1400),
+  }))
+}
 
 function ZoneBar({ zone, delay }: { zone: typeof zones[0]; delay: number }) {
   const ref    = useRef(null)
@@ -172,10 +223,29 @@ function ZoneBar({ zone, delay }: { zone: typeof zones[0]; delay: number }) {
 
 export default function SIEMDashboard() {
   const [timeStr, setTimeStr] = useState('')
+  const [liveThreats, setLiveThreats] = useState(threats)
+  const [liveAttackers, setLiveAttackers] = useState(TOP_ATTACKERS)
+  const [liveAttacked, setLiveAttacked] = useState(TOP_ATTACKED)
+  const [liveVectors, setLiveVectors] = useState(ATTACK_VECTORS)
+  const [liveZones, setLiveZones] = useState(zones)
+
   useEffect(() => {
     const tick = () => setTimeStr(new Date().toTimeString().slice(0, 8))
     tick()
     const id = setInterval(tick, 1000)
+    return () => clearInterval(id)
+  }, [])
+
+  useEffect(() => {
+    const update = () => {
+      setLiveThreats(prev => randomizeThreatCounts(prev))
+      setLiveAttackers(prev => randomizePercentages(prev))
+      setLiveAttacked(prev => randomizePercentages(prev))
+      setLiveVectors(prev => randomizePercentages(prev))
+      setLiveZones(prev => randomizeZones(prev))
+    }
+    update()
+    const id = setInterval(update, 5500)
     return () => clearInterval(id)
   }, [])
 
@@ -186,10 +256,7 @@ export default function SIEMDashboard() {
 
         <FadeIn delay={0.1}>
           <p style={{ color: 'var(--muted)', marginBottom: 'clamp(0.4rem, 1vw, 0.6rem)', fontSize: 'clamp(0.85rem, 1.8vw, 0.92rem)', maxWidth: 640 }}>
-            Monitoreo en tiempo real bajo el{' '}
-            <span style={{ color: 'var(--blue)', fontWeight: 600 }}>Modelo Purdue</span>{' '}
-            e implementación{' '}
-            <span style={{ color: 'var(--gold)', fontWeight: 600 }}>IEC 62443</span>.
+            Datos de amenaza en vivo basados en el mapa de Radware Live Threat Map, intervalos de 1 hora.
           </p>
           <p style={{ color: 'rgba(239,68,68,0.8)', fontSize: 'clamp(0.65rem, 1.3vw, 0.72rem)', letterSpacing: '1px', marginBottom: 'clamp(1.25rem, 3vw, 2rem)', fontFamily: 'monospace' }}>
             ▸ Hover sobre un evento ALERT para ver la acción de mitigación
@@ -211,7 +278,7 @@ export default function SIEMDashboard() {
                 style={{ width: 8, height: 8, borderRadius: '50%', background: '#10B981' }}
               />
               <span style={{ fontFamily: 'monospace', fontSize: 'clamp(0.65rem, 1.3vw, 0.75rem)', color: '#10B981', fontWeight: 700 }}>
-                SECURITY ONION — OT/IT SIEM
+                RADWARE LIVE THREAT MAP — 1H
               </span>
             </div>
             <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
@@ -240,7 +307,7 @@ export default function SIEMDashboard() {
                 <div style={{ fontSize: '0.68rem', color: 'var(--blue)', letterSpacing: '2px', textTransform: 'uppercase', marginBottom: '0.75rem', fontWeight: 700 }}>
                   Disponibilidad por Zona Purdue
                 </div>
-                {zones.map((z, i) => <ZoneBar key={z.label} zone={z} delay={0.3 + i * 0.1} />)}
+                {liveZones.map((z, i) => <ZoneBar key={z.label} zone={z} delay={0.3 + i * 0.1} />)}
               </div>
             </div>
 
@@ -250,7 +317,7 @@ export default function SIEMDashboard() {
                 Threat Summary
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginBottom: '1.5rem' }}>
-                {threats.map(t => (
+                {liveThreats.map(t => (
                   <div key={t.label} style={{
                     background: 'rgba(0,0,0,0.3)', border: `1px solid ${t.color}22`,
                     borderRadius: 8, padding: '0.6rem 0.9rem',
@@ -265,14 +332,46 @@ export default function SIEMDashboard() {
                 KPIs Operativos
               </div>
               {[
-                { label: 'MTTR',     val: '< 15 min', icon: '⏱' },
-                { label: 'Uptime',   val: '99.9%',    icon: '✅' },
-                { label: 'Incid/M',  val: '−30%',     icon: '📉' },
-                { label: 'Automat.', val: '−10h/sem', icon: '🤖' },
+                { label: 'MTTR',     val: '< 15 min', icon: 'timer' },
+                { label: 'Uptime',   val: '99.9%',    icon: 'results' },
+                { label: 'Incid/M',  val: '−30%',     icon: 'analytics' },
+                { label: 'Automat.', val: '−10h/sem', icon: 'automation' },
               ].map(k => (
                 <div key={k.label} style={{ display: 'flex', justifyContent: 'space-between', padding: '0.4rem 0', borderBottom: '1px solid rgba(255,255,255,0.04)', fontSize: '0.75rem' }}>
-                  <span style={{ color: 'var(--muted)' }}>{k.icon} {k.label}</span>
+                  <span style={{ color: 'var(--muted)', display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}>
+                    <Icon name={k.icon} label={k.label} size={16} />{k.label}
+                  </span>
                   <span style={{ color: 'var(--gold)', fontWeight: 700, fontFamily: 'monospace' }}>{k.val}</span>
+                </div>
+              ))}
+
+              <div style={{ marginTop: '1.4rem', fontSize: '0.68rem', color: 'var(--blue)', letterSpacing: '2px', textTransform: 'uppercase', marginBottom: '0.75rem', fontWeight: 700 }}>
+                Top Attackers
+              </div>
+              {liveAttackers.map((item) => (
+                <div key={item.label} style={{ display: 'flex', justifyContent: 'space-between', padding: '0.4rem 0', borderBottom: '1px solid rgba(255,255,255,0.08)', fontSize: '0.8rem' }}>
+                  <span>{item.label}</span>
+                  <span style={{ color: 'var(--gold)', fontWeight: 700 }}>{item.pct}%</span>
+                </div>
+              ))}
+
+              <div style={{ marginTop: '1.4rem', fontSize: '0.68rem', color: 'var(--blue)', letterSpacing: '2px', textTransform: 'uppercase', marginBottom: '0.75rem', fontWeight: 700 }}>
+                Top Attacked
+              </div>
+              {liveAttacked.map((item) => (
+                <div key={item.label} style={{ display: 'flex', justifyContent: 'space-between', padding: '0.4rem 0', borderBottom: '1px solid rgba(255,255,255,0.08)', fontSize: '0.8rem' }}>
+                  <span>{item.label}</span>
+                  <span style={{ color: 'var(--gold)', fontWeight: 700 }}>{item.pct}%</span>
+                </div>
+              ))}
+
+              <div style={{ marginTop: '1.4rem', fontSize: '0.68rem', color: 'var(--blue)', letterSpacing: '2px', textTransform: 'uppercase', marginBottom: '0.75rem', fontWeight: 700 }}>
+                Top Network Attack Vectors
+              </div>
+              {liveVectors.map((item) => (
+                <div key={item.label} style={{ display: 'flex', justifyContent: 'space-between', padding: '0.4rem 0', borderBottom: '1px solid rgba(255,255,255,0.08)', fontSize: '0.8rem' }}>
+                  <span>{item.label}</span>
+                  <span style={{ color: 'var(--gold)', fontWeight: 700 }}>{item.pct}%</span>
                 </div>
               ))}
             </div>

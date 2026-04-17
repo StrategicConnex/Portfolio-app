@@ -4,6 +4,7 @@ import { useRef } from 'react'
 import { motion, useInView } from 'framer-motion'
 import SectionHeader from './ui/SectionHeader'
 import FadeIn from './ui/FadeIn'
+import Icon from './ui/Icon'
 
 const jobs = [
   {
@@ -13,10 +14,10 @@ const jobs = [
     color:   '#1E90FF',
     badge:   'Actual',
     achievements: [
-      { icon: '🛡️', text: 'Políticas de seguridad alineadas a ISO 27001 y NIST' },
-      { icon: '🔍', text: 'SIEM Security Onion + IAM + Firewalls industriales' },
-      { icon: '⚙️', text: 'Convergencia IT/OT: protección SCADA y control de procesos' },
-      { icon: '☁️', text: 'Infraestructura híbrida: on-premise + Azure + AWS + VMware' },
+      { icon: 'security', text: 'Políticas de seguridad alineadas a ISO 27001 y NIST' },
+      { icon: 'search', text: 'SIEM Security Onion + IAM + Firewalls industriales' },
+      { icon: 'automation', text: 'Convergencia IT/OT: protección SCADA y control de procesos' },
+      { icon: 'cloud', text: 'Infraestructura híbrida: on-premise + Azure + AWS + VMware' },
     ],
     bullets: [
       'Planificación y ejecución de proyectos tecnológicos bajo metodología PMI con reporte a gerencia',
@@ -36,12 +37,12 @@ const jobs = [
     color:   '#C5A46D',
     badge:   '11 años',
     achievements: [
-      { icon: '📡', text: '99.9% uptime en sistemas críticos de producción' },
-      { icon: '📉', text: '−30% reducción de incidentes de seguridad' },
-      { icon: '⚡', text: '−20% latencia con optimización Cisco / MikroTik' },
-      { icon: '🤖', text: '−10h semanales por automatización Python + Power BI' },
-      { icon: '🚀', text: '+25% eficiencia: virtualización datacenter vSphere/ESXi' },
-      { icon: '🔒', text: 'SIEM Security Onion para detección temprana de intrusiones' },
+      { icon: 'network', text: '99.9% uptime en sistemas críticos de producción' },
+      { icon: 'analytics', text: '−30% reducción de incidentes de seguridad' },
+      { icon: 'speed', text: '−20% latencia con optimización Cisco / MikroTik' },
+      { icon: 'automation', text: '−10h semanales por automatización Python + Power BI' },
+      { icon: 'rocket', text: '+25% eficiencia: virtualización datacenter vSphere/ESXi' },
+      { icon: 'security', text: 'SIEM Security Onion para detección temprana de intrusiones' },
     ],
     bullets: [
       'Diseño de arquitectura de red para sistemas críticos de producción con 99.9% de disponibilidad',
@@ -65,11 +66,11 @@ const jobs = [
     color:   '#6366F1',
     badge:   '10 años',
     achievements: [
-      { icon: '🌐', text: 'Red MPLS: 5 bases + 33 sitios satelitales' },
-      { icon: '💡', text: '−20% recursos físicos con virtualización regional' },
-      { icon: '💰', text: '−20% costos de red vía renegociación de contratos' },
-      { icon: '🏗️', text: 'HUB Latinoamérica en Buenos Aires: servidores regionales virtualizados' },
-      { icon: '📋', text: 'Cumplimiento SOX implementado para el área de IT' },
+      { icon: 'world', text: 'Red MPLS: 5 bases + 33 sitios satelitales' },
+      { icon: 'design', text: '−20% recursos físicos con virtualización regional' },
+      { icon: 'results', text: '−20% costos de red vía renegociación de contratos' },
+      { icon: 'industry', text: 'HUB Latinoamérica en Buenos Aires: servidores regionales virtualizados' },
+      { icon: 'document', text: 'Cumplimiento SOX implementado para el área de IT' },
     ],
     bullets: [
       'Diseño de la red MPLS nacional: 5 bases operativas y 33 sitios satelitales',
@@ -139,13 +140,14 @@ function TimelineItem({ job, index }: { job: typeof jobs[0]; index: number }) {
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '1rem' }}>
         {job.achievements.map((a) => (
           <div key={a.text} style={{
-            display: 'flex', alignItems: 'center', gap: '0.35rem',
+            display: 'flex', alignItems: 'center', gap: '0.6rem',
             background: 'rgba(255,255,255,0.03)',
             border: '1px solid rgba(255,255,255,0.07)',
-            borderRadius: 8, padding: '0.3rem 0.7rem',
+            borderRadius: 8, padding: '0.45rem 0.75rem',
             fontSize: '0.78rem', color: 'var(--text)',
           }}>
-            <span>{a.icon}</span><span>{a.text}</span>
+            <div style={{ width: 20, height: 20 }}><Icon name={a.icon} label={a.text} size={20} /></div>
+            <span>{a.text}</span>
           </div>
         ))}
       </div>

@@ -4,12 +4,13 @@ import { motion, useInView } from 'framer-motion'
 import { useRef } from 'react'
 import SectionHeader from './ui/SectionHeader'
 import FadeIn from './ui/FadeIn'
+import Icon from './ui/Icon'
 
 const metrics = [
-  { num: '99.9%', label: 'Disponibilidad de red comprometida', color: 'var(--blue)', icon: '🛡️' },
-  { num: '−30%',  label: 'Reducción de incidentes de seguridad', color: '#10B981', icon: '📉' },
-  { num: '−10h',  label: 'Ahorro semanal con automatización Python', color: 'var(--gold)', icon: '⚡' },
-  { num: '+25%',  label: 'Eficiencia operativa en virtualización', color: '#8B5CF6', icon: '🚀' },
+  { num: '99.9%', label: 'Disponibilidad de red comprometida', color: 'var(--blue)', icon: 'shield' },
+  { num: '−30%',  label: 'Reducción de incidentes de seguridad', color: '#10B981', icon: 'analytics' },
+  { num: '−10h',  label: 'Ahorro semanal con automatización Python', color: 'var(--gold)', icon: 'automation' },
+  { num: '+25%',  label: 'Eficiencia operativa en virtualización', color: '#8B5CF6', icon: 'rocket' },
 ]
 
 const competencias = [
@@ -68,7 +69,7 @@ function MetricCard({ num, label, color, icon, delay }: { num: string; label: st
       }}
     >
       <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: `linear-gradient(90deg, transparent, ${color}, transparent)` }} />
-      <div style={{ fontSize: '1.8rem', marginBottom: '0.5rem' }}>{icon}</div>
+      <div style={{ marginBottom: '0.75rem' }}><Icon name={icon} label={label} size={36} /></div>
       <div style={{ fontSize: '2.4rem', fontWeight: 800, color, lineHeight: 1 }}>{num}</div>
       <div style={{ fontSize: '0.8rem', color: 'var(--muted)', marginTop: '0.5rem', lineHeight: 1.45 }}>{label}</div>
     </motion.div>

@@ -3,6 +3,7 @@
 import dynamic from 'next/dynamic'
 import SectionHeader from './ui/SectionHeader'
 import FadeIn from './ui/FadeIn'
+import Icon from './ui/Icon'
 
 /* Carga el canvas 3D solo en cliente (Three.js no funciona en SSR) */
 const MindMap3D = dynamic(() => import('./MindMap3D'), {
@@ -16,7 +17,7 @@ const MindMap3D = dynamic(() => import('./MindMap3D'), {
       display: 'flex', alignItems: 'center', justifyContent: 'center',
     }}>
       <div style={{ textAlign: 'center', color: 'var(--muted)' }}>
-        <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>🌐</div>
+        <div style={{ marginBottom: '0.5rem' }}><Icon name="web" label="Cargando mapa 3D" size={36} /></div>
         <p style={{ fontSize: '0.85rem' }}>Cargando mapa 3D…</p>
       </div>
     </div>
@@ -24,12 +25,12 @@ const MindMap3D = dynamic(() => import('./MindMap3D'), {
 })
 
 const domainCards = [
-  { color: '#8B5CF6', emoji: '💻', title: 'Desarrollo Web', items: ['React', 'Next.js', 'Tailwind', 'UI Premium'] },
-  { color: '#1E90FF', emoji: '🤖', title: 'IA Aplicada', items: ['Chatbots', 'Automatización', 'Documentos inteligentes', 'Marketing IA'] },
-  { color: '#10B981', emoji: '📊', title: 'Ingeniería Comercial', items: ['Licitaciones', 'Presentaciones', 'Propuestas'] },
-  { color: '#F97316', emoji: '🎨', title: 'Diseño Estratégico', items: ['Branding', 'UX/UI', 'Conversiones'] },
-  { color: '#06B6D4', emoji: '🏭', title: 'Industrias', items: ['Oil & Gas', 'Construcción', 'Energía'] },
-  { color: '#EF4444', emoji: '📈', title: 'Resultados', items: ['Más ventas', 'Mejor imagen', 'Menos tiempo', 'Escalabilidad'] },
+  { color: '#8B5CF6', icon: 'web', title: 'Desarrollo Web', items: ['React', 'Next.js', 'Tailwind', 'UI Premium'] },
+  { color: '#1E90FF', icon: 'ai', title: 'IA Aplicada', items: ['Chatbots', 'Automatización', 'Documentos inteligentes', 'Marketing IA'] },
+  { color: '#10B981', icon: 'analytics', title: 'Ingeniería Comercial', items: ['Licitaciones', 'Presentaciones', 'Propuestas'] },
+  { color: '#F97316', icon: 'design', title: 'Diseño Estratégico', items: ['Branding', 'UX/UI', 'Conversiones'] },
+  { color: '#06B6D4', icon: 'industry', title: 'Industrias', items: ['Oil & Gas', 'Construcción', 'Energía'] },
+  { color: '#EF4444', icon: 'results', title: 'Resultados', items: ['Más ventas', 'Mejor imagen', 'Menos tiempo', 'Escalabilidad'] },
 ]
 
 export default function Arquitectura() {
@@ -107,10 +108,9 @@ export default function Arquitectura() {
                 <div style={{ position: 'relative', zIndex: 1 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1rem' }}>
                     <div style={{
-                      fontSize: '2rem',
-                      filter: `drop-shadow(0 0 8px ${card.color})`,
+                      marginBottom: '0.15rem',
                     }}>
-                      {card.emoji}
+                      <Icon name={card.icon} label={card.title} size={36} />
                     </div>
                     <span style={{
                       fontSize: '0.85rem',

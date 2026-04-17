@@ -4,6 +4,7 @@ import { motion, useInView } from 'framer-motion'
 import { useRef } from 'react'
 import FadeIn from './ui/FadeIn'
 import SectionHeader from './ui/SectionHeader'
+import Icon from './ui/Icon'
 
 /* ── Standards & Certifications (text-based, grayscale style) ── */
 const standards = [
@@ -25,7 +26,7 @@ const companies = [
     years: '2025 – Actual',
     sector: 'Oil & Gas',
     color: '#F97316',
-    icon: '⚡',
+    icon: 'energy',
   },
   {
     name: 'OPS',
@@ -33,7 +34,7 @@ const companies = [
     years: '2013 – 2024',
     sector: 'Oil & Gas',
     color: '#C5A46D',
-    icon: '🛢️',
+    icon: 'oil',
   },
   {
     name: 'EXT',
@@ -41,7 +42,7 @@ const companies = [
     years: '2003 – 2013',
     sector: 'Natural Gas Processing',
     color: '#6366F1',
-    icon: '🏭',
+    icon: 'industry',
   },
 ]
 
@@ -92,12 +93,11 @@ export default function TrustBadges() {
                 }}>
                   <div style={{
                     width: 'clamp(44px, 10vw, 52px)', height: 'clamp(44px, 10vw, 52px)', borderRadius: 10, flexShrink: 0,
-                    background: `rgba(${parseInt(c.color.slice(1,3),16)}, ${parseInt(c.color.slice(3,5),16)}, ${parseInt(c.color.slice(5,7),16)}, 0.1)`,
+                    background: `rgba(${parseInt(c.color.slice(1,3),16)}, ${parseInt(c.color.slice(3,5),16)}, ${parseInt(c.color.slice(5,7),16)}, 0.12)`,
                     border: `1px solid ${c.color}33`,
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    fontSize: 'clamp(1.2rem, 2.5vw, 1.5rem)',
                   }}>
-                    {c.icon}
+                    <Icon name={c.icon} label={c.full} size={26} />
                   </div>
                   <div>
                     <div style={{ fontSize: 'clamp(0.8rem, 1.6vw, 0.88rem)', fontWeight: 700, color: 'var(--text)' }}>{c.full}</div>

@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import SectionHeader from './ui/SectionHeader'
 import FadeIn from './ui/FadeIn'
+import Icon from './ui/Icon'
 
 type FormState = 'idle' | 'sending' | 'sent' | 'error'
 
@@ -20,12 +21,12 @@ const projectTypes = [
 ]
 
 const contactCards = [
-  { icon: '✉', label: 'palacios_juan@hotmail.com',        sub: 'Email profesional',        href: 'mailto:palacios_juan@hotmail.com',                   color: 'var(--blue)' },
-  { icon: '📞', label: '+54 299 586 9435',                sub: 'WhatsApp / Llamadas',      href: 'https://wa.me/542995869435',                      color: '#10B981', external: true },
-  { icon: 'in', label: 'linkedin/juanfpalacios',          sub: 'LinkedIn',                href: 'https://linkedin.com/in/juanfpalacios',            color: '#0A66C2', external: true },
-  { icon: '🐙', label: 'github/StrategicConnex',           sub: 'GitHub',                  href: 'https://github.com/StrategicConnex/',              color: '#333', external: true },
-  { icon: '🏅', label: 'credly.com/users/juan-palacios',   sub: 'Certificaciones',         href: 'https://www.credly.com/users/juan-palacios.88e7ba6c', color: '#F9B400', external: true },
-  { icon: '📍', label: 'Neuquén, Argentina',               sub: 'Trabajo remoto o presencial', href: null,                                          color: 'var(--gold)' },
+  { icon: 'email', label: 'palacios_juan@hotmail.com',        sub: 'Email profesional',        href: 'mailto:palacios_juan@hotmail.com',                   color: 'var(--blue)' },
+  { icon: 'phone', label: '+54 299 586 9435',                sub: 'WhatsApp / Llamadas',      href: 'https://wa.me/542995869435',                      color: '#10B981', external: true },
+  { icon: 'linkedin', label: 'linkedin/juanfpalacios',        sub: 'LinkedIn',                href: 'https://linkedin.com/in/juanfpalacios',            color: '#0A66C2', external: true },
+  { icon: 'github', label: 'github/StrategicConnex',          sub: 'GitHub',                  href: 'https://github.com/StrategicConnex/',              color: '#333', external: true },
+  { icon: 'credly', label: 'credly.com/users/juan-palacios', sub: 'Certificaciones',         href: 'https://www.credly.com/users/juan-palacios.88e7ba6c', color: '#F9B400', external: true },
+  { icon: 'location', label: 'Neuquén, Argentina',             sub: 'Trabajo remoto o presencial', href: null,                                          color: 'var(--gold)' },
 ]
 
 export default function Contacto() {
@@ -108,13 +109,17 @@ export default function Contacto() {
                       whileHover={{ borderColor: c.color, x: 4 }}
                       style={{ display: 'flex', alignItems: 'center', gap: '0.9rem', padding: '0.85rem 1.1rem', background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 10, textDecoration: 'none', color: 'var(--text)', transition: 'border-color 0.2s' }}
                     >
-                      <div style={{ width: 38, height: 38, borderRadius: 8, background: `${c.color}18`, color: c.color, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1rem', fontWeight: 700, flexShrink: 0 }}>{c.icon}</div>
+                      <div style={{ width: 38, height: 38, borderRadius: 8, background: `${c.color}18`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                        <Icon name={c.icon} label={c.label} size={24} />
+                      </div>
                       <div><div style={{ fontSize: '0.84rem', fontWeight: 600 }}>{c.label}</div><div style={{ fontSize: '0.7rem', color: 'var(--muted)' }}>{c.sub}</div></div>
                       <span style={{ marginLeft: 'auto', fontSize: '0.72rem', color: c.color, opacity: 0.6 }}>↗</span>
                     </motion.a>
                   ) : (
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.9rem', padding: '0.85rem 1.1rem', background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 10 }}>
-                      <div style={{ width: 38, height: 38, borderRadius: 8, background: `${c.color}18`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1rem', flexShrink: 0 }}>{c.icon}</div>
+                      <div style={{ width: 38, height: 38, borderRadius: 8, background: `${c.color}18`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <Icon name={c.icon} label={c.label} size={24} />
+                  </div>
                       <div><div style={{ fontSize: '0.84rem', fontWeight: 600 }}>{c.label}</div><div style={{ fontSize: '0.7rem', color: 'var(--muted)' }}>{c.sub}</div></div>
                     </div>
                   )}
@@ -142,7 +147,9 @@ export default function Contacto() {
               <AnimatePresence mode="wait">
                 {status === 'sent' ? (
                   <motion.div key="sent" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} style={{ textAlign: 'center', padding: '2rem 0' }}>
-                    <div style={{ fontSize: '3rem', marginBottom: '0.75rem' }}>✅</div>
+                    <div style={{ width: 48, height: 48, margin: '0 auto 0.75rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <Icon name="check" label="Mensaje enviado" size={40} />
+                    </div>
                     <h3 style={{ color: '#4ade80', marginBottom: '0.5rem' }}>¡Mensaje enviado!</h3>
                     <p style={{ color: 'var(--muted)', fontSize: '0.88rem' }}>Respondo en menos de 24 horas hábiles.</p>
                   </motion.div>
