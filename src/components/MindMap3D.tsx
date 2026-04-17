@@ -248,7 +248,11 @@ function NeonConnections({ selectedLabel }: { selectedLabel: string | null }) {
 
         const geometry = new THREE.BufferGeometry()
         geometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array(points.flatMap(p => [p.x, p.y, p.z])), 3))
-        const active = selectedLabel && (edge.includes(selectedLabel) || nodes.find(node => node.label === selectedLabel)?.related.includes(edge[0]) || nodes.find(node => node.label === selectedLabel)?.related.includes(edge[1]))
+        const selectedNode = selectedLabel ? nodes.find(node => node.label === selectedLabel) : undefined
+        const active = Boolean(
+          selectedNode &&
+          (edge.includes(selectedLabel) || selectedNode.related.includes(edge[0]) || selectedNode.related.includes(edge[1]))
+        )
         const material = new THREE.LineBasicMaterial({
           color: active ? '#FFFFFF' : '#00FFFF',
           linewidth: active ? 2.5 : 1.2,
@@ -278,7 +282,12 @@ function Scene({ selectedLabel, onSelect }: { selectedLabel: string | null; onSe
       <NeonConnections selectedLabel={selectedLabel} />
       {nodes.map((node, i) => {
         const isSelected = selectedLabel === node.label
-        const isRelated = selectedLabel ? node.related.includes(selectedLabel) || (node.label !== selectedLabel && nodes.find(n => n.label === selectedLabel)?.related.includes(node.label)) : false
+        const selectedNode = selectedLabel ? nodes.find(n => n.label === selectedLabel) : undefined
+        const isRelated = Boolean(
+          selectedNode &&
+          (node.related.includes(selectedLabel ?? '') ||
+          (node.label !== selectedLabel && selectedNode.related.includes(node.label)))
+        )
         return (
           <ParticleNode
             key={i}
