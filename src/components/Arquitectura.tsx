@@ -25,26 +25,23 @@ const MindMap3D = dynamic(() => import('./MindMap3D'), {
 })
 
 const domainCards = [
-  { color: '#8B5CF6', icon: 'web', title: 'Desarrollo Web', items: ['React', 'Next.js', 'Tailwind', 'UI Premium'] },
-  { color: '#1E90FF', icon: 'ai', title: 'IA Aplicada', items: ['Chatbots', 'Automatización', 'Documentos inteligentes', 'Marketing IA'] },
-  { color: '#10B981', icon: 'analytics', title: 'Ingeniería Comercial', items: ['Licitaciones', 'Presentaciones', 'Propuestas'] },
-  { color: '#F97316', icon: 'design', title: 'Diseño Estratégico', items: ['Branding', 'UX/UI', 'Conversiones'] },
-  { color: '#06B6D4', icon: 'industry', title: 'Industrias', items: ['Oil & Gas', 'Construcción', 'Energía'] },
-  { color: '#EF4444', icon: 'results', title: 'Resultados', items: ['Más ventas', 'Mejor imagen', 'Menos tiempo', 'Escalabilidad'] },
+  { color: '#F97316', icon: 'industry', title: 'Capa Inferior OT', items: ['Modbus', 'DNP3', 'SCADA', 'Field Devices'] },
+  { color: '#8B5CF6', icon: 'network', title: 'Capa Media Infraestructura', items: ['Virtualización', 'Redes Cisco', 'Firewalls Industriales'] },
+  { color: '#EF4444', icon: 'shield', title: 'Capa Superior Seguridad', items: ['SIEM', 'NIST CSF', 'ISO 27001'] },
 ]
 
 export default function Arquitectura() {
   return (
     <section id="arquitectura" style={{ padding: 'clamp(2rem, 5vw, 5rem) clamp(1rem, 5vw, 2rem)', background: 'var(--bg2)' }}>
       <div style={{ maxWidth: 1100, margin: 'auto' }}>
-        <SectionHeader label="Visión sistémica" title="Mapa Mental" highlight="Futurista 3D" />
+        <SectionHeader label="Visión sistémica" title="Mapa de Convergencia IT/OT" highlight="Modelo Purdue" />
 
         <FadeIn delay={0.05}>
           <p style={{ color: 'var(--muted)', marginBottom: '0.5rem', fontSize: 'clamp(0.85rem, 2vw, 0.92rem)', maxWidth: 580 }}>
-            Mapa interactivo futurista con nodos de partículas y flujos neon. Arrastrá para rotar · Scroll para zoom · Hover para ver detalles.
+            Mapa interactivo de convergencia IT/OT inspirado en el Modelo Purdue. Haz clic en un nodo para resaltar dependencias entre SCADA, firewalls industriales, virtualización y controles de seguridad.
           </p>
           <p style={{ color: 'var(--blue)', fontSize: 'clamp(0.65rem, 1.5vw, 0.72rem)', letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 600, marginBottom: '2rem' }}>
-            Partículas dinámicas + Flujos neon azul + Efectos pulsantes
+            Capa Inferior OT · Capa Media Infraestructura · Capa Superior Seguridad
           </p>
         </FadeIn>
 
