@@ -143,6 +143,10 @@ export default function Hero() {
           >
             Palacios
           </span>
+          <br />
+          <span style={{ display: 'block', fontSize: '0.75em', marginTop: '0.35rem', color: 'var(--gold)', fontWeight: 600 }}>
+            Ciberseguridad para Oil & Gas en Vaca Muerta · Consultoría IT/OT Neuquén
+          </span>
         </motion.h1>
 
         {/* Title */}

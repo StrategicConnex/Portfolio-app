@@ -228,6 +228,50 @@ export default function SIEMDashboard() {
   const [liveAttacked, setLiveAttacked] = useState(TOP_ATTACKED)
   const [liveVectors, setLiveVectors] = useState(ATTACK_VECTORS)
   const [liveZones, setLiveZones] = useState(zones)
+  const [incidentActive, setIncidentActive] = useState(false)
+
+  const incidentTimeoutRef = useRef<number | null>(null)
+
+  const simulateIncident = () => {
+    if (incidentActive) return
+    setIncidentActive(true)
+
+    setLiveZones(prev => prev.map(zone =>
+      zone.label === 'Nivel 1 – Field Devices'
+        ? { ...zone, pct: clamp(zone.pct - 8, 70, 98), events: zone.events + 90 }
+        : zone
+    ))
+
+    setLiveThreats(prev => prev.map(t => {
+      if (t.label === 'HIGH') return { ...t, count: clamp(t.count + 9, 0, 40) }
+      if (t.label === 'CRITICAL') return { ...t, count: clamp(t.count + 5, 0, 40) }
+      return t
+    }))
+
+    setLiveVectors(prev => prev.map(v =>
+      v.label === 'IP Flood' ? { ...v, pct: clamp(v.pct + 10, 1, 100) } : v
+    ))
+
+    setLiveAttackers(prev => prev.map(a => {
+      if (a.label === 'China') return { ...a, pct: clamp(a.pct + 5, 1, 100) }
+      if (a.label === 'United States') return { ...a, pct: clamp(a.pct - 3, 1, 100) }
+      return a
+    }))
+
+    if (incidentTimeoutRef.current) window.clearTimeout(incidentTimeoutRef.current)
+    incidentTimeoutRef.current = window.setTimeout(() => {
+      setIncidentActive(false)
+      incidentTimeoutRef.current = null
+    }, 7000)
+  }
+
+  useEffect(() => {
+    return () => {
+      if (incidentTimeoutRef.current) {
+        window.clearTimeout(incidentTimeoutRef.current)
+      }
+    }
+  }, [])
 
   useEffect(() => {
     const tick = () => setTimeStr(new Date().toTimeString().slice(0, 8))
@@ -281,13 +325,37 @@ export default function SIEMDashboard() {
                 RADWARE LIVE THREAT MAP — 1H
               </span>
             </div>
-            <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
+            <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
               <span style={{ fontFamily: 'monospace', fontSize: '0.7rem', color: 'var(--muted)' }}>
                 IEC 62443 | NIST CSF | ISO 27001
               </span>
               <span style={{ fontFamily: 'monospace', fontSize: '0.7rem', color: '#64748B' }}>{timeStr} UTC-3</span>
+              <button
+                type="button"
+                onClick={simulateIncident}
+                disabled={incidentActive}
+                style={{
+                  background: incidentActive ? '#334155' : 'linear-gradient(135deg, #1E3A8A, #2563EB)',
+                  color: '#fff', border: 'none', borderRadius: 999, padding: '0.55rem 1rem',
+                  fontSize: '0.72rem', fontWeight: 700, cursor: incidentActive ? 'not-allowed' : 'pointer',
+                  boxShadow: incidentActive ? 'none' : '0 12px 30px rgba(37,99,235,0.18)',
+                }}
+              >
+                {incidentActive ? 'Incidente Simulado' : 'Simular Incidente'}
+              </button>
             </div>
           </div>
+
+          {incidentActive && (
+            <div style={{
+              marginTop: '1rem', padding: '0.85rem 1rem', background: 'rgba(248,113,113,0.12)',
+              border: '1px solid rgba(248,113,113,0.22)', borderRadius: 12, display: 'flex', gap: '0.75rem', alignItems: 'center',
+              fontSize: '0.85rem', color: '#F8B4B4',
+            }}>
+              <span style={{ fontWeight: 700, color: '#F87171' }}>INCIDENTE SIMULADO – Purdue Nivel 1</span>
+              <span>Detección de anomalía en dispositivos de campo. El SOC aplica mitigación automática y ajusta la disponibilidad de la zona.</span>
+            </div>
+          )}
 
           {/* Grid */}
           <div className="siem-grid" style={{

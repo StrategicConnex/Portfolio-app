@@ -10,14 +10,14 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://juanfpalacios.vercel.app'),
-  title: 'Juan Felipe Palacios – Arquitecto IT/OT | Ciberseguridad Industrial',
+  title: 'Juan Felipe Palacios – Consultoría IT/OT Neuquén | Ciberseguridad para Oil & Gas en Vaca Muerta',
   description:
-    'Profesional con 20+ años en Ciberseguridad Industrial, Arquitectura IT/OT, IEC 62443, NIST, SCADA y Oil & Gas. Basado en Neuquén, Argentina. Disponible para proyectos de alta criticidad.',
+    'Consultoría IT/OT y ciberseguridad industrial para Oil & Gas en Vaca Muerta. Experiencia en IEC 62443, NIST, SCADA y redes críticas. Basado en Neuquén, Argentina.',
   keywords: [
     'Ciberseguridad Industrial', 'IT/OT', 'IEC 62443', 'NIST', 'SCADA',
-    'Arquitecto de Redes', 'Oil & Gas', 'Vaca Muerta', 'Neuquén', 'Argentina',
+    'Ciberseguridad para Oil & Gas en Vaca Muerta', 'Consultoría IT/OT Neuquén', 'Oil & Gas', 'Vaca Muerta', 'Neuquén', 'Argentina',
     'Security Onion', 'SIEM', 'Modelo Purdue', 'ISO 27001', 'SOX',
-    'Juan Felipe Palacios', 'Next.js', 'VMware', 'Azure', 'Cisco',
+    'Juan Felipe Palacios', 'Consultoría IT/OT', 'Infraestructura crítica', 'Neuquén',
   ],
   authors: [{ name: 'Juan Felipe Palacios', url: 'https://linkedin.com/in/juanfpalacios' }],
   creator: 'Juan Felipe Palacios',
@@ -28,8 +28,8 @@ export const metadata: Metadata = {
     { media: '(prefers-color-scheme: light)', color: '#ffffff' },
   ],
   openGraph: {
-    title: 'Juan Felipe Palacios – Arquitecto IT/OT | Ciberseguridad Industrial',
-    description: 'Transformando infraestructura crítica en sistemas resilientes e inteligentes. 20+ años en Oil & Gas. Neuquén, Argentina.',
+    title: 'Juan Felipe Palacios – Consultoría IT/OT Neuquén | Ciberseguridad para Oil & Gas en Vaca Muerta',
+    description: 'Referente en ciberseguridad industrial y consultoría IT/OT para Oil & Gas en Neuquén y Vaca Muerta.',
     type: 'website',
     locale: 'es_AR',
     url: 'https://juanfpalacios.vercel.app',
@@ -51,8 +51,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Juan Felipe Palacios – Arquitecto IT/OT | Ciberseguridad Industrial',
-    description: 'Transformando infraestructura crítica en sistemas resilientes e inteligentes.',
+    title: 'Juan Felipe Palacios – Consultoría IT/OT Neuquén | Ciberseguridad para Oil & Gas',
+    description: 'Consultoría IT/OT y Ciberseguridad Industrial para Oil & Gas en Vaca Muerta y Neuquén.',
     creator: '@juanfpalacios',
     site: '@juanfpalacios',
     images: ['https://juanfpalacios.vercel.app/JuanPalacios.png'],
@@ -83,10 +83,18 @@ const jsonLd = {
     },
     {
       '@type': 'ProfessionalService',
-      name: 'Juan Felipe Palacios – Consultoría IT/OT',
+      name: 'Juan Felipe Palacios – Consultoría IT/OT Neuquén',
+      serviceType: 'Ciberseguridad para Oil & Gas en Vaca Muerta',
       description: 'Servicios de consultoría en ciberseguridad industrial, arquitectura de redes IT/OT y gestión de infraestructura crítica para el sector Oil & Gas en Vaca Muerta.',
       url: 'https://juanfpalacios.vercel.app',
       areaServed: ['Neuquén', 'Argentina', 'Vaca Muerta'],
+      address: {
+        '@type': 'PostalAddress',
+        streetAddress: 'Neuquén, Argentina',
+        addressLocality: 'Neuquén',
+        addressRegion: 'Neuquén',
+        addressCountry: 'AR',
+      },
       geo: { '@type': 'GeoCoordinates', latitude: -38.9516, longitude: -68.0591 },
       hasOfferCatalog: {
         '@type': 'OfferCatalog',
