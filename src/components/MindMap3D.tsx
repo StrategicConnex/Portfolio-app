@@ -251,7 +251,7 @@ function NeonConnections({ selectedLabel }: { selectedLabel: string | null }) {
         const selectedNode = selectedLabel ? nodes.find(node => node.label === selectedLabel) : undefined
         const active = Boolean(
           selectedNode &&
-          (edge.includes(selectedLabel) || selectedNode.related.includes(edge[0]) || selectedNode.related.includes(edge[1]))
+          ((selectedLabel && edge.includes(selectedLabel)) || selectedNode.related.includes(edge[0]) || selectedNode.related.includes(edge[1]))
         )
         const material = new THREE.LineBasicMaterial({
           color: active ? '#FFFFFF' : '#00FFFF',
