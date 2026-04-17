@@ -78,7 +78,7 @@ export default function Hero() {
             }}
           >
             <Image
-              src="/juanpalacios.png"
+              src="/JuanPalacios.png"
               alt="Foto de perfil de Juan Palacios"
               width={132}
               height={132}
