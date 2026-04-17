@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { motion } from 'framer-motion'
 import type { Variants } from 'framer-motion'
 import dynamic from 'next/dynamic'
@@ -176,6 +177,23 @@ export default function Hero() {
           >
             Explorar arquitectura
           </motion.a>
+        </motion.div>
+
+        {/* Office photo */}
+        <motion.div
+          custom={5} variants={TEXT_VARIANTS} initial="hidden" animate="visible"
+          style={{ display: 'flex', justifyContent: 'center', margin: '2rem auto 1.5rem', maxWidth: 360 }}
+        >
+          <div style={{ width: '100%', borderRadius: 24, overflow: 'hidden', border: '1px solid rgba(255,255,255,0.12)', boxShadow: '0 28px 90px rgba(0,0,0,0.22)' }}>
+            <Image
+              src="/Foto_Oficina.png"
+              alt="Foto de la oficina de Juan Felipe Palacios"
+              width={800}
+              height={800}
+              style={{ width: '100%', height: 'auto', display: 'block' }}
+              priority
+            />
+          </div>
         </motion.div>
 
         {/* Scroll indicator */}

@@ -5,6 +5,15 @@ import { useRef, useEffect, useState } from 'react'
 import SectionHeader from './ui/SectionHeader'
 import FadeIn from './ui/FadeIn'
 
+type KasperskyLiveData = {
+  success: boolean
+  status: number
+  source: string
+  fetchedAt: string
+  title?: string
+  attackCount?: string
+}
+
 /* ─── Log lines with mitigation for ALERT events ─── */
 const LOG_LINES = [
   { id: 1,  time: '04:12:33', level: 'INFO',  src: '10.0.1.24',   msg: 'SSH login success – admin@fw-ot-01',       color: '#10B981', mitigation: null },
@@ -172,11 +181,36 @@ function ZoneBar({ zone, delay }: { zone: typeof zones[0]; delay: number }) {
 
 export default function SIEMDashboard() {
   const [timeStr, setTimeStr] = useState('')
+  const [liveData, setLiveData] = useState<KasperskyLiveData | null>(null)
+  const [liveError, setLiveError] = useState<string | null>(null)
+
   useEffect(() => {
     const tick = () => setTimeStr(new Date().toTimeString().slice(0, 8))
     tick()
+
+    const fetchLive = async () => {
+      try {
+        const res = await fetch('/api/kaspersky')
+        const data = (await res.json()) as KasperskyLiveData
+        setLiveData(data)
+        if (!res.ok) {
+          setLiveError(data.title || 'No se pudo obtener datos en vivo')
+        } else {
+          setLiveError(null)
+        }
+      } catch (error) {
+        setLiveError('No se pudo conectar con Kaspersky en vivo')
+      }
+    }
+
+    fetchLive()
+    const interval = setInterval(fetchLive, 30000)
+
     const id = setInterval(tick, 1000)
-    return () => clearInterval(id)
+    return () => {
+      clearInterval(interval)
+      clearInterval(id)
+    }
   }, [])
 
   return (
@@ -214,11 +248,23 @@ export default function SIEMDashboard() {
                 SECURITY ONION — OT/IT SIEM
               </span>
             </div>
-            <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', alignItems: 'flex-end', textAlign: 'right' }}>
               <span style={{ fontFamily: 'monospace', fontSize: '0.7rem', color: 'var(--muted)' }}>
                 IEC 62443 | NIST CSF | ISO 27001
               </span>
               <span style={{ fontFamily: 'monospace', fontSize: '0.7rem', color: '#64748B' }}>{timeStr} UTC-3</span>
+              <div style={{ marginTop: '0.65rem', padding: '0.5rem 0.75rem', borderRadius: 10, background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.15)', color: liveError ? '#F97316' : '#10B981', fontSize: '0.72rem', minWidth: 220 }}>
+                <div style={{ fontWeight: 700, marginBottom: '0.25rem' }}>Kaspersky Cybermap</div>
+                {liveData ? (
+                  liveError ? (
+                    <span>{liveError}</span>
+                  ) : (
+                    <span>{liveData.attackCount ? `Ataques detectados: ${liveData.attackCount}` : liveData.title || 'Datos en vivo conectados'}</span>
+                  )
+                ) : (
+                  <span>Cargando datos en vivo...</span>
+                )}
+              </div>
             </div>
           </div>
 
@@ -249,6 +295,13 @@ export default function SIEMDashboard() {
               <div style={{ fontSize: '0.68rem', color: '#EF4444', letterSpacing: '2px', textTransform: 'uppercase', marginBottom: '0.75rem', fontWeight: 700 }}>
                 Threat Summary
               </div>
+              {liveData && !liveError && (
+                <div style={{ marginBottom: '1rem', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 10, padding: '0.75rem' }}>
+                  <div style={{ fontSize: '0.75rem', color: '#10B981', fontWeight: 700, marginBottom: '0.35rem' }}>Datos en vivo de Kaspersky</div>
+                  <div style={{ color: 'var(--muted)', fontSize: '0.72rem', marginBottom: '0.25rem' }}>{liveData.attackCount ? `Ataques detectados: ${liveData.attackCount}` : 'Sin métrica exacta disponible'}</div>
+                  <div style={{ color: '#64748B', fontSize: '0.68rem' }}>Última actualización: {new Date(liveData.fetchedAt).toLocaleTimeString('es-AR', { hour12: false })}</div>
+                </div>
+              )}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginBottom: '1.5rem' }}>
                 {threats.map(t => (
                   <div key={t.label} style={{
