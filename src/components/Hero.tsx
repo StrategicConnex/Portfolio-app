@@ -116,7 +116,7 @@ export default function Hero() {
               textTransform: 'uppercase',
             }}
           >
-            IT/OT · Ciberseguridad · Infraestructura
+            React • AI • Analytics • Commercial Strategy
           </span>
         </motion.div>
 
@@ -132,7 +132,7 @@ export default function Hero() {
             letterSpacing: '-0.5px',
           }}
         >
-          Juan Felipe{' '}
+          Juan{' '}
           <span
             style={{
               background: 'linear-gradient(135deg, #1E90FF 0%, #C5A46D 100%)',
@@ -142,10 +142,6 @@ export default function Hero() {
             }}
           >
             Palacios
-          </span>
-          <br />
-          <span style={{ display: 'block', fontSize: '0.75em', marginTop: '0.35rem', color: 'var(--gold)', fontWeight: 600 }}>
-            Ciberseguridad para Oil & Gas en Vaca Muerta · Consultoría IT/OT Neuquén
           </span>
         </motion.h1>
 
@@ -160,7 +156,7 @@ export default function Hero() {
             letterSpacing: '0.5px',
           }}
         >
-          IT/OT Cybersecurity Architect
+          Project Manager IT | Cibersecurity Leader | Cloud System Administrator | SysAdmin | Divulgador de #CulturaSegura | AI Solutions Architect | LLM Applications
         </motion.p>
 
         {/* Tagline */}
@@ -174,7 +170,7 @@ export default function Hero() {
             lineHeight: 1.8,
           }}
         >
-          Transformando infraestructura crítica en sistemas resilientes e inteligentes
+          Building intelligent digital solutions for business growth.
         </motion.p>
 
         {/* CTAs */}
