@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { motion, useInView } from 'framer-motion'
 import { useRef } from 'react'
 import SectionHeader from './ui/SectionHeader'
@@ -133,13 +134,26 @@ export default function Proyecto() {
               {/* Right: Screenshot + metrics panel */}
               <div>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.9rem', marginBottom: '1.25rem' }}>
-                  <div style={{ background: 'linear-gradient(135deg, rgba(14,165,233,0.18), rgba(15,23,42,0.08))', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 16, minHeight: 150, padding: '1rem' }}>
-                    <div style={{ fontSize: '0.72rem', color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '0.75rem' }}>Captura del dashboard</div>
-                    <div style={{ flex: 1, borderRadius: 12, background: 'rgba(255,255,255,0.06)', minHeight: 80, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--muted)', fontSize: '0.85rem' }}>
-                      Interfaz con métricas industriales
+                  <div style={{ 
+                    background: 'linear-gradient(135deg, rgba(14,165,233,0.18), rgba(15,23,42,0.08))', 
+                    border: '1px solid rgba(255,255,255,0.08)', 
+                    borderRadius: 16, 
+                    minHeight: 180, 
+                    padding: '0.75rem',
+                    display: 'flex',
+                    flexDirection: 'column'
+                  }}>
+                    <div style={{ fontSize: '0.72rem', color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '0.6rem' }}>Captura del dashboard</div>
+                    <div style={{ flex: 1, borderRadius: 10, overflow: 'hidden', position: 'relative', border: '1px solid rgba(255,255,255,0.1)' }}>
+                      <Image 
+                        src="/proyectopersonal.jpeg" 
+                        alt="Captura del dashboard estratégico" 
+                        fill 
+                        style={{ objectFit: 'cover' }}
+                      />
                     </div>
                   </div>
-                  <div style={{ background: 'linear-gradient(135deg, rgba(234,179,8,0.16), rgba(15,23,42,0.08))', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 16, minHeight: 150, padding: '1rem' }}>
+                  <div style={{ background: 'linear-gradient(135deg, rgba(234,179,8,0.16), rgba(15,23,42,0.08))', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 16, minHeight: 180, padding: '1rem' }}>
                     <div style={{ fontSize: '0.72rem', color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '0.75rem' }}>Captura de control documental</div>
                     <div style={{ flex: 1, borderRadius: 12, background: 'rgba(255,255,255,0.06)', minHeight: 80, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--muted)', fontSize: '0.85rem' }}>
                       Panel de seguimiento B2B

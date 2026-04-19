@@ -46,85 +46,35 @@ export default function Hero() {
       </div>
 
       {/* Subtle radial glow behind text */}
-      <motion.div
+      <div
         aria-hidden="true"
-        animate={{
-          scale: [1, 1.05, 1],
-          opacity: [0.07, 0.1, 0.07],
-        }}
-        transition={{
-          duration: 8,
-          repeat: Infinity,
-          ease: 'easeInOut',
-        }}
         style={{
           position: 'absolute',
           top: '50%', left: '50%',
           transform: 'translate(-50%, -50%)',
           width: 700, height: 700,
           borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(30,144,255,0.07) 0%, rgba(197,166,109,0.03) 50%, transparent 70%)',
+          background: 'radial-gradient(circle, rgba(30,144,255,0.07) 0%, transparent 70%)',
           pointerEvents: 'none',
           zIndex: 0,
         }}
       />
 
-      {/* Animated gradient background */}
-      <motion.div
-        animate={{
-          backgroundPosition: ['0% 0%', '100% 100%', '0% 0%'],
-        }}
-        transition={{
-          duration: 20,
-          repeat: Infinity,
-          ease: 'linear',
-        }}
-        style={{
-          position: 'absolute',
-          top: 0, left: 0, right: 0, bottom: 0,
-          background: 'linear-gradient(45deg, rgba(30,144,255,0.02), rgba(197,166,109,0.01), rgba(30,144,255,0.02))',
-          backgroundSize: '400% 400%',
-          pointerEvents: 'none',
-          zIndex: 0,
-        }}
-      />
-
-      {/* Content with Glassmorphism */}
-      <motion.div
-        className="hero-content"
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.8, ease: 'easeOut' }}
-        style={{
-          position: 'relative',
-          zIndex: 1,
-          maxWidth: 900,
-          padding: '3rem',
-          borderRadius: 24,
-          background: 'rgba(255, 255, 255, 0.05)',
-          backdropFilter: 'blur(20px)',
-          border: '1px solid rgba(255, 255, 255, 0.1)',
-          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(255, 255, 255, 0.05)',
-        }}
-      >
+      {/* Content */}
+      <div className="hero-content" style={{ position: 'relative', zIndex: 1, maxWidth: 800 }}>
         <motion.div
           className="hero-avatar"
           custom={0} variants={TEXT_VARIANTS} initial="hidden" animate="visible"
           style={{ marginBottom: '2rem', display: 'flex', justifyContent: 'center' }}
         >
-          <motion.div
-            whileHover={{ scale: 1.05 }}
-            transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+          <div
             style={{
-              width: 140,
-              height: 140,
+              width: 132,
+              height: 132,
               borderRadius: '50%',
               overflow: 'hidden',
-              border: '2px solid rgba(255, 255, 255, 0.2)',
-              background: 'rgba(255, 255, 255, 0.1)',
-              backdropFilter: 'blur(10px)',
-              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(255, 255, 255, 0.1)',
-              position: 'relative',
+              border: '3px solid rgba(30,144,255,0.2)',
+              boxShadow: '0 24px 60px rgba(0,0,0,0.15)',
             }}
           >
             <picture>
@@ -133,20 +83,19 @@ export default function Hero() {
               <Image
                 src="/JuanPalacios.jpg"
                 alt="Foto de perfil de Juan Palacios"
-                width={140}
-                height={140}
-                sizes="(max-width: 640px) 110px, 140px"
-                quality={85}
+                width={132}
+                height={132}
+                sizes="(max-width: 640px) 110px, 132px"
+                quality={75}
                 priority
                 loading="eager"
                 placeholder="blur"
                 blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUA
                 AAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0
                 DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg=="
-                style={{ borderRadius: '50%' }}
               />
             </picture>
-          </motion.div>
+          </div>
         </motion.div>
 
         <div className="hero-copy">
@@ -155,51 +104,48 @@ export default function Hero() {
           custom={1} variants={TEXT_VARIANTS} initial="hidden" animate="visible"
           style={{ marginBottom: '1.5rem' }}
         >
-          <motion.span
-            whileHover={{ scale: 1.02 }}
-            transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+          <span
             style={{
               display: 'inline-block',
-              background: 'rgba(255, 255, 255, 0.1)',
-              backdropFilter: 'blur(10px)',
-              border: '1px solid rgba(197, 166, 109, 0.3)',
+              border: '1px solid var(--gold)',
               color: 'var(--gold)',
               fontSize: '0.72rem',
-              letterSpacing: '2px',
-              padding: '0.4rem 1.2rem',
-              borderRadius: 24,
+              letterSpacing: '3px',
+              padding: '0.3rem 1rem',
+              borderRadius: 20,
               textTransform: 'uppercase',
-              boxShadow: '0 4px 16px rgba(0, 0, 0, 0.1)',
             }}
           >
-            React • AI • Analytics • Commercial Strategy
-          </motion.span>
+            IT/OT · Ciberseguridad · Infraestructura
+          </span>
         </motion.div>
 
         {/* Name */}
         <motion.h1
           custom={2} variants={TEXT_VARIANTS} initial="hidden" animate="visible"
           style={{
-            fontSize: 'clamp(2.8rem, 7vw, 4.5rem)',
-            fontWeight: 900,
-            lineHeight: 1.05,
-            marginBottom: '0.75rem',
+            fontSize: 'clamp(2.4rem, 6vw, 4rem)',
+            fontWeight: 800,
+            lineHeight: 1.1,
+            marginBottom: '0.5rem',
             color: 'var(--text)',
-            letterSpacing: '-1px',
-            textShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+            letterSpacing: '-0.5px',
           }}
         >
-          Juan{' '}
+          Juan Felipe{' '}
           <span
             style={{
-              background: 'linear-gradient(135deg, #1E90FF 0%, #C5A46D 50%, #38BDF8 100%)',
+              background: 'linear-gradient(135deg, #1E90FF 0%, #C5A46D 100%)',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
               backgroundClip: 'text',
-              textShadow: 'none',
             }}
           >
             Palacios
+          </span>
+          <br />
+          <span style={{ display: 'block', fontSize: '0.75em', marginTop: '0.35rem', color: 'var(--gold)', fontWeight: 600 }}>
+            Ciberseguridad para Oil & Gas en Vaca Muerta · Consultoría IT/OT Neuquén
           </span>
         </motion.h1>
 
@@ -207,16 +153,15 @@ export default function Hero() {
         <motion.p
           custom={3} variants={TEXT_VARIANTS} initial="hidden" animate="visible"
           style={{
-            fontSize: 'clamp(1.1rem, 2.8vw, 1.5rem)',
+            fontSize: 'clamp(1rem, 2.5vw, 1.4rem)',
             color: 'var(--blue)',
-            fontWeight: 600,
-            marginBottom: '1.25rem',
-            letterSpacing: '0.3px',
-            textShadow: '0 1px 2px rgba(0, 0, 0, 0.05)',
-            lineHeight: 1.4,
+            fontWeight: 500,
+            marginBottom: '1rem',
+            letterSpacing: '0.5px',
           }}
         >
-          Project Manager IT | Cibersecurity Leader | Cloud System Administrator | SysAdmin | Divulgador de #CulturaSegura | AI Solutions Architect | LLM Applications
+          IT/OT Cybersecurity Architect
+          Project Manager IT | Cybersecurity Leader | SysAdmin | Divulgador de #CulturaSegura
         </motion.p>
 
         {/* Tagline */}
@@ -224,15 +169,13 @@ export default function Hero() {
           custom={4} variants={TEXT_VARIANTS} initial="hidden" animate="visible"
           style={{
             color: 'var(--muted)',
-            fontSize: '1.15rem',
-            maxWidth: 600,
-            margin: '0 auto 3rem',
-            lineHeight: 1.7,
-            textShadow: '0 1px 2px rgba(0, 0, 0, 0.05)',
-            fontWeight: 400,
+            fontSize: '1.05rem',
+            maxWidth: 540,
+            margin: '0 auto 2.5rem',
+            lineHeight: 1.8,
           }}
         >
-          Building intelligent digital solutions for business growth.
+          Transformando infraestructura crítica en sistemas resilientes e inteligentes para el sector industrial y Oil & Gas.
         </motion.p>
 
         {/* CTAs */}

@@ -2,15 +2,16 @@
 
 import { motion, useInView } from 'framer-motion'
 import { useRef } from 'react'
+import Image from 'next/image'
 import SectionHeader from './ui/SectionHeader'
 import FadeIn from './ui/FadeIn'
 import Icon from './ui/Icon'
 
 const metrics = [
-  { num: '99.9%', label: 'Disponibilidad de red comprometida', color: 'var(--blue)', icon: 'shield' },
-  { num: '−30%',  label: 'Reducción de incidentes de seguridad', color: '#10B981', icon: 'analytics' },
-  { num: '−10h',  label: 'Ahorro semanal con automatización Python', color: 'var(--gold)', icon: 'automation' },
-  { num: '+25%',  label: 'Eficiencia operativa en virtualización', color: '#8B5CF6', icon: 'rocket' },
+  { num: '99.9%', label: 'Disponibilidad de red comprometida', color: 'var(--blue)', icon: 'shield', img: '/perfil_infraestructura.png' },
+  { num: '−30%',  label: 'Reducción de incidentes de seguridad', color: '#10B981', icon: 'analytics', img: '/perfil_seguridad.png' },
+  { num: '−10h',  label: 'Ahorro semanal con automatización Python', color: 'var(--gold)', icon: 'automation', img: '/perfil_automatizacion.png' },
+  { num: '+25%',  label: 'Eficiencia operativa en virtualización', color: '#8B5CF6', icon: 'rocket', img: '/perfil_nube.png' },
 ]
 
 const competencias = [
@@ -46,32 +47,54 @@ const competencias = [
   },
 ]
 
-function MetricCard({ num, label, color, icon, delay }: { num: string; label: string; color: string; icon: string; delay: number }) {
+function MetricCard({ num, label, color, icon, img, delay }: { num: string; label: string; color: string; icon: string; img: string; delay: number }) {
   const ref    = useRef(null)
   const inView = useInView(ref, { once: true })
 
   return (
     <motion.div
       ref={ref}
-      initial={{ opacity: 0, y: 30 }}
-      animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ delay, duration: 0.6, ease: 'easeOut' }}
-      whileHover={{ y: -5 }}
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={inView ? { opacity: 1, scale: 1 } : {}}
+      transition={{ delay, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+      whileHover={{ y: -5, scale: 1.02 }}
       style={{
         background: 'var(--card)',
         border: '1px solid var(--border)',
-        borderRadius: 16,
-        padding: '1.75rem 1.5rem',
-        textAlign: 'center',
+        borderRadius: 20,
+        height: '240px',
         cursor: 'default',
         position: 'relative',
         overflow: 'hidden',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'flex-end',
+        padding: '1.5rem',
       }}
     >
-      <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: `linear-gradient(90deg, transparent, ${color}, transparent)` }} />
-      <div style={{ marginBottom: '0.75rem' }}><Icon name={icon} label={label} size={36} /></div>
-      <div style={{ fontSize: '2.4rem', fontWeight: 800, color, lineHeight: 1 }}>{num}</div>
-      <div style={{ fontSize: '0.8rem', color: 'var(--muted)', marginTop: '0.5rem', lineHeight: 1.45 }}>{label}</div>
+      {/* Background Image */}
+      <div style={{ position: 'absolute', inset: 0, zIndex: 0 }}>
+        <Image 
+          src={img} 
+          alt={label} 
+          fill 
+          style={{ objectFit: 'cover', opacity: 0.4, filter: 'grayscale(0.4) brightness(0.7)' }} 
+        />
+        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.9) 20%, rgba(0,0,0,0.2) 100%)' }} />
+      </div>
+
+      <div style={{ position: 'relative', zIndex: 1 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
+          <div style={{ width: 32, height: 32, borderRadius: 8, background: `${color}22`, display: 'flex', alignItems: 'center', justifyContent: 'center', border: `1px solid ${color}44` }}>
+            <Icon name={icon} label={label} size={18} />
+          </div>
+          <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#fff', letterSpacing: '-1px' }}>{num}</div>
+        </div>
+        <div style={{ fontSize: '0.82rem', color: 'rgba(255,255,255,0.7)', lineHeight: 1.3, fontWeight: 500 }}>{label}</div>
+      </div>
+      
+      {/* Accent bar */}
+      <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 3, background: color, opacity: 0.6 }} />
     </motion.div>
   )
 }

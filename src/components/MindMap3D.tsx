@@ -127,16 +127,19 @@ function ParticleNode({
   const [hovered, setHovered] = useState(false)
   const glowRef = useRef<THREE.Mesh>(null)
   
-  const positions = new Float32Array(node.particleCount * 3)
   const radius = 0.4
 
-  for (let i = 0; i < node.particleCount; i++) {
-    const theta = Math.random() * Math.PI * 2
-    const phi = Math.random() * Math.PI
-    positions[i * 3] = radius * Math.sin(phi) * Math.cos(theta)
-    positions[i * 3 + 1] = radius * Math.sin(phi) * Math.sin(theta)
-    positions[i * 3 + 2] = radius * Math.cos(phi)
-  }
+  const [positions] = useState(() => {
+    const pos = new Float32Array(node.particleCount * 3)
+    for (let i = 0; i < node.particleCount; i++) {
+      const theta = Math.random() * Math.PI * 2
+      const phi = Math.random() * Math.PI
+      pos[i * 3] = radius * Math.sin(phi) * Math.cos(theta)
+      pos[i * 3 + 1] = radius * Math.sin(phi) * Math.sin(theta)
+      pos[i * 3 + 2] = radius * Math.cos(phi)
+    }
+    return pos
+  })
 
   useFrame((state) => {
     if (pointsRef.current) {

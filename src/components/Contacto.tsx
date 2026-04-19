@@ -21,8 +21,6 @@ const projectTypes = [
 ]
 
 const contactCards = [
-  { icon: 'email', label: 'palacios_juan@hotmail.com',        sub: 'Email profesional',        href: 'mailto:palacios_juan@hotmail.com',                   color: 'var(--blue)' },
-  { icon: 'phone', label: '+54 299 586 9435',                sub: 'WhatsApp / Llamadas',      href: 'https://wa.me/542995869435',                      color: '#10B981', external: true },
   { icon: 'linkedin', label: 'linkedin/juanfpalacios',        sub: 'LinkedIn',                href: 'https://linkedin.com/in/juanfpalacios',            color: '#0A66C2', external: true },
   { icon: 'github', label: 'github/StrategicConnex',          sub: 'GitHub',                  href: 'https://github.com/StrategicConnex/',              color: '#333', external: true },
   { icon: 'credly', label: 'credly.com/users/juan-palacios', sub: 'Certificaciones',         href: 'https://www.credly.com/users/juan-palacios.88e7ba6c', color: '#F9B400', external: true },
@@ -71,13 +69,6 @@ export default function Contacto() {
 
             <FadeIn delay={0.18} direction="left">
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.85rem', marginBottom: '1.5rem' }}>
-                <motion.a
-                  href="mailto:palacios_juan@hotmail.com"
-                  whileHover={{ y: -2 }}
-                  style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '0.85rem 1.2rem', background: 'var(--blue)', color: '#fff', borderRadius: 999, fontWeight: 700, textDecoration: 'none', boxShadow: '0 14px 30px rgba(15, 23, 42, 0.12)' }}
-                >
-                  Enviar email
-                </motion.a>
                 <motion.a
                   href="https://linkedin.com/in/juanfpalacios"
                   target="_blank"

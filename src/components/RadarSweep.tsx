@@ -16,7 +16,6 @@ export default function RadarSweep() {
     const W = canvas.width  = 220
     const H = canvas.height = 220
     // Cast after null guard — TS can't narrow through the nested draw() closure
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const c = canvas.getContext('2d')!
     if (!c) return
     const cx = W / 2, cy = H / 2, R = 90

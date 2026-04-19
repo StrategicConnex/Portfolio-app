@@ -1,5 +1,7 @@
 'use client'
 
+import Image from 'next/image'
+
 type IconProps = {
   name: string
   label: string
@@ -9,7 +11,7 @@ type IconProps = {
 
 export default function Icon({ name, label, size = 32, className }: IconProps) {
   return (
-    <img
+    <Image
       src={`/icons/${name}.svg`}
       alt={label}
       width={size}

@@ -71,8 +71,6 @@ const jsonLd = {
       description: 'Especialista en ciberseguridad industrial con 20+ años en Oil & Gas. IEC 62443, NIST CSF, SCADA, Modelo Purdue. Basado en Neuquén, Argentina.',
       url: 'https://juanfpalacios.vercel.app',
       sameAs: ['https://linkedin.com/in/juanfpalacios'],
-      email: 'palacios_juan@hotmail.com',
-      telephone: '+542995869435',
       address: {
         '@type': 'PostalAddress',
         addressLocality: 'Neuquén',
