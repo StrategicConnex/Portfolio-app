@@ -14,7 +14,7 @@ export default function ChatBot() {
   const [mounted, setMounted] = useState(false)
   const [input, setInput] = useState('')
   const [messages, setMessages] = useState<Message[]>([
-    { role: 'assistant', content: '¡Hola! Soy el asistente IA de Juan. ¿En qué puedo ayudarte hoy? Puedo contarte sobre su experiencia, tecnologías o proyectos.' }
+    { role: 'assistant', content: '¡Hola! Soy Nacho Assistant, el compañero IA de Juan. ¿En qué puedo ayudarte hoy? Consultame sobre su experiencia en Oil & Gas, ciberseguridad industrial o disponibilidad.' }
   ])
   const [isLoading, setIsLoading] = useState(false)
   const scrollRef = useRef<HTMLDivElement>(null)
@@ -148,11 +148,17 @@ export default function ChatBot() {
           >
             {/* Header */}
             <div style={{ padding: '20px', borderBottom: '1px solid rgba(255, 255, 255, 0.1)', display: 'flex', alignItems: 'center', gap: '14px', background: 'rgba(37, 99, 235, 0.1)' }}>
-              <div style={{ width: '45px', height: '45px', borderRadius: '50%', backgroundColor: 'rgba(37, 99, 235, 0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid rgba(37, 99, 235, 0.4)' }}>
-                <Sparkles size={22} style={{ color: '#60a5fa' }} />
+              <div style={{ width: '45px', height: '45px', borderRadius: '50%', backgroundColor: 'rgba(37, 99, 235, 0.2)', overflow: 'hidden', border: '1px solid rgba(37, 99, 235, 0.4)' }}>
+                <Image 
+                  src="/nacho-avatar.png" 
+                  alt="Nacho Assistant" 
+                  width={45} 
+                  height={45} 
+                  className="object-cover"
+                />
               </div>
               <div style={{ flex: 1 }}>
-                <h3 style={{ fontSize: '15px', fontWeight: 'bold', color: 'white', margin: 0, letterSpacing: '0.5px' }}>Juan's AI Assistant</h3>
+                <h3 style={{ fontSize: '15px', fontWeight: 'bold', color: 'white', margin: 0, letterSpacing: '0.5px' }}>Nacho Assistant</h3>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '4px' }}>
                   <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#22c55e', boxShadow: '0 0 10px #22c55e' }} />
                   <span style={{ fontSize: '11px', color: '#60a5fa', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '1px' }}>En Línea · v3.0</span>
@@ -178,9 +184,10 @@ export default function ChatBot() {
                       alignItems: 'center', 
                       justifyContent: 'center', 
                       backgroundColor: msg.role === 'user' ? '#1e293b' : 'rgba(37, 99, 235, 0.15)', 
-                      border: msg.role === 'user' ? '1px solid rgba(255,255,255,0.1)' : '1px solid rgba(37, 99, 235, 0.3)' 
+                      border: msg.role === 'user' ? '1px solid rgba(255,255,255,0.1)' : '1px solid rgba(37, 99, 235, 0.3)',
+                      overflow: 'hidden'
                     }}>
-                      {msg.role === 'user' ? <User size={16} style={{ color: '#94a3b8' }} /> : <Bot size={16} style={{ color: '#60a5fa' }} />}
+                      {msg.role === 'user' ? <User size={16} style={{ color: '#94a3b8' }} /> : <Image src="/nacho-avatar.png" alt="Nacho" width={34} height={34} className="object-cover" />}
                     </div>
                     <div style={{ 
                       padding: '14px', 
@@ -202,9 +209,9 @@ export default function ChatBot() {
               {isLoading && (
                 <div style={{ display: 'flex', justifyContent: 'flex-start' }}>
                   <div style={{ display: 'flex', gap: '10px' }}>
-                    <div style={{ width: '34px', height: '34px', borderRadius: '50%', backgroundColor: 'rgba(37, 99, 235, 0.15)', border: '1px solid rgba(37, 99, 235, 0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      <Bot size={16} style={{ color: '#60a5fa' }} />
-                    </div>
+                <div style={{ width: '34px', height: '34px', borderRadius: '50%', backgroundColor: 'rgba(37, 99, 235, 0.15)', border: '1px solid rgba(37, 99, 235, 0.3)', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <Image src="/nacho-avatar.png" alt="Nacho" width={34} height={34} className="object-cover" />
+                </div>
                     <div style={{ background: 'rgba(255, 255, 255, 0.03)', padding: '14px', borderRadius: '18px', borderTopLeftRadius: '0', border: '1px solid rgba(255, 255, 255, 0.05)', display: 'flex', gap: '6px', alignItems: 'center' }}>
                       <motion.div animate={{ opacity: [0.3, 1, 0.3], scale: [1, 1.2, 1] }} transition={{ repeat: Infinity, duration: 1 }} style={{ width: '7px', height: '7px', backgroundColor: '#60a5fa', borderRadius: '50%' }} />
                       <motion.div animate={{ opacity: [0.3, 1, 0.3], scale: [1, 1.2, 1] }} transition={{ repeat: Infinity, duration: 1, delay: 0.2 }} style={{ width: '7px', height: '7px', backgroundColor: '#60a5fa', borderRadius: '50%' }} />
