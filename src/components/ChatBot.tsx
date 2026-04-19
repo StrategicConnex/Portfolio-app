@@ -151,7 +151,7 @@ export default function ChatBot() {
             <div style={{ padding: '20px', borderBottom: '1px solid rgba(255, 255, 255, 0.1)', display: 'flex', alignItems: 'center', gap: '14px', background: 'rgba(37, 99, 235, 0.1)' }}>
               <div style={{ width: '45px', height: '45px', borderRadius: '50%', backgroundColor: 'rgba(37, 99, 235, 0.2)', overflow: 'hidden', border: '1px solid rgba(37, 99, 235, 0.4)' }}>
                 <Image 
-                  src="/nacho-avatar.png" 
+                  src="/NachoAsistente.png" 
                   alt="Nacho Assistant" 
                   width={45} 
                   height={45} 
@@ -188,7 +188,7 @@ export default function ChatBot() {
                       border: msg.role === 'user' ? '1px solid rgba(255,255,255,0.1)' : '1px solid rgba(37, 99, 235, 0.3)',
                       overflow: 'hidden'
                     }}>
-                      {msg.role === 'user' ? <User size={16} style={{ color: '#94a3b8' }} /> : <Image src="/nacho-avatar.png" alt="Nacho" width={34} height={34} className="object-cover" />}
+                      {msg.role === 'user' ? <User size={16} style={{ color: '#94a3b8' }} /> : <Image src="/NachoAsistente.png" alt="Nacho" width={34} height={34} className="object-cover" />}
                     </div>
                     <div style={{ 
                       padding: '14px', 
@@ -211,7 +211,7 @@ export default function ChatBot() {
                 <div style={{ display: 'flex', justifyContent: 'flex-start' }}>
                   <div style={{ display: 'flex', gap: '10px' }}>
                 <div style={{ width: '34px', height: '34px', borderRadius: '50%', backgroundColor: 'rgba(37, 99, 235, 0.15)', border: '1px solid rgba(37, 99, 235, 0.3)', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <Image src="/nacho-avatar.png" alt="Nacho" width={34} height={34} className="object-cover" />
+                  <Image src="/NachoAsistente.png" alt="Nacho" width={34} height={34} className="object-cover" />
                 </div>
                     <div style={{ background: 'rgba(255, 255, 255, 0.03)', padding: '14px', borderRadius: '18px', borderTopLeftRadius: '0', border: '1px solid rgba(255, 255, 255, 0.05)', display: 'flex', gap: '6px', alignItems: 'center' }}>
                       <motion.div animate={{ opacity: [0.3, 1, 0.3], scale: [1, 1.2, 1] }} transition={{ repeat: Infinity, duration: 1 }} style={{ width: '7px', height: '7px', backgroundColor: '#60a5fa', borderRadius: '50%' }} />
