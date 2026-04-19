@@ -19,31 +19,37 @@ const competencias = [
     grupo: 'Ciberseguridad Industrial',
     color: '#1E90FF',
     items: ['Modelo Purdue', 'IEC 62443', 'NIST CSF', 'ISO 27001', 'SOX', 'SIEM – Security Onion', 'IAM', 'Firewalls Industriales'],
+    img: '/comp_cyber.png'
   },
   {
     grupo: 'Redes & Infraestructura',
     color: '#3B82F6',
     items: ['Cisco CCNA', 'MPLS', 'MikroTik', 'VSAT', 'Riverbed WAN', 'VPN', 'Fibra Óptica', 'DNS / DHCP'],
+    img: '/comp_redes.png'
   },
   {
     grupo: 'Cloud & Virtualización',
     color: '#06B6D4',
     items: ['Microsoft Azure', 'AWS', 'VMware vSphere', 'ESXi', 'vCenter', 'Nexus 1000v', 'Windows Server 2003–2022', 'Active Directory', 'Exchange', 'SQL Server', 'Linux'],
+    img: '/comp_cloud.png'
   },
   {
     grupo: 'OT / Control Industrial',
     color: '#C5A46D',
     items: ['SCADA', 'Modbus', 'OPC UA', 'DNP3', 'Edge Computing', 'Veeam Backup', 'Backup Exec', 'Control Industrial'],
+    img: '/comp_ot.png'
   },
   {
     grupo: 'Desarrollo & Automatización',
     color: '#8B5CF6',
     items: ['Next.js 14', 'React.js', 'Tailwind CSS', 'JavaScript ES6+', 'TypeScript', 'Python', 'Power BI', 'CI/CD', 'Vercel'],
+    img: '/comp_web.png'
   },
   {
     grupo: 'Gestión & GRC',
     color: '#10B981',
     items: ['PMI / Project Management', 'GRC', 'Risk Analysis', 'Incident Response', 'Stakeholder Management', 'SDLC'],
+    img: '/comp_grc.png'
   },
 ]
 
@@ -135,32 +141,63 @@ export default function Perfil() {
             <p style={{ fontSize: 'clamp(0.65rem, 1.5vw, 0.72rem)', color: 'var(--blue)', letterSpacing: '3px', textTransform: 'uppercase', marginBottom: 'clamp(0.75rem, 2vw, 1.25rem)' }}>
               Dominio técnico completo
             </p>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(clamp(250px, 100%, 280px), 1fr))', gap: 'clamp(0.75rem, 2vw, 0.9rem)' }}>
-              {competencias.map((c) => (
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(clamp(250px, 100%, 280px), 1fr))', gap: 'clamp(0.75rem, 2vw, 1.25rem)' }}>
+              {competencias.map((c, i) => (
                 <motion.div
                   key={c.grupo}
-                  whileHover={{ borderColor: c.color + '66' }}
-                  style={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 10, padding: 'clamp(0.75rem, 2vw, 1.2rem)', transition: 'border-color 0.3s' }}
+                  whileHover={{ y: -4, borderColor: c.color + '88' }}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.05, duration: 0.5 }}
+                  style={{ 
+                    background: 'var(--card)', 
+                    border: '1px solid var(--border)', 
+                    borderRadius: 12, 
+                    padding: 'clamp(0.75rem, 2vw, 1.2rem)', 
+                    transition: 'border-color 0.3s, transform 0.3s',
+                    position: 'relative',
+                    overflow: 'hidden',
+                    minHeight: '160px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'flex-start'
+                  }}
                 >
-                  <div style={{ fontSize: 'clamp(0.75rem, 1.5vw, 0.82rem)', color: 'var(--text)', fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', marginBottom: '0.8rem' }}>
-                    {c.grupo}
+                  {/* Background Image */}
+                  <div style={{ position: 'absolute', inset: 0, zIndex: 0 }}>
+                    <Image 
+                      src={c.img} 
+                      alt={c.grupo} 
+                      fill 
+                      style={{ objectFit: 'cover', opacity: 0.12, filter: 'grayscale(0.6) brightness(0.5)' }} 
+                    />
+                    <div style={{ position: 'absolute', inset: 0, background: `linear-gradient(135deg, rgba(0,0,0,0.95) 40%, rgba(0,0,0,0.6) 100%)` }} />
                   </div>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.35rem' }}>
-                    {c.items.map(item => (
-                      <span key={item} style={{
-                        background: 'rgba(255,255,255,0.08)',
-                        color: 'var(--text)',
-                        border: '1px solid rgba(255,255,255,0.12)',
-                        padding: '0.24rem 0.65rem',
-                        borderRadius: 22,
-                        fontSize: 'clamp(0.75rem, 1.2vw, 0.82rem)',
-                        fontWeight: 500,
-                        minWidth: 'max-content',
-                      }}>
-                        {item}
-                      </span>
-                    ))}
+
+                  <div style={{ position: 'relative', zIndex: 1 }}>
+                    <div style={{ fontSize: 'clamp(0.75rem, 1.5vw, 0.82rem)', color: c.color, fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', marginBottom: '0.8rem' }}>
+                      {c.grupo}
+                    </div>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.35rem' }}>
+                      {c.items.map(item => (
+                        <span key={item} style={{
+                          background: 'rgba(255,255,255,0.05)',
+                          color: 'rgba(255,255,255,0.9)',
+                          border: '1px solid rgba(255,255,255,0.08)',
+                          padding: '0.2rem 0.55rem',
+                          borderRadius: 22,
+                          fontSize: 'clamp(0.7rem, 1.2vw, 0.78rem)',
+                          fontWeight: 500,
+                        }}>
+                          {item}
+                        </span>
+                      ))}
+                    </div>
                   </div>
+                  
+                  {/* Left accent bar */}
+                  <div style={{ position: 'absolute', left: 0, top: '15%', bottom: '15%', width: 2, background: c.color, opacity: 0.5 }} />
                 </motion.div>
               ))}
             </div>
