@@ -46,17 +46,17 @@ export default function Hero() {
         
         {/* Avatar Section */}
         <motion.div
-          className="hero-avatar flex justify-center mb-10"
+          className="hero-avatar flex justify-center mb-12"
           custom={0} variants={TEXT_VARIANTS} initial="hidden" animate="visible"
         >
-          <div className="relative w-[160px] h-[160px] md:w-[200px] md:h-[200px] rounded-full overflow-hidden border-4 border-blue-500/30 shadow-[0_0_40px_rgba(30,144,255,0.15)] bg-slate-900">
+          <div className="relative w-[180px] h-[180px] md:w-[260px] md:h-[260px] rounded-full overflow-hidden border-[6px] border-blue-500/20 shadow-[0_0_60px_rgba(30,144,255,0.15)] bg-slate-900">
             <Image
               src="/JuanPalacios.jpg"
               alt="Foto de perfil de Juan Palacios"
               fill
               className="object-cover"
-              sizes="(max-width: 768px) 160px, 200px"
-              quality={95}
+              sizes="(max-width: 768px) 180px, 260px"
+              quality={100}
               priority
               placeholder="blur"
               blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg=="
@@ -70,9 +70,9 @@ export default function Hero() {
           {/* Badge */}
           <motion.div
             custom={1} variants={TEXT_VARIANTS} initial="hidden" animate="visible"
-            className="mb-6"
+            className="mb-5"
           >
-            <span className="inline-block border border-[var(--gold)] text-[var(--gold)] text-[0.72rem] tracking-[3px] py-1 px-4 rounded-full uppercase font-medium">
+            <span className="inline-block border border-[var(--gold)]/60 text-[var(--gold)] text-[0.65rem] tracking-[4px] py-1 px-4 rounded-full uppercase font-medium">
               IT/OT · Ciberseguridad · Infraestructura
             </span>
           </motion.div>
@@ -80,13 +80,13 @@ export default function Hero() {
           {/* Main Title / H1 */}
           <motion.h1
             custom={2} variants={TEXT_VARIANTS} initial="hidden" animate="visible"
-            className="text-[clamp(1.8rem,5vw,3.2rem)] font-extrabold leading-tight mb-2 tracking-tighter text-[var(--text)]"
+            className="text-[clamp(1.4rem,4.5vw,2.6rem)] font-extrabold leading-[1.1] mb-2 tracking-tighter text-[var(--text)]"
           >
             Juan Felipe{' '}
             <span className="bg-gradient-to-r from-blue-500 to-[var(--gold)] bg-clip-text text-transparent">
               Palacios
             </span>
-            <span className="block text-[0.6em] mt-2 text-[var(--gold)] font-medium tracking-wide uppercase opacity-90">
+            <span className="block text-[0.52em] mt-3 text-[var(--gold)] font-medium tracking-[0.1em] uppercase opacity-80 leading-relaxed">
               Ciberseguridad para Oil & Gas en Vaca Muerta · Consultoría IT/OT Neuquén
             </span>
           </motion.h1>
@@ -94,10 +94,10 @@ export default function Hero() {
           {/* Role Description */}
           <motion.p
             custom={3} variants={TEXT_VARIANTS} initial="hidden" animate="visible"
-            className="text-[clamp(0.9rem,1.8vw,1.15rem)] text-[var(--blue)] font-medium mb-4 tracking-wide"
+            className="text-[clamp(0.8rem,1.5vw,0.95rem)] text-[var(--blue)] font-medium mb-3 tracking-widest uppercase"
           >
             IT/OT Cybersecurity Architect
-            <span className="block text-xs md:text-sm text-slate-400 mt-2 font-normal max-w-2xl opacity-80">
+            <span className="block text-[10px] md:text-[12px] text-slate-400 mt-2 font-normal max-w-2xl opacity-70 tracking-normal normal-case">
               Project Manager IT | Cybersecurity Leader | SysAdmin | Divulgador de #CulturaSegura
             </span>
           </motion.p>
@@ -105,7 +105,7 @@ export default function Hero() {
           {/* Tagline */}
           <motion.p
             custom={4} variants={TEXT_VARIALNTS} initial="hidden" animate="visible"
-            className="text-slate-400 text-sm md:text-base max-w-xl mx-auto lg:mx-0 mb-10 leading-relaxed font-light"
+            className="text-slate-400 text-[13px] md:text-[14px] max-w-lg mx-auto lg:mx-0 mb-8 leading-relaxed font-light opacity-80"
           >
             Transformando infraestructura crítica en sistemas resilientes e inteligentes para el sector industrial y Oil & Gas.
           </motion.p>
