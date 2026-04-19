@@ -6,7 +6,7 @@ import SectionHeader from './ui/SectionHeader'
 import Icon from './ui/Icon'
 
 const certs = [
-  { icon: 'certificate', text: 'Licenciatura en Ciencias de la Computación – UNCO', tier: 'gold' },
+  { icon: 'certificate', text: 'Analista de sistemas – UNCO', tier: 'gold' },
   { icon: 'document', text: 'Project Management & IEC 62443 – Universidad Siglo 21', tier: 'gold' },
   { icon: 'cloud', text: 'VMware Certified Associate – VCA-DCV', tier: 'blue' },
   { icon: 'network', text: 'Cisco CCNA Routing & Switching', tier: 'blue' },
