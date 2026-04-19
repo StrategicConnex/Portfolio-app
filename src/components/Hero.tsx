@@ -46,17 +46,17 @@ export default function Hero() {
         
         {/* Avatar Section */}
         <motion.div
-          className="hero-avatar flex justify-center mb-8"
+          className="hero-avatar flex justify-center mb-10"
           custom={0} variants={TEXT_VARIANTS} initial="hidden" animate="visible"
         >
-          <div className="relative w-[132px] h-[132px] rounded-full overflow-hidden border-3 border-blue-500/20 shadow-2xl shadow-black/15">
+          <div className="relative w-[160px] h-[160px] md:w-[200px] md:h-[200px] rounded-full overflow-hidden border-4 border-blue-500/30 shadow-[0_0_40px_rgba(30,144,255,0.15)] bg-slate-900">
             <Image
               src="/JuanPalacios.jpg"
               alt="Foto de perfil de Juan Palacios"
               fill
               className="object-cover"
-              sizes="132px"
-              quality={85}
+              sizes="(max-width: 768px) 160px, 200px"
+              quality={95}
               priority
               placeholder="blur"
               blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg=="
