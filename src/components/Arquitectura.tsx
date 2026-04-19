@@ -1,33 +1,14 @@
 'use client'
 
-import dynamic from 'next/dynamic'
+import PurdueModel2D from './PurdueModel2D'
 import SectionHeader from './ui/SectionHeader'
 import FadeIn from './ui/FadeIn'
 import Icon from './ui/Icon'
 
-/* Carga el canvas 3D solo en cliente (Three.js no funciona en SSR) */
-const MindMap3D = dynamic(() => import('./MindMap3D'), {
-  ssr: false,
-  loading: () => (
-    <div style={{
-      width: '100%', height: 480,
-      background: 'rgba(30,144,255,0.03)',
-      border: '1px solid rgba(30,144,255,0.15)',
-      borderRadius: 16,
-      display: 'flex', alignItems: 'center', justifyContent: 'center',
-    }}>
-      <div style={{ textAlign: 'center', color: 'var(--muted)' }}>
-        <div style={{ marginBottom: '0.5rem' }}><Icon name="web" label="Cargando mapa 3D" size={36} /></div>
-        <p style={{ fontSize: '0.85rem' }}>Cargando mapa 3D…</p>
-      </div>
-    </div>
-  ),
-})
-
 const domainCards = [
   { color: '#F97316', icon: 'industry', title: 'Capa Inferior OT', items: ['Modbus', 'DNP3', 'SCADA', 'Field Devices'] },
   { color: '#8B5CF6', icon: 'network', title: 'Capa Media Infraestructura', items: ['Virtualización', 'Redes Cisco', 'Firewalls Industriales'] },
-  { color: '#EF4444', icon: 'shield', title: 'Capa Superior Seguridad', items: ['SIEM', 'NIST CSF', 'ISO 27001'] },
+  { color: '#EF4444', icon: 'shield', title: 'Capa Superior Seguridad', items: ['SIEM / SOC', 'NIST CSF', 'ISO 27001', 'Estrategia GRC'] },
 ]
 
 export default function Arquitectura() {
@@ -37,17 +18,17 @@ export default function Arquitectura() {
         <SectionHeader label="Visión sistémica" title="Mapa de Convergencia IT/OT" highlight="Modelo Purdue" />
 
         <FadeIn delay={0.05}>
-          <p style={{ color: 'var(--muted)', marginBottom: '0.5rem', fontSize: 'clamp(0.85rem, 2vw, 0.92rem)', maxWidth: 580 }}>
+          <p style={{ color: 'var(--muted)', marginBottom: '0.5rem', fontSize: 'clamp(0.85rem, 2vw, 0.92rem)', maxWidth: 620 }}>
             Mapa interactivo de convergencia IT/OT inspirado en el Modelo Purdue. Haz clic en un nodo para resaltar dependencias entre SCADA, firewalls industriales, virtualización y controles de seguridad.
           </p>
-          <p style={{ color: 'var(--blue)', fontSize: 'clamp(0.65rem, 1.5vw, 0.72rem)', letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 600, marginBottom: '2rem' }}>
+          <p style={{ color: 'var(--blue)', fontSize: 'clamp(0.65rem, 1.5vw, 0.72rem)', letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 600, marginBottom: '2.5rem' }}>
             Capa Inferior OT · Capa Media Infraestructura · Capa Superior Seguridad
           </p>
         </FadeIn>
 
-        {/* 3D Canvas */}
+        {/* 2D Interactive Purdue Model */}
         <FadeIn delay={0.1}>
-          <MindMap3D />
+          <PurdueModel2D />
         </FadeIn>
 
         {/* Domain cards below */}
