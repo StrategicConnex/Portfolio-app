@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
+import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
 import { MessageSquare, X as CloseIcon, Send, Sparkles, Bot, User } from 'lucide-react'
 
