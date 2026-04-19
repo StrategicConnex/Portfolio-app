@@ -22,7 +22,7 @@ export default function ChatBot() {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight
     }
-  }, [messages])
+  }, [messages, isOpen])
 
   const handleSend = async () => {
     if (!input.trim() || isLoading) return
@@ -61,19 +61,29 @@ export default function ChatBot() {
   }
 
   return (
-    <div className="fixed bottom-6 right-6 z-[200]">
+    <div style={{ position: 'fixed', bottom: '24px', right: '24px', zIndex: 9999 }}>
       {/* Floating Button */}
       <motion.button
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
         onClick={() => setIsOpen(!isOpen)}
-        className="w-14 h-14 rounded-full bg-blue-600 text-white flex items-center justify-center shadow-2xl relative overflow-hidden group"
         style={{
-          boxShadow: '0 0 20px rgba(37, 99, 235, 0.4)'
+          width: '56px',
+          height: '56px',
+          borderRadius: '50%',
+          backgroundColor: '#1E90FF',
+          color: 'white',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          boxShadow: '0 4px 20px rgba(30, 144, 255, 0.4)',
+          border: 'none',
+          cursor: 'pointer',
+          position: 'relative',
+          overflow: 'hidden'
         }}
       >
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-400 to-blue-700 opacity-0 group-hover:opacity-100 transition-opacity" />
-        {isOpen ? <CloseIcon size={24} className="relative z-10" /> : <MessageSquare size={24} className="relative z-10" />}
+        {isOpen ? <CloseIcon size={24} /> : <MessageSquare size={24} />}
       </motion.button>
 
       {/* Chat Window */}
@@ -83,62 +93,74 @@ export default function ChatBot() {
             initial={{ opacity: 0, y: 20, scale: 0.95, transformOrigin: 'bottom right' }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
-            className="absolute bottom-20 right-0 w-[350px] md:w-[400px] h-[500px] bg-[#0f172a]/95 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl flex flex-col overflow-hidden"
+            style={{
+              position: 'absolute',
+              bottom: '80px',
+              right: '0',
+              width: 'min(400px, 90vw)',
+              height: '500px',
+              backgroundColor: '#0f172a',
+              backgroundImage: 'linear-gradient(to bottom, rgba(30, 144, 255, 0.05), transparent)',
+              backdropFilter: 'blur(20px)',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+              borderRadius: '16px',
+              boxShadow: '0 10px 40px rgba(0, 0, 0, 0.5)',
+              display: 'flex',
+              flexDirection: 'column',
+              overflow: 'hidden'
+            }}
           >
             {/* Header */}
-            <div className="p-4 border-b border-white/10 bg-blue-600/10 flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-blue-600/20 flex items-center justify-center border border-blue-500/30">
-                  <Sparkles size={20} className="text-blue-400" />
-                </div>
-                <div>
-                  <h3 className="text-sm font-bold text-white leading-none">Juan's AI Assistant</h3>
-                  <p className="text-[10px] text-blue-400 font-medium uppercase tracking-wider mt-1">Online · v2.0</p>
-                </div>
+            <div style={{ p: '16px', padding: '16px', borderBottom: '1px solid rgba(255, 255, 255, 0.1)', display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <div style={{ width: '40px', height: '40px', borderRadius: '50%', backgroundColor: 'rgba(30, 144, 255, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid rgba(30, 144, 255, 0.2)' }}>
+                <Sparkles size={20} style={{ color: '#1E90FF' }} />
               </div>
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+              <div style={{ flex: 1 }}>
+                <h3 style={{ fontSize: '14px', fontWeight: 'bold', color: 'white', margin: 0 }}>Juan's AI Assistant</h3>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginTop: '2px' }}>
+                  <div style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#22c55e' }} />
+                  <span style={{ fontSize: '10px', color: '#1E90FF', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '1px' }}>En línea</span>
+                </div>
               </div>
             </div>
 
             {/* Messages */}
             <div 
               ref={scrollRef}
-              className="flex-1 overflow-y-auto p-4 space-y-4 scroll-smooth custom-scrollbar"
+              style={{ flex: 1, overflowY: 'auto', padding: '16px', display: 'flex', flexDirection: 'column', gap: '16px' }}
             >
               {messages.map((msg, i) => (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, x: msg.role === 'user' ? 10 : -10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
-                >
-                  <div className={`flex gap-2 max-w-[85%] ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}>
-                    <div className={`w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center ${
-                      msg.role === 'user' ? 'bg-slate-700' : 'bg-blue-600/20 border border-blue-500/30'
-                    }`}>
-                      {msg.role === 'user' ? <User size={14} className="text-slate-300" /> : <Bot size={14} className="text-blue-400" />}
+                <div key={i} style={{ display: 'flex', justifyContent: msg.role === 'user' ? 'flex-end' : 'flex-start' }}>
+                  <div style={{ display: 'flex', gap: '8px', maxWidth: '85%', flexDirection: msg.role === 'user' ? 'row-reverse' : 'row' }}>
+                    <div style={{ width: '32px', height: '32px', borderRadius: '50%', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: msg.role === 'user' ? '#334155' : 'rgba(30, 144, 255, 0.1)', border: msg.role === 'user' ? 'none' : '1px solid rgba(30, 144, 255, 0.2)' }}>
+                      {msg.role === 'user' ? <User size={14} style={{ color: '#cbd5e1' }} /> : <Bot size={14} style={{ color: '#1E90FF' }} />}
                     </div>
-                    <div className={`p-3 rounded-2xl text-sm leading-relaxed ${
-                      msg.role === 'user' 
-                        ? 'bg-blue-600 text-white rounded-tr-none' 
-                        : 'bg-white/5 text-slate-300 border border-white/5 rounded-tl-none'
-                    }`}>
+                    <div style={{ 
+                      padding: '12px', 
+                      borderRadius: '12px', 
+                      fontSize: '14px', 
+                      lineHeight: '1.5',
+                      backgroundColor: msg.role === 'user' ? '#1E90FF' : 'rgba(255, 255, 255, 0.05)',
+                      color: msg.role === 'user' ? 'white' : '#cbd5e1',
+                      border: msg.role === 'user' ? 'none' : '1px solid rgba(255, 255, 255, 0.05)',
+                      borderTopRightRadius: msg.role === 'user' ? '0' : '12px',
+                      borderTopLeftRadius: msg.role === 'user' ? '12px' : '0'
+                    }}>
                       {msg.content}
                     </div>
                   </div>
-                </motion.div>
+                </div>
               ))}
               {isLoading && (
-                <div className="flex justify-start">
-                  <div className="flex gap-2">
-                    <div className="w-8 h-8 rounded-full bg-blue-600/20 border border-blue-500/30 flex items-center justify-center">
-                      <Bot size={14} className="text-blue-400" />
+                <div style={{ display: 'flex', justifyContent: 'flex-start' }}>
+                  <div style={{ display: 'flex', gap: '8px' }}>
+                    <div style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: 'rgba(30, 144, 255, 0.1)', border: '1px solid rgba(30, 144, 255, 0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <Bot size={14} style={{ color: '#1E90FF' }} />
                     </div>
-                    <div className="bg-white/5 p-3 rounded-2xl rounded-tl-none border border-white/5 flex gap-1 items-center h-10">
-                      <motion.div animate={{ opacity: [0.3, 1, 0.3] }} transition={{ repeat: Infinity, duration: 1 }} className="w-1.5 h-1.5 bg-blue-400 rounded-full" />
-                      <motion.div animate={{ opacity: [0.3, 1, 0.3] }} transition={{ repeat: Infinity, duration: 1, delay: 0.2 }} className="w-1.5 h-1.5 bg-blue-400 rounded-full" />
-                      <motion.div animate={{ opacity: [0.3, 1, 0.3] }} transition={{ repeat: Infinity, duration: 1, delay: 0.4 }} className="w-1.5 h-1.5 bg-blue-400 rounded-full" />
+                    <div style={{ background: 'rgba(255, 255, 255, 0.05)', padding: '12px', borderRadius: '12px', borderTopLeftRadius: '0', border: '1px solid rgba(255, 255, 255, 0.05)', display: 'flex', gap: '4px', alignItems: 'center' }}>
+                      <motion.div animate={{ opacity: [0.3, 1, 0.3] }} transition={{ repeat: Infinity, duration: 1 }} style={{ width: '6px', height: '6px', backgroundColor: '#1E90FF', borderRadius: '50%' }} />
+                      <motion.div animate={{ opacity: [0.3, 1, 0.3] }} transition={{ repeat: Infinity, duration: 1, delay: 0.2 }} style={{ width: '6px', height: '6px', backgroundColor: '#1E90FF', borderRadius: '50%' }} />
+                      <motion.div animate={{ opacity: [0.3, 1, 0.3] }} transition={{ repeat: Infinity, duration: 1, delay: 0.4 }} style={{ width: '6px', height: '6px', backgroundColor: '#1E90FF', borderRadius: '50%' }} />
                     </div>
                   </div>
                 </div>
@@ -146,34 +168,55 @@ export default function ChatBot() {
             </div>
 
             {/* Input */}
-            <div className="p-4 border-t border-white/10">
-              <div className="relative">
+            <div style={{ padding: '16px', borderTop: '1px solid rgba(255, 255, 255, 0.1)' }}>
+              <div style={{ position: 'relative' }}>
                 <input
                   type="text"
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && handleSend()}
                   placeholder="Pregunta sobre Juan..."
-                  className="w-100 bg-white/5 border border-white/10 rounded-xl py-3 pl-4 pr-12 text-sm text-white focus:outline-none focus:border-blue-500/50 transition-colors placeholder:text-slate-500"
+                  style={{
+                    width: '100%',
+                    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                    borderRadius: '12px',
+                    padding: '12px 48px 12px 16px',
+                    fontSize: '14px',
+                    color: 'white',
+                    outline: 'none',
+                    transition: 'border-color 0.2s',
+                    boxSizing: 'border-box'
+                  }}
                 />
                 <button
                   onClick={handleSend}
                   disabled={!input.trim() || isLoading}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 p-2 text-blue-500 hover:text-blue-400 disabled:text-slate-600 transition-colors"
+                  style={{
+                    position: 'absolute',
+                    right: '8px',
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    background: 'none',
+                    border: 'none',
+                    padding: '8px',
+                    color: !input.trim() || isLoading ? '#475569' : '#1E90FF',
+                    cursor: !input.trim() || isLoading ? 'default' : 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}
                 >
                   <Send size={18} />
                 </button>
               </div>
-              <p className="text-[9px] text-slate-500 mt-2 text-center">IA de alto rendimiento para perfiles IT/OT · OpenRouter API</p>
+              <p style={{ fontSize: '9px', color: '#64748b', marginTop: '8px', textAlign: 'center' }}>
+                IA para perfiles IT/OT · OpenRouter API
+              </p>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
-      <style jsx global>{`
-        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 10px; }
-      `}</style>
     </div>
   )
 }
