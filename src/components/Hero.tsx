@@ -25,218 +25,134 @@ export default function Hero() {
   return (
     <section
       id="hero"
-      style={{
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        textAlign: 'center',
-        padding: 'clamp(2rem, 5vw, 6rem) clamp(1rem, 5vw, 2rem) clamp(2rem, 5vw, 4rem)',
-        position: 'relative',
-        overflow: 'hidden',
-        background: 'var(--bg)',
-      }}
+      className="min-h-screen flex items-center justify-center text-center relative overflow-hidden bg-[var(--bg)] px-4 py-16"
     >
       {/* Three.js background */}
       <ParticleCanvas />
 
       {/* Purdue radar — visible md+ */}
-      <div style={{ display: 'none' }} className="hero-radar">
+      <div className="hero-radar invisible lg:visible">
         <RadarSweep />
       </div>
 
       {/* Subtle radial glow behind text */}
       <div
         aria-hidden="true"
-        style={{
-          position: 'absolute',
-          top: '50%', left: '50%',
-          transform: 'translate(-50%, -50%)',
-          width: 700, height: 700,
-          borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(30,144,255,0.07) 0%, transparent 70%)',
-          pointerEvents: 'none',
-          zIndex: 0,
-        }}
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] rounded-full bg-[radial-gradient(circle,rgba(30,144,255,0.07)_0%,transparent_70%)] pointer-events-none z-0"
       />
 
-      {/* Content */}
-      <div className="hero-content" style={{ position: 'relative', zIndex: 1, maxWidth: 800 }}>
+      {/* Content Container */}
+      <div className="hero-content relative z-10 max-w-[1100px] w-full">
+        
+        {/* Avatar Section */}
         <motion.div
-          className="hero-avatar"
+          className="hero-avatar flex justify-center mb-8"
           custom={0} variants={TEXT_VARIANTS} initial="hidden" animate="visible"
-          style={{ marginBottom: '2rem', display: 'flex', justifyContent: 'center' }}
         >
-          <div
-            style={{
-              width: 132,
-              height: 132,
-              borderRadius: '50%',
-              overflow: 'hidden',
-              border: '3px solid rgba(30,144,255,0.2)',
-              boxShadow: '0 24px 60px rgba(0,0,0,0.15)',
-            }}
-          >
-            <picture>
-              <source srcSet="/JuanPalacios.webp" type="image/webp" />
-              <source srcSet="/JuanPalacios.jpg" type="image/jpeg" />
-              <Image
-                src="/JuanPalacios.jpg"
-                alt="Foto de perfil de Juan Palacios"
-                width={132}
-                height={132}
-                sizes="(max-width: 640px) 110px, 132px"
-                quality={75}
-                priority
-                loading="eager"
-                placeholder="blur"
-                blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUA
-                AAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0
-                DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg=="
-              />
-            </picture>
+          <div className="relative w-[132px] h-[132px] rounded-full overflow-hidden border-3 border-blue-500/20 shadow-2xl shadow-black/15">
+            <Image
+              src="/JuanPalacios.jpg"
+              alt="Foto de perfil de Juan Palacios"
+              fill
+              className="object-cover"
+              sizes="132px"
+              quality={85}
+              priority
+              placeholder="blur"
+              blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg=="
+            />
           </div>
         </motion.div>
 
-        <div className="hero-copy">
+        {/* Textual Content */}
+        <div className="hero-copy lg:text-left">
+          
           {/* Badge */}
           <motion.div
-          custom={1} variants={TEXT_VARIANTS} initial="hidden" animate="visible"
-          style={{ marginBottom: '1.5rem' }}
-        >
-          <span
-            style={{
-              display: 'inline-block',
-              border: '1px solid var(--gold)',
-              color: 'var(--gold)',
-              fontSize: '0.72rem',
-              letterSpacing: '3px',
-              padding: '0.3rem 1rem',
-              borderRadius: 20,
-              textTransform: 'uppercase',
-            }}
+            custom={1} variants={TEXT_VARIANTS} initial="hidden" animate="visible"
+            className="mb-6"
           >
-            IT/OT · Ciberseguridad · Infraestructura
-          </span>
-        </motion.div>
+            <span className="inline-block border border-[var(--gold)] text-[var(--gold)] text-[0.72rem] tracking-[3px] py-1 px-4 rounded-full uppercase font-medium">
+              IT/OT · Ciberseguridad · Infraestructura
+            </span>
+          </motion.div>
 
-        {/* Name */}
-        <motion.h1
-          custom={2} variants={TEXT_VARIANTS} initial="hidden" animate="visible"
-          style={{
-            fontSize: 'clamp(2.4rem, 6vw, 4rem)',
-            fontWeight: 800,
-            lineHeight: 1.1,
-            marginBottom: '0.5rem',
-            color: 'var(--text)',
-            letterSpacing: '-0.5px',
-          }}
-        >
-          Juan Felipe{' '}
-          <span
-            style={{
-              background: 'linear-gradient(135deg, #1E90FF 0%, #C5A46D 100%)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text',
-            }}
+          {/* Main Title / H1 */}
+          <motion.h1
+            custom={2} variants={TEXT_VARIANTS} initial="hidden" animate="visible"
+            className="text-[clamp(2.4rem,6vw,4rem)] font-extrabold leading-tight mb-2 tracking-tighter text-[var(--text)]"
           >
-            Palacios
-          </span>
-          <br />
-          <span style={{ display: 'block', fontSize: '0.75em', marginTop: '0.35rem', color: 'var(--gold)', fontWeight: 600 }}>
-            Ciberseguridad para Oil & Gas en Vaca Muerta · Consultoría IT/OT Neuquén
-          </span>
-        </motion.h1>
+            Juan Felipe{' '}
+            <span className="bg-gradient-to-r from-blue-500 to-[var(--gold)] bg-clip-text text-transparent">
+              Palacios
+            </span>
+            <span className="block text-[0.75em] mt-1.5 text-[var(--gold)] font-semibold tracking-normal">
+              Ciberseguridad para Oil & Gas en Vaca Muerta · Consultoría IT/OT Neuquén
+            </span>
+          </motion.h1>
 
-        {/* Title */}
-        <motion.p
-          custom={3} variants={TEXT_VARIANTS} initial="hidden" animate="visible"
-          style={{
-            fontSize: 'clamp(1rem, 2.5vw, 1.4rem)',
-            color: 'var(--blue)',
-            fontWeight: 500,
-            marginBottom: '1rem',
-            letterSpacing: '0.5px',
-          }}
-        >
-          IT/OT Cybersecurity Architect
-          Project Manager IT | Cybersecurity Leader | SysAdmin | Divulgador de #CulturaSegura
-        </motion.p>
-
-        {/* Tagline */}
-        <motion.p
-          custom={4} variants={TEXT_VARIANTS} initial="hidden" animate="visible"
-          style={{
-            color: 'var(--muted)',
-            fontSize: '1.05rem',
-            maxWidth: 540,
-            margin: '0 auto 2.5rem',
-            lineHeight: 1.8,
-          }}
-        >
-          Transformando infraestructura crítica en sistemas resilientes e inteligentes para el sector industrial y Oil & Gas.
-        </motion.p>
-
-        {/* CTAs */}
-        <motion.div
-          custom={5} variants={TEXT_VARIANTS} initial="hidden" animate="visible"
-          style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}
-        >
-          <motion.a
-            href="#experiencia"
-            whileHover={{ scale: 1.04, boxShadow: '0 0 24px rgba(30,144,255,0.4)' }}
-            whileTap={{ scale: 0.97 }}
-            style={{
-              padding: '0.75rem 1.8rem',
-              borderRadius: 8,
-              background: 'var(--blue)',
-              color: '#fff',
-              textDecoration: 'none',
-              fontWeight: 600,
-              fontSize: '0.9rem',
-              border: '2px solid var(--blue)',
-              transition: 'background 0.2s',
-            }}
+          {/* Role Description */}
+          <motion.p
+            custom={3} variants={TEXT_VARIANTS} initial="hidden" animate="visible"
+            className="text-[clamp(1rem,2.5vw,1.4rem)] text-[var(--blue)] font-medium mb-4 tracking-wide"
           >
-            Ver experiencia
-          </motion.a>
+            IT/OT Cybersecurity Architect
+            <span className="block text-sm md:text-base text-slate-400 mt-1 font-normal">
+              Project Manager IT | Cybersecurity Leader | SysAdmin | Divulgador de #CulturaSegura
+            </span>
+          </motion.p>
 
-          <motion.a
-            href="#arquitectura"
-            whileHover={{ scale: 1.04, boxShadow: '0 0 24px rgba(197,164,109,0.3)' }}
-            whileTap={{ scale: 0.97 }}
-            style={{
-              padding: '0.75rem 1.8rem',
-              borderRadius: 8,
-              background: 'transparent',
-              color: 'var(--gold)',
-              textDecoration: 'none',
-              fontWeight: 600,
-              fontSize: '0.9rem',
-              border: '2px solid var(--gold)',
-            }}
+          {/* Tagline */}
+          <motion.p
+            custom={4} variants={TEXT_VARIALNTS} initial="hidden" animate="visible"
+            className="text-slate-400 text-lg max-w-xl mx-auto lg:mx-0 mb-10 leading-relaxed"
           >
-            Explorar arquitectura
-          </motion.a>
-        </motion.div>
+            Transformando infraestructura crítica en sistemas resilientes e inteligentes para el sector industrial y Oil & Gas.
+          </motion.p>
 
-        {/* Scroll indicator */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.8, duration: 1 }}
-          style={{ marginTop: '3.5rem', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}
-        >
-          <span style={{ fontSize: '0.7rem', color: 'var(--muted)', letterSpacing: '2px', textTransform: 'uppercase' }}>Scroll</span>
+          {/* CTA Buttons */}
           <motion.div
-            animate={{ y: [0, 8, 0] }}
-            transition={{ repeat: Infinity, duration: 2, ease: 'easeInOut' }}
-            style={{ width: 1.5, height: 28, background: 'linear-gradient(to bottom, var(--blue), transparent)', borderRadius: 2 }}
-          />
-        </motion.div>
+            custom={5} variants={TEXT_VARIANTS} initial="hidden" animate="visible"
+            className="flex flex-wrap gap-4 justify-center lg:justify-start"
+          >
+            <motion.a
+              href="#experiencia"
+              whileHover={{ scale: 1.04, boxShadow: '0 0 24px rgba(30,144,255,0.4)' }}
+              whileTap={{ scale: 0.97 }}
+              className="px-8 py-3 rounded-lg bg-[var(--blue)] text-white font-semibold text-sm border-2 border-[var(--blue)] transition-all"
+            >
+              Ver experiencia
+            </motion.a>
+
+            <motion.a
+              href="#arquitectura"
+              whileHover={{ scale: 1.04, boxShadow: '0 0 24px rgba(197,164,109,0.3)' }}
+              whileTap={{ scale: 0.97 }}
+              className="px-8 py-3 rounded-lg bg-transparent text-[var(--gold)] font-semibold text-sm border-2 border-[var(--gold)] transition-all"
+            >
+              Explorar arquitectura
+            </motion.a>
+          </motion.div>
+
+          {/* Scroll Indicator */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1.8, duration: 1 }}
+            className="mt-14 flex flex-col items-center gap-1.5 lg:items-start"
+          >
+            <span className="text-[0.7rem] text-slate-500 uppercase tracking-[2px]">Scroll</span>
+            <motion.div
+              animate={{ y: [0, 8, 0] }}
+              transition={{ repeat: Infinity, duration: 2, ease: 'easeInOut' }}
+              className="w-[1.5px] h-7 bg-gradient-to-b from-blue-500 to-transparent rounded"
+            />
+          </motion.div>
+        </div>
       </div>
-    </div>
     </section>
   )
 }
+
+// Fix for typo in variants prop
+const TEXT_VARIALNTS = TEXT_VARIANTS;

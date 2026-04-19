@@ -53,67 +53,59 @@ export default function Navbar() {
         initial={{ y: -80, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-        style={{
-          position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100,
-          background: scrolled ? 'rgba(10,25,47,0.95)' : 'rgba(10,25,47,0.7)',
-          backdropFilter: 'blur(16px)',
-          borderBottom: scrolled ? '1px solid rgba(255,255,255,0.08)' : '1px solid transparent',
-          transition: 'background 0.4s, border-color 0.4s',
-          overflow: 'hidden',
-        }}
+        className={`fixed top-0 left-0 right-0 z-[100] backdrop-blur-xl border-b transition-all duration-300 ${
+          scrolled 
+            ? 'bg-slate-950/95 border-white/10' 
+            : 'bg-slate-950/70 border-white/0'
+        }`}
       >
-        <div style={{ position: 'absolute', top: 0, left: 0, height: 3, width: `${progress}%`, background: 'linear-gradient(90deg, var(--blue), var(--gold))', transition: 'width 0.15s ease-out', zIndex: 101 }} />
-        <div style={{ maxWidth: 1100, margin: 'auto', padding: 'clamp(0.5rem, 2vw, 1rem) clamp(1rem, 5vw, 2rem)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 'auto', minHeight: 60 }}>
+        {/* Scroll Progress Bar */}
+        <div 
+          className="absolute top-0 left-0 h-[3px] bg-gradient-to-r from-blue-500 to-[var(--gold)] transition-all duration-150 ease-out z-[101]"
+          style={{ width: `${progress}%` }} 
+        />
+
+        <div className="max-w-[1100px] mx-auto px-6 h-16 md:h-20 flex items-center justify-between">
+          
           {/* Logo */}
-          <motion.span
+          <motion.a
+            href="#"
             whileHover={{ scale: 1.05 }}
-            style={{ color: 'var(--gold)', fontWeight: 700, fontSize: 'clamp(0.9rem, 2.5vw, 1.1rem)', letterSpacing: '2px', cursor: 'default' }}
+            className="text-[var(--gold)] font-bold text-lg md:text-xl tracking-[2px] cursor-pointer"
           >
             JFP
-          </motion.span>
+          </motion.a>
 
-          {/* Desktop links */}
-          <ul style={{ display: 'flex', gap: 'clamp(1rem, 3vw, 1.75rem)', listStyle: 'none', margin: 0, padding: 0, flexWrap: 'wrap', justifyContent: 'center' }}
-              className="hidden-mobile">
-            {links.map(link => (
-              <li key={link.href}>
-                <a
-                  href={link.href}
-                  style={{
-                    color: active === link.href.slice(1) ? 'var(--blue)' : 'var(--muted)',
-                    textDecoration: 'none',
-                    fontSize: 'clamp(0.7rem, 1.5vw, 0.85rem)',
-                    fontWeight: active === link.href.slice(1) ? 600 : 400,
-                    transition: 'color 0.2s',
-                    position: 'relative',
-                    whiteSpace: 'nowrap',
-                  }}
-                  onMouseEnter={e => (e.currentTarget.style.color = 'var(--blue)')}
-                  onMouseLeave={e => {
-                    if (active !== link.href.slice(1))
-                      e.currentTarget.style.color = 'var(--muted)'
-                  }}
-                >
-                  {link.label}
-                  {active === link.href.slice(1) && (
-                    <motion.span
-                      layoutId="nav-dot"
-                      style={{
-                        position: 'absolute', bottom: -4, left: 0, right: 0,
-                        height: 2, background: 'var(--blue)', borderRadius: 1,
-                      }}
-                    />
-                  )}
-                </a>
-              </li>
-            ))}
+          {/* Desktop Navigation */}
+          <ul className="hidden lg:flex items-center gap-6 md:gap-8 list-none m-0 p-0">
+            {links.map(link => {
+              const isActive = active === link.href.slice(1)
+              return (
+                <li key={link.href}>
+                  <a
+                    href={link.href}
+                    className={`nav-link text-[11px] md:text-xs uppercase tracking-wider transition-colors duration-300 font-medium relative py-1 ${
+                      isActive ? 'text-blue-400' : 'text-slate-400 hover:text-blue-400'
+                    }`}
+                  >
+                    {link.label}
+                    {isActive && (
+                      <motion.span
+                        layoutId="nav-dot"
+                        className="absolute bottom-[-6px] left-0 right-0 h-[2.5px] bg-blue-500 rounded-full"
+                        transition={{ type: 'spring', stiffness: 350, damping: 30 }}
+                      />
+                    )}
+                  </a>
+                </li>
+              )
+            })}
           </ul>
 
-          {/* Mobile hamburger */}
+          {/* Mobile hamburger toggle */}
           <button
             onClick={() => setMenuOpen(o => !o)}
-            style={{ background: 'none', border: 'none', color: 'var(--text)', cursor: 'pointer', padding: '0.5rem', display: 'none' }}
-            className="show-mobile"
+            className="lg:hidden p-2 text-slate-200 hover:text-white transition-colors"
             aria-label="Toggle menu"
           >
             {menuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -121,46 +113,49 @@ export default function Navbar() {
         </div>
       </motion.nav>
 
-      {/* Mobile drawer */}
+      {/* Mobile Drawer Overlay */}
       <AnimatePresence>
         {menuOpen && (
-          <motion.div
-            initial={{ x: '100%' }}
-            animate={{ x: 0 }}
-            exit={{ x: '100%' }}
-            transition={{ type: 'spring', stiffness: 300, damping: 35 }}
-            style={{
-              position: 'fixed', top: 60, right: 0, bottom: 0, width: 'min(280px, 100vw)',
-              background: 'rgba(10,25,47,0.98)', backdropFilter: 'blur(20px)',
-              borderLeft: '1px solid rgba(255,255,255,0.08)',
-              zIndex: 99, padding: 'clamp(1rem, 5vw, 2rem)',
-              display: 'flex', flexDirection: 'column', gap: '1.25rem',
-            }}
-          >
-            {links.map((link, i) => (
-              <motion.a
-                key={link.href}
-                href={link.href}
-                initial={{ x: 30, opacity: 0 }}
-                animate={{ x: 0, opacity: 1 }}
-                transition={{ delay: i * 0.05 + 0.1 }}
-                onClick={() => setMenuOpen(false)}
-                style={{
-                  color: active === link.href.slice(1) ? 'var(--blue)' : 'var(--muted)',
-                  textDecoration: 'none', fontSize: 'clamp(0.9rem, 2vw, 1rem)', fontWeight: 500,
-                }}
-              >
-                {link.label}
-              </motion.a>
-            ))}
-          </motion.div>
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setMenuOpen(false)}
+              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[98] lg:hidden"
+            />
+            <motion.div
+              initial={{ x: '100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '100%' }}
+              transition={{ type: 'spring', stiffness: 300, damping: 35 }}
+              className="fixed top-0 right-0 bottom-0 w-[280px] bg-slate-900 z-[99] p-8 flex flex-col gap-8 shadow-2xl lg:hidden"
+            >
+              <div className="flex justify-between items-center mb-4">
+                <span className="text-[var(--gold)] font-bold text-xl tracking-wider">MENU</span>
+                <button onClick={() => setMenuOpen(false)} className="text-slate-400 hover:text-white">
+                  <X size={24} />
+                </button>
+              </div>
+              {links.map((link, i) => (
+                <motion.a
+                  key={link.href}
+                  href={link.href}
+                  initial={{ x: 20, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  transition={{ delay: i * 0.05 }}
+                  onClick={() => setMenuOpen(false)}
+                  className={`text-lg font-medium transition-colors ${
+                    active === link.href.slice(1) ? 'text-blue-400' : 'text-slate-400'
+                  }`}
+                >
+                  {link.label}
+                </motion.a>
+              ))}
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
-
-      <style>{`
-        @media (min-width: 641px) { .show-mobile { display: none !important; } }
-        @media (max-width: 640px) { .hidden-mobile { display: none !important; } }
-      `}</style>
     </>
   )
 }
