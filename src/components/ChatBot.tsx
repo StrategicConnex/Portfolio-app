@@ -39,27 +39,36 @@ export default function ChatBot() {
     setIsLoading(true)
 
     try {
+      console.log('Sending messages to API:', [...messages, userMessage]);
       const response = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ messages: [...messages, userMessage] }),
       })
 
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        console.error('API Response Error:', response.status, errorData);
+        throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
+      }
+
       const data = await response.json()
+      console.log('API Response Success:', data);
       
-      if (data.choices && data.choices[0]) {
+      if (data.choices && data.choices[0] && data.choices[0].message) {
         setMessages(prev => [...prev, { 
           role: 'assistant', 
           content: data.choices[0].message.content 
         }])
       } else {
-        throw new Error('Invalid response from API')
+        console.error('Invalid API response format:', data);
+        throw new Error('Invalid response from API');
       }
-    } catch (error) {
-      console.error('Chat error:', error)
+    } catch (error: any) {
+      console.error('Chat error detail:', error);
       setMessages(prev => [...prev, { 
         role: 'assistant', 
-        content: 'Lo siento, hubo un problema al procesar tu solicitud. Por favor, intenta de nuevo.' 
+        content: `Mantenimiento de Sistema: ${error.message || 'Error desconocido'}. Por favor, verifica tu conexión o intenta más tarde.` 
       }])
     } finally {
       setIsLoading(false)

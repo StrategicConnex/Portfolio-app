@@ -2,7 +2,20 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(req: NextRequest) {
   try {
-    const { messages } = await req.json();
+    const body = await req.json();
+    const { messages } = body;
+
+    if (!messages || !Array.isArray(messages)) {
+      console.error('Mensajes no encontrados en el body:', body);
+      return NextResponse.json({ error: 'Messages are required and must be an array' }, { status: 400 });
+    }
+
+    if (!process.env.OPENROUTER_API_KEY) {
+      console.error('OPENROUTER_API_KEY no está configurada');
+      return NextResponse.json({ error: 'API Key missing' }, { status: 500 });
+    }
+
+    console.log('Enviando solicitud a OpenRouter...');
 
     const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
       method: 'POST',
@@ -48,10 +61,16 @@ REGLAS DE COMPORTAMIENTO:
       }),
     });
 
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error(`Error de OpenRouter (${response.status}):`, errorText);
+      return NextResponse.json({ error: `OpenRouter API error: ${response.status}` }, { status: response.status });
+    }
+
     const data = await response.json();
     return NextResponse.json(data);
   } catch (error) {
     console.error('Error in chat API:', error);
-    return NextResponse.json({ error: 'Failed to fetch from OpenRouter' }, { status: 500 });
+    return NextResponse.json({ error: 'Internal server error during chat processing' }, { status: 500 });
   }
 }
