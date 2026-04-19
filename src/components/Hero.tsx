@@ -80,13 +80,13 @@ export default function Hero() {
           {/* Main Title / H1 */}
           <motion.h1
             custom={2} variants={TEXT_VARIANTS} initial="hidden" animate="visible"
-            className="text-[clamp(2.4rem,6vw,4rem)] font-extrabold leading-tight mb-2 tracking-tighter text-[var(--text)]"
+            className="text-[clamp(1.8rem,5vw,3.2rem)] font-extrabold leading-tight mb-2 tracking-tighter text-[var(--text)]"
           >
             Juan Felipe{' '}
             <span className="bg-gradient-to-r from-blue-500 to-[var(--gold)] bg-clip-text text-transparent">
               Palacios
             </span>
-            <span className="block text-[0.75em] mt-1.5 text-[var(--gold)] font-semibold tracking-normal">
+            <span className="block text-[0.6em] mt-2 text-[var(--gold)] font-medium tracking-wide uppercase opacity-90">
               Ciberseguridad para Oil & Gas en Vaca Muerta · Consultoría IT/OT Neuquén
             </span>
           </motion.h1>
@@ -94,10 +94,10 @@ export default function Hero() {
           {/* Role Description */}
           <motion.p
             custom={3} variants={TEXT_VARIANTS} initial="hidden" animate="visible"
-            className="text-[clamp(1rem,2.5vw,1.4rem)] text-[var(--blue)] font-medium mb-4 tracking-wide"
+            className="text-[clamp(0.9rem,1.8vw,1.15rem)] text-[var(--blue)] font-medium mb-4 tracking-wide"
           >
             IT/OT Cybersecurity Architect
-            <span className="block text-sm md:text-base text-slate-400 mt-1 font-normal">
+            <span className="block text-xs md:text-sm text-slate-400 mt-2 font-normal max-w-2xl opacity-80">
               Project Manager IT | Cybersecurity Leader | SysAdmin | Divulgador de #CulturaSegura
             </span>
           </motion.p>
@@ -105,7 +105,7 @@ export default function Hero() {
           {/* Tagline */}
           <motion.p
             custom={4} variants={TEXT_VARIALNTS} initial="hidden" animate="visible"
-            className="text-slate-400 text-lg max-w-xl mx-auto lg:mx-0 mb-10 leading-relaxed"
+            className="text-slate-400 text-sm md:text-base max-w-xl mx-auto lg:mx-0 mb-10 leading-relaxed font-light"
           >
             Transformando infraestructura crítica en sistemas resilientes e inteligentes para el sector industrial y Oil & Gas.
           </motion.p>
