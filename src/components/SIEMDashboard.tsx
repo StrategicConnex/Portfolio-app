@@ -33,7 +33,7 @@ const MitigationTooltip = memo(({ m }: { m: NonNullable<LogLine['mitigation']> }
     animate={{ opacity: 1, y: 0, scale: 1 }}
     exit={{ opacity: 0, scale: 0.95 }}
     transition={{ duration: 0.18 }}
-    className="absolute bottom-[calc(100%+8px)] left-0 z-50 min-w-[320px] max-w-[400px] p-3 rounded-lg border border-red-500/40 bg-[#0A1628] shadow-[0_0_24px_rgba(239,68,68,0.15)] pointer-events-none"
+    className="absolute bottom-[calc(100%+8px)] left-0 z-50 w-[min(90vw,400px)] p-3 rounded-lg border border-red-500/40 bg-[#0A1628] shadow-[0_0_24px_rgba(239,68,68,0.15)] pointer-events-none"
   >
     <div className="text-[0.65rem] text-red-500 font-bold tracking-[1.5px] uppercase mb-1.5">
       ⚡ Respuesta automática
@@ -75,7 +75,7 @@ const LogScroller = memo(() => {
   }, [])
 
   return (
-    <div className="font-mono text-[0.72rem] leading-relaxed min-h-[160px]">
+    <div className="font-mono text-[10px] sm:text-[0.72rem] leading-relaxed min-h-[160px] overflow-x-auto">
       <AnimatePresence initial={false}>
         {queue.map((line) => (
           <motion.div
@@ -86,16 +86,17 @@ const LogScroller = memo(() => {
             transition={{ duration: 0.4 }}
             onMouseEnter={() => line.mitigation && setHovered(line.renderKey)}
             onMouseLeave={() => setHovered(null)}
-            className={`flex gap-2.5 p-1 px-1.5 rounded transition-colors relative cursor-${line.mitigation ? 'help' : 'default'} ${
+            onClick={() => line.mitigation && setHovered(hovered === line.renderKey ? null : line.renderKey)}
+            className={`flex gap-2 sm:gap-2.5 p-1 px-1.5 rounded transition-colors relative cursor-${line.mitigation ? 'help' : 'default'} ${
               hovered === line.renderKey ? 'bg-red-500/10' : ''
             }`}
           >
-            <span className="text-slate-500 flex-shrink-0">{line.time}</span>
-            <span style={{ color: line.color }} className="font-bold min-w-[40px] flex-shrink-0">{line.level}</span>
-            <span className="text-slate-400 flex-shrink-0 min-w-[96px]">{line.src}</span>
-            <span className="text-slate-300 flex-1">{line.msg}</span>
+            <span className="text-slate-500 flex-shrink-0 w-12">{line.time}</span>
+            <span style={{ color: line.color }} className="font-bold min-w-[35px] sm:min-w-[40px] flex-shrink-0">{line.level}</span>
+            <span className="text-slate-400 flex-shrink-0 min-w-[80px] sm:min-w-[96px] truncate">{line.src}</span>
+            <span className="text-slate-300 flex-1 min-w-[120px]">{line.msg}</span>
             {line.mitigation && (
-              <span className="text-red-500 text-[0.65rem] self-center opacity-70">
+              <span className="text-red-500 text-[9px] self-center opacity-70 hidden sm:inline">
                 hover ▸
               </span>
             )}
@@ -105,14 +106,13 @@ const LogScroller = memo(() => {
               )}
             </AnimatePresence>
           </motion.div>
-        ))}
       </AnimatePresence>
     </div>
   )
 })
 LogScroller.displayName = 'LogScroller'
 
-const ZoneBar = memo(({ zone, delay }: { zone: typeof PURDUE_ZONES[0]; delay: number }) => {
+const ZoneBar = memo(({ zone, delay }: { zone: (typeof PURDUE_ZONES)[0]; delay: number }) => {
   const ref    = useRef(null)
   const inView = useInView(ref, { once: true })
   return (

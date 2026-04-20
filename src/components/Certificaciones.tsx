@@ -25,34 +25,29 @@ export default function Certificaciones() {
       <div ref={ref} style={{ maxWidth: 1100, margin: 'auto' }}>
         <SectionHeader label="Formación" title="Certificaciones &" highlight="Educación" />
 
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(clamp(240px, 100%, 260px), 1fr))',
-          gap: 'clamp(0.6rem, 1.5vw, 0.9rem)',
-        }}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
           {certs.map((c, i) => (
             <motion.div
               key={i}
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 15 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.5, delay: i * 0.07 + 0.1 }}
+              transition={{ duration: 0.5, delay: i * 0.05 + 0.1 }}
               whileHover={{ scale: 1.02, borderColor: c.tier === 'gold' ? 'rgba(197,164,109,0.5)' : 'rgba(30,144,255,0.5)' }}
               style={{
                 background: 'var(--card)',
                 border: '1px solid var(--border)',
-                borderRadius: 10,
-                padding: 'clamp(0.7rem, 2vw, 0.9rem) clamp(0.8rem, 2vw, 1.2rem)',
+                borderRadius: 12,
+                padding: '1rem',
                 display: 'flex',
                 alignItems: 'center',
-                gap: 'clamp(0.6rem, 1.5vw, 0.8rem)',
+                gap: '0.85rem',
                 transition: 'border-color 0.2s',
-                cursor: 'default',
               }}
             >
               {/* Icon badge */}
               <div style={{
-                  width: 38,
-                  height: 38,
+                  width: 40,
+                  height: 40,
                   borderRadius: '50%',
                   background: c.tier === 'gold'
                     ? 'rgba(197,164,109,0.15)'
@@ -64,18 +59,11 @@ export default function Certificaciones() {
                   justifyContent: 'center',
                   flexShrink: 0,
                 }}>
-                  <Icon name={c.icon} label={c.text} size={22} />
+                  <Icon name={c.icon} label={c.text} size={20} />
                 </div>
 
               {/* Text */}
-              <span style={{
-                fontSize: '0.82rem',
-                color: c.tier === 'gold'
-                  ? 'var(--text)'
-                  : 'var(--muted)',
-                lineHeight: 1.45,
-                fontWeight: c.tier === 'gold' ? 500 : 400,
-              }}>
+              <span className={`text-[12px] sm:text-[13px] leading-snug ${c.tier === 'gold' ? 'text-white font-medium' : 'text-slate-400'}`}>
                 {c.text}
               </span>
             </motion.div>

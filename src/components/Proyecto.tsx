@@ -54,9 +54,7 @@ export default function Proyecto() {
   return (
     <section id="proyecto" style={{ padding: 'clamp(2rem, 5vw, 5rem) clamp(1rem, 5vw, 2rem)', background: 'var(--bg)' }}>
       <div style={{ maxWidth: 1100, margin: 'auto' }}>
-        <SectionHeader label="Proyecto freelance" title="Strategic" highlight="Connex" />
-
-        <FadeIn delay={0.1}>
+        <SectionHeader label="Proyecto freelance" title="Strategic" highlight="Connex"        <FadeIn delay={0.1}>
           <div style={{
             background: 'var(--card)',
             border: '1px solid var(--border)',
@@ -66,49 +64,46 @@ export default function Proyecto() {
             {/* Top accent bar */}
             <div style={{ height: 3, background: 'linear-gradient(90deg, var(--blue), var(--gold))' }} />
 
-            <div style={{ padding: 'clamp(1.5rem, 4vw, 2.5rem)', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'clamp(1.5rem, 4vw, 3rem)', alignItems: 'start' }}>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 p-6 sm:p-10">
               {/* Left */}
               <div>
-                <div style={{ fontSize: 'clamp(0.6rem, 1.2vw, 0.7rem)', color: 'var(--gold)', letterSpacing: '2px', textTransform: 'uppercase', marginBottom: '0.5rem', fontWeight: 700 }}>
-                  Proyecto freelance · Full Stack · Vaca Muerta
+                <div style={{ fontSize: '0.7rem', color: 'var(--gold)', letterSpacing: '2px', textTransform: 'uppercase', marginBottom: '0.5rem', fontWeight: 700 }}>
+                  Proyecto freelance · Full Stack
                 </div>
-                <h3 style={{ fontSize: 'clamp(1.4rem, 4vw, 1.8rem)', fontWeight: 800, color: 'var(--text)', marginBottom: '0.5rem', lineHeight: 1.15 }}>
-                  StrategicConnex<br />
-                  <span style={{ color: 'var(--gold)' }}>Side project freelance</span>
+                <h3 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white mb-3 leading-tight">
+                  StrategicConnex
                 </h3>
-                <p style={{ color: 'var(--muted)', fontSize: 'clamp(0.8rem, 1.8vw, 0.88rem)', lineHeight: 1.85, marginBottom: '1.25rem' }}>
-                  Trabajo freelance desarrollado y gestionado por mí como especialista IT/OT y
-                  ciberseguridad. Plataforma web de alto rendimiento para digitalizar servicios
-                  del ecosistema de Vaca Muerta, con dashboard de control documental, monitoreo
-                  de KPIs industriales e integración B2B con operadoras como
-                  <span style={{ color: 'var(--text)' }}> YPF, PAE y Vista Oil</span>.
+                <p className="text-slate-400 text-sm sm:text-base leading-relaxed mb-6">
+                  Transformación digital para el ecosistema de Vaca Muerta. Dashboard de control documental, monitoreo
+                  de KPIs industriales e integración B2B con operadoras líderes como
+                  <span className="text-white font-medium"> YPF, PAE y Vista Energy</span>.
                 </p>
 
                 {/* Highlight chips */}
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'clamp(0.4rem, 1vw, 0.6rem)', marginBottom: '1.5rem' }}>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
                   {highlights.map(h => (
                     <div key={h.label} style={{
                       background: 'rgba(30,144,255,0.05)',
                       border: '1px solid rgba(30,144,255,0.12)',
                       borderRadius: 10,
-                      padding: 'clamp(0.5rem, 1.5vw, 0.75rem) clamp(0.6rem, 1.5vw, 0.9rem)',
+                      padding: '0.75rem 1rem',
                     }}>
-                      <div style={{ marginBottom: '0.45rem' }}><Icon name={h.icon} label={h.label} size={28} /></div>
-                      <div style={{ fontSize: 'clamp(0.68rem, 1.5vw, 0.78rem)', fontWeight: 700, color: 'var(--text)', marginBottom: '0.15rem' }}>{h.label}</div>
-                      <div style={{ fontSize: 'clamp(0.65rem, 1.2vw, 0.7rem)', color: 'var(--muted)', lineHeight: 1.4 }}>{h.desc}</div>
+                      <div className="mb-2"><Icon name={h.icon} label={h.label} size={24} /></div>
+                      <div className="text-xs sm:text-sm font-bold text-white mb-1">{h.label}</div>
+                      <div className="text-[11px] sm:text-xs text-slate-500 leading-snug">{h.desc}</div>
                     </div>
                   ))}
                 </div>
 
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', marginBottom: '1.75rem' }}>
+                <div className="flex flex-wrap gap-2 mb-6">
                   {techTags.map(t => <span key={t} className="tech-tag">{t}</span>)}
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: '0.9rem', marginBottom: '1.75rem' }}>
+                <div className="grid grid-cols-3 gap-3 mb-8">
                   {metrics.map(metric => (
-                    <div key={metric.label} style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 14, padding: '1rem' }}>
-                      <div style={{ fontSize: '1.25rem', fontWeight: 800, color: metric.color, marginBottom: '0.35rem' }}>{metric.value}</div>
-                      <div style={{ fontSize: '0.75rem', color: 'var(--muted)', lineHeight: 1.5 }}>{metric.label}</div>
+                    <div key={metric.label} style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 14, padding: '0.75rem' }}>
+                      <div className="text-lg sm:text-xl font-extrabold mb-1" style={{ color: metric.color }}>{metric.value}</div>
+                      <div className="text-[10px] sm:text-xs text-slate-500 leading-tight uppercase font-bold tracking-tighter">{metric.label}</div>
                     </div>
                   ))}
                 </div>
@@ -119,32 +114,18 @@ export default function Proyecto() {
                   rel="noopener noreferrer"
                   whileHover={{ scale: 1.04, boxShadow: '0 0 28px rgba(30,144,255,0.35)' }}
                   whileTap={{ scale: 0.97 }}
-                  style={{
-                    display: 'inline-flex', alignItems: 'center', gap: '0.5rem',
-                    padding: '0.8rem 1.8rem',
-                    background: 'var(--blue)', color: '#fff',
-                    textDecoration: 'none', fontWeight: 700, fontSize: '0.88rem',
-                    borderRadius: 8, border: '2px solid var(--blue)',
-                  }}
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 bg-blue-600 text-white font-bold text-sm rounded-xl transition-all shadow-lg shadow-blue-500/20"
                 >
                   Ver proyecto en vivo <span>↗</span>
                 </motion.a>
               </div>
 
               {/* Right: Screenshot + metrics panel */}
-              <div>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.9rem', marginBottom: '1.25rem' }}>
-                  <div style={{ 
-                    background: 'linear-gradient(135deg, rgba(14,165,233,0.18), rgba(15,23,42,0.08))', 
-                    border: '1px solid rgba(255,255,255,0.08)', 
-                    borderRadius: 16, 
-                    minHeight: 180, 
-                    padding: '0.75rem',
-                    display: 'flex',
-                    flexDirection: 'column'
-                  }}>
-                    <div style={{ fontSize: '0.72rem', color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '0.6rem' }}>Captura del dashboard</div>
-                    <div style={{ flex: 1, borderRadius: 10, overflow: 'hidden', position: 'relative', border: '1px solid rgba(255,255,255,0.1)' }}>
+              <div className="space-y-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="bg-slate-800/20 border border-white/5 rounded-2xl p-3 flex flex-col h-[200px] sm:h-[180px]">
+                    <div className="text-[10px] text-slate-500 uppercase tracking-widest mb-3 font-bold">Captura Dashboard</div>
+                    <div className="flex-1 relative rounded-xl overflow-hidden grayscale hover:grayscale-0 transition-all duration-700">
                       <Image 
                         src="/proyectopersonal.jpeg" 
                         alt="Captura del dashboard estratégico" 
@@ -153,11 +134,9 @@ export default function Proyecto() {
                       />
                     </div>
                   </div>
-                  <div style={{ background: 'linear-gradient(135deg, rgba(234,179,8,0.16), rgba(15,23,42,0.08))', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 16, minHeight: 180, padding: '1rem' }}>
-                    <div style={{ fontSize: '0.72rem', color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '0.75rem' }}>Captura de control documental</div>
-                    <div style={{ flex: 1, borderRadius: 12, background: 'rgba(255,255,255,0.06)', minHeight: 80, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--muted)', fontSize: '0.85rem' }}>
-                      Panel de seguimiento B2B
-                    </div>
+                  <div className="bg-slate-800/20 border border-white/5 rounded-2xl p-4 flex flex-col justify-center items-center text-center">
+                    <div className="text-[10px] text-slate-500 uppercase tracking-widest mb-4 font-bold">Control B2B</div>
+                    <div className="text-xs text-slate-400 italic">Panel de seguimiento para operadoras de primer nivel</div>
                   </div>
                 </div>
 
@@ -165,51 +144,35 @@ export default function Proyecto() {
                   background: 'rgba(30,144,255,0.04)',
                   border: '1px solid rgba(30,144,255,0.14)',
                   borderRadius: 14,
-                  padding: '1.75rem',
-                  marginBottom: '1.25rem',
+                  padding: '1.5rem',
                 }}>
-                  <div style={{ fontSize: '0.68rem', color: 'var(--muted)', letterSpacing: '2px', textTransform: 'uppercase', marginBottom: '1.1rem' }}>
-                    Lighthouse Score
-                  </div>
+                  <div className="text-[10px] text-slate-500 uppercase tracking-widest mb-6 font-bold">Lighthouse Scores</div>
                   {scores.map((s, i) => (
                     <ScoreBar key={s.label} {...s} delay={0.3 + i * 0.1} />
                   ))}
                 </div>
 
-                <div style={{
-                  background: 'rgba(197,164,109,0.06)',
-                  border: '1px solid rgba(197,164,109,0.18)',
-                  borderRadius: 14,
-                  padding: '1.25rem 1.5rem',
-                }}>
-                  <div style={{ fontSize: '0.7rem', color: 'var(--gold)', fontWeight: 700, letterSpacing: '1px', marginBottom: '0.6rem', textTransform: 'uppercase' }}>
-                    Arquitectura técnica
+                <div className="bg-amber-500/5 border border-amber-500/20 rounded-2xl p-6">
+                  <div className="text-[10px] text-amber-500 font-bold tracking-widest uppercase mb-4">Arquitectura Técnica</div>
+                  <div className="grid grid-cols-1 gap-2">
+                    {[
+                      'Next.js 14 App Router + SSG',
+                      'Optimización Next/Image',
+                      'CI/CD pipeline en Vercel',
+                      'SEO semántico + schema',
+                      'Homologación técnica Oil & Gas',
+                    ].map(item => (
+                      <div key={item} className="text-xs text-slate-400 flex gap-2 items-start">
+                        <span className="text-amber-500">▸</span>{item}
+                      </div>
+                    ))}
                   </div>
-                  {[
-                    'Next.js 14 App Router + SSG',
-                    'Optimización Next/Image + lazy loading',
-                    'CI/CD pipeline en Vercel',
-                    'SEO semántico + schema markup',
-                    'Homologación técnica: YPF · PAE · Vista',
-                    'Dashboard KPIs industriales en tiempo real',
-                  ].map(item => (
-                    <div key={item} style={{ fontSize: '0.78rem', color: 'var(--muted)', padding: '0.2rem 0', display: 'flex', gap: '0.5rem', alignItems: 'flex-start' }}>
-                      <span style={{ color: 'var(--gold)', flexShrink: 0 }}>▸</span>{item}
-                    </div>
-                  ))}
                 </div>
               </div>
             </div>
           </div>
         </FadeIn>
       </div>
-
-      <style>{`
-        @media (max-width: 700px) {
-          #proyecto .proj-grid { grid-template-columns: 1fr !important; }
-          #proyecto .highlight-grid { grid-template-columns: 1fr !important; }
-        }
-      `}</style>
     </section>
   )
 }
