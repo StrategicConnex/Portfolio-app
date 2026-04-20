@@ -21,7 +21,6 @@ import {
   randomizeThreatCounts, 
   randomizeZones 
 } from '@/lib/utils'
-import { useSystemAlert } from '@/context/SystemAlertContext'
 
 /* ─── Types ─── */
 type LogLine = typeof LOG_LINES[0]
@@ -62,7 +61,6 @@ MitigationTooltip.displayName = 'MitigationTooltip'
 
 const LogScroller = memo(() => {
   const { t } = useLanguage()
-  const { broadcastAlert } = useSystemAlert()
   const renderKeyRef = useRef(LOG_LINES.length)
   const nextIdxRef   = useRef(6)
   const [hovered, setHovered] = useState<number | null>(null)
@@ -77,20 +75,9 @@ const LogScroller = memo(() => {
       nextIdxRef.current++
       renderKeyRef.current++
       setQueue(q => [...q.slice(1), { ...line, renderKey: rk }])
-      
-      // Broadcast if it's an ALERT level
-      if (line.level === 'ALERT') {
-        broadcastAlert({
-          id: rk,
-          level: line.level,
-          src: line.src,
-          msg: line.msg,
-          timestamp: line.time
-        })
-      }
     }, 2200)
     return () => clearInterval(id)
-  }, [broadcastAlert])
+  }, [])
 
   return (
     <div className="font-mono text-[10px] sm:text-[0.72rem] leading-relaxed min-h-[160px] overflow-x-auto">
