@@ -1,7 +1,7 @@
 'use client'
 
-import { motion } from 'framer-motion'
-import { memo, useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import React, { memo, useState, useMemo } from 'react'
 import SectionHeader from './ui/SectionHeader'
 import FadeIn from './ui/FadeIn'
 import { 
@@ -90,6 +90,12 @@ const StatusBadge = ({ status }: { status: string }) => {
 
 const AuditHub = () => {
   const [activeTab, setActiveTab] = useState<'compliance' | 'findings'>('compliance')
+  const [severityFilter, setSeverityFilter] = useState<string>('All')
+  const [expandedId, setExpandedId] = useState<string | null>(null)
+
+  const filteredFindings = useMemo(() => {
+    return AUDIT_FINDINGS.filter(f => severityFilter === 'All' || f.severity === severityFilter)
+  }, [severityFilter])
 
   return (
     <section id="audit-hub" className="py-24 sm:py-32 relative overflow-hidden">
@@ -177,40 +183,125 @@ const AuditHub = () => {
                     </div>
                   </div>
                 ) : (
-                  <div className="overflow-x-auto">
-                    <table className="w-full min-w-[700px] text-left border-separate border-spacing-y-3">
-                      <thead>
-                        <tr className="text-[0.65rem] text-slate-500 uppercase tracking-widest font-bold">
-                          <th className="px-4 pb-2">ID Reporte</th>
-                          <th className="px-4 pb-2">Severidad</th>
-                          <th className="px-4 pb-2">Estado</th>
-                          <th className="px-4 pb-2">Control OT / Activo</th>
-                          <th className="px-4 pb-2">Remediación Implementada</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {AUDIT_FINDINGS.map((finding) => (
-                          <tr key={finding.id} className="group h-16">
-                            <td className="px-4 bg-white/5 rounded-l-lg border-y border-l border-white/10 group-hover:bg-white/[0.08] transition-colors">
-                              <div className="text-[0.75rem] font-mono text-slate-400">{finding.id}</div>
-                            </td>
-                            <td className="px-4 bg-white/5 border-y border-white/10 group-hover:bg-white/[0.08] transition-colors">
-                              <SeverityBadge severity={finding.severity} />
-                            </td>
-                            <td className="px-4 bg-white/5 border-y border-white/10 group-hover:bg-white/[0.08] transition-colors">
-                              <StatusBadge status={finding.status} />
-                            </td>
-                            <td className="px-4 bg-white/5 border-y border-white/10 group-hover:bg-white/[0.08] transition-colors">
-                              <div className="text-[0.75rem] font-bold text-slate-200">{finding.control}</div>
-                              <div className="text-[0.65rem] text-slate-500 line-clamp-1 italic">{finding.description}</div>
-                            </td>
-                            <td className="px-4 bg-white/5 border-y border-r border-white/10 rounded-r-lg group-hover:bg-white/[0.08] transition-colors">
-                              <div className="text-[0.7rem] leading-relaxed text-blue-200/70 max-w-xs">{finding.remediation}</div>
-                            </td>
+                  <div className="space-y-6">
+                    {/* Filter Controls */}
+                    <div className="flex flex-wrap gap-3 items-center pb-4 border-b border-white/5">
+                      <span className="text-[0.65rem] text-slate-500 uppercase tracking-widest font-bold mr-2">Filtrar por Severidad:</span>
+                      {['All', 'High', 'Medium', 'Low'].map((s) => (
+                        <button
+                          key={s}
+                          onClick={() => setSeverityFilter(s)}
+                          className={`px-3 py-1 rounded-full text-[0.65rem] font-bold uppercase tracking-tighter transition-all border ${
+                            severityFilter === s 
+                              ? 'bg-blue-600 border-blue-500 text-white shadow-[0_0_10px_rgba(37,99,235,0.4)]' 
+                              : 'bg-white/5 border-white/10 text-slate-400 hover:bg-white/10'
+                          }`}
+                        >
+                          {s}
+                        </button>
+                      ))}
+                    </div>
+
+                    <div className="overflow-x-auto">
+                      <table className="w-full min-w-[750px] text-left border-separate border-spacing-y-2">
+                        <thead>
+                          <tr className="text-[0.65rem] text-slate-500 uppercase tracking-widest font-bold">
+                            <th className="px-4 pb-2">Reporte</th>
+                            <th className="px-4 pb-2">Severidad</th>
+                            <th className="px-4 pb-2">Estado</th>
+                            <th className="px-4 pb-2">Control / Activo</th>
+                            <th className="px-4 pb-2 text-right">Acción</th>
                           </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                        </thead>
+                        <motion.tbody layout>
+                          <AnimatePresence mode="popLayout">
+                            {filteredFindings.map((finding) => (
+                              <React.Fragment key={finding.id}>
+                                <motion.tr 
+                                  layout
+                                  initial={{ opacity: 0, y: 10 }}
+                                  animate={{ opacity: 1, y: 0 }}
+                                  exit={{ opacity: 0, scale: 0.95 }}
+                                  onClick={() => setExpandedId(expandedId === finding.id ? null : finding.id)}
+                                  className={`group cursor-pointer transition-colors ${expandedId === finding.id ? 'bg-blue-500/5' : 'hover:bg-white/5'}`}
+                                >
+                                  <td className="px-4 py-4 bg-white/5 rounded-l-lg border-y border-l border-white/10">
+                                    <div className="text-[0.7rem] font-mono text-slate-400">{finding.id}</div>
+                                  </td>
+                                  <td className="px-4 py-4 bg-white/5 border-y border-white/10">
+                                    <SeverityBadge severity={finding.severity} />
+                                  </td>
+                                  <td className="px-4 py-4 bg-white/5 border-y border-white/10">
+                                    <StatusBadge status={finding.status} />
+                                  </td>
+                                  <td className="px-4 py-4 bg-white/5 border-y border-white/10">
+                                    <div className="text-[0.75rem] font-bold text-slate-200">{finding.control}</div>
+                                    <div className="text-[0.65rem] text-slate-500 line-clamp-1 italic">{finding.description}</div>
+                                  </td>
+                                  <td className="px-4 py-4 bg-white/5 rounded-r-lg border-y border-r border-white/10 text-right">
+                                    <button className="text-[0.65rem] text-blue-400 font-bold uppercase tracking-tighter hover:text-blue-300 transition-colors">
+                                      {expandedId === finding.id ? 'Cerrar' : 'Detalles'}
+                                    </button>
+                                  </td>
+                                </motion.tr>
+
+                                {/* Expanded Detail Panel */}
+                                <AnimatePresence>
+                                  {expandedId === finding.id && (
+                                    <motion.tr
+                                      initial={{ opacity: 0, height: 0 }}
+                                      animate={{ opacity: 1, height: 'auto' }}
+                                      exit={{ opacity: 0, height: 0 }}
+                                      className="bg-blue-500/5 overflow-hidden"
+                                    >
+                                      <td colSpan={5} className="px-8 py-6 rounded-lg border-x border-b border-blue-500/20">
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                          <div className="space-y-4">
+                                            <div>
+                                              <h4 className="text-[0.65rem] text-blue-400 uppercase tracking-widest font-bold mb-2">Impacto en Negocio</h4>
+                                              <p className="text-[0.8rem] text-slate-300 leading-relaxed font-medium">
+                                                {finding.impact || 'Análisis de impacto pendiente de validación técnica por el equipo de seguridad.'}
+                                              </p>
+                                            </div>
+                                            <div>
+                                              <h4 className="text-[0.65rem] text-emerald-400 uppercase tracking-widest font-bold mb-2">Plan de Remediación</h4>
+                                              <p className="text-[0.8rem] text-slate-300 leading-relaxed">
+                                                {finding.remediation}
+                                              </p>
+                                            </div>
+                                          </div>
+                                          <div className="space-y-4">
+                                            <div className="bg-black/40 rounded-lg p-4 border border-white/5">
+                                              <h4 className="text-[0.6rem] text-slate-500 uppercase tracking-widest font-bold mb-3 flex justify-between">
+                                                Evidencia Técnica (Log)
+                                                <span className="text-blue-500 font-mono tracking-normal">{finding.timestamp}</span>
+                                              </h4>
+                                              <code className="text-[0.7rem] text-blue-200/80 font-mono leading-tight block break-all">
+                                                {finding.evidence || '> No additional log metadata captured for this entry.'}
+                                              </code>
+                                            </div>
+                                            <div className="flex gap-4 pt-2">
+                                              <div className="flex flex-col">
+                                                <span className="text-[0.6rem] text-slate-500 uppercase">Propietario</span>
+                                                <span className="text-[0.7rem] text-slate-300 font-bold">IT/OT Security Architect</span>
+                                              </div>
+                                              <div className="flex flex-col">
+                                                <span className="text-[0.6rem] text-slate-500 uppercase">Referencia</span>
+                                                <span className="text-[0.7rem] text-slate-300 font-bold">NIST-PR.AC-1</span>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </td>
+                                    </motion.tr>
+                                  )}
+                                </AnimatePresence>
+                              </React.Fragment>
+                            ))}
+                          </AnimatePresence>
+                        </motion.tbody>
+                      </table>
+                    </div>
                   </div>
                 )}
               </div>

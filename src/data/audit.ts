@@ -12,7 +12,10 @@ export const AUDIT_FINDINGS = [
     status: 'Remediated',
     control: 'Access Control (Level 2)',
     description: 'Falta de autenticación multifactor (MFA) en HMI de zona de procesos.',
-    remediation: 'Implementación de PAM con integración Duo Security para acceso a activos críticos.'
+    remediation: 'Implementación de PAM con integración Duo Security para acceso a activos críticos.',
+    impact: 'Riesgo Crítico de acceso no autorizado a sistemas de control de planta (SCADA).',
+    evidence: 'Log: Unauthenticated login attempts detected from IP 10.2.45.12 via Port 502 (Modbus).',
+    timestamp: '2024-02-15 14:30'
   },
   {
     id: 'AUD-2024-002',
@@ -20,7 +23,10 @@ export const AUDIT_FINDINGS = [
     status: 'In Progress',
     control: 'Network Segmentation',
     description: 'Reglas de firewall permisivas entre Nivel 3 y Nivel 4 (Purdue).',
-    remediation: 'Reconfiguración de IDS Inline y Micro-segmentación mediante FortiGate OT.'
+    remediation: 'Reconfiguración de IDS Inline y Micro-segmentación mediante FortiGate OT.',
+    impact: 'Movimiento lateral potencial entre redes IT y OT, exponiendo PLCs.',
+    evidence: 'Scan: ICMP traffic detected through VLAN 20 (Production) towards VLAN 1 (Corporate).',
+    timestamp: '2024-02-18 09:15'
   },
   {
     id: 'AUD-2024-003',
@@ -28,7 +34,10 @@ export const AUDIT_FINDINGS = [
     status: 'Remediated',
     control: 'Inventory Management',
     description: 'Dispositivos IoT no inventariados en VLAN de servicios generales.',
-    remediation: 'Despliegue de Claroty CTD para visibilidad pasiva de activos OT.'
+    remediation: 'Despliegue de Claroty CTD para visibilidad pasiva de activos OT.',
+    impact: 'Pérdida parcial de visibilidad en el inventario de activos no críticos.',
+    evidence: 'Packet Capture: Unknown vendor MAC addresses (RaspberryPi) broadcasting on industrial VLAN.',
+    timestamp: '2024-02-20 16:45'
   },
   {
     id: 'AUD-2024-004',
@@ -36,7 +45,10 @@ export const AUDIT_FINDINGS = [
     status: 'Planned',
     control: 'Encryption at Rest',
     description: 'Logs históricos de PLC guardados en texto plano en historiador.',
-    remediation: 'Encriptación AES-256 en base de datos de historiador y firma digital.'
+    remediation: 'Encriptación AES-256 en base de datos de historiador y firma digital.',
+    impact: 'Posible manipulación de registros históricos de producción (Data Integrity).',
+    evidence: 'Audit: /opt/historian/logs available via SSH without encrypted file system check.',
+    timestamp: '2024-02-22 11:20'
   }
 ]
 

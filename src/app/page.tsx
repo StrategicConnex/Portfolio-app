@@ -13,6 +13,7 @@ const Certificaciones = dynamic(() => import('@/components/Certificaciones'))
 const AuditHub        = dynamic(() => import('@/components/AuditHub'))
 const Proyecto        = dynamic(() => import('@/components/Proyecto'))
 const Contacto        = dynamic(() => import('@/components/Contacto'))
+const AIConsultant    = dynamic(() => import('@/components/AIConsultant'))
 const Footer          = dynamic(() => import('@/components/Footer'))
 
 export default function Home() {
@@ -32,6 +33,7 @@ export default function Home() {
         <Proyecto />
         <Contacto />
       </main>
+      <AIConsultant />
       <Footer />
     </>
   )

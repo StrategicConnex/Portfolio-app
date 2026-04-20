@@ -6,16 +6,12 @@ export async function POST(req: NextRequest) {
     const { messages } = body;
 
     if (!messages || !Array.isArray(messages)) {
-      console.error('Mensajes no encontrados en el body:', body);
-      return NextResponse.json({ error: 'Messages are required and must be an array' }, { status: 400 });
+      return NextResponse.json({ error: 'Messages are required' }, { status: 400 });
     }
 
     if (!process.env.OPENROUTER_API_KEY) {
-      console.error('OPENROUTER_API_KEY no está configurada');
       return NextResponse.json({ error: 'API Key missing' }, { status: 500 });
     }
-
-    console.log('Enviando solicitud a OpenRouter...');
 
     const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
       method: 'POST',
@@ -27,6 +23,7 @@ export async function POST(req: NextRequest) {
       },
       body: JSON.stringify({
         model: 'google/gemini-2.0-flash-001',
+        stream: true,
         messages: [
           {
             role: 'system',
@@ -49,12 +46,19 @@ INFORMACIÓN CLAVE DE JUAN:
 - Idiomas: Español (Nativo) e Inglés (Técnico/Profesional).
 - CV: Hay un botón de "Descargar CV" en el portfolio que apunta a /CV-JuanFelipePalacios.pdf.
 
+MÉTRICAS Y LOGROS TÉCNICOS (REALES):
+- MTTR (Tiempo Medio de Respuesta): Reducido a menos de 15 minutos en entornos críticos.
+- Uptime de Infraestructura: 99.9% garantizado en redes industriales y corporativas.
+- Reducción de Incidentes: -30% mes a mes mediante la implementación de reglas de SIEM (Security Onion) e IA.
+- Eficiencia Operativa: Ahorro de 10 horas semanales por personal mediante automatización (Python/PowerShell).
+- Cumplimiento (Compliance): ISO 27001 (94%), IEC 62443 (88%), NIST CSF (91%).
+
 REGLAS DE COMPORTAMIENTO:
 1. Responde en el mismo idioma que el usuario.
-2. Sé conciso pero informativo.
+2. Sé conciso pero informativo. Cuando hables de logros, usa cifras específicas.
 3. Si te preguntan algo personal que no sea profesional, responde amablemente que solo puedes hablar del perfil profesional de Juan.
 4. Si preguntan por contacto, menciona que pueden contactarlo por LinkedIn (linkedin.com/in/juanfpalacios) o usar el formulario de contacto al final de la página.
-5. Ejemplo de respuesta: "¿Juan trabajó con Next.js?" -> "Sí, Juan tiene experiencia sólida en desarrollo web con Next.js 14, habiendo desarrollado sitios visuales de alto impacto integrando también Tailwind CSS y Three.js."`
+5. Ejemplo de respuesta: "¿Cómo mejora la seguridad Juan?" -> "Mediante estrategias de automatización y SIEM, Juan ha logrado reducir el tiempo de respuesta a incidentes (MTTR) a menos de 15 minutos, además de reducir el volumen de incidentes en un 30% mensual."`
           },
           ...messages,
         ],
@@ -63,14 +67,18 @@ REGLAS DE COMPORTAMIENTO:
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error(`Error de OpenRouter (${response.status}):`, errorText);
-      return NextResponse.json({ error: `OpenRouter API error: ${response.status}` }, { status: response.status });
+      return NextResponse.json({ error: `OpenRouter error: ${response.status}` }, { status: response.status });
     }
 
-    const data = await response.json();
-    return NextResponse.json(data);
+    return new Response(response.body, {
+      headers: {
+        'Content-Type': 'text/event-stream',
+        'Cache-Control': 'no-cache',
+        'Connection': 'keep-alive',
+      },
+    });
   } catch (error) {
     console.error('Error in chat API:', error);
-    return NextResponse.json({ error: 'Internal server error during chat processing' }, { status: 500 });
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
