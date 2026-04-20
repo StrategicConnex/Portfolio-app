@@ -404,6 +404,9 @@ const translations: Record<Language, Record<string, string>> = {
 
     // Footer
     'footer.built_with': 'Construido con Next.js 14 · Framer Motion · Three.js',
+    'arquitectura.purdue.interaction': 'Haga clic y arrastre para rotar • Hover para detalles',
+    'contact.availability.active': 'DISPONIBLE PARA CONSULTORÍA',
+    'contact.availability.busy': 'OCUPADO ACTUALMENTE',
   },
   en: {
     // Nav
@@ -796,6 +799,9 @@ const translations: Record<Language, Record<string, string>> = {
 
     // Footer
     'footer.built_with': 'Built with Next.js 14 · Framer Motion · Three.js',
+    'arquitectura.purdue.interaction': 'Click and drag to rotate • Hover for details',
+    'contact.availability.active': 'AVAILABLE FOR CONSULTING',
+    'contact.availability.busy': 'CURRENTLY BUSY',
   }
 }
 

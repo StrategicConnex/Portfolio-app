@@ -1,6 +1,6 @@
 'use client'
 
-import PurdueModel2D from './PurdueModel2D'
+import PurdueModel3D from './PurdueModel3D'
 import SectionHeader from './ui/SectionHeader'
 import FadeIn from './ui/FadeIn'
 import Icon from './ui/Icon'
@@ -16,22 +16,22 @@ export default function Arquitectura() {
   const { t } = useLanguage()
 
   return (
-    <section id="arquitectura" style={{ padding: 'clamp(2rem, 5vw, 5rem) clamp(1rem, 5vw, 2rem)', background: 'var(--bg2)' }}>
-      <div style={{ maxWidth: 1100, margin: 'auto' }}>
+    <section id="arquitectura" className="py-20 px-6 bg-slate-900">
+      <div className="max-w-6xl mx-auto">
         <SectionHeader label={t('arch.label')} title={t('arch.title')} highlight={t('arch.highlight')} />
 
         <FadeIn delay={0.05}>
-          <p style={{ color: 'var(--muted)', marginBottom: '0.5rem', fontSize: 'clamp(0.85rem, 2vw, 0.92rem)', maxWidth: 620 }}>
+          <p className="text-slate-400 text-sm md:text-base max-w-2xl mb-2">
             {t('arch.interactive_desc')}
           </p>
-          <p style={{ color: 'var(--blue)', fontSize: 'clamp(0.65rem, 1.5vw, 0.72rem)', letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 600, marginBottom: '2.5rem' }}>
+          <p className="text-blue-500 text-xs md:text-sm font-bold tracking-widest uppercase mb-10">
             {t('arch.domain.ot')} · {t('arch.domain.infra')} · {t('arch.domain.security')}
           </p>
         </FadeIn>
 
-        {/* 2D Interactive Purdue Model */}
+        {/* 3D Spatial Purdue Model */}
         <FadeIn delay={0.1}>
-          <PurdueModel2D />
+          <PurdueModel3D />
         </FadeIn>
 
         {/* Domain cards below */}

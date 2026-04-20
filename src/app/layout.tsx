@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
 import { LanguageProvider } from '@/context/LanguageContext'
+import { SystemAlertProvider } from '@/context/SystemAlertContext'
 import React from 'react'
 
 const inter = Inter({
@@ -130,7 +131,9 @@ export default function RootLayout({
       </head>
       <body className={inter.className}>
         <LanguageProvider>
-          {children}
+          <SystemAlertProvider>
+            {children}
+          </SystemAlertProvider>
         </LanguageProvider>
       </body>
     </html>

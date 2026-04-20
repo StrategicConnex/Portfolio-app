@@ -4,6 +4,7 @@ import { useState, useRef, useEffect, memo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { MessageSquare, Send, X, Bot, User, Loader2 } from 'lucide-react'
 import { useLanguage } from '@/context/LanguageContext'
+import { useSystemAlert } from '@/context/SystemAlertContext'
 
 /* ─── Types ─── */
 interface Message {
@@ -13,12 +14,25 @@ interface Message {
 
 const AIConsultant = () => {
   const { t, language } = useLanguage()
+  const { lastAlert } = useSystemAlert()
   const [isOpen, setIsOpen] = useState(false)
   
   // Initial message is localized
   const [messages, setMessages] = useState<Message[]>([
     { role: 'assistant', content: t('ai.welcome') }
   ])
+
+  // React to system alerts
+  useEffect(() => {
+    if (lastAlert) {
+      const alertMsg = language === 'es' 
+        ? `⚠️ [SISTEMA] He detectado un evento crítico: "${lastAlert.msg}" desde ${lastAlert.src}. ¿Deseas que analicemos la mitigación aplicada?`
+        : `⚠️ [SYSTEM] I've detected a critical event: "${lastAlert.msg}" from ${lastAlert.src}. Would you like me to analyze the applied mitigation?`
+      
+      setMessages(prev => [...prev, { role: 'assistant', content: alertMsg }])
+      setIsOpen(true) // Open chat to show the alert
+    }
+  }, [lastAlert, language])
   
   // Update initial message when language changes if it's the only message
   useEffect(() => {
