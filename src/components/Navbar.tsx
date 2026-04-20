@@ -9,6 +9,7 @@ const links = [
   { href: '#arquitectura', label: 'Arquitectura' },
   { href: '#experiencia',  label: 'Experiencia' },
   { href: '#siem',         label: 'SIEM' },
+  { href: '#audit-hub',    label: 'Audit' },
   { href: '#stack',        label: 'Stack' },
   { href: '#proyecto',     label: 'Proyecto' },
   { href: '#contacto',     label: 'Contacto' },

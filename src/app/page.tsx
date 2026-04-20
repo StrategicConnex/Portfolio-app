@@ -10,6 +10,7 @@ const TrustBadges     = dynamic(() => import('@/components/TrustBadges'))
 const SIEMDashboard   = dynamic(() => import('@/components/SIEMDashboard'))
 const Stack           = dynamic(() => import('@/components/Stack'))
 const Certificaciones = dynamic(() => import('@/components/Certificaciones'))
+const AuditHub        = dynamic(() => import('@/components/AuditHub'))
 const Proyecto        = dynamic(() => import('@/components/Proyecto'))
 const Contacto        = dynamic(() => import('@/components/Contacto'))
 const Footer          = dynamic(() => import('@/components/Footer'))
@@ -25,6 +26,7 @@ export default function Home() {
         <Experiencia />
         <TrustBadges />
         <SIEMDashboard />
+        <AuditHub />
         <Stack />
         <Certificaciones />
         <Proyecto />
