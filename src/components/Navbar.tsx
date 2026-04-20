@@ -25,31 +25,10 @@ export default function Navbar() {
   const [progress,  setProgress]  = useState(0)
 
   useEffect(() => {
-    let ticking = false
     const onScroll = () => {
-      if (!ticking) {
-        window.requestAnimationFrame(() => {
-          const isScrolled = window.scrollY > 20
-          setScrolled(prev => prev !== isScrolled ? isScrolled : prev)
-          
-          const docHeight = document.documentElement.scrollHeight
-          const winHeight = window.innerHeight
-          const maxScroll = docHeight - winHeight
-          
-          if (maxScroll > 0) {
-            const currentProgress = (window.scrollY / maxScroll) * 100
-            setProgress(prev => {
-              // Only update if change is significant (> 0.2%) to avoid micro-renders
-              return Math.abs(prev - currentProgress) > 0.2 ? currentProgress : prev
-            })
-          } else {
-            setProgress(prev => prev !== 0 ? 0 : prev)
-          }
-          
-          ticking = false
-        })
-        ticking = true
-      }
+      setScrolled(window.scrollY > 20)
+      const maxScroll = document.documentElement.scrollHeight - window.innerHeight
+      setProgress(maxScroll > 0 ? (window.scrollY / maxScroll) * 100 : 0)
     }
     window.addEventListener('scroll', onScroll, { passive: true })
     onScroll()
@@ -61,11 +40,7 @@ export default function Navbar() {
     const ids = linkKeys.map(l => l.href.slice(1))
     const observer = new IntersectionObserver(
       entries => {
-        entries.forEach(e => { 
-          if (e.isIntersecting) {
-            setActive(prev => prev !== e.target.id ? e.target.id : prev)
-          }
-        })
+        entries.forEach(e => { if (e.isIntersecting) setActive(e.target.id) })
       },
       { rootMargin: '-40% 0px -55% 0px' }
     )
