@@ -81,16 +81,17 @@ export default function Hero() {
 
           <motion.h1
             custom={1} variants={TEXT_VARIANTS} initial="hidden" animate="visible"
-            className="text-[clamp(1.5rem,8vw,3rem)] lg:text-[clamp(2.5rem,5.5vw,4.5rem)] font-extrabold leading-[1.1] tracking-tighter text-white"
+            className="text-[clamp(1.3rem,7vw,2.5rem)] lg:text-[clamp(2.2rem,5vw,3.8rem)] font-extrabold leading-[1.1] tracking-tighter text-white"
           >
             {t('hero.title.first')}{' '}
             <span className="text-blue-500">
               {t('hero.title.last')}
             </span>
-            <span className="block text-[0.4em] sm:text-[0.45em] mt-3 sm:mt-4 text-[var(--gold)] font-medium tracking-[0.1em] sm:tracking-[0.14em] uppercase opacity-90 leading-relaxed max-w-[280px] sm:max-w-xl mx-auto lg:mx-0">
-              {t('hero.subtitle').split(' · ').map((s, i) => (
+            <span className="block text-[0.32em] sm:text-[0.38em] mt-3 sm:mt-4 text-[var(--gold)] font-medium tracking-[0.1em] sm:tracking-[0.14em] uppercase opacity-90 leading-relaxed max-w-[280px] sm:max-w-xl mx-auto lg:mx-0">
+              {t('hero.subtitle').split(' | ').map((s, i) => (
                 <React.Fragment key={i}>
-                  {s} {i === 0 && <br className="hidden sm:block" />}
+                  {s} {i < t('hero.subtitle').split(' | ').length - 1 && <span className="mx-2 opacity-50">|</span>}
+                  {i === 0 && <br className="hidden sm:block" />}
                 </React.Fragment>
               ))}
             </span>
@@ -112,7 +113,7 @@ export default function Hero() {
 
           <motion.p
             custom={4} variants={TEXT_VARIANTS} initial="hidden" animate="visible"
-            className="text-slate-400 text-[12px] sm:text-[14px] max-w-md mx-auto lg:mx-0 mb-6 sm:mb-8 leading-relaxed font-light opacity-80"
+            className="text-slate-400 text-[11px] sm:text-[13px] max-w-md mx-auto lg:mx-0 mb-6 sm:mb-8 leading-relaxed font-light opacity-80"
           >
             {t('hero.tagline')}
           </motion.p>

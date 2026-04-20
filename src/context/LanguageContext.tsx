@@ -28,7 +28,7 @@ const translations: Record<Language, Record<string, string>> = {
     // Hero
     'hero.title.first': 'Juan Felipe',
     'hero.title.last': 'Palacios',
-    'hero.subtitle': 'Ciberseguridad para Oil & Gas · Consultoría IT/OT Patagonia',
+    'hero.subtitle': 'Project Manager IT | Cybersecurity Leader | SysAdmin',
     'hero.role': 'IT/OT Cybersecurity Architect',
     'hero.tagline': 'Resiliencia digital para infraestructuras críticas y el sector de Oil & Gas.',
     'hero.cta.history': 'Historial Crítico',
@@ -420,7 +420,7 @@ const translations: Record<Language, Record<string, string>> = {
     // Hero
     'hero.title.first': 'Juan Felipe',
     'hero.title.last': 'Palacios',
-    'hero.subtitle': 'Oil & Gas Cybersecurity · Patagonia IT/OT Consulting',
+    'hero.subtitle': 'Project Manager IT | Cybersecurity Leader | SysAdmin',
     'hero.role': 'IT/OT Cybersecurity Architect',
     'hero.tagline': 'Digital resilience for critical infrastructures and the Oil & Gas sector.',
     'hero.cta.history': 'Critical History',
