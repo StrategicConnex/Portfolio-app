@@ -135,8 +135,8 @@ export default function ChatBot() {
               opacity: 1, 
               y: 0, 
               scale: 1,
-              height: isMinimized ? '70px' : '580px',
-              width: isMinimized ? '280px' : 'min(420px, 92vw)'
+              height: isMinimized ? '64px' : '520px',
+              width: isMinimized ? '260px' : 'min(380px, 90vw)'
             }}
             exit={{ opacity: 0, y: 20, scale: 0.9 }}
             style={{
