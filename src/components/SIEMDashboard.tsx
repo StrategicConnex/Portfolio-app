@@ -106,6 +106,7 @@ const LogScroller = memo(() => {
               )}
             </AnimatePresence>
           </motion.div>
+        ))}
       </AnimatePresence>
     </div>
   )

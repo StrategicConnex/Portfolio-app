@@ -54,7 +54,8 @@ export default function Proyecto() {
   return (
     <section id="proyecto" style={{ padding: 'clamp(2rem, 5vw, 5rem) clamp(1rem, 5vw, 2rem)', background: 'var(--bg)' }}>
       <div style={{ maxWidth: 1100, margin: 'auto' }}>
-        <SectionHeader label="Proyecto freelance" title="Strategic" highlight="Connex"        <FadeIn delay={0.1}>
+        <SectionHeader label="Proyecto freelance" title="Strategic" highlight="Connex" />
+        <FadeIn delay={0.1}>
           <div style={{
             background: 'var(--card)',
             border: '1px solid var(--border)',
