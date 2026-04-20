@@ -1,4 +1,10 @@
+'use client'
+
+import { useLanguage } from '@/context/LanguageContext'
+
 export default function Footer() {
+  const { t } = useLanguage()
+
   return (
     <footer
       style={{
@@ -18,7 +24,7 @@ export default function Footer() {
         {' · '}Neuquén, Argentina
       </p>
       <p style={{ marginTop: 'clamp(0.15rem, 0.5vw, 0.25rem)', opacity: 0.6 }}>
-        Construido con Next.js 14 · Framer Motion · Three.js
+        {t('footer.built_with')}
       </p>
       <p style={{ marginTop: '0.75rem', opacity: 0.72 }}>
         <a href="https://linkedin.com/in/juanfpalacios" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline', marginRight: '0.75rem' }}>LinkedIn</a>

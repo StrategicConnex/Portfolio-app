@@ -7,10 +7,12 @@ import FadeIn from './ui/FadeIn'
 import Icon from './ui/Icon'
 import { JOBS } from '@/data/experiencia'
 import { hexToRgba } from '@/lib/utils'
+import { useLanguage } from '@/context/LanguageContext'
 
 /* ─── Timeline Item Component ─── */
 
-const TimelineItem = memo(({ job, index }: { job: typeof JOBS[0]; index: number }) => {
+const TimelineItem = memo(({ job, index }: { job: any; index: number }) => {
+  const { t } = useLanguage()
   const ref    = useRef(null)
   const inView = useInView(ref, { once: true, margin: '-60px' })
 
@@ -38,11 +40,11 @@ const TimelineItem = memo(({ job, index }: { job: typeof JOBS[0]; index: number 
       <div className="flex flex-wrap items-start justify-between gap-3 mb-2">
         <div className="space-y-1">
           <div style={{ color: job.color }} className="text-[11px] font-bold tracking-[1px] uppercase">
-            {job.period}
+            {t(job.periodKey)}
           </div>
           <h3 className="text-lg md:text-xl font-extrabold text-slate-100">{job.company}</h3>
           <div style={{ color: job.color }} className="text-sm font-medium">
-            {job.role}
+            {t(job.roleKey)}
           </div>
         </div>
         
@@ -54,34 +56,34 @@ const TimelineItem = memo(({ job, index }: { job: typeof JOBS[0]; index: number 
           }}
           className="border rounded-full px-3 py-0.5 text-[10px] font-bold shrink-0 self-start mt-1"
         >
-          {job.badge}
+          {t(job.badgeKey)}
         </span>
       </div>
 
       {/* Highlights Grid */}
       <div className="flex flex-wrap gap-2 mb-4">
-        {job.achievements.map((a) => (
-          <div key={a.text} className="flex items-center gap-2.5 bg-white/5 border border-white/10 rounded-lg p-2 px-3">
-            <Icon name={a.icon} label={a.text} size={20} />
-            <span className="text-xs text-slate-200">{a.text}</span>
+        {job.achievements.map((a: any) => (
+          <div key={a.textKey} className="flex items-center gap-2.5 bg-white/5 border border-white/10 rounded-lg p-2 px-3">
+            <Icon name={a.icon} label={t(a.textKey)} size={20} />
+            <span className="text-xs text-slate-200">{t(a.textKey)}</span>
           </div>
         ))}
       </div>
 
       {/* Detail Bullets */}
       <ul className="space-y-1.5 mb-5">
-        {job.bullets.map((b, i) => (
+        {job.bullets.map((bKey: string, i: number) => (
           <li key={i} className="text-sm text-slate-400 pl-4 relative leading-relaxed">
             <span style={{ color: job.color }} className="absolute left-0">▸</span>
-            {b}
+            {t(bKey)}
           </li>
         ))}
       </ul>
 
       {/* Tech Keywords */}
       <div className="flex flex-wrap gap-1.5">
-        {job.tags.map(t => (
-          <span key={t} 
+        {job.tags.map((tag: string) => (
+          <span key={tag} 
             style={{ 
               color: job.color,
               background: hexToRgba(job.color, 0.08),
@@ -89,7 +91,7 @@ const TimelineItem = memo(({ job, index }: { job: typeof JOBS[0]; index: number 
             }}
             className="border rounded-full px-2.5 py-0.5 text-[10px] font-semibold"
           >
-            {t}
+            {tag}
           </span>
         ))}
       </div>
@@ -101,17 +103,18 @@ TimelineItem.displayName = 'TimelineItem'
 /* ─── Main Section Component ─── */
 
 export default function Experiencia() {
+  const { t } = useLanguage()
   return (
     <section id="experiencia" className="py-20 px-6 bg-slate-900">
       <div className="max-w-6xl mx-auto">
-        <SectionHeader label="Trayectoria" title="Experiencia" highlight="Laboral" />
+        <SectionHeader label={t('experience.label')} title={t('experience.title')} highlight={t('experience.highlight')} />
 
         <FadeIn delay={0.05}>
           <div className="flex flex-wrap gap-3 mb-10 md:mb-14">
             {[
-              { label: '20+ años en el sector industrial', color: '#C5A46D' },
-              { label: 'Oil & Gas · Neuquén · Argentina', color: '#1E90FF' },
-              { label: 'IT/OT · Cloud · Security · Dev', color: '#10B981' },
+              { label: t('experience.badge.years'), color: '#C5A46D' },
+              { label: t('experience.badge.location'), color: '#1E90FF' },
+              { label: t('experience.badge.tech'), color: '#10B981' },
             ].map(b => (
               <span key={b.label} 
                 style={{ 

@@ -1,12 +1,21 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
+import { LanguageProvider } from '@/context/LanguageContext'
+import React from 'react'
 
 const inter = Inter({
   subsets: ['latin'],
   variable: '--font-inter',
   display: 'swap',
 })
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: '(prefers-color-scheme: dark)', color: '#0f172a' },
+    { media: '(prefers-color-scheme: light)', color: '#ffffff' },
+  ],
+}
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://juanfpalacios.vercel.app'),
@@ -23,10 +32,6 @@ export const metadata: Metadata = {
   creator: 'Juan Felipe Palacios',
   applicationName: 'Portfolio - Juan Felipe Palacios',
   publisher: 'Juan Felipe Palacios',
-  themeColor: [
-    { media: '(prefers-color-scheme: dark)', color: '#0f172a' },
-    { media: '(prefers-color-scheme: light)', color: '#ffffff' },
-  ],
   openGraph: {
     title: 'Juan Felipe Palacios – Consultoría IT/OT Neuquén | Ciberseguridad para Oil & Gas en Vaca Muerta',
     description: 'Referente en ciberseguridad industrial y consultoría IT/OT para Oil & Gas en Neuquén y Vaca Muerta.',
@@ -108,9 +113,6 @@ const jsonLd = {
   ],
 }
 
-
-
-
 export default function RootLayout({
   children,
 }: {
@@ -119,7 +121,6 @@ export default function RootLayout({
   return (
     <html lang="es" className={inter.variable} style={{ colorScheme: 'dark' }}>
       <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
         <meta name="color-scheme" content="dark" />
         <link rel="canonical" href="https://juanfpalacios.vercel.app" />
         <script
@@ -128,9 +129,10 @@ export default function RootLayout({
         />
       </head>
       <body className={inter.className}>
-        {children}
+        <LanguageProvider>
+          {children}
+        </LanguageProvider>
       </body>
     </html>
   )
 }
-

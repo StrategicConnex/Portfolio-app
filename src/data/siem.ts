@@ -12,11 +12,10 @@ export const LOG_LINES = [
 ]
 
 export const PURDUE_ZONES = [
-  { label: 'Nivel 4 – Corporativo',   pct: 98,   color: '#10B981', events: 1204 },
-  { label: 'Nivel 3 – SCADA/DCS',     pct: 99.9, color: '#1E90FF', events: 318  },
-  { label: 'Nivel 2 – Control',        pct: 99.9, color: '#1E90FF', events: 142  },
-  { label: 'Nivel 1 – Field Devices',  pct: 97,   color: '#C5A46D', events: 87   },
-  { label: 'Nivel 0 – Sensores/OT',    pct: 100,  color: '#10B981', events: 23   },
+  { labelKey: 'siem.zone.enterprise', pct: 98,   color: '#10B981', events: 1204 },
+  { labelKey: 'siem.zone.operations', pct: 99.9, color: '#1E90FF', events: 318  },
+  { labelKey: 'siem.zone.control',    pct: 99.9, color: '#1E90FF', events: 142  },
+  { labelKey: 'siem.zone.field',      pct: 97,   color: '#C5A46D', events: 87   },
 ]
 
 export const TOP_ATTACKERS = [
@@ -51,8 +50,8 @@ export const THREAT_LEVELS = [
 ]
 
 export const OPERATIONAL_KPIS = [
-  { label: 'MTTR',     val: '< 15 min', icon: 'timer' },
-  { label: 'Uptime',   val: '99.9%',    icon: 'results' },
-  { label: 'Incid/M',  val: '−30%',     icon: 'analytics' },
-  { label: 'Automat.', val: '−10h/sem', icon: 'automation' },
+  { labelKey: 'siem.ui.mttr',   val: '< 15 min', icon: 'timer' },
+  { labelKey: 'siem.kpi.uptime', val: '99.9%',    icon: 'results' },
+  { labelKey: 'siem.kpi.blocked', val: '−30%',     icon: 'analytics' },
+  { labelKey: 'siem.kpi.alerts', val: '−10h/sem', icon: 'automation' },
 ]

@@ -1,8 +1,8 @@
 export const COMPLIANCE_MARCOS = [
-  { name: 'ISO 27001:2022', progress: 94, color: '#3B82F6', description: 'Sistema de Gestión de Seguridad de la Información (SGSI).' },
-  { name: 'IEC 62443-4-2', progress: 88, color: '#10B981', description: 'Seguridad para sistemas de control y automatización industrial (IACS).' },
-  { name: 'NIST CSF v2.0', progress: 91, color: '#6366F1', description: 'Marco de Ciberseguridad para infraestructuras críticas.' },
-  { name: 'GDPR / LGPD', progress: 100, color: '#8B5CF6', description: 'Protección de datos y privacidad industrial.' }
+  { name: 'ISO 27001:2022', progress: 94, color: '#3B82F6', descriptionKey: 'audit.marco.iso.desc' },
+  { name: 'IEC 62443-4-2', progress: 88, color: '#10B981', descriptionKey: 'audit.marco.iec.desc' },
+  { name: 'NIST CSF v2.0', progress: 91, color: '#6366F1', descriptionKey: 'audit.marco.nist.desc' },
+  { name: 'GDPR / LGPD', progress: 100, color: '#8B5CF6', descriptionKey: 'audit.marco.gdpr.desc' }
 ]
 
 export const AUDIT_FINDINGS = [
@@ -11,9 +11,9 @@ export const AUDIT_FINDINGS = [
     severity: 'High',
     status: 'Remediated',
     control: 'Access Control (Level 2)',
-    description: 'Falta de autenticación multifactor (MFA) en HMI de zona de procesos.',
-    remediation: 'Implementación de PAM con integración Duo Security para acceso a activos críticos.',
-    impact: 'Riesgo Crítico de acceso no autorizado a sistemas de control de planta (SCADA).',
+    descriptionKey: 'audit.finding.001.desc',
+    remediationKey: 'audit.finding.001.remediation',
+    impactKey: 'audit.finding.001.impact',
     evidence: 'Log: Unauthenticated login attempts detected from IP 10.2.45.12 via Port 502 (Modbus).',
     timestamp: '2024-02-15 14:30'
   },
@@ -22,9 +22,9 @@ export const AUDIT_FINDINGS = [
     severity: 'Medium',
     status: 'In Progress',
     control: 'Network Segmentation',
-    description: 'Reglas de firewall permisivas entre Nivel 3 y Nivel 4 (Purdue).',
-    remediation: 'Reconfiguración de IDS Inline y Micro-segmentación mediante FortiGate OT.',
-    impact: 'Movimiento lateral potencial entre redes IT y OT, exponiendo PLCs.',
+    descriptionKey: 'audit.finding.002.desc',
+    remediationKey: 'audit.finding.002.remediation',
+    impactKey: 'audit.finding.002.impact',
     evidence: 'Scan: ICMP traffic detected through VLAN 20 (Production) towards VLAN 1 (Corporate).',
     timestamp: '2024-02-18 09:15'
   },
@@ -33,9 +33,9 @@ export const AUDIT_FINDINGS = [
     severity: 'Low',
     status: 'Remediated',
     control: 'Inventory Management',
-    description: 'Dispositivos IoT no inventariados en VLAN de servicios generales.',
-    remediation: 'Despliegue de Claroty CTD para visibilidad pasiva de activos OT.',
-    impact: 'Pérdida parcial de visibilidad en el inventario de activos no críticos.',
+    descriptionKey: 'audit.finding.003.desc',
+    remediationKey: 'audit.finding.003.remediation',
+    impactKey: 'audit.finding.003.impact',
     evidence: 'Packet Capture: Unknown vendor MAC addresses (RaspberryPi) broadcasting on industrial VLAN.',
     timestamp: '2024-02-20 16:45'
   },
@@ -44,20 +44,20 @@ export const AUDIT_FINDINGS = [
     severity: 'Medium',
     status: 'Planned',
     control: 'Encryption at Rest',
-    description: 'Logs históricos de PLC guardados en texto plano en historiador.',
-    remediation: 'Encriptación AES-256 en base de datos de historiador y firma digital.',
-    impact: 'Posible manipulación de registros históricos de producción (Data Integrity).',
+    descriptionKey: 'audit.finding.004.desc',
+    remediationKey: 'audit.finding.004.remediation',
+    impactKey: 'audit.finding.004.impact',
     evidence: 'Audit: /opt/historian/logs available via SSH without encrypted file system check.',
     timestamp: '2024-02-22 11:20'
   }
 ]
 
 export const DOMAIN_HEALTH = [
-  { domain: 'Identificación', score: 92 },
-  { domain: 'Protección', score: 88 },
-  { domain: 'Detección', score: 95 },
-  { domain: 'Respuesta', score: 98 },
-  { domain: 'Recuperación', score: 90 }
+  { domainKey: 'audit.domain.id', score: 92 },
+  { domainKey: 'audit.domain.prot', score: 88 },
+  { domainKey: 'audit.domain.det', score: 95 },
+  { domainKey: 'audit.domain.resp', score: 98 },
+  { domainKey: 'audit.domain.rec', score: 90 }
 ]
 
 export const AUDIT_SUMMARY = {

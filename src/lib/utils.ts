@@ -2,7 +2,7 @@ export function clamp(value: number, min: number, max: number) {
   return Math.min(max, Math.max(min, value))
 }
 
-export function randomizePercentages(items: { label: string; pct: number }[]) {
+export function randomizePercentages<T extends { pct: number }>(items: T[]): T[] {
   const next = items.map(item => ({
     ...item,
     pct: clamp(item.pct + Math.round((Math.random() - 0.5) * 6), 1, 90),
@@ -14,14 +14,14 @@ export function randomizePercentages(items: { label: string; pct: number }[]) {
   })).sort((a, b) => b.pct - a.pct)
 }
 
-export function randomizeThreatCounts(items: { label: string; count: number; color: string }[]) {
+export function randomizeThreatCounts<T extends { count: number }>(items: T[]): T[] {
   return items.map(item => ({
     ...item,
     count: clamp(item.count + Math.round((Math.random() - 0.5) * 4), 0, 40),
   }))
 }
 
-export function randomizeZones(items: { label: string; pct: number; color: string; events: number }[]) {
+export function randomizeZones<T extends { pct: number; events: number }>(items: T[]): T[] {
   return items.map(item => ({
     ...item,
     pct: clamp(item.pct + Math.round((Math.random() - 0.5) * 2), 90, 100),

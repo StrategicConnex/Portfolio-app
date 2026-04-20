@@ -6,6 +6,7 @@ import Image from 'next/image'
 import SectionHeader from './ui/SectionHeader'
 import FadeIn from './ui/FadeIn'
 import Icon from './ui/Icon'
+import { useLanguage } from '@/context/LanguageContext'
 
 const metrics = [
   { num: '99.9%', label: 'Disponibilidad de red comprometida', color: 'var(--blue)', icon: 'shield', img: '/perfil_infraestructura.png' },
@@ -106,27 +107,19 @@ function MetricCard({ num, label, color, icon, img, delay }: { num: string; labe
 }
 
 export default function Perfil() {
+  const { t } = useLanguage()
+
   return (
     <section id="perfil" style={{ padding: 'clamp(2rem, 5vw, 5rem) clamp(1rem, 5vw, 2rem)', background: 'var(--bg)' }}>
       <div style={{ maxWidth: 1100, margin: 'auto' }}>
-        <SectionHeader label="Sobre mí" title="Perfil" highlight="Profesional" />
+        <SectionHeader label={t('profile.label')} title={t('profile.title')} highlight={t('profile.highlight')} />
 
         <FadeIn delay={0.1}>
           <p style={{ color: 'var(--muted)', maxWidth: 840, marginBottom: '1.4rem', fontSize: 'clamp(0.85rem, 2vw, 0.97rem)', lineHeight: 1.75 }}>
-            Profesional en Ciberseguridad y Arquitectura de Redes con{' '}
-            <span style={{ color: 'var(--text)', fontWeight: 700 }}>más de 20 años</span>{' '}
-            de trayectoria en el sector industrial. Especialista en la convergencia{' '}
-            <span style={{ color: 'var(--blue)', fontWeight: 700 }}>IT/OT</span>{' '}
-            con sólida experiencia en el diseño e implementación del{' '}
-            <span style={{ color: 'var(--blue)', fontWeight: 700 }}>Modelo Purdue</span>{' '}
-            para la protección de infraestructuras críticas en Oil &amp; Gas.
+            {t('profile.description1')}
           </p>
           <p style={{ color: 'var(--muted)', maxWidth: 840, marginBottom: '3rem', fontSize: 'clamp(0.85rem, 2vw, 0.97rem)', lineHeight: 1.75 }}>
-            Experto en defensa activa mediante{' '}
-            <span style={{ color: 'var(--text)', fontWeight: 600 }}>SIEM (Security Onion)</span>,
-            gestión de identidades (IAM) y aseguramiento de la continuidad operativa bajo los estándares{' '}
-            <span style={{ color: 'var(--gold)', fontWeight: 700 }}>IEC 62443, NIST y SOX</span>.
-            Perfil híbrido único: Infraestructura crítica + Desarrollo Full-Stack + Estrategia de Seguridad.
+            {t('profile.description2')}
           </p>
         </FadeIn>
 

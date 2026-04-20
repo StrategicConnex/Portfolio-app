@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { messages } = body;
+    const { messages, language = 'es' } = body;
 
     if (!messages || !Array.isArray(messages)) {
       return NextResponse.json({ error: 'Messages are required' }, { status: 400 });
@@ -29,6 +29,8 @@ export async function POST(req: NextRequest) {
             role: 'system',
             content: `Eres Nacho Assistant, el compañero IA de Juan Felipe Palacios. Tu objetivo es responder preguntas de visitantes de su portfolio de manera profesional, técnica y amigable.
 Juan es un Arquitecto de Ciberseguridad IT/OT con más de 20 años de experiencia en infraestructuras críticas (Oil & Gas).
+
+EL USUARIO ESTÁ NAVEGANDO EN: ${language.toUpperCase()}. Responde preferentemente en este idioma a menos que el usuario cambie de idioma.
 
 INFORMACIÓN CLAVE DE JUAN:
 - Rol Actual: Project Manager IT | Cybersecurity Leader en YPY Oilfield Services.

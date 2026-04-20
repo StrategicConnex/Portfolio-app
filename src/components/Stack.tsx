@@ -5,59 +5,61 @@ import { useRef } from 'react'
 import Image from 'next/image'
 import SectionHeader from './ui/SectionHeader'
 import Icon from './ui/Icon'
+import { useLanguage } from '@/context/LanguageContext'
 
 const categories = [
   {
     icon: 'shield',
-    cat: 'Seguridad',
-    title: 'Ciberseguridad Industrial',
+    cat: 'stack.cat.security',
+    title: 'stack.title.security',
     color: '#1E90FF',
-    tags: ['Security Onion (SIEM)', 'Firewalls', 'IAM', 'IEC 62443', 'NIST CSF', 'ISO 27001', 'SOX', 'Modelo Purdue', 'Incident Response'],
+    tags: ['stack.tag.siem', 'stack.tag.firewalls', 'stack.tag.iam', 'stack.tag.iec', 'stack.tag.nist', 'stack.tag.iso', 'stack.tag.sox', 'stack.tag.purdue', 'stack.tag.ir'],
     img: '/stack_seguridad.png',
   },
   {
     icon: 'network',
-    cat: 'Redes',
-    title: 'Infraestructura & Conectividad',
+    cat: 'stack.cat.network',
+    title: 'stack.title.network',
     color: '#3B82F6',
-    tags: ['Cisco CCNA', 'MPLS', 'MikroTik', 'VSAT', 'Riverbed WAN', 'VPN', 'Fibra Óptica', 'DNS / DHCP'],
+    tags: ['stack.tag.networks', 'stack.tag.mpls', 'stack.tag.mikrotik', 'stack.tag.vsat', 'stack.tag.wan', 'stack.tag.vpn', 'stack.tag.fiber', 'stack.tag.dns'],
     img: '/stack_redes.png',
   },
   {
     icon: 'cloud',
-    cat: 'Cloud & Virtualización',
-    title: 'Plataformas & Servidores',
+    cat: 'stack.cat.cloud',
+    title: 'stack.title.cloud',
     color: '#06B6D4',
-    tags: ['Microsoft Azure', 'AWS', 'VMware vSphere', 'ESXi', 'vCenter', 'Windows Server 2003–2022', 'Active Directory', 'Linux'],
+    tags: ['stack.tag.azure', 'stack.tag.aws', 'stack.tag.vmware', 'stack.tag.esxi', 'stack.tag.vcenter', 'stack.tag.windows', 'stack.tag.ad', 'stack.tag.linux'],
     img: '/stack_cloud.png',
   },
   {
     icon: 'automation',
-    cat: 'OT / Industrial',
-    title: 'Sistemas de Control',
+    cat: 'stack.cat.ot',
+    title: 'stack.title.ot',
     color: '#C5A46D',
-    tags: ['SCADA', 'Modbus', 'OPC UA', 'DNP3', 'Edge Computing', 'Veeam Backup', 'Control Industrial'],
+    tags: ['stack.tag.scada', 'stack.tag.modbus', 'stack.tag.opc', 'stack.tag.dnp3', 'stack.tag.edge', 'stack.tag.veeam', 'stack.tag.industrial_control'],
     img: '/stack_ot.png',
   },
   {
     icon: 'web',
-    cat: 'Desarrollo',
-    title: 'Web & Full-Stack',
+    cat: 'stack.cat.dev',
+    title: 'stack.title.dev',
     color: '#8B5CF6',
-    tags: ['Next.js 14', 'React.js', 'Tailwind CSS', 'JavaScript ES6+', 'TypeScript', 'CI/CD', 'Vercel', 'SEO Técnico'],
+    tags: ['stack.tag.nextjs', 'stack.tag.react', 'stack.tag.tailwind', 'stack.tag.js', 'stack.tag.ts', 'stack.tag.cicd', 'stack.tag.vercel', 'stack.tag.seo'],
     img: '/stack_web.png',
   },
   {
     icon: 'ai',
-    cat: 'Automatización & Datos',
-    title: 'Inteligencia Operativa',
+    cat: 'stack.cat.ai',
+    title: 'stack.title.ai',
     color: '#10B981',
-    tags: ['Python', 'Power BI', 'PowerShell', 'Dashboards KPI', 'Análisis de datos', 'Reportes automáticos'],
+    tags: ['stack.tag.python', 'stack.tag.powerbi', 'stack.tag.powershell', 'stack.tag.kpi', 'stack.tag.data_analysis', 'stack.tag.reports'],
     img: '/stack_data.png',
   },
 ]
 
 function StackCard({ item, index }: { item: typeof categories[0]; index: number }) {
+  const { t } = useLanguage()
   const ref    = useRef(null)
   const inView = useInView(ref, { once: true, margin: '-60px' })
 
@@ -87,7 +89,7 @@ function StackCard({ item, index }: { item: typeof categories[0]; index: number 
       <div style={{ position: 'absolute', inset: 0, zIndex: 0 }}>
         <Image 
           src={item.img} 
-          alt={item.title}
+          alt={t(item.title)}
           fill
           style={{ objectFit: 'cover', opacity: 0.15, filter: 'grayscale(0.5) brightness(0.6)' }}
         />
@@ -97,20 +99,20 @@ function StackCard({ item, index }: { item: typeof categories[0]; index: number 
       <div style={{ position: 'relative', zIndex: 1 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
           <div style={{ padding: '0.4rem', borderRadius: 8, background: `${item.color}15`, border: `1px solid ${item.color}33`, display: 'flex' }}>
-            <Icon name={item.icon} label={item.cat} size={20} />
+            <Icon name={item.icon} label={t(item.cat)} size={20} />
           </div>
           <div style={{ fontSize: '0.65rem', color: item.color, letterSpacing: '2px', textTransform: 'uppercase', fontWeight: 700 }}>
-            {item.cat}
+            {t(item.cat)}
           </div>
         </div>
         
         <div style={{ fontSize: '1.1rem', fontWeight: 700, color: '#fff', marginBottom: '0.75rem' }}>
-          {item.title}
+          {t(item.title)}
         </div>
 
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.35rem' }}>
-          {item.tags.map(t => (
-            <span key={t} style={{
+          {item.tags.map(tagKey => (
+            <span key={tagKey} style={{
               background: 'rgba(255,255,255,0.04)',
               color: 'rgba(255,255,255,0.7)',
               border: '1px solid rgba(255,255,255,0.1)',
@@ -119,7 +121,7 @@ function StackCard({ item, index }: { item: typeof categories[0]; index: number 
               fontSize: '0.68rem',
               fontWeight: 500,
             }}>
-              {t}
+              {t(tagKey)}
             </span>
           ))}
         </div>
@@ -142,10 +144,12 @@ function StackCard({ item, index }: { item: typeof categories[0]; index: number 
 }
 
 export default function Stack() {
+  const { t } = useLanguage()
+
   return (
     <section id="stack" style={{ padding: 'clamp(2rem, 5vw, 5rem) clamp(1rem, 5vw, 2rem)', background: 'var(--bg)' }}>
       <div style={{ maxWidth: 1100, margin: 'auto' }}>
-        <SectionHeader label="Tecnología" title="Stack" highlight="Tecnológico" />
+        <SectionHeader label={t('stack.label')} title={t('stack.title')} highlight={t('stack.highlight')} />
 
         <div style={{
           display: 'grid',

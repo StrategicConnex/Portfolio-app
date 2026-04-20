@@ -2,101 +2,102 @@
 
 import { motion, AnimatePresence } from 'framer-motion'
 import { useState, useMemo } from 'react'
-
-const levels = [
-  {
-    id: 'security',
-    title: 'Capa Superior: Seguridad & Gestión',
-    color: '#EF4444',
-    bg: '/purdue_security.png',
-    nodes: [
-      { 
-        id: 'siem', 
-        label: 'SIEM / SOC', 
-        description: 'Monitorización continua de eventos y respuesta ante incidentes.', 
-        components: ['Security Onion', 'Wazuh', 'Dashboards en Tiempo Real'],
-        connectsTo: ['firewall', 'virtual'] 
-      },
-      { 
-        id: 'nist', 
-        label: 'NIST CSF', 
-        description: 'Marco de ciberseguridad para infraestructuras críticas.', 
-        components: ['ID.AM', 'PR.AC', 'DE.AE', 'RS.RP'],
-        connectsTo: ['siem', 'grc'] 
-      },
-      { 
-        id: 'grc', 
-        label: 'Estrategia GRC', 
-        description: 'Gobierno, Riesgo y Cumplimiento normativo industrial.', 
-        components: ['ISO 27001', 'IEC 62443', 'Compliance Audits'],
-        connectsTo: ['nist'] 
-      }
-    ]
-  },
-  {
-    id: 'infra',
-    title: 'Capa Media: Infraestructura IT/OT',
-    color: '#8B5CF6',
-    bg: '/stack_cloud.png',
-    nodes: [
-      { 
-        id: 'virtual', 
-        label: 'Virtualización', 
-        description: 'Servidores vSphere para control industrial de alta disponibilidad.', 
-        components: ['ESXi Hosts', 'vCenter', 'SAN Storage', 'Veeam Backup'],
-        connectsTo: ['scada', 'idmz'] 
-      },
-      { 
-        id: 'firewall', 
-        label: 'Firewalls Industriales', 
-        description: 'Segmentación perimetral y protección de activos críticos.', 
-        components: ['Cisco ASA/FTD', 'FortiGate', 'PFSense', 'VPN IPsec'],
-        connectsTo: ['idmz', 'plc'] 
-      },
-      { 
-        id: 'idmz', 
-        label: 'Industrial DMZ', 
-        description: 'Zona desmilitarizada para intercambio seguro de datos IT/OT.', 
-        components: ['Proxy Inverso', 'Historian Front-end', 'Patch Management'],
-        connectsTo: ['siem', 'firewall'] 
-      }
-    ]
-  },
-  {
-    id: 'ot',
-    title: 'Capa Inferior: Control & Operaciones (OT)',
-    color: '#F97316',
-    bg: '/stack_ot.png',
-    nodes: [
-      { 
-        id: 'scada', 
-        label: 'SCADA / HMI', 
-        description: 'Supervisión de procesos y control de interfaz humano-máquina.', 
-        components: ['Aveva / Wonderware', 'Ignition', 'WinCC'],
-        connectsTo: ['plc'] 
-      },
-      { 
-        id: 'plc', 
-        label: 'PLC / RTU', 
-        description: 'Controladores lógicos programables y terminales remotas.', 
-        components: ['Schneider Electric', 'Rockwell Automation', 'Siemens S7'],
-        connectsTo: ['scada'] 
-      },
-      { 
-        id: 'purdue', 
-        label: 'Nivel 0-2 (Planta)', 
-        description: 'Instrumentación, sensores de campo y actuadores de proceso.', 
-        components: ['Sensores HART', 'Modbus TCP/RTU', 'DNP3'],
-        connectsTo: ['plc'] 
-      }
-    ]
-  }
-]
-
 import Image from 'next/image'
+import { useLanguage } from '@/context/LanguageContext'
 
 export default function PurdueModel2D() {
+  const { t } = useLanguage()
   const [activeNode, setActiveNode] = useState<string | null>(null)
+
+  const levels = useMemo(() => [
+    {
+      id: 'security',
+      title: 'arch.purdue.level.security',
+      color: '#EF4444',
+      bg: '/purdue_security.png',
+      nodes: [
+        { 
+          id: 'siem', 
+          label: 'arch.purdue.nodes.siem.label', 
+          description: 'arch.purdue.nodes.siem.desc', 
+          components: ['Security Onion', 'Wazuh', 'Dashboards en Tiempo Real'],
+          connectsTo: ['firewall', 'virtual'] 
+        },
+        { 
+          id: 'nist', 
+          label: 'arch.purdue.nodes.nist.label', 
+          description: 'arch.purdue.nodes.nist.desc', 
+          components: ['ID.AM', 'PR.AC', 'DE.AE', 'RS.RP'],
+          connectsTo: ['siem', 'grc'] 
+        },
+        { 
+          id: 'grc', 
+          label: 'arch.purdue.nodes.grc.label', 
+          description: 'arch.purdue.nodes.grc.desc', 
+          components: ['ISO 27001', 'IEC 62443', 'Compliance Audits'],
+          connectsTo: ['nist'] 
+        }
+      ]
+    },
+    {
+      id: 'infra',
+      title: 'arch.purdue.level.infra',
+      color: '#8B5CF6',
+      bg: '/stack_cloud.png',
+      nodes: [
+        { 
+          id: 'virtual', 
+          label: 'arch.purdue.nodes.virtual.label', 
+          description: 'arch.purdue.nodes.virtual.desc', 
+          components: ['ESXi Hosts', 'vCenter', 'SAN Storage', 'Veeam Backup'],
+          connectsTo: ['scada', 'idmz'] 
+        },
+        { 
+          id: 'firewall', 
+          label: 'arch.purdue.nodes.firewall.label', 
+          description: 'arch.purdue.nodes.firewall.desc', 
+          components: ['Cisco ASA/FTD', 'FortiGate', 'PFSense', 'VPN IPsec'],
+          connectsTo: ['idmz', 'plc'] 
+        },
+        { 
+          id: 'idmz', 
+          label: 'arch.purdue.nodes.idmz.label', 
+          description: 'arch.purdue.nodes.idmz.desc', 
+          components: ['Proxy Inverso', 'Historian Front-end', 'Patch Management'],
+          connectsTo: ['siem', 'firewall'] 
+        }
+      ]
+    },
+    {
+      id: 'ot',
+      title: 'arch.purdue.level.ot',
+      color: '#F97316',
+      bg: '/stack_ot.png',
+      nodes: [
+        { 
+          id: 'scada', 
+          label: 'arch.purdue.nodes.scada.label', 
+          description: 'arch.purdue.nodes.scada.desc', 
+          components: ['Aveva / Wonderware', 'Ignition', 'WinCC'],
+          connectsTo: ['plc'] 
+        },
+        { 
+          id: 'plc', 
+          label: 'arch.purdue.nodes.plc.label', 
+          description: 'arch.purdue.nodes.plc.desc', 
+          components: ['Schneider Electric', 'Rockwell Automation', 'Siemens S7'],
+          connectsTo: ['scada'] 
+        },
+        { 
+          id: 'purdue', 
+          label: 'arch.purdue.nodes.plant.label', 
+          description: 'arch.purdue.nodes.plant.desc', 
+          components: ['Sensores HART', 'Modbus TCP/RTU', 'DNP3'],
+          connectsTo: ['plc'] 
+        }
+      ]
+    }
+  ], [])
   
   const selectedNodeData = useMemo(() => {
     for (const level of levels) {
@@ -104,7 +105,7 @@ export default function PurdueModel2D() {
       if (node) return { ...node, color: level.color }
     }
     return null
-  }, [activeNode])
+  }, [activeNode, levels])
 
   const dependencies = selectedNodeData?.connectsTo || []
 
@@ -140,7 +141,7 @@ export default function PurdueModel2D() {
           <div style={{ position: 'absolute', inset: 0, zIndex: 0 }}>
             <Image 
               src={level.bg} 
-              alt={level.title} 
+              alt={t(level.title)} 
               fill 
               style={{ objectFit: 'cover', opacity: 0.15, filter: 'grayscale(0.5) brightness(0.4)' }} 
             />
@@ -166,7 +167,7 @@ export default function PurdueModel2D() {
                 color: level.color,
                 fontWeight: 800 
               }}>
-                {level.title}
+                {t(level.title)}
               </h4>
               <div style={{ flex: 1, height: 1, background: `linear-gradient(to right, ${level.color}44, transparent)` }} />
             </div>
@@ -203,7 +204,7 @@ export default function PurdueModel2D() {
                         fontWeight: 700, 
                         color: isActive ? '#fff' : isDependency ? level.color : 'rgba(255,255,255,0.9)',
                       }}>
-                        {node.label}
+                        {t(node.label)}
                       </div>
                       
                       {/* Sub-components expansion */}
@@ -216,7 +217,7 @@ export default function PurdueModel2D() {
                             style={{ overflow: 'hidden' }}
                           >
                             <p style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.5)', margin: '0.75rem 0', lineHeight: 1.4 }}>
-                              {node.description}
+                              {t(node.description)}
                             </p>
                             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', marginTop: '0.5rem' }}>
                               {node.components.map(comp => (

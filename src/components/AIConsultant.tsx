@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect, memo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { MessageSquare, Send, X, Bot, User, Loader2 } from 'lucide-react'
+import { useLanguage } from '@/context/LanguageContext'
 
 /* ─── Types ─── */
 interface Message {
@@ -11,10 +12,21 @@ interface Message {
 }
 
 const AIConsultant = () => {
+  const { t, language } = useLanguage()
   const [isOpen, setIsOpen] = useState(false)
+  
+  // Initial message is localized
   const [messages, setMessages] = useState<Message[]>([
-    { role: 'assistant', content: 'Hola, soy Nacho Assistant, el consultor IA de Juan. ¿En qué puedo ayudarte hoy sobre su perfil IT/OT?' }
+    { role: 'assistant', content: t('ai.welcome') }
   ])
+  
+  // Update initial message when language changes if it's the only message
+  useEffect(() => {
+    if (messages.length === 1 && messages[0].role === 'assistant') {
+      setMessages([{ role: 'assistant', content: t('ai.welcome') }])
+    }
+  }, [language, t])
+
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
@@ -39,7 +51,10 @@ const AIConsultant = () => {
       const response = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: [...messages, userMsg] })
+        body: JSON.stringify({ 
+          messages: [...messages, userMsg],
+          language: language // Pass current language to AI
+        })
       })
 
       if (!response.ok) throw new Error('API request failed')
@@ -86,7 +101,7 @@ const AIConsultant = () => {
       }
     } catch (error) {
       console.error('Chat error:', error)
-      setMessages(prev => [...prev, { role: 'assistant', content: 'Actualmente tengo problemas de conexión. Por favor, intenta de nuevo más tarde.' }])
+      setMessages(prev => [...prev, { role: 'assistant', content: t('ai.error') }])
     } finally {
       setIsLoading(false)
     }
@@ -148,14 +163,14 @@ const AIConsultant = () => {
                   <h3 className="text-xs font-bold text-white uppercase tracking-wider">Nacho Assistant</h3>
                   <div className="flex items-center gap-1.5">
                     <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                    <p className="text-[10px] text-slate-400 font-medium">Arquitecto IT/OT IA</p>
+                    <p className="text-[10px] text-slate-400 font-medium">{t('ai.subtitle')}</p>
                   </div>
                 </div>
               </div>
               <button 
                 onClick={() => setIsOpen(false)}
                 className="text-slate-500 hover:text-white transition-colors"
-                aria-label="Cerrar chat"
+                aria-label={t('ai.close')}
               >
                 <X size={18} />
               </button>
@@ -210,7 +225,7 @@ const AIConsultant = () => {
                   type="text"
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
-                  placeholder="Escribe tu consulta sobre Juan..."
+                  placeholder={t('ai.placeholder')}
                   className="flex-1 bg-transparent border-none focus:ring-0 text-[0.82rem] text-slate-200 px-2 placeholder:text-slate-600"
                 />
                 <button
@@ -222,7 +237,7 @@ const AIConsultant = () => {
                 </button>
               </form>
               <div className="mt-2 text-[0.62rem] text-center text-slate-600 font-medium">
-                Responde basado en la experiencia de Juan en IT/OT
+                {t('ai.footer')}
               </div>
             </div>
           </motion.div>

@@ -2,20 +2,23 @@
 
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Menu, X } from 'lucide-react'
+import { useLanguage } from '@/context/LanguageContext'
+import { Languages, Menu, X } from 'lucide-react'
 
-const links = [
-  { href: '#perfil',       label: 'Perfil' },
-  { href: '#arquitectura', label: 'Arquitectura' },
-  { href: '#experiencia',  label: 'Experiencia' },
-  { href: '#siem',         label: 'SIEM' },
-  { href: '#audit-hub',    label: 'Audit' },
-  { href: '#stack',        label: 'Stack' },
-  { href: '#proyecto',     label: 'Proyecto' },
-  { href: '#contacto',     label: 'Contacto' },
+const linkKeys = [
+  { href: '#perfil',       key: 'nav.profile', label: 'Perfil' },
+  { href: '#arquitectura', key: 'nav.architecture', label: 'Arquitectura' },
+  { href: '#experiencia',  key: 'nav.experience', label: 'Experiencia' },
+  { href: '#siem',         key: 'nav.siem', label: 'SIEM' },
+  { href: '#audit-hub',    key: 'nav.audit', label: 'Audit' },
+  { href: '#blog',         key: 'nav.blog', label: 'Inteligencia' },
+  { href: '#stack',        key: 'nav.stack', label: 'Stack' },
+  { href: '#proyecto',     key: 'nav.projects', label: 'Proyectos' },
+  { href: '#contacto',     key: 'nav.contact', label: 'Contacto' },
 ]
 
 export default function Navbar() {
+  const { language, setLanguage, t } = useLanguage()
   const [scrolled, setScrolled]   = useState(false)
   const [active,   setActive]     = useState('')
   const [menuOpen, setMenuOpen]   = useState(false)
@@ -34,7 +37,7 @@ export default function Navbar() {
 
   // highlight active section via IntersectionObserver
   useEffect(() => {
-    const ids = links.map(l => l.href.slice(1))
+    const ids = linkKeys.map(l => l.href.slice(1))
     const observer = new IntersectionObserver(
       entries => {
         entries.forEach(e => { if (e.isIntersecting) setActive(e.target.id) })
@@ -79,17 +82,18 @@ export default function Navbar() {
 
           {/* Desktop Navigation */}
           <ul className="hidden lg:flex items-center gap-6 md:gap-8 list-none m-0 p-0">
-            {links.map(link => {
+            {linkKeys.map(link => {
               const isActive = active === link.href.slice(1)
+              const label = t(link.key) || link.label
               return (
                 <li key={link.href}>
                   <a
                     href={link.href}
-                    className={`nav-link text-[11px] md:text-xs uppercase tracking-wider transition-colors duration-300 font-medium relative py-1 ${
+                    className={`nav-link text-[10px] uppercase tracking-wider transition-colors duration-300 font-medium relative py-1 ${
                       isActive ? 'text-blue-400' : 'text-slate-400 hover:text-blue-400'
                     }`}
                   >
-                    {link.label}
+                    {label}
                     {isActive && (
                       <motion.span
                         layoutId="nav-dot"
@@ -103,14 +107,27 @@ export default function Navbar() {
             })}
           </ul>
 
-          {/* Mobile hamburger toggle */}
-          <button
-            onClick={() => setMenuOpen(o => !o)}
-            className="lg:hidden p-2 text-slate-200 hover:text-white transition-colors"
-            aria-label="Toggle menu"
-          >
-            {menuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
+          <div className="flex items-center gap-4">
+            {/* Language Switcher */}
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => setLanguage(language === 'es' ? 'en' : 'es')}
+              className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-xs font-bold text-slate-300 hover:bg-white/10 hover:text-white transition-all group"
+            >
+              <Languages size={14} className="text-blue-500 group-hover:rotate-12 transition-transform" />
+              <span className="uppercase tracking-widest">{language}</span>
+            </motion.button>
+
+            {/* Mobile hamburger toggle */}
+            <button
+              onClick={() => setMenuOpen(o => !o)}
+              className="lg:hidden p-2 text-slate-200 hover:text-white transition-colors"
+              aria-label="Toggle menu"
+            >
+              {menuOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+          </div>
         </div>
       </motion.nav>
 
@@ -138,21 +155,41 @@ export default function Navbar() {
                   <X size={24} />
                 </button>
               </div>
-              {links.map((link, i) => (
-                <motion.a
-                  key={link.href}
-                  href={link.href}
-                  initial={{ x: 20, opacity: 0 }}
-                  animate={{ x: 0, opacity: 1 }}
-                  transition={{ delay: i * 0.05 }}
-                  onClick={() => setMenuOpen(false)}
-                  className={`text-lg font-medium transition-colors ${
-                    active === link.href.slice(1) ? 'text-blue-400' : 'text-slate-400'
-                  }`}
-                >
-                  {link.label}
-                </motion.a>
-              ))}
+              <div className="flex flex-col gap-6">
+                {linkKeys.map((link, i) => (
+                  <motion.a
+                    key={link.href}
+                    href={link.href}
+                    initial={{ x: 20, opacity: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    transition={{ delay: i * 0.05 }}
+                    onClick={() => setMenuOpen(false)}
+                    className={`text-lg font-medium transition-colors ${
+                      active === link.href.slice(1) ? 'text-blue-400' : 'text-slate-400'
+                    }`}
+                  >
+                    {t(link.key) || link.label}
+                  </motion.a>
+                ))}
+              </div>
+              
+              <div className="mt-auto pt-8 border-t border-white/10">
+                <p className="text-slate-500 text-xs uppercase tracking-widest mb-4">Language / Idioma</p>
+                <div className="flex gap-4">
+                  <button 
+                    onClick={() => setLanguage('es')}
+                    className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${language === 'es' ? 'bg-blue-500 text-white' : 'bg-white/5 text-slate-400 hover:bg-white/10'}`}
+                  >
+                    ESPAÑOL
+                  </button>
+                  <button 
+                    onClick={() => setLanguage('en')}
+                    className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${language === 'en' ? 'bg-blue-500 text-white' : 'bg-white/5 text-slate-400 hover:bg-white/10'}`}
+                  >
+                    ENGLISH
+                  </button>
+                </div>
+              </div>
             </motion.div>
           </>
         )}

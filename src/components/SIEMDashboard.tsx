@@ -5,6 +5,7 @@ import { useRef, useEffect, useState, memo } from 'react'
 import SectionHeader from './ui/SectionHeader'
 import FadeIn from './ui/FadeIn'
 import Icon from './ui/Icon'
+import { useLanguage } from '@/context/LanguageContext'
 import { 
   LOG_LINES, 
   PURDUE_ZONES, 
@@ -27,35 +28,39 @@ type QueuedLine = LogLine & { renderKey: number }
 
 /* ─── Sub-components ─── */
 
-const MitigationTooltip = memo(({ m }: { m: NonNullable<LogLine['mitigation']> }) => (
-  <motion.div
-    initial={{ opacity: 0, y: -6, scale: 0.95 }}
-    animate={{ opacity: 1, y: 0, scale: 1 }}
-    exit={{ opacity: 0, scale: 0.95 }}
-    transition={{ duration: 0.18 }}
-    className="absolute bottom-[calc(100%+8px)] left-0 z-50 w-[min(90vw,400px)] p-3 rounded-lg border border-red-500/40 bg-[#0A1628] shadow-[0_0_24px_rgba(239,68,68,0.15)] pointer-events-none"
-  >
-    <div className="text-[0.65rem] text-red-500 font-bold tracking-[1.5px] uppercase mb-1.5">
-      ⚡ Respuesta automática
-    </div>
-    <div className="text-[0.78rem] text-red-300 font-semibold mb-2">
-      {m.action}
-    </div>
-    <ul className="list-none p-0 m-0 mb-1.5">
-      {m.steps.map((s, i) => (
-        <li key={i} className="text-[0.7rem] text-slate-400/85 py-0.5 pl-4 relative">
-          <span className="absolute left-0 text-emerald-500">✓</span>{s}
-        </li>
-      ))}
-    </ul>
-    <div className="text-[0.65rem] text-emerald-500 font-mono border-t border-white/10 pt-1.5">
-      MTTR: {m.time}
-    </div>
-  </motion.div>
-))
+const MitigationTooltip = memo(({ m }: { m: NonNullable<LogLine['mitigation']> }) => {
+  const { t } = useLanguage()
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: -6, scale: 0.95 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.95 }}
+      transition={{ duration: 0.18 }}
+      className="absolute bottom-[calc(100%+8px)] left-0 z-50 w-[min(90vw,400px)] p-3 rounded-lg border border-red-500/40 bg-[#0A1628] shadow-[0_0_24px_rgba(239,68,68,0.15)] pointer-events-none"
+    >
+      <div className="text-[0.65rem] text-red-500 font-bold tracking-[1.5px] uppercase mb-1.5">
+        ⚡ {t('siem.ui.auto_response')}
+      </div>
+      <div className="text-[0.78rem] text-red-300 font-semibold mb-2">
+        {m.action}
+      </div>
+      <ul className="list-none p-0 m-0 mb-1.5">
+        {m.steps.map((s, i) => (
+          <li key={i} className="text-[0.7rem] text-slate-400/85 py-0.5 pl-4 relative">
+            <span className="absolute left-0 text-emerald-500">✓</span>{s}
+          </li>
+        ))}
+      </ul>
+      <div className="text-[0.65rem] text-emerald-500 font-mono border-t border-white/10 pt-1.5">
+        {t('siem.ui.mttr')}: {m.time}
+      </div>
+    </motion.div>
+  )
+})
 MitigationTooltip.displayName = 'MitigationTooltip'
 
 const LogScroller = memo(() => {
+  const { t } = useLanguage()
   const renderKeyRef = useRef(LOG_LINES.length)
   const nextIdxRef   = useRef(6)
   const [hovered, setHovered] = useState<number | null>(null)
@@ -97,7 +102,7 @@ const LogScroller = memo(() => {
             <span className="text-slate-300 flex-1 min-w-[120px]">{line.msg}</span>
             {line.mitigation && (
               <span className="text-red-500 text-[9px] self-center opacity-70 hidden sm:inline">
-                hover ▸
+                {t('siem.hover_hint').split(' ')[0]} ▸
               </span>
             )}
             <AnimatePresence>
@@ -114,12 +119,13 @@ const LogScroller = memo(() => {
 LogScroller.displayName = 'LogScroller'
 
 const ZoneBar = memo(({ zone, delay }: { zone: (typeof PURDUE_ZONES)[0]; delay: number }) => {
+  const { t } = useLanguage()
   const ref    = useRef(null)
   const inView = useInView(ref, { once: true })
   return (
     <div ref={ref} className="mb-2">
       <div className="flex justify-between mb-1">
-        <span className="text-[0.72rem] text-slate-400">{zone.label}</span>
+        <span className="text-[0.72rem] text-slate-400">{t(zone.labelKey)}</span>
         <div className="flex gap-3">
           <span className="text-[0.7rem] text-slate-500">{zone.events} ev/h</span>
           <span style={{ color: zone.color }} className="text-[0.72rem] font-bold">{zone.pct}%</span>
@@ -142,6 +148,7 @@ ZoneBar.displayName = 'ZoneBar'
 /* ─── Main Component ─── */
 
 export default function SIEMDashboard() {
+  const { t } = useLanguage()
   const [timeStr, setTimeStr] = useState('')
   const [liveThreats, setLiveThreats] = useState(THREAT_LEVELS)
   const [liveAttackers, setLiveAttackers] = useState(TOP_ATTACKERS)
@@ -157,15 +164,15 @@ export default function SIEMDashboard() {
     setIncidentActive(true)
 
     setLiveZones(prev => prev.map(zone =>
-      zone.label === 'Nivel 1 – Field Devices'
+      zone.labelKey === 'siem.zone.field'
         ? { ...zone, pct: clamp(zone.pct - 8, 70, 98), events: zone.events + 90 }
         : zone
     ))
 
-    setLiveThreats(prev => prev.map(t => {
-      if (t.label === 'HIGH') return { ...t, count: clamp(t.count + 9, 0, 40) }
-      if (t.label === 'CRITICAL') return { ...t, count: clamp(t.count + 5, 0, 40) }
-      return t
+    setLiveThreats(prev => prev.map(threat => {
+      if (threat.label === 'HIGH') return { ...threat, count: clamp(threat.count + 9, 0, 40) }
+      if (threat.label === 'CRITICAL') return { ...threat, count: clamp(threat.count + 5, 0, 40) }
+      return threat
     }))
 
     setLiveVectors(prev => prev.map(v =>
@@ -208,14 +215,14 @@ export default function SIEMDashboard() {
   return (
     <section id="siem" className="py-20 px-6 bg-slate-950">
       <div className="max-w-6xl mx-auto">
-        <SectionHeader label="Security Operations" title="SIEM" highlight="Dashboard" />
+        <SectionHeader label={t('siem.label')} title={t('siem.title')} highlight={t('siem.highlight')} />
 
         <FadeIn delay={0.1}>
           <p className="text-slate-400 mb-2 text-sm max-w-2xl">
-            Datos de amenaza en vivo basados en el mapa de Radware Live Threat Map, intervalos de 1 hora.
+            {t('siem.map_desc')}
           </p>
           <p className="text-red-500/80 text-[10px] tracking-wider mb-8 font-mono">
-            ▸ Hover sobre un evento ALERT para ver la acción de mitigación
+            {t('siem.hover_hint')}
           </p>
         </FadeIn>
 
@@ -248,7 +255,7 @@ export default function SIEMDashboard() {
                     : 'bg-blue-600 hover:bg-blue-500 text-white shadow-lg shadow-blue-600/20 cursor-pointer active:scale-95'
                 }`}
               >
-                {incidentActive ? 'Incidente Simulado' : 'Simular Incidente'}
+                {incidentActive ? t('siem.incident_btn_active') : t('siem.incident_btn')}
               </button>
             </div>
           </div>
@@ -263,8 +270,8 @@ export default function SIEMDashboard() {
                 className="overflow-hidden"
               >
                 <div className="p-4 mb-1 bg-red-500/10 border-x border-red-500/20 flex gap-3 items-center text-xs md:text-sm text-red-200">
-                  <span className="font-bold text-red-500 shrink-0">INCIDENTE SIMULADO – Purdue Nivel 1</span>
-                  <span>Detección de anomalía en dispositivos de campo. El SOC aplica mitigación automática.</span>
+                  <span className="font-bold text-red-500 shrink-0">{t('siem.ui.incident_title')}</span>
+                  <span>{t('siem.ui.incident_desc')}</span>
                 </div>
               </motion.div>
             )}
@@ -277,7 +284,7 @@ export default function SIEMDashboard() {
             <div className="lg:col-span-2 space-y-8">
               <div>
                 <h4 className="text-[10px] text-blue-400 tracking-[2px] uppercase mb-4 font-bold">
-                  ▶ Event Stream – Nivel IT/OT
+                  ▶ {t('siem.ui.event_stream')}
                 </h4>
                 <div className="bg-black/60 border border-blue-500/10 rounded-xl p-4 overflow-visible shadow-inner backdrop-blur-md">
                   <LogScroller />
@@ -286,10 +293,10 @@ export default function SIEMDashboard() {
               
               <div>
                 <h4 className="text-[10px] text-blue-400 tracking-[2px] uppercase mb-4 font-bold">
-                  Disponibilidad por Zona Purdue
+                  {t('siem.ui.availability')}
                 </h4>
                 <div className="space-y-1">
-                  {liveZones.map((z, i) => <ZoneBar key={z.label} zone={z} delay={0.3 + i * 0.1} />)}
+                  {liveZones.map((z, i) => <ZoneBar key={z.labelKey} zone={z} delay={0.3 + i * 0.1} />)}
                 </div>
               </div>
             </div>
@@ -299,13 +306,13 @@ export default function SIEMDashboard() {
               {/* Threat Summary */}
               <div>
                 <h4 className="text-[10px] text-red-500 tracking-[2px] uppercase mb-4 font-bold">
-                  Threat Summary
+                  {t('siem.ui.threat_summary')}
                 </h4>
                 <div className="grid grid-cols-2 gap-2">
-                  {liveThreats.map(t => (
-                    <div key={t.label} className="bg-black/30 border border-white/5 rounded-lg p-3 flex justify-between items-center transition-hover hover:border-white/10">
-                      <span style={{ color: t.color }} className="text-[10px] font-bold font-mono">{t.label}</span>
-                      <span style={{ background: `${t.color}20`, color: t.color }} className="rounded-full px-2 py-0.5 text-[10px] font-black">{t.count}</span>
+                  {liveThreats.map(threat => (
+                    <div key={threat.label} className="bg-black/30 border border-white/5 rounded-lg p-3 flex justify-between items-center transition-hover hover:border-white/10">
+                      <span style={{ color: threat.color }} className="text-[10px] font-bold font-mono">{threat.label}</span>
+                      <span style={{ background: `${threat.color}20`, color: threat.color }} className="rounded-full px-2 py-0.5 text-[10px] font-black">{threat.count}</span>
                     </div>
                   ))}
                 </div>
@@ -314,13 +321,13 @@ export default function SIEMDashboard() {
               {/* KPIs */}
               <div>
                 <h4 className="text-[10px] text-amber-500 tracking-[2px] uppercase mb-4 font-bold">
-                  KPIs Operativos
+                  {t('siem.ui.operational_kpis')}
                 </h4>
                 <div className="space-y-0.5">
                   {OPERATIONAL_KPIS.map(k => (
-                    <div key={k.label} className="flex justify-between py-2 border-b border-white/5 text-xs">
+                    <div key={k.labelKey} className="flex justify-between py-2 border-b border-white/5 text-xs">
                       <span className="text-slate-400 flex items-center gap-2">
-                        <Icon name={k.icon} label={k.label} size={14} />{k.label}
+                        <Icon name={k.icon} label={t(k.labelKey)} size={14} />{t(k.labelKey)}
                       </span>
                       <span className="text-amber-500 font-bold font-mono">{k.val}</span>
                     </div>
@@ -331,9 +338,9 @@ export default function SIEMDashboard() {
               {/* Vertical Stats Lists */}
               <div className="space-y-6">
                 {[
-                  { title: 'Top Attackers', data: liveAttackers, color: 'text-blue-400' },
-                  { title: 'Top Attacked', data: liveAttacked, color: 'text-blue-400' },
-                  { title: 'Attack Vectors', data: liveVectors, color: 'text-blue-400' }
+                  { title: t('siem.ui.top_attackers'), data: liveAttackers, color: 'text-blue-400' },
+                  { title: t('siem.ui.top_attacked'), data: liveAttacked, color: 'text-blue-400' },
+                  { title: t('siem.ui.attack_vectors'), data: liveVectors, color: 'text-blue-400' }
                 ].map((stat) => (
                   <div key={stat.title}>
                     <h4 className={`text-[10px] ${stat.color} tracking-[2px] uppercase mb-3 font-bold`}>

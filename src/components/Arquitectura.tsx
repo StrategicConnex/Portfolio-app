@@ -4,25 +4,28 @@ import PurdueModel2D from './PurdueModel2D'
 import SectionHeader from './ui/SectionHeader'
 import FadeIn from './ui/FadeIn'
 import Icon from './ui/Icon'
+import { useLanguage } from '@/context/LanguageContext'
 
 const domainCards = [
-  { color: '#F97316', icon: 'industry', title: 'Capa Inferior OT', items: ['Modbus', 'DNP3', 'SCADA', 'Field Devices'] },
-  { color: '#8B5CF6', icon: 'network', title: 'Capa Media Infraestructura', items: ['Virtualización', 'Redes Cisco', 'Firewalls Industriales'] },
-  { color: '#EF4444', icon: 'shield', title: 'Capa Superior Seguridad', items: ['SIEM / SOC', 'NIST CSF', 'ISO 27001', 'Estrategia GRC'] },
+  { color: '#F97316', icon: 'industry', title: 'arch.domain.ot', items: ['Modbus', 'DNP3', 'SCADA', 'Field Devices'] },
+  { color: '#8B5CF6', icon: 'network', title: 'arch.domain.infra', items: ['arch.domain.items.virt', 'arch.domain.items.networks', 'arch.domain.items.firewalls'] },
+  { color: '#EF4444', icon: 'shield', title: 'arch.domain.security', items: ['SIEM / SOC', 'NIST CSF', 'ISO 27001', 'arch.domain.items.strategy'] },
 ]
 
 export default function Arquitectura() {
+  const { t } = useLanguage()
+
   return (
     <section id="arquitectura" style={{ padding: 'clamp(2rem, 5vw, 5rem) clamp(1rem, 5vw, 2rem)', background: 'var(--bg2)' }}>
       <div style={{ maxWidth: 1100, margin: 'auto' }}>
-        <SectionHeader label="Visión sistémica" title="Mapa de Convergencia IT/OT" highlight="Modelo Purdue" />
+        <SectionHeader label={t('arch.label')} title={t('arch.title')} highlight={t('arch.highlight')} />
 
         <FadeIn delay={0.05}>
           <p style={{ color: 'var(--muted)', marginBottom: '0.5rem', fontSize: 'clamp(0.85rem, 2vw, 0.92rem)', maxWidth: 620 }}>
-            Mapa interactivo de convergencia IT/OT inspirado en el Modelo Purdue. Haz clic en un nodo para resaltar dependencias entre SCADA, firewalls industriales, virtualización y controles de seguridad.
+            {t('arch.interactive_desc')}
           </p>
           <p style={{ color: 'var(--blue)', fontSize: 'clamp(0.65rem, 1.5vw, 0.72rem)', letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 600, marginBottom: '2.5rem' }}>
-            Capa Inferior OT · Capa Media Infraestructura · Capa Superior Seguridad
+            {t('arch.domain.ot')} · {t('arch.domain.infra')} · {t('arch.domain.security')}
           </p>
         </FadeIn>
 
@@ -88,7 +91,7 @@ export default function Arquitectura() {
                     <div style={{
                       marginBottom: '0.15rem',
                     }}>
-                      <Icon name={card.icon} label={card.title} size={36} />
+                      <Icon name={card.icon} label={t(card.title)} size={36} />
                     </div>
                     <span style={{
                       fontSize: '0.85rem',
@@ -98,7 +101,7 @@ export default function Arquitectura() {
                       letterSpacing: '0.8px',
                       textShadow: `0 0 10px ${card.color}60`,
                     }}>
-                      {card.title}
+                      {t(card.title)}
                     </span>
                   </div>
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
@@ -116,7 +119,7 @@ export default function Arquitectura() {
                         textShadow: `0 0 8px ${card.color}40`,
                         cursor: 'default',
                       }}>
-                        {item}
+                        {t(item)}
                       </span>
                     ))}
                   </div>

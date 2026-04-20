@@ -5,19 +5,20 @@ import { motion, AnimatePresence } from 'framer-motion'
 import SectionHeader from './ui/SectionHeader'
 import FadeIn from './ui/FadeIn'
 import Icon from './ui/Icon'
+import { useLanguage } from '@/context/LanguageContext'
 
 type FormState = 'idle' | 'sending' | 'sent' | 'error'
 
 const projectTypes = [
-  'Auditoría de Seguridad OT/IT',
-  'Implementación SIEM (Security Onion)',
-  'Diseño Arquitectura IT/OT (Modelo Purdue)',
-  'Infraestructura de Red – Oil & Gas',
-  'Virtualización y Cloud (Azure/VMware)',
-  'Automatización Python / Power BI',
-  'Consultoría IEC 62443 / NIST / ISO 27001',
-  'Desarrollo Web (Next.js / Full Stack)',
-  'Otro',
+  'contact.type.audit',
+  'contact.type.siem',
+  'contact.type.arch',
+  'contact.type.network',
+  'contact.type.cloud',
+  'contact.type.automation',
+  'contact.type.compliance',
+  'contact.type.dev',
+  'contact.type.other',
 ]
 
 const contactCards = [
@@ -28,6 +29,7 @@ const contactCards = [
 ]
 
 export default function Contacto() {
+  const { t } = useLanguage()
   const [form, setForm]   = useState({ name: '', email: '', company: '', type: '', message: '' })
   const [status, setStatus] = useState<FormState>('idle')
 
@@ -38,7 +40,7 @@ export default function Contacto() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setStatus('sending')
-    // Simulate async send (replace with fetch to /api/contact or Formspree)
+    // Simulate async send
     await new Promise(r => setTimeout(r, 1200))
     setStatus('sent')
   }
@@ -54,7 +56,7 @@ export default function Contacto() {
   return (
     <section id="contacto" style={{ padding: 'clamp(2rem, 5vw, 5rem) clamp(1rem, 5vw, 2rem)', background: 'var(--bg2)' }}>
       <div style={{ maxWidth: 1100, margin: 'auto' }}>
-        <SectionHeader label="Contacto" title="Trabajemos" highlight="Juntos" center />
+        <SectionHeader label={t('contact.label')} title={t('contact.title')} highlight={t('contact.highlight')} center />
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.3fr', gap: 'clamp(1.5rem, 4vw, 3rem)', alignItems: 'start' }}>
 
@@ -62,8 +64,7 @@ export default function Contacto() {
           <div>
             <FadeIn delay={0.05}>
               <p style={{ color: 'var(--muted)', fontSize: 'clamp(0.8rem, 1.8vw, 0.9rem)', lineHeight: 1.8, marginBottom: 'clamp(1rem, 3vw, 1.75rem)' }}>
-                Especializado en proyectos de alta criticidad en entornos industriales Oil &amp; Gas.
-                Disponible para consultoría, arquitectura IT/OT, ciberseguridad y liderazgo técnico.
+                {t('contact.description')}
               </p>
             </FadeIn>
 
@@ -84,7 +85,7 @@ export default function Contacto() {
                   whileHover={{ y: -2 }}
                   style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '0.85rem 1.2rem', background: 'rgba(255,215,0,0.12)', color: 'var(--text)', borderRadius: 999, fontWeight: 700, textDecoration: 'none', border: '1px solid rgba(255,215,0,0.28)' }}
                 >
-                  Descargar CV
+                  {t('contact.download_cv')}
                 </motion.a>
               </div>
             </FadeIn>
@@ -125,7 +126,7 @@ export default function Contacto() {
                 style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', background: 'rgba(34,197,94,0.07)', color: '#4ade80', border: '1px solid rgba(34,197,94,0.22)', padding: '0.5rem 1.1rem', borderRadius: 20, fontSize: '0.82rem', fontWeight: 600 }}
               >
                 <motion.div animate={{ opacity: [1, 0.3, 1] }} transition={{ repeat: Infinity, duration: 1.8 }} style={{ width: 8, height: 8, borderRadius: '50%', background: '#4ade80' }} />
-                Disponible para proyectos de alta criticidad
+                {t('contact.availability')}
               </motion.div>
             </FadeIn>
           </div>
@@ -139,26 +140,26 @@ export default function Contacto() {
                 {status === 'sent' ? (
                   <motion.div key="sent" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} style={{ textAlign: 'center', padding: '2rem 0' }}>
                     <div style={{ width: 48, height: 48, margin: '0 auto 0.75rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      <Icon name="check" label="Mensaje enviado" size={40} />
+                      <Icon name="check" label={t('contact.form.success')} size={40} />
                     </div>
-                    <h3 style={{ color: '#4ade80', marginBottom: '0.5rem' }}>¡Mensaje enviado!</h3>
-                    <p style={{ color: 'var(--muted)', fontSize: '0.88rem' }}>Respondo en menos de 24 horas hábiles.</p>
+                    <h3 style={{ color: '#4ade80', marginBottom: '0.5rem' }}>{t('contact.form.success')}</h3>
+                    <p style={{ color: 'var(--muted)', fontSize: '0.88rem' }}>{t('contact.form.success_msg')}</p>
                   </motion.div>
                 ) : (
                   <motion.form key="form" onSubmit={handleSubmit}>
-                    <h3 style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text)', marginBottom: '0.3rem' }}>Iniciar conversación</h3>
-                    <p style={{ fontSize: '0.75rem', color: 'var(--muted)', marginBottom: '1.5rem' }}>Contame sobre tu proyecto para darte una respuesta más precisa.</p>
+                    <h3 style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text)', marginBottom: '0.3rem' }}>{t('contact.form.title')}</h3>
+                    <p style={{ fontSize: '0.75rem', color: 'var(--muted)', marginBottom: '1.5rem' }}>{t('contact.form.subtitle')}</p>
 
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginBottom: '0.75rem' }}>
                       <div>
-                        <label style={{ fontSize: '0.72rem', color: 'var(--muted)', display: 'block', marginBottom: '0.3rem' }}>Nombre *</label>
-                        <input required name="name" value={form.name} onChange={handleChange} placeholder="Tu nombre" style={inputStyle}
+                        <label style={{ fontSize: '0.72rem', color: 'var(--muted)', display: 'block', marginBottom: '0.3rem' }}>{t('contact.form.name')} *</label>
+                        <input required name="name" value={form.name} onChange={handleChange} placeholder={t('contact.form.name')} style={inputStyle}
                           onFocus={e => e.currentTarget.style.borderColor = 'rgba(30,144,255,0.5)'}
                           onBlur={e => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'}
                         />
                       </div>
                       <div>
-                        <label style={{ fontSize: '0.72rem', color: 'var(--muted)', display: 'block', marginBottom: '0.3rem' }}>Email *</label>
+                        <label style={{ fontSize: '0.72rem', color: 'var(--muted)', display: 'block', marginBottom: '0.3rem' }}>{t('contact.form.email')} *</label>
                         <input required type="email" name="email" value={form.email} onChange={handleChange} placeholder="email@empresa.com" style={inputStyle}
                           onFocus={e => e.currentTarget.style.borderColor = 'rgba(30,144,255,0.5)'}
                           onBlur={e => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'}
@@ -167,7 +168,7 @@ export default function Contacto() {
                     </div>
 
                     <div style={{ marginBottom: '0.75rem' }}>
-                      <label style={{ fontSize: '0.72rem', color: 'var(--muted)', display: 'block', marginBottom: '0.3rem' }}>Empresa / Organización</label>
+                      <label style={{ fontSize: '0.72rem', color: 'var(--muted)', display: 'block', marginBottom: '0.3rem' }}>{t('contact.form.company')}</label>
                       <input name="company" value={form.company} onChange={handleChange} placeholder="YPF, PAE, Vista Oil…" style={inputStyle}
                         onFocus={e => e.currentTarget.style.borderColor = 'rgba(30,144,255,0.5)'}
                         onBlur={e => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'}
@@ -175,20 +176,20 @@ export default function Contacto() {
                     </div>
 
                     <div style={{ marginBottom: '0.75rem' }}>
-                      <label style={{ fontSize: '0.72rem', color: 'var(--muted)', display: 'block', marginBottom: '0.3rem' }}>Tipo de proyecto *</label>
+                      <label style={{ fontSize: '0.72rem', color: 'var(--muted)', display: 'block', marginBottom: '0.3rem' }}>{t('contact.form.type')}</label>
                       <select required name="type" value={form.type} onChange={handleChange}
                         style={{ ...inputStyle, appearance: 'none', cursor: 'pointer' }}
                         onFocus={e => e.currentTarget.style.borderColor = 'rgba(30,144,255,0.5)'}
                         onBlur={e => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'}
                       >
-                        <option value="" disabled>Seleccioná el tipo de proyecto…</option>
-                        {projectTypes.map(t => <option key={t} value={t}>{t}</option>)}
+                        <option value="" disabled>{t('contact.form.type.placeholder')}</option>
+                        {projectTypes.map(pt => <option key={pt} value={pt}>{t(pt)}</option>)}
                       </select>
                     </div>
 
                     <div style={{ marginBottom: '1.25rem' }}>
-                      <label style={{ fontSize: '0.72rem', color: 'var(--muted)', display: 'block', marginBottom: '0.3rem' }}>Descripción breve</label>
-                      <textarea name="message" value={form.message} onChange={handleChange} rows={3} placeholder="Contame brevemente el contexto (sector, urgencia, alcance)…"
+                      <label style={{ fontSize: '0.72rem', color: 'var(--muted)', display: 'block', marginBottom: '0.3rem' }}>{t('contact.form.message')}</label>
+                      <textarea name="message" value={form.message} onChange={handleChange} rows={3} placeholder={t('contact.form.message.placeholder')}
                         style={{ ...inputStyle, resize: 'vertical', minHeight: 80 }}
                         onFocus={e => e.currentTarget.style.borderColor = 'rgba(30,144,255,0.5)'}
                         onBlur={e => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'}
@@ -207,10 +208,10 @@ export default function Contacto() {
                         border: 'none', borderRadius: 8, cursor: status === 'sending' ? 'wait' : 'pointer',
                       }}
                     >
-                      {status === 'sending' ? 'Enviando…' : 'Enviar consulta →'}
+                      {status === 'sending' ? t('contact.form.sending') : t('contact.form.send')}
                     </motion.button>
                     <p style={{ fontSize: '0.68rem', color: 'var(--muted)', textAlign: 'center', marginTop: '0.6rem' }}>
-                      Respuesta en &lt; 24h · Sin spam · Datos confidenciales
+                      {t('contact.form.footer')}
                     </p>
                   </motion.form>
                 )}
