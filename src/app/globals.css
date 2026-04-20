@@ -211,3 +211,31 @@ body {
     grid-template-columns: 2fr 1fr;
   }
 }
+
+/* Scanline animation for technical consoles */
+@keyframes scanline {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100%); }
+}
+
+.scanline-container {
+  position: relative;
+  overflow: hidden;
+}
+
+.scanline-container::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(30, 144, 255, 0.05) 50%,
+    transparent 100%
+  );
+  animation: scanline 8s linear infinite;
+  pointer-events: none;
+  z-index: 10;
+}

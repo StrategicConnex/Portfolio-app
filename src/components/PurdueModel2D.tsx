@@ -109,19 +109,22 @@ export default function PurdueModel2D() {
   const dependencies = selectedNodeData?.connectsTo || []
 
   return (
-    <div style={{
-      width: '100%',
-      minHeight: 600,
-      background: 'rgba(0,0,0,0.4)',
-      border: '1px solid var(--border)',
-      borderRadius: 24,
-      position: 'relative',
-      overflow: 'hidden',
-      display: 'flex',
-      flexDirection: 'column',
-      gap: '1rem',
-      backdropFilter: 'blur(10px)',
-    }}>
+    <div 
+      className="scanline-container"
+      style={{
+        width: '100%',
+        minHeight: 600,
+        background: 'rgba(0,0,0,0.4)',
+        border: '1px solid var(--border)',
+        borderRadius: 24,
+        position: 'relative',
+        overflow: 'hidden',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '1rem',
+        backdropFilter: 'blur(10px)',
+      }}
+    >
       {levels.map((level, lIndex) => (
         <div key={level.id} style={{ 
           position: 'relative', 

@@ -115,7 +115,7 @@ export default function Hero() {
 
           {/* Tagline */}
           <motion.p
-            custom={4} variants={TEXT_VARIALNTS} initial="hidden" animate="visible"
+            custom={4} variants={TEXT_VARIANTS} initial="hidden" animate="visible"
             className="text-slate-400 text-[12px] sm:text-[14px] max-w-md mx-auto lg:mx-0 mb-6 sm:mb-8 leading-relaxed font-light opacity-80"
           >
             Resiliencia digital para infraestructuras críticas y el sector de Oil & Gas.
@@ -164,6 +164,3 @@ export default function Hero() {
     </section>
   )
 }
-
-// Fix for variants typo
-const TEXT_VARIALNTS = TEXT_VARIANTS

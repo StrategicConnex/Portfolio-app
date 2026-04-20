@@ -14,9 +14,9 @@ import {
 /* ─── Sub-components ─── */
 
 const StatCard = ({ label, value, color }: { label: string, value: string | number, color: string }) => (
-  <div className="bg-[#0A1628]/40 border border-white/5 rounded-lg p-3 sm:p-4 flex flex-col items-center justify-center text-center">
-    <div className="text-[0.6rem] sm:text-[0.65rem] text-slate-400 uppercase tracking-widest mb-1">{label}</div>
-    <div className="text-xl sm:text-2xl font-bold font-mono transition-all duration-300" style={{ color }}>{value}</div>
+  <div className="glass rounded-xl p-4 sm:p-5 flex flex-col items-center justify-center text-center transition-all duration-300 hover:border-white/20 hover:bg-white/[0.06] group">
+    <div className="text-[0.6rem] sm:text-[0.65rem] text-slate-500 uppercase tracking-[0.2em] mb-1.5 group-hover:text-slate-400 transition-colors font-bold">{label}</div>
+    <div className="text-2xl sm:text-3xl font-bold font-mono transition-all duration-300" style={{ color, textShadow: `0 0 20px ${color}40` }}>{value}</div>
   </div>
 )
 
@@ -124,7 +124,7 @@ const AuditHub = () => {
 
           {/* ─── Column 2: Main Console ─── */}
           <div className="xl:col-span-9 order-1 xl:order-2">
-            <div className="bg-[#070D18] border border-white/10 rounded-2xl overflow-hidden shadow-2xl backdrop-blur-xl">
+            <div className="glass scanline-container rounded-2xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)] backdrop-blur-2xl">
               
               {/* Console Header / Tabs */}
               <div className="flex border-b border-white/10 bg-white/5">
@@ -254,7 +254,7 @@ const AuditHub = () => {
                                       exit={{ opacity: 0, height: 0 }}
                                       className="bg-blue-500/5 overflow-hidden"
                                     >
-                                      <td colSpan={5} className="px-8 py-6 rounded-lg border-x border-b border-blue-500/20">
+                                      <td colSpan={5} className="px-8 py-6 rounded-lg border-x border-b border-blue-500/20 bg-blue-500/[0.03] backdrop-blur-md">
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                           <div className="space-y-4">
                                             <div>

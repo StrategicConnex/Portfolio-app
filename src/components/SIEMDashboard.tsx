@@ -221,7 +221,7 @@ export default function SIEMDashboard() {
 
         <FadeIn delay={0.15}>
           {/* Dashboard Header */}
-          <div className="bg-slate-900/90 border border-blue-500/20 shadow-lg shadow-blue-500/5 rounded-t-2xl p-4 flex flex-wrap items-center justify-between gap-4">
+          <div className="glass rounded-t-2xl p-4 flex flex-wrap items-center justify-between gap-4 border-b-0">
             <div className="flex items-center gap-2.5">
               <motion.div
                 animate={{ opacity: [1, 0.3, 1] }}
@@ -271,7 +271,7 @@ export default function SIEMDashboard() {
           </AnimatePresence>
 
           {/* Dashboard Content Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 bg-slate-900/75 border border-blue-500/15 border-t-0 rounded-b-2xl p-6 gap-6">
+          <div className="scanline-container glass rounded-b-2xl p-6 grid grid-cols-1 lg:grid-cols-3 gap-6 border-t-0 shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
             
             {/* Main Log Area */}
             <div className="lg:col-span-2 space-y-8">
@@ -279,7 +279,7 @@ export default function SIEMDashboard() {
                 <h4 className="text-[10px] text-blue-400 tracking-[2px] uppercase mb-4 font-bold">
                   ▶ Event Stream – Nivel IT/OT
                 </h4>
-                <div className="bg-black/40 border border-blue-500/10 rounded-xl p-4 overflow-visible shadow-inner">
+                <div className="bg-black/60 border border-blue-500/10 rounded-xl p-4 overflow-visible shadow-inner backdrop-blur-md">
                   <LogScroller />
                 </div>
               </div>
