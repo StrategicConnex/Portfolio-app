@@ -210,9 +210,44 @@ a:focus-visible {
   border-radius: 4px;
 }
 
-/* Animated border gradient (for hero CTA hover) */
-@keyframes border-spin {
-  0%   { background-position: 0%   50%; }
-  50%  { background-position: 100% 50%; }
-  100% { background-position: 0%   50%; }
+/* Night vision flicker effect */
+@keyframes nv-flicker {
+  0% { opacity: 0.95; }
+  5% { opacity: 0.85; }
+  10% { opacity: 0.95; }
+  15% { opacity: 0.9; }
+  25% { opacity: 0.8; }
+  30% { opacity: 1; }
+  100% { opacity: 0.98; }
+}
+
+.night-vision-card {
+  filter: grayscale(1) brightness(0.7) contrast(1.4) sepia(0.2) hue-rotate(80deg);
+  position: relative;
+  transition: all 0.5s ease;
+}
+
+.night-vision-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 1px,
+    rgba(0, 255, 65, 0.03) 1px,
+    rgba(0, 255, 65, 0.03) 2px
+  );
+  pointer-events: none;
+  z-index: 2;
+  opacity: 0.5;
+  animation: nv-flicker 4s infinite;
+}
+
+.night-vision-card:hover {
+  filter: grayscale(0) brightness(1) contrast(1) sepia(0) hue-rotate(0deg);
+}
+
+.night-vision-card:hover::before {
+  opacity: 0;
 }

@@ -84,13 +84,16 @@ export default function TrustBadges() {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(clamp(240px, 100%, 260px), 1fr))', gap: 'clamp(0.6rem, 1.5vw, 0.9rem)', marginBottom: 'clamp(2rem, 4vw, 3rem)' }}>
             {companies.map((c, i) => (
               <BadgePill key={c.name} delay={i * 0.08}>
-                <div style={{
-                  background: 'rgba(255,255,255,0.03)',
-                  border: '1px solid rgba(255,255,255,0.08)',
-                  borderRadius: 12, padding: 'clamp(0.8rem, 2vw, 1.1rem) clamp(0.9rem, 2vw, 1.3rem)',
-                  display: 'flex', gap: 'clamp(0.6rem, 1.5vw, 1rem)', alignItems: 'center',
-                  transition: 'border-color 0.2s',
-                }}>
+                <div 
+                  className="night-vision-card"
+                  style={{
+                    background: 'rgba(255,255,255,0.03)',
+                    border: '1px solid rgba(255,255,255,0.08)',
+                    borderRadius: 12, padding: 'clamp(0.8rem, 2vw, 1.1rem) clamp(0.9rem, 2vw, 1.3rem)',
+                    display: 'flex', gap: 'clamp(0.6rem, 1.5vw, 1rem)', alignItems: 'center',
+                    overflow: 'hidden'
+                  }}
+                >
                   <div style={{
                     width: 'clamp(44px, 10vw, 52px)', height: 'clamp(44px, 10vw, 52px)', borderRadius: 10, flexShrink: 0,
                     background: `rgba(${parseInt(c.color.slice(1,3),16)}, ${parseInt(c.color.slice(3,5),16)}, ${parseInt(c.color.slice(5,7),16)}, 0.12)`,
@@ -99,7 +102,7 @@ export default function TrustBadges() {
                   }}>
                     <Icon name={c.icon} label={c.full} size={26} />
                   </div>
-                  <div>
+                  <div style={{ position: 'relative', zIndex: 3 }}>
                     <div style={{ fontSize: 'clamp(0.8rem, 1.6vw, 0.88rem)', fontWeight: 700, color: 'var(--text)' }}>{c.full}</div>
                     <div style={{ fontSize: 'clamp(0.65rem, 1.3vw, 0.72rem)', color: c.color, fontWeight: 600 }}>{c.years}</div>
                     <div style={{ fontSize: 'clamp(0.63rem, 1.2vw, 0.7rem)', color: 'var(--muted)' }}>{c.sector}</div>
