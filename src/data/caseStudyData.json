@@ -1,0 +1,41 @@
+{
+  "meta": {
+    "title": "Caso de Estudio: Convergencia IT/OT",
+    "sector": "Manufactura de Procesos Continuos",
+    "duration": "8 meses",
+    "year": 2026
+  },
+  "before": {
+    "mttr": { "value": 4.2, "unit": "horas", "label": "MTTR" },
+    "alerts": { "value": 850, "unit": "diarias", "label": "Alertas", "sub": "90% ruido" },
+    "coverage": { "value": 35, "unit": "%", "label": "Cobertura OT" },
+    "responseTime": { "value": 6, "unit": "horas", "label": "Tiempo de respuesta" }
+  },
+  "after": {
+    "mttr": { "value": 15, "unit": "minutos", "label": "MTTR" },
+    "mttd": { "value": 2, "unit": "minutos", "label": "MTTD" },
+    "coverage": { "value": 98, "unit": "%", "label": "Cobertura OT" },
+    "savings": { "value": 420000, "unit": "USD", "label": "Ahorro anual" }
+  },
+  "architecture": {
+    "levels": [
+      { "id": 5, "name": "Corporativo", "components": ["SIEM Unificado", "Dashboards Grafana", "SOAR"] },
+      { "id": 3.5, "name": "DMZ Industrial", "components": ["Historian", "Jump Server MFA", "Edge Firewall"] },
+      { "id": 3, "name": "Site Operations", "components": ["SCADA", "MES", "Engineering WS"] },
+      { "id": 2, "name": "Control", "components": ["PLCs", "HMIs", "Sensores IoT"] }
+    ]
+  },
+  "incident": {
+    "date": "Marzo 2026",
+    "type": "Manipulación de setpoints",
+    "timeline": [
+      { "time": "T+0s", "action": "Detección anómala", "tool": "Suricata + ML" },
+      { "time": "T+30s", "action": "Alerta correlacionada", "tool": "SOC Unificado" },
+      { "time": "T+60s", "action": "Playbook SOAR", "tool": "Shuffle" },
+      { "time": "T+3min", "action": "Validación operador", "tool": "Dashboard OT" },
+      { "time": "T+5min", "action": "Aislamiento", "tool": "Firewall OT" },
+      { "time": "T+15min", "action": "Incidente cerrado", "tool": "Forense" }
+    ],
+    "impactAvoided": "$180,000 - $240,000"
+  }
+}

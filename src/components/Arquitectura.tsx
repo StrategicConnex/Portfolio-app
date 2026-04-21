@@ -46,7 +46,7 @@ export default function Arquitectura() {
               <div
                 key={card.title}
                 style={{
-                  background: `rgba(${parseInt(card.color.slice(1,3),16)}, ${parseInt(card.color.slice(3,5),16)}, ${parseInt(card.color.slice(5,7),16)}, 0.08)`,
+                  background: `rgba(${parseInt(card.color.slice(1, 3), 16)}, ${parseInt(card.color.slice(3, 5), 16)}, ${parseInt(card.color.slice(5, 7), 16)}, 0.08)`,
                   border: `1.5px solid ${card.color}40`,
                   borderRadius: 12,
                   padding: '1.5rem',
@@ -107,7 +107,7 @@ export default function Arquitectura() {
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
                     {card.items.map(item => (
                       <span key={item} style={{
-                        background: `rgba(${parseInt(card.color.slice(1,3),16)}, ${parseInt(card.color.slice(3,5),16)}, ${parseInt(card.color.slice(5,7),16)}, 0.15)`,
+                        background: `rgba(${parseInt(card.color.slice(1, 3), 16)}, ${parseInt(card.color.slice(3, 5), 16)}, ${parseInt(card.color.slice(5, 7), 16)}, 0.15)`,
                         color: card.color,
                         border: `1px solid ${card.color}50`,
                         padding: '0.4rem 0.8rem',

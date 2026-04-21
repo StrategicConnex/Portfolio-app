@@ -5,7 +5,8 @@ import { motion, AnimatePresence } from 'framer-motion'
 import SectionHeader from './ui/SectionHeader'
 import FadeIn from './ui/FadeIn'
 import { useLanguage } from '@/context/LanguageContext'
-import { ShieldCheck, ShieldAlert, ArrowRight, Zap, Database, Lock } from 'lucide-react'
+import { ShieldCheck, ShieldAlert, ArrowRight, Zap, Database, Lock, X } from 'lucide-react'
+import CaseStudyDetail from './CaseStudyDetail'
 
 const CASE_STUDIES = [
   {
@@ -79,6 +80,7 @@ export default function Proyecto() {
   const [activeCase, setActiveCase] = useState(0)
   const [sliderPos, setSliderPos] = useState(50)
   const [isDragging, setIsDragging] = useState(false)
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
   const handleMouseMove = (e: React.MouseEvent | React.TouchEvent) => {
     if (!isDragging) return
@@ -263,6 +265,7 @@ export default function Proyecto() {
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
+                    onClick={() => setIsModalOpen(true)}
                     className="flex items-center gap-3 bg-blue-600/10 hover:bg-blue-600/20 border border-blue-500/30 px-6 py-3 rounded-xl transition-all group"
                   >
                     <span className="text-blue-400 text-xs font-black uppercase tracking-[2px]">{t('projects.view_project')}</span>
@@ -274,6 +277,13 @@ export default function Proyecto() {
           </div>
         </div>
       </div>
+
+      {/* Full Screen Case Study Detail */}
+      <AnimatePresence>
+        {isModalOpen && (
+          <CaseStudyDetail onClose={() => setIsModalOpen(false)} />
+        )}
+      </AnimatePresence>
     </section>
   )
 }
