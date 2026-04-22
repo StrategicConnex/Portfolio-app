@@ -278,7 +278,7 @@ export default function SIEMDashboard() {
           </AnimatePresence>
 
           {/* Dashboard Content Grid */}
-          <div className="scanline-container glass rounded-b-2xl p-6 grid grid-cols-1 lg:grid-cols-3 gap-6 border-t-0 shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
+          <div className="scanline-container glass rounded-b-2xl p-4 sm:p-6 grid grid-cols-1 lg:grid-cols-3 gap-6 border-t-0 shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
             
             {/* Main Log Area */}
             <div className="lg:col-span-2 space-y-8">

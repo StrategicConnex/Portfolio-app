@@ -58,7 +58,7 @@ export default function Contacto() {
       <div style={{ maxWidth: 1100, margin: 'auto' }}>
         <SectionHeader label={t('contact.label')} title={t('contact.title')} highlight={t('contact.highlight')} center />
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.3fr', gap: 'clamp(1.5rem, 4vw, 3rem)', alignItems: 'start' }}>
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.3fr] gap-6 lg:gap-12 items-start">
 
           {/* LEFT — contact cards + availability */}
           <div>
@@ -150,7 +150,7 @@ export default function Contacto() {
                     <h3 style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text)', marginBottom: '0.3rem' }}>{t('contact.form.title')}</h3>
                     <p style={{ fontSize: '0.75rem', color: 'var(--muted)', marginBottom: '1.5rem' }}>{t('contact.form.subtitle')}</p>
 
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginBottom: '0.75rem' }}>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
                       <div>
                         <label style={{ fontSize: '0.72rem', color: 'var(--muted)', display: 'block', marginBottom: '0.3rem' }}>{t('contact.form.name')} *</label>
                         <input required name="name" value={form.name} onChange={handleChange} placeholder={t('contact.form.name')} style={inputStyle}

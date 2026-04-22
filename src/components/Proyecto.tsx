@@ -165,9 +165,9 @@ export default function Proyecto() {
                       {t(CASE_STUDIES[activeCase].descriptionKey)}
                     </p>
                   </div>
-                  <div className="flex gap-4">
+                  <div className="flex flex-wrap gap-4">
                     {CASE_STUDIES[activeCase].metrics.map(m => (
-                      <div key={m.labelKey} className="bg-white/5 border border-white/10 rounded-2xl p-4 text-center min-w-[110px] relative overflow-hidden group">
+                      <div key={m.labelKey} className="bg-white/5 border border-white/10 rounded-2xl p-4 text-center min-w-[110px] flex-1 relative overflow-hidden group">
                         <div className={`absolute top-0 right-0 p-1 ${m.trend === 'up' ? 'text-emerald-500' : 'text-blue-500'}`}>
                           <Zap size={10} className="animate-pulse" />
                         </div>
@@ -180,7 +180,7 @@ export default function Proyecto() {
 
                 {/* Interactive Slider Container */}
                 <div 
-                  className="relative flex-grow rounded-2xl overflow-hidden bg-white/5 border border-white/10 cursor-col-resize select-none h-[400px]"
+                  className="relative flex-grow rounded-2xl overflow-hidden bg-white/5 border border-white/10 cursor-col-resize select-none h-[500px] sm:h-[450px] md:h-[400px]"
                   onMouseDown={() => setIsDragging(true)}
                   onMouseUp={() => setIsDragging(false)}
                   onMouseLeave={() => setIsDragging(false)}
@@ -190,8 +190,8 @@ export default function Proyecto() {
                   onTouchMove={handleMouseMove}
                 >
                   {/* AFTER State (Full Background) */}
-                  <div className="absolute inset-0 bg-[#0a0a0a] p-8">
-                    <div className="flex items-center gap-3 text-emerald-500 mb-8">
+                  <div className="absolute inset-0 bg-[#0a0a0a] p-5 sm:p-8">
+                    <div className="flex items-center gap-3 text-emerald-500 mb-6 sm:mb-8">
                       <ShieldCheck size={24} />
                       <span className="text-sm font-black uppercase tracking-[3px]">{t('projects.after')}</span>
                     </div>
@@ -215,10 +215,10 @@ export default function Proyecto() {
 
                   {/* BEFORE State (Clipped Overlay) */}
                   <div 
-                    className="absolute inset-0 bg-[#1a0a0a] p-8 border-r-2 border-blue-500/50"
+                    className="absolute inset-0 bg-[#1a0a0a] p-5 sm:p-8 border-r-2 border-blue-500/50"
                     style={{ clipPath: `inset(0 ${100 - sliderPos}% 0 0)` }}
                   >
-                    <div className="flex items-center gap-3 text-red-500 mb-8">
+                    <div className="flex items-center gap-3 text-red-500 mb-6 sm:mb-8">
                       <ShieldAlert size={24} />
                       <span className="text-sm font-black uppercase tracking-[3px]">{t('projects.before')}</span>
                     </div>
