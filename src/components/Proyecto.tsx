@@ -81,6 +81,30 @@ export default function Proyecto() {
   const [sliderPos, setSliderPos] = useState(50)
   const [isDragging, setIsDragging] = useState(false)
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [terminalSequenceActive, setTerminalSequenceActive] = useState(false)
+  const [terminalLines, setTerminalLines] = useState<string[]>([])
+
+  const handleOpenCaseStudy = async () => {
+    setTerminalSequenceActive(true)
+    setTerminalLines([])
+    
+    const lines = [
+      '[>] Verificando credenciales de acceso...',
+      '[>] Handshake seguro establecido (TLS 1.3)...',
+      '[>] Desencriptando payload de proyecto...',
+      '[>] Autorización confirmada.',
+      '[>] Acceso Concedido.'
+    ]
+
+    for (let i = 0; i < lines.length; i++) {
+      await new Promise(r => setTimeout(r, 400 + Math.random() * 300))
+      setTerminalLines(prev => [...prev, lines[i]])
+    }
+    
+    await new Promise(r => setTimeout(r, 600))
+    setTerminalSequenceActive(false)
+    setIsModalOpen(true)
+  }
 
   const handleMouseMove = (e: React.MouseEvent | React.TouchEvent) => {
     if (!isDragging) return
@@ -265,7 +289,7 @@ export default function Proyecto() {
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    onClick={() => setIsModalOpen(true)}
+                    onClick={handleOpenCaseStudy}
                     className="flex items-center gap-3 bg-blue-600/10 hover:bg-blue-600/20 border border-blue-500/30 px-6 py-3 rounded-xl transition-all group"
                   >
                     <span className="text-blue-400 text-xs font-black uppercase tracking-[2px]">{t('projects.view_project')}</span>
@@ -282,6 +306,45 @@ export default function Proyecto() {
       <AnimatePresence>
         {isModalOpen && (
           <CaseStudyDetail onClose={() => setIsModalOpen(false)} />
+        )}
+      </AnimatePresence>
+
+      {/* Terminal Sequence Overlay */}
+      <AnimatePresence>
+        {terminalSequenceActive && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[110] bg-slate-950/90 backdrop-blur-md flex flex-col items-center justify-center font-mono"
+          >
+            <div className="w-[min(90vw,600px)] p-6 bg-black/50 border border-blue-500/20 rounded-lg shadow-[0_0_50px_rgba(30,144,255,0.1)] relative overflow-hidden">
+              <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-blue-500 to-transparent opacity-50" />
+              <div className="flex gap-2 mb-4 border-b border-white/10 pb-2">
+                <div className="w-3 h-3 rounded-full bg-red-500/50 border border-red-500" />
+                <div className="w-3 h-3 rounded-full bg-amber-500/50 border border-amber-500" />
+                <div className="w-3 h-3 rounded-full bg-emerald-500/50 border border-emerald-500" />
+                <span className="text-[10px] text-blue-500/70 ml-auto uppercase tracking-widest font-bold">Secure_Terminal // auth_seq</span>
+              </div>
+              <div className="flex flex-col gap-2 min-h-[150px] text-sm">
+                {terminalLines.map((line, i) => (
+                  <motion.div 
+                    key={i} 
+                    initial={{ opacity: 0, x: -10 }} 
+                    animate={{ opacity: 1, x: 0 }}
+                    className={line.includes('Concedido') ? 'text-emerald-500 font-bold drop-shadow-[0_0_8px_rgba(16,185,129,0.5)]' : 'text-blue-400 drop-shadow-[0_0_5px_rgba(59,130,246,0.3)]'}
+                  >
+                    {line}
+                  </motion.div>
+                ))}
+                <motion.div
+                  animate={{ opacity: [1, 0] }}
+                  transition={{ repeat: Infinity, duration: 0.8 }}
+                  className="w-2.5 h-4 bg-emerald-500 mt-2 shadow-[0_0_10px_rgba(16,185,129,0.5)]"
+                />
+              </div>
+            </div>
+          </motion.div>
         )}
       </AnimatePresence>
     </section>
