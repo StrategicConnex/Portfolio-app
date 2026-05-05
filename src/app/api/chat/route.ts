@@ -1,18 +1,55 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
+
+// Schema para validación estricta
+const ChatSchema = z.object({
+  messages: z.array(z.object({
+    role: z.enum(['system', 'user', 'assistant']),
+    content: z.string().min(1).max(2000),
+  })).min(1).max(20),
+  language: z.enum(['es', 'en']).optional().default('es'),
+});
+
+// Rate limiter básico en memoria (Para producción se recomienda Upstash Redis)
+const rateLimitMap = new Map<string, { count: number; lastReset: number }>();
+const RATE_LIMIT = 10; // 10 mensajes
+const RATE_LIMIT_WINDOW = 60 * 1000; // 1 minuto
 
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json();
-    const { messages, language = 'es' } = body;
+    // 1. Rate Limiting por IP
+    const ip = req.headers.get('x-forwarded-for')?.split(',')[0] || '127.0.0.1';
+    const now = Date.now();
+    const userLimit = rateLimitMap.get(ip) || { count: 0, lastReset: now };
 
-    if (!messages || !Array.isArray(messages)) {
-      return NextResponse.json({ error: 'Messages are required' }, { status: 400 });
+    if (now - userLimit.lastReset > RATE_LIMIT_WINDOW) {
+      userLimit.count = 0;
+      userLimit.lastReset = now;
     }
+
+    if (userLimit.count >= RATE_LIMIT) {
+      return NextResponse.json({ error: 'Too many requests' }, { status: 429 });
+    }
+
+    userLimit.count++;
+    rateLimitMap.set(ip, userLimit);
+
+    // 2. Validación de Entrada
+    const body = await req.json();
+    const validation = ChatSchema.safeParse(body);
+
+    if (!validation.success) {
+      return NextResponse.json({ error: 'Invalid input', details: validation.error.format() }, { status: 400 });
+    }
+
+    const { messages, language } = validation.data;
 
     if (!process.env.OPENROUTER_API_KEY) {
-      return NextResponse.json({ error: 'API Key missing' }, { status: 500 });
+      console.error('CRITICAL: OPENROUTER_API_KEY missing');
+      return NextResponse.json({ error: 'Configuration error' }, { status: 500 });
     }
 
+    // 3. Llamada a OpenRouter
     const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -68,8 +105,7 @@ REGLAS DE COMPORTAMIENTO:
     });
 
     if (!response.ok) {
-      const errorText = await response.text();
-      return NextResponse.json({ error: `OpenRouter error: ${response.status}` }, { status: response.status });
+      return NextResponse.json({ error: `API error: ${response.status}` }, { status: response.status });
     }
 
     return new Response(response.body, {

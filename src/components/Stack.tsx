@@ -91,6 +91,7 @@ function StackCard({ item, index }: { item: typeof categories[0]; index: number 
           src={item.img} 
           alt={t(item.title)}
           fill
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           style={{ objectFit: 'cover', opacity: 0.15, filter: 'grayscale(0.5) brightness(0.6)' }}
         />
         <div style={{ position: 'absolute', inset: 0, background: `linear-gradient(to top, rgba(0,0,0,1) 30%, transparent 100%)` }} />

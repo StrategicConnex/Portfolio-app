@@ -237,14 +237,23 @@ const AuditHub = () => {
                           <AnimatePresence mode="popLayout">
                             {filteredFindings.map((finding) => (
                               <React.Fragment key={finding.id}>
-                                <motion.tr 
-                                  layout
-                                  initial={{ opacity: 0, y: 10 }}
-                                  animate={{ opacity: 1, y: 0 }}
-                                  exit={{ opacity: 0, scale: 0.95 }}
-                                  onClick={() => setExpandedId(expandedId === finding.id ? null : finding.id)}
-                                  className={`group cursor-pointer transition-colors ${expandedId === finding.id ? 'bg-blue-500/5' : 'hover:bg-white/5'}`}
-                                >
+                                  <motion.tr 
+                                    layout
+                                    initial={{ opacity: 0, y: 10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, scale: 0.95 }}
+                                    onClick={() => setExpandedId(expandedId === finding.id ? null : finding.id)}
+                                    onKeyDown={(e) => {
+                                      if (e.key === 'Enter' || e.key === ' ') {
+                                        e.preventDefault()
+                                        setExpandedId(expandedId === finding.id ? null : finding.id)
+                                      }
+                                    }}
+                                    role="button"
+                                    tabIndex={0}
+                                    aria-expanded={expandedId === finding.id}
+                                    className={`group cursor-pointer transition-colors outline-none focus-visible:bg-blue-500/10 ${expandedId === finding.id ? 'bg-blue-500/5' : 'hover:bg-white/5'}`}
+                                  >
                                   <td className="px-4 py-4 bg-white/5 rounded-l-lg border-y border-l border-white/10">
                                     <div className="text-[0.7rem] font-mono text-slate-400">{finding.id}</div>
                                   </td>

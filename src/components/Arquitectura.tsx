@@ -27,6 +27,17 @@ export default function Arquitectura() {
           <p style={{ color: 'var(--blue)', fontSize: 'clamp(0.65rem, 1.5vw, 0.72rem)', letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 600, marginBottom: '2.5rem' }}>
             {t('arch.domain.ot')} · {t('arch.domain.infra')} · {t('arch.domain.security')}
           </p>
+          
+          {/* SEO Optimized Hidden Text Content */}
+          <div style={{ position: 'absolute', width: 1, height: 1, padding: 0, margin: -1, overflow: 'hidden', clip: 'rect(0,0,0,0)', whiteSpace: 'nowrap', border: 0 }}>
+            <h3>Modelo Purdue para Ciberseguridad Industrial (IT/OT)</h3>
+            <p>
+              La Arquitectura Purdue (ISA-95) es el estándar fundamental para la segmentación de redes en infraestructuras críticas. 
+              Este portfolio presenta una implementación avanzada enfocada en Oil & Gas, cubriendo desde el Nivel 0 (sensores y actuadores Modbus/HART) 
+              hasta el Nivel 4/5 (Red Corporativa), pasando por la DMZ Industrial y la protección de sistemas SCADA mediante normativas IEC 62443.
+              Expertise en Firewalls industriales, SIEM (Security Onion) y resiliencia operativa en la Cuenca Neuquina (Vaca Muerta).
+            </p>
+          </div>
         </FadeIn>
 
         {/* 2D Interactive Purdue Model */}
@@ -43,7 +54,7 @@ export default function Arquitectura() {
             marginTop: 'clamp(2rem, 5vw, 3rem)',
           }}>
             {domainCards.map((card) => (
-              <div
+              <article
                 key={card.title}
                 style={{
                   background: `rgba(${parseInt(card.color.slice(1, 3), 16)}, ${parseInt(card.color.slice(3, 5), 16)}, ${parseInt(card.color.slice(5, 7), 16)}, 0.08)`,
@@ -124,7 +135,7 @@ export default function Arquitectura() {
                     ))}
                   </div>
                 </div>
-              </div>
+              </article>
             ))}
           </div>
         </FadeIn>

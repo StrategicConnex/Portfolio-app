@@ -75,7 +75,10 @@ export default function ParticleCanvas() {
         }
       }
 
-      if (linesMesh) scene.remove(linesMesh)
+      if (linesMesh) {
+        scene.remove(linesMesh)
+        linesMesh.geometry.dispose() // Liberar memoria GPU
+      }
       const lineGeo = new THREE.BufferGeometry()
       lineGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(linePositions), 3))
       linesMesh = new THREE.LineSegments(lineGeo, lineMat)

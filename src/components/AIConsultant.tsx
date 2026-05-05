@@ -115,6 +115,7 @@ const AIConsultant = () => {
         whileTap={{ scale: 0.95 }}
         onClick={() => setIsOpen(!isOpen)}
         className="fixed bottom-6 right-6 z-[100] w-16 h-16 bg-blue-600 rounded-2xl flex items-center justify-center shadow-[0_10px_30px_rgba(37,99,235,0.3)] hover:shadow-[0_15px_40px_rgba(37,99,235,0.5)] transition-all border border-white/20"
+        aria-label={isOpen ? t('ai.close') : t('ai.open') || 'Open chat'}
       >
         <AnimatePresence mode="wait">
           {isOpen ? (

@@ -85,6 +85,7 @@ function MetricCard({ num, label, color, icon, img, delay }: { num: string; labe
           src={img} 
           alt={label} 
           fill 
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           style={{ objectFit: 'cover', opacity: 0.4, filter: 'grayscale(0.4) brightness(0.7)' }} 
         />
         <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.9) 20%, rgba(0,0,0,0.2) 100%)' }} />
@@ -163,6 +164,7 @@ export default function Perfil() {
                       src={c.img} 
                       alt={c.grupo} 
                       fill 
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                       style={{ objectFit: 'cover', opacity: 0.12, filter: 'grayscale(0.6) brightness(0.5)' }} 
                     />
                     <div style={{ position: 'absolute', inset: 0, background: `linear-gradient(135deg, rgba(0,0,0,0.95) 40%, rgba(0,0,0,0.6) 100%)` }} />

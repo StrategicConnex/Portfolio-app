@@ -2,115 +2,9 @@
 
 import { Canvas, useFrame } from '@react-three/fiber'
 import { OrbitControls, Text, Stars, Html } from '@react-three/drei'
-import { useRef, useState } from 'react'
+import { useRef, useState, useMemo } from 'react'
 import * as THREE from 'three'
-
-type NodeDefinition = {
-  label: string
-  pos: [number, number, number]
-  color: string
-  particleCount: number
-  subs: string[]
-  related: string[]
-}
-
-const nodes: NodeDefinition[] = [
-  {
-    label: 'Convergencia IT/OT',
-    pos: [0, 0, 0],
-    color: '#C5A46D',
-    particleCount: 300,
-    subs: ['Modelo Purdue', 'Visión integrada'],
-    related: ['SCADA', 'Firewalls Industriales', 'SIEM', 'Virtualización'],
-  },
-  {
-    label: 'SCADA',
-    pos: [-2, -2.6, 0],
-    color: '#1E90FF',
-    particleCount: 170,
-    subs: ['Control de planta', 'DCS/PLC'],
-    related: ['Modbus', 'DNP3', 'Firewalls Industriales', 'Virtualización'],
-  },
-  {
-    label: 'Modbus',
-    pos: [-4.5, -4.1, 0],
-    color: '#F97316',
-    particleCount: 120,
-    subs: ['Protocolo OT legacy'],
-    related: ['SCADA', 'DNP3'],
-  },
-  {
-    label: 'DNP3',
-    pos: [-1.5, -4.1, 0],
-    color: '#F97316',
-    particleCount: 120,
-    subs: ['Telemetría segura'],
-    related: ['SCADA'],
-  },
-  {
-    label: 'Firewalls Industriales',
-    pos: [2, -2.6, 0],
-    color: '#06B6D4',
-    particleCount: 140,
-    subs: ['Segmentación OT/IT', 'Inspección profunda'],
-    related: ['SCADA', 'Virtualización', 'SIEM'],
-  },
-  {
-    label: 'Virtualización',
-    pos: [-2.8, 0, 0],
-    color: '#8B5CF6',
-    particleCount: 150,
-    subs: ['VMware', 'Hypervisores'],
-    related: ['Firewalls Industriales', 'Redes Cisco', 'SIEM'],
-  },
-  {
-    label: 'Redes Cisco',
-    pos: [2.8, 0, 0],
-    color: '#8B5CF6',
-    particleCount: 150,
-    subs: ['Switches L2/L3', 'SD-WAN'],
-    related: ['Virtualización', 'NIST', 'SIEM'],
-  },
-  {
-    label: 'SIEM',
-    pos: [-2, 2.6, 0],
-    color: '#EF4444',
-    particleCount: 170,
-    subs: ['Detección y corrección', 'Correlación de eventos'],
-    related: ['NIST', 'ISO 27001', 'Firewalls Industriales'],
-  },
-  {
-    label: 'NIST',
-    pos: [0, 4.1, 0],
-    color: '#10B981',
-    particleCount: 140,
-    subs: ['CSF', 'Riesgo y gobernanza'],
-    related: ['SIEM', 'ISO 27001'],
-  },
-  {
-    label: 'ISO 27001',
-    pos: [2, 2.6, 0],
-    color: '#10B981',
-    particleCount: 140,
-    subs: ['Gestión de seguridad', 'Cumplimiento'],
-    related: ['SIEM', 'NIST'],
-  },
-]
-
-const edges = [
-  ['Convergencia IT/OT', 'SCADA'],
-  ['SCADA', 'Modbus'],
-  ['SCADA', 'DNP3'],
-  ['SCADA', 'Firewalls Industriales'],
-  ['Firewalls Industriales', 'Virtualización'],
-  ['Firewalls Industriales', 'SIEM'],
-  ['Virtualización', 'Redes Cisco'],
-  ['Virtualización', 'SIEM'],
-  ['Redes Cisco', 'NIST'],
-  ['SIEM', 'NIST'],
-  ['SIEM', 'ISO 27001'],
-  ['NIST', 'ISO 27001'],
-]
+import { nodes, edges, type NodeDefinition } from '@/data/mindmap'
 
 function ParticleNode({
   node,
@@ -222,50 +116,63 @@ function ParticleNode({
 
 /* ── Conexiones flujo neon ── */
 function NeonConnections({ selectedLabel }: { selectedLabel: string | null }) {
-  const lineRefs = useRef<THREE.Line[]>([])
+  const lineRefs = useRef<(THREE.Line | null)[]>([])
 
   useFrame((state) => {
     lineRefs.current.forEach((line, idx) => {
       if (!line) return
-      const positions = (line.geometry as THREE.BufferGeometry).attributes.position.array as Float32Array
+      const positions = line.geometry.attributes.position.array as Float32Array
       const progress = (state.clock.elapsedTime * 0.52 + idx * 0.18) % 1
       for (let i = 0; i < positions.length; i += 3) {
         positions[i + 2] = Math.sin((i / positions.length) * Math.PI - progress * Math.PI * 2) * 0.08
       }
-      ;(line.geometry as THREE.BufferGeometry).attributes.position.needsUpdate = true
+      line.geometry.attributes.position.needsUpdate = true
     })
   })
 
+  const connectionData = useMemo(() => {
+    return edges.map((edge) => {
+      const from = nodes.find(node => node.label === edge[0])!
+      const to = nodes.find(node => node.label === edge[1])!
+      const start = new THREE.Vector3(...from.pos)
+      const end = new THREE.Vector3(...to.pos)
+      const points = []
+      for (let j = 0; j <= 28; j++) {
+        const t = j / 28
+        points.push(start.clone().lerp(end, t))
+      }
+      const positionArray = new Float32Array(points.flatMap(p => [p.x, p.y, p.z]))
+      return { edge, positionArray }
+    })
+  }, [])
+
   return (
     <>
-      {edges.map((edge, i) => {
-        const from = nodes.find(node => node.label === edge[0])!
-        const to = nodes.find(node => node.label === edge[1])!
-        const start = new THREE.Vector3(...from.pos)
-        const end = new THREE.Vector3(...to.pos)
-        const points = []
-        for (let j = 0; j <= 28; j++) {
-          const t = j / 28
-          points.push(start.clone().lerp(end, t))
-        }
-
-        const geometry = new THREE.BufferGeometry()
-        geometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array(points.flatMap(p => [p.x, p.y, p.z])), 3))
+      {connectionData.map((data, i) => {
         const selectedNode = selectedLabel ? nodes.find(node => node.label === selectedLabel) : undefined
         const active = Boolean(
           selectedNode &&
-          ((selectedLabel && edge.includes(selectedLabel)) || selectedNode.related.includes(edge[0]) || selectedNode.related.includes(edge[1]))
+          ((selectedLabel && data.edge.includes(selectedLabel)) || selectedNode.related.includes(data.edge[0]) || selectedNode.related.includes(data.edge[1]))
         )
-        const material = new THREE.LineBasicMaterial({
-          color: active ? '#FFFFFF' : '#00FFFF',
-          linewidth: active ? 2.5 : 1.2,
-          transparent: true,
-          opacity: active ? 0.95 : 0.28,
-        })
-        const line = new THREE.Line(geometry, material)
-
+        
         return (
-          <primitive key={i} object={line} ref={(el: THREE.Line) => { if (el) lineRefs.current[i] = el }} />
+          <line key={i} ref={(el) => { lineRefs.current[i] = el as any }}>
+            <bufferGeometry>
+              <bufferAttribute
+                attach="attributes-position"
+                args={[data.positionArray, 3]}
+                count={data.positionArray.length / 3}
+                array={data.positionArray}
+                itemSize={3}
+              />
+            </bufferGeometry>
+            <lineBasicMaterial
+              color={active ? '#FFFFFF' : '#00FFFF'}
+              transparent
+              opacity={active ? 0.95 : 0.28}
+              linewidth={active ? 2.5 : 1.2}
+            />
+          </line>
         )
       })}
     </>

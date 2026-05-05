@@ -75,14 +75,22 @@ const jsonLd = {
       jobTitle: 'Arquitecto IT/OT – Ciberseguridad Industrial',
       description: 'Especialista en ciberseguridad industrial con 20+ años en Oil & Gas. IEC 62443, NIST CSF, SCADA, Modelo Purdue. Basado en Neuquén, Argentina.',
       url: 'https://juanfpalacios.vercel.app',
-      sameAs: ['https://linkedin.com/in/juanfpalacios'],
+      sameAs: [
+        'https://linkedin.com/in/juanfpalacios',
+        'https://github.com/juanfpalacios',
+        'https://twitter.com/juanfpalacios'
+      ],
       address: {
         '@type': 'PostalAddress',
         addressLocality: 'Neuquén',
         addressRegion: 'Neuquén',
         addressCountry: 'AR',
       },
-      knowsAbout: ['Ciberseguridad Industrial Argentina', 'IEC 62443', 'NIST CSF', 'SCADA', 'Modelo Purdue', 'Oil & Gas Vaca Muerta', 'SIEM Security Onion', 'Arquitectura IT/OT'],
+      knowsAbout: [
+        'Ciberseguridad Industrial Argentina', 'IEC 62443', 'NIST CSF', 'SCADA', 'Modelo Purdue', 
+        'Oil & Gas Vaca Muerta', 'SIEM Security Onion', 'Arquitectura IT/OT',
+        'Infraestructura Crítica', 'Seguridad de Redes', 'Continuidad de Negocio'
+      ],
     },
     {
       '@type': 'ProfessionalService',
