@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google'
 import './globals.css'
 import { LanguageProvider } from '@/context/LanguageContext'
 import React from 'react'
+import Script from 'next/script'
 
 const inter = Inter({
   subsets: ['latin'],
@@ -134,6 +135,11 @@ export default function RootLayout({
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+        <Script
+          src="https://strategicaudit.pro/scripts/vitals.js"
+          data-project-id="7c9945ad-c235-484d-98fa-1d8fe7e9ee40"
+          defer
         />
       </head>
       <body className={inter.className}>
