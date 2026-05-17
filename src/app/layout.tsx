@@ -137,7 +137,7 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
         <Script
-          src="https://strategicaudit.pro/scripts/vitals.js"
+          src="https://scaudit.vercel.app/scripts/vitals.js"
           data-project-id="7c9945ad-c235-484d-98fa-1d8fe7e9ee40"
           defer
         />
