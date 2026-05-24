@@ -1241,7 +1241,8 @@ export const PromptInputSubmit = ({
         onStop();
         return;
       }
-      onClick?.(e);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      onClick?.(e as any);
     },
     [isGenerating, onStop, onClick]
   );
