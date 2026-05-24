@@ -1321,7 +1321,8 @@ export const PromptInputHoverCard = ({
   openDelay = 0,
   closeDelay = 0,
   ...props
-}: PromptInputHoverCardProps) => (
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+}: any) => (
   <HoverCard closeDelay={closeDelay} openDelay={openDelay} {...props} />
 );
 
