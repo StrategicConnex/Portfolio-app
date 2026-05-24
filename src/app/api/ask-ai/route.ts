@@ -1,4 +1,4 @@
-import { streamText, type UIMessage } from 'ai';
+import { streamText, type UIMessage, convertToModelMessages } from 'ai';
 import { createOpenAI } from '@ai-sdk/openai';
 import { NextResponse } from 'next/server';
 
@@ -10,17 +10,24 @@ const openrouter = createOpenAI({
 });
 
 export async function POST(req: Request) {
-  if (!process.env.OPENROUTER_API_KEY) {
-    console.error('CRITICAL: OPENROUTER_API_KEY missing');
-    return NextResponse.json({ error: 'AI provider is not configured' }, { status: 500 });
-  }
+  try {
+    if (!process.env.OPENROUTER_API_KEY) {
+      console.error('CRITICAL: OPENROUTER_API_KEY missing');
+      return NextResponse.json({ error: 'AI provider is not configured' }, { status: 500 });
+    }
 
-  const { messages }: { messages: UIMessage[] } = await req.json();
+    const body = await req.json();
+    const messages: UIMessage[] = body.messages || [];
+    const language: string = body.language || 'es';
 
-  const result = streamText({
-    model: openrouter('google/gemini-2.0-flash-001'),
-    messages,
-    system: `You are Ask Juan AI, an enterprise-grade Infrastructure & Cybersecurity Copilot for juanpalacios.vercel.app.
+    const modelMessages = await convertToModelMessages(messages);
+
+    const result = streamText({
+      model: openrouter('google/gemini-2.0-flash-001'),
+      messages: modelMessages,
+      system: `You are Ask Juan AI, an enterprise-grade Infrastructure & Cybersecurity Copilot for juanpalacios.vercel.app.
+
+EL USUARIO ESTÁ NAVEGANDO EN: ${language.toUpperCase()}. Responde preferentemente en este idioma a menos que el usuario cambie de idioma.
 
 Role:
 - AI Infrastructure & Cybersecurity Copilot
@@ -32,7 +39,14 @@ Behavior:
 - Focus on Juan Felipe Palacios' professional profile, consulting services, IT/OT cybersecurity, industrial networks, Vaca Muerta, Oil & Gas, Security Onion, NIST CSF, ISO 27001 and IEC 62443.
 - Do not invent personal facts, certifications or metrics that are not in the portfolio context.
 - For contact requests, direct users to LinkedIn or the contact section of the site.`
-  });
+    });
 
-  return result.toTextStreamResponse ? result.toTextStreamResponse() : (result as any).toUIMessageStreamResponse ? (result as any).toUIMessageStreamResponse() : (result as any).toDataStreamResponse();
+    return result.toUIMessageStreamResponse();
+  } catch (error) {
+    console.error('Ask AI error:', error);
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
+  }
 }
