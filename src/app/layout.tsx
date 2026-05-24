@@ -1,15 +1,8 @@
 import type { Metadata, Viewport } from 'next'
-import { Inter } from 'next/font/google'
 import './globals.css'
 import { LanguageProvider } from '@/context/LanguageContext'
 import React from 'react'
 import Script from 'next/script'
-
-const inter = Inter({
-  subsets: ['latin'],
-  variable: '--font-inter',
-  display: 'swap',
-})
 
 export const viewport: Viewport = {
   themeColor: [
@@ -19,7 +12,7 @@ export const viewport: Viewport = {
 }
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://juanfpalacios.vercel.app'),
+  metadataBase: new URL('https://juanpalacios.vercel.app'),
   title: 'Juan Felipe Palacios – Consultoría IT/OT Neuquén | Ciberseguridad para Oil & Gas en Vaca Muerta',
   description:
     'Consultoría IT/OT y ciberseguridad industrial para Oil & Gas en Vaca Muerta. Experiencia en IEC 62443, NIST, SCADA y redes críticas. Basado en Neuquén, Argentina.',
@@ -38,17 +31,17 @@ export const metadata: Metadata = {
     description: 'Referente en ciberseguridad industrial y consultoría IT/OT para Oil & Gas en Neuquén y Vaca Muerta.',
     type: 'website',
     locale: 'es_AR',
-    url: 'https://juanfpalacios.vercel.app',
+    url: 'https://juanpalacios.vercel.app',
     siteName: 'Juan Felipe Palacios Portfolio',
     images: [
       {
-        url: 'https://juanfpalacios.vercel.app/JuanPalacios.png',
+        url: 'https://juanpalacios.vercel.app/JuanPalacios.webp',
         alt: 'Foto de perfil de Juan Felipe Palacios',
         width: 1200,
         height: 1200,
       },
       {
-        url: 'https://juanfpalacios.vercel.app/JuanPalacios.webp',
+        url: 'https://juanpalacios.vercel.app/JuanPalacios.webp',
         alt: 'Foto de perfil de Juan Felipe Palacios',
         width: 1200,
         height: 1200,
@@ -61,10 +54,10 @@ export const metadata: Metadata = {
     description: 'Consultoría IT/OT y Ciberseguridad Industrial para Oil & Gas en Vaca Muerta y Neuquén.',
     creator: '@juanfpalacios',
     site: '@juanfpalacios',
-    images: ['https://juanfpalacios.vercel.app/JuanPalacios.png'],
+    images: ['https://juanpalacios.vercel.app/JuanPalacios.webp'],
   },
   robots: { index: true, follow: true },
-  alternates: { canonical: 'https://juanfpalacios.vercel.app', languages: { 'es-AR': 'https://juanfpalacios.vercel.app' } },
+  alternates: { canonical: 'https://juanpalacios.vercel.app', languages: { 'es-AR': 'https://juanpalacios.vercel.app' } },
 }
 
 const jsonLd = {
@@ -75,7 +68,7 @@ const jsonLd = {
       name: 'Juan Felipe Palacios',
       jobTitle: 'Arquitecto IT/OT – Ciberseguridad Industrial',
       description: 'Especialista en ciberseguridad industrial con 20+ años en Oil & Gas. IEC 62443, NIST CSF, SCADA, Modelo Purdue. Basado en Neuquén, Argentina.',
-      url: 'https://juanfpalacios.vercel.app',
+      url: 'https://juanpalacios.vercel.app',
       sameAs: [
         'https://linkedin.com/in/juanfpalacios',
         'https://github.com/juanfpalacios',
@@ -98,7 +91,7 @@ const jsonLd = {
       name: 'Juan Felipe Palacios – Consultoría IT/OT Neuquén',
       serviceType: 'Ciberseguridad para Oil & Gas en Vaca Muerta',
       description: 'Servicios de consultoría en ciberseguridad industrial, arquitectura de redes IT/OT y gestión de infraestructura crítica para el sector Oil & Gas en Vaca Muerta.',
-      url: 'https://juanfpalacios.vercel.app',
+      url: 'https://juanpalacios.vercel.app',
       areaServed: ['Neuquén', 'Argentina', 'Vaca Muerta'],
       address: {
         '@type': 'PostalAddress',
@@ -128,10 +121,10 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="es" className={inter.variable} style={{ colorScheme: 'dark' }}>
+    <html lang="es" style={{ colorScheme: 'dark' }}>
       <head>
         <meta name="color-scheme" content="dark" />
-        <link rel="canonical" href="https://juanfpalacios.vercel.app" />
+        <link rel="canonical" href="https://juanpalacios.vercel.app" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -147,7 +140,7 @@ export default function RootLayout({
           data-flush-interval="15000"
         />
       </head>
-      <body className={inter.className}>
+      <body className="font-sans antialiased bg-[#0f172a] text-slate-300">
         <LanguageProvider>
           {children}
         </LanguageProvider>

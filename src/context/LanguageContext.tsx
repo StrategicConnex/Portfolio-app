@@ -836,8 +836,10 @@ export const LanguageProvider = ({ children }: { children: ReactNode }) => {
   // Load language on mount
   React.useEffect(() => {
     const saved = localStorage.getItem('portfolio_lang')
-    if (saved === 'en' || saved === 'es') {
-      setLanguage(saved as Language)
+    if (saved === 'en') {
+      setLanguage('en')
+    } else {
+      setLanguage('es') // Spanish by default always
     }
     setIsLoaded(true)
   }, [])
