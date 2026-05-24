@@ -1,21 +1,25 @@
-import { convertToModelMessages, streamText, type UIMessage } from 'ai';
-import { google } from '@ai-sdk/google';
+import { streamText, type UIMessage } from 'ai';
+import { createOpenAI } from '@ai-sdk/openai';
 import { NextResponse } from 'next/server';
 
 export const maxDuration = 30;
 
+const openrouter = createOpenAI({
+  baseURL: 'https://openrouter.ai/api/v1',
+  apiKey: process.env.OPENROUTER_API_KEY,
+});
+
 export async function POST(req: Request) {
-  if (!process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
-    console.error('CRITICAL: GOOGLE_GENERATIVE_AI_API_KEY missing');
+  if (!process.env.OPENROUTER_API_KEY) {
+    console.error('CRITICAL: OPENROUTER_API_KEY missing');
     return NextResponse.json({ error: 'AI provider is not configured' }, { status: 500 });
   }
 
   const { messages }: { messages: UIMessage[] } = await req.json();
-  const modelMessages = await convertToModelMessages(messages);
 
   const result = streamText({
-    model: google(process.env.GOOGLE_GENERATIVE_AI_MODEL || 'gemini-2.0-flash-001'),
-    messages: modelMessages,
+    model: openrouter('google/gemini-2.0-flash-001'),
+    messages,
     system: `You are Ask Juan AI, an enterprise-grade Infrastructure & Cybersecurity Copilot for juanpalacios.vercel.app.
 
 Role:
@@ -30,5 +34,5 @@ Behavior:
 - For contact requests, direct users to LinkedIn or the contact section of the site.`
   });
 
-  return result.toUIMessageStreamResponse();
+  return result.toTextStreamResponse ? result.toTextStreamResponse() : (result as any).toUIMessageStreamResponse ? (result as any).toUIMessageStreamResponse() : (result as any).toDataStreamResponse();
 }

@@ -4,27 +4,16 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, Minimize2, Maximize2, ArrowUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useChat } from '@ai-sdk/react';
-import { DefaultChatTransport } from 'ai';
 import { useState } from 'react';
 import { Conversation, ConversationContent } from '@/components/ai-elements/conversation';
 import { useLanguage } from '@/context/LanguageContext';
 
 export function AskAIPanel() {
-  const { t } = useLanguage();
   const { isOpen, setIsOpen } = useAskAIStore();
   const [expanded, setExpanded] = useState(false);
-  const { messages, sendMessage } = useChat({
-    transport: new DefaultChatTransport({ api: '/api/ask-ai' }),
+  const { messages, input, handleInputChange, handleSubmit } = useChat({
+    api: '/api/ask-ai',
   });
-  const [input, setInput] = useState('');
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => setInput(e.target.value);
-  const handleSubmit = (e?: React.FormEvent) => {
-    e?.preventDefault?.();
-    if (!input.trim()) return;
-    sendMessage({ text: input });
-    setInput('');
-  };
 
 
   return (
@@ -63,9 +52,9 @@ export function AskAIPanel() {
                  <div className="text-center text-slate-400 mt-10 text-sm">Pregúntame sobre IT/OT, OSINT, DNS, SSL o mi experiencia.</div>
                ) : (
                  messages.map(m => (
-                   <div key={m.id} className={`flex flex-col gap-1 mb-4 ${m.role === 'user' ? 'items-end' : 'items-start'}`}>
+                    <div key={m.id} className={`flex flex-col gap-1 mb-4 ${m.role === 'user' ? 'items-end' : 'items-start'}`}>
                       <div className={`p-3 rounded-xl text-sm ${m.role === 'user' ? 'bg-orange-500/20 text-orange-50 max-w-[80%]' : 'text-slate-200 max-w-full'}`}>
-                        {m.parts.map(p => p.type === 'text' ? p.text : '').join('')}
+                        {m.content}
                       </div>
                    </div>
                  ))
