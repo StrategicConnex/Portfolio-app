@@ -421,7 +421,8 @@ export const PromptInputActionAddAttachments = ({
   const attachments = usePromptInputAttachments();
 
   const handleSelect = useCallback(
-    (e: React.MouseEvent<HTMLButtonElement>) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (e: any) => {
       e.preventDefault();
       attachments.openFileDialog();
     },
@@ -449,7 +450,8 @@ export const PromptInputActionAddScreenshot = ({
   const attachments = usePromptInputAttachments();
 
   const handleSelect = useCallback(
-    async (event: React.MouseEvent<HTMLButtonElement>) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    async (event: any) => {
       onSelect?.(event);
       if (event.defaultPrevented) {
         return;
