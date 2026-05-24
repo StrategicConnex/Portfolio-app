@@ -9,10 +9,10 @@ import Icon from './ui/Icon'
 import { useLanguage } from '@/context/LanguageContext'
 
 const metrics = [
-  { num: '99.9%', label: 'Disponibilidad de red comprometida', color: 'var(--blue)', icon: 'shield', img: '/perfil_infraestructura.png' },
-  { num: '−30%',  label: 'Reducción de incidentes de seguridad', color: '#10B981', icon: 'analytics', img: '/perfil_seguridad.png' },
-  { num: '−10h',  label: 'Ahorro semanal con automatización Python', color: 'var(--gold)', icon: 'automation', img: '/perfil_automatizacion.png' },
-  { num: '+25%',  label: 'Eficiencia operativa en virtualización', color: '#8B5CF6', icon: 'rocket', img: '/perfil_nube.png' },
+  { num: '99.9%', label: 'Disponibilidad de red comprometida', color: 'var(--blue)', icon: 'shield', img: '/perfil_infraestructura.webp' },
+  { num: '−30%',  label: 'Reducción de incidentes de seguridad', color: '#10B981', icon: 'analytics', img: '/perfil_seguridad.webp' },
+  { num: '−10h',  label: 'Ahorro semanal con automatización Python', color: 'var(--gold)', icon: 'automation', img: '/perfil_automatizacion.webp' },
+  { num: '+25%',  label: 'Eficiencia operativa en virtualización', color: '#8B5CF6', icon: 'rocket', img: '/perfil_nube.webp' },
 ]
 
 const competencias = [
@@ -20,37 +20,37 @@ const competencias = [
     grupo: 'Ciberseguridad Industrial',
     color: '#1E90FF',
     items: ['Modelo Purdue', 'IEC 62443', 'NIST CSF', 'ISO 27001', 'SOX', 'SIEM – Security Onion', 'IAM', 'Firewalls Industriales'],
-    img: '/comp_cyber.png'
+    img: '/comp_cyber.webp'
   },
   {
     grupo: 'Redes & Infraestructura',
     color: '#3B82F6',
     items: ['Cisco CCNA', 'MPLS', 'MikroTik', 'VSAT', 'Riverbed WAN', 'VPN', 'Fibra Óptica', 'DNS / DHCP'],
-    img: '/comp_redes.png'
+    img: '/comp_redes.webp'
   },
   {
     grupo: 'Cloud & Virtualización',
     color: '#06B6D4',
     items: ['Microsoft Azure', 'AWS', 'VMware vSphere', 'ESXi', 'vCenter', 'Nexus 1000v', 'Windows Server 2003–2022', 'Active Directory', 'Exchange', 'SQL Server', 'Linux'],
-    img: '/comp_cloud.png'
+    img: '/comp_cloud.webp'
   },
   {
     grupo: 'OT / Control Industrial',
     color: '#C5A46D',
     items: ['SCADA', 'Modbus', 'OPC UA', 'DNP3', 'Edge Computing', 'Veeam Backup', 'Backup Exec', 'Control Industrial'],
-    img: '/comp_ot.png'
+    img: '/comp_ot.webp'
   },
   {
     grupo: 'Desarrollo & Automatización',
     color: '#8B5CF6',
     items: ['Next.js 14', 'React.js', 'Tailwind CSS', 'JavaScript ES6+', 'TypeScript', 'Python', 'Power BI', 'CI/CD', 'Vercel'],
-    img: '/comp_web.png'
+    img: '/comp_web.webp'
   },
   {
     grupo: 'Gestión & GRC',
     color: '#10B981',
     items: ['PMI / Project Management', 'GRC', 'Risk Analysis', 'Incident Response', 'Stakeholder Management', 'SDLC'],
-    img: '/comp_grc.png'
+    img: '/comp_grc.webp'
   },
 ]
 

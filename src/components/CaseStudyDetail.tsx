@@ -1,11 +1,11 @@
 'use client'
 
 import React, { useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { X, ShieldCheck, ShieldAlert, Zap, Activity, Clock, Server, ArrowRight, Download, Mail, CheckCircle2, ArrowLeft } from 'lucide-react'
+import { motion } from 'framer-motion'
+import { X, ShieldCheck, ShieldAlert, Zap, Activity, Clock, Server, Download, CheckCircle2, ArrowLeft } from 'lucide-react'
 import caseData from '../data/caseStudyData.json'
 import { Canvas } from '@react-three/fiber'
-import { OrbitControls, Sphere, Line, Text } from '@react-three/drei'
+import { OrbitControls, Sphere, Line } from '@react-three/drei'
 
 // S1: Hero 3D Element
 function NetworkGraph() {
@@ -108,7 +108,7 @@ export default function CaseStudyDetail({ onClose }: { onClose: () => void }) {
                   <p className="text-xs font-black text-red-400 uppercase tracking-widest mb-2">{data.label}</p>
                   <p className="text-4xl font-mono text-white mb-1">{data.value}</p>
                   <p className="text-sm text-slate-400">{data.unit}</p>
-                  {/* @ts-ignore */}
+                  {/* @ts-expect-error Data structure has optional sub field */}
                   {data.sub && <p className="text-xs text-red-400/80 mt-2 font-medium">{data.sub}</p>}
                 </div>
               </motion.div>

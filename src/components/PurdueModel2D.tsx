@@ -14,7 +14,7 @@ export default function PurdueModel2D() {
       id: 'security',
       title: 'arch.purdue.level.security',
       color: '#EF4444',
-      bg: '/purdue_security.png',
+      bg: '/purdue_security.webp',
       nodes: [
         { 
           id: 'siem', 
@@ -43,7 +43,7 @@ export default function PurdueModel2D() {
       id: 'infra',
       title: 'arch.purdue.level.infra',
       color: '#8B5CF6',
-      bg: '/stack_cloud.png',
+      bg: '/stack_cloud.webp',
       nodes: [
         { 
           id: 'virtual', 
@@ -72,7 +72,7 @@ export default function PurdueModel2D() {
       id: 'ot',
       title: 'arch.purdue.level.ot',
       color: '#F97316',
-      bg: '/stack_ot.png',
+      bg: '/stack_ot.webp',
       nodes: [
         { 
           id: 'scada', 
@@ -99,13 +99,14 @@ export default function PurdueModel2D() {
     }
   ], [])
   
-  const selectedNodeData = useMemo(() => {
-    for (const level of levels) {
-      const node = level.nodes.find(n => n.id === activeNode)
-      if (node) return { ...node, color: level.color }
+  let selectedNodeData = null
+  for (const level of levels) {
+    const node = level.nodes.find(n => n.id === activeNode)
+    if (node) {
+      selectedNodeData = { ...node, color: level.color }
+      break
     }
-    return null
-  }, [activeNode, levels])
+  }
 
   const dependencies = selectedNodeData?.connectsTo || []
 

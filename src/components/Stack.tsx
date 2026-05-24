@@ -14,7 +14,7 @@ const categories = [
     title: 'stack.title.security',
     color: '#1E90FF',
     tags: ['stack.tag.siem', 'stack.tag.firewalls', 'stack.tag.iam', 'stack.tag.iec', 'stack.tag.nist', 'stack.tag.iso', 'stack.tag.sox', 'stack.tag.purdue', 'stack.tag.ir'],
-    img: '/stack_seguridad.png',
+    img: '/stack_seguridad.webp',
   },
   {
     icon: 'network',
@@ -22,7 +22,7 @@ const categories = [
     title: 'stack.title.network',
     color: '#3B82F6',
     tags: ['stack.tag.networks', 'stack.tag.mpls', 'stack.tag.mikrotik', 'stack.tag.vsat', 'stack.tag.wan', 'stack.tag.vpn', 'stack.tag.fiber', 'stack.tag.dns'],
-    img: '/stack_redes.png',
+    img: '/stack_redes.webp',
   },
   {
     icon: 'cloud',
@@ -30,7 +30,7 @@ const categories = [
     title: 'stack.title.cloud',
     color: '#06B6D4',
     tags: ['stack.tag.azure', 'stack.tag.aws', 'stack.tag.vmware', 'stack.tag.esxi', 'stack.tag.vcenter', 'stack.tag.windows', 'stack.tag.ad', 'stack.tag.linux'],
-    img: '/stack_cloud.png',
+    img: '/stack_cloud.webp',
   },
   {
     icon: 'automation',
@@ -38,7 +38,7 @@ const categories = [
     title: 'stack.title.ot',
     color: '#C5A46D',
     tags: ['stack.tag.scada', 'stack.tag.modbus', 'stack.tag.opc', 'stack.tag.dnp3', 'stack.tag.edge', 'stack.tag.veeam', 'stack.tag.industrial_control'],
-    img: '/stack_ot.png',
+    img: '/stack_ot.webp',
   },
   {
     icon: 'web',
@@ -46,7 +46,7 @@ const categories = [
     title: 'stack.title.dev',
     color: '#8B5CF6',
     tags: ['stack.tag.nextjs', 'stack.tag.react', 'stack.tag.tailwind', 'stack.tag.js', 'stack.tag.ts', 'stack.tag.cicd', 'stack.tag.vercel', 'stack.tag.seo'],
-    img: '/stack_web.png',
+    img: '/stack_web.webp',
   },
   {
     icon: 'ai',
@@ -54,7 +54,7 @@ const categories = [
     title: 'stack.title.ai',
     color: '#10B981',
     tags: ['stack.tag.python', 'stack.tag.powerbi', 'stack.tag.powershell', 'stack.tag.kpi', 'stack.tag.data_analysis', 'stack.tag.reports'],
-    img: '/stack_data.png',
+    img: '/stack_data.webp',
   },
 ]
 

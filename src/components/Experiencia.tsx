@@ -11,7 +11,23 @@ import { useLanguage } from '@/context/LanguageContext'
 
 /* ─── Timeline Item Component ─── */
 
-const TimelineItem = memo(({ job, index }: { job: any; index: number }) => {
+interface Achievement {
+  textKey: string;
+  icon: string;
+}
+
+interface Job {
+  periodKey: string;
+  company: string;
+  roleKey: string;
+  badgeKey: string;
+  color: string;
+  achievements: Achievement[];
+  bullets: string[];
+  tags: string[];
+}
+
+const TimelineItem = memo(({ job, index }: { job: Job; index: number }) => {
   const { t } = useLanguage()
   const ref    = useRef(null)
   const inView = useInView(ref, { once: true, margin: '-60px' })
@@ -62,7 +78,7 @@ const TimelineItem = memo(({ job, index }: { job: any; index: number }) => {
 
       {/* Highlights Grid */}
       <div className="flex flex-wrap gap-2 mb-4">
-        {job.achievements.map((a: any) => (
+        {job.achievements.map((a: Achievement) => (
           <div key={a.textKey} className="flex items-center gap-2.5 bg-white/5 border border-white/10 rounded-lg p-2 px-3">
             <Icon name={a.icon} label={t(a.textKey)} size={20} />
             <span className="text-xs text-slate-200">{t(a.textKey)}</span>

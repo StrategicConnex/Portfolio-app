@@ -2,7 +2,7 @@
 
 import { Canvas, useFrame } from '@react-three/fiber'
 import { OrbitControls, Text, Stars, Html } from '@react-three/drei'
-import { useRef, useState, useMemo } from 'react'
+import { useRef, useState, useMemo, useEffect } from 'react'
 import * as THREE from 'three'
 import { nodes, edges, type NodeDefinition } from '@/data/mindmap'
 
@@ -156,7 +156,7 @@ function NeonConnections({ selectedLabel }: { selectedLabel: string | null }) {
         )
         
         return (
-          <line key={i} ref={(el) => { lineRefs.current[i] = el as any }}>
+          <line key={i} ref={(el) => { lineRefs.current[i] = el as THREE.Line | null }}>
             <bufferGeometry>
               <bufferAttribute
                 attach="attributes-position"
@@ -223,7 +223,18 @@ function Scene({ selectedLabel, onSelect }: { selectedLabel: string | null; onSe
 /* ── Export ── */
 export default function MindMap3D() {
   const [selectedLabel, setSelectedLabel] = useState<string | null>(null)
-  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768)
+    }
+    // Defer the initial update to avoid synchronous state updates in effect body
+    setTimeout(checkMobile, 0)
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
+
   const canvasHeight = isMobile ? 300 : 480
   
   return (

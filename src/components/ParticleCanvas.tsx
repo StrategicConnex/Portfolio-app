@@ -118,7 +118,7 @@ export default function ParticleCanvas() {
     >
       <Particles
         id="tsparticles"
-        options={options as any}
+        options={options as Record<string, unknown>}
         style={{ width: '100%', height: '100%', position: 'absolute', inset: 0 }}
       />
       <div style={{

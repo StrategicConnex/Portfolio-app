@@ -3,9 +3,9 @@
 import React, { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import SectionHeader from './ui/SectionHeader'
-import FadeIn from './ui/FadeIn'
+
 import { useLanguage } from '@/context/LanguageContext'
-import { ShieldCheck, ShieldAlert, ArrowRight, Zap, Database, Lock, X } from 'lucide-react'
+import { ShieldCheck, ShieldAlert, ArrowRight, Zap, Database, Lock } from 'lucide-react'
 import CaseStudyDetail from './CaseStudyDetail'
 
 const CASE_STUDIES = [
@@ -164,7 +164,7 @@ export default function Proyecto() {
                 <span className="text-[11px] font-black text-emerald-400 uppercase tracking-wider">Impacto de Seniority</span>
               </div>
               <p className="text-xs text-slate-400 leading-relaxed italic">
-                "Juniors muestran código. <span className="text-white font-bold">Seniors muestran impacto real y ROI operativo.</span>"
+                &quot;Juniors muestran código. <span className="text-white font-bold">Seniors muestran impacto real y ROI operativo.</span>&quot;
               </p>
             </div>
           </div>

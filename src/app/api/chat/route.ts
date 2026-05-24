@@ -4,13 +4,16 @@ import { z } from 'zod';
 // Schema para validación estricta
 const ChatSchema = z.object({
   messages: z.array(z.object({
-    role: z.enum(['system', 'user', 'assistant']),
+    role: z.enum(['user', 'assistant']),
     content: z.string().min(1).max(2000),
   })).min(1).max(20),
   language: z.enum(['es', 'en']).optional().default('es'),
 });
 
-// Rate limiter básico en memoria (Para producción se recomienda Upstash Redis)
+// Rate limiter básico en memoria.
+// NOTA: Para un entorno serverless de producción, este mapa en memoria no se comparte entre workers.
+// Se recomienda encarecidamente reemplazarlo por un backend persistente como Upstash Redis o Vercel KV.
+// Ejemplo: await redis.set(`ratelimit:${ip}`, count, { ex: 60 })
 const rateLimitMap = new Map<string, { count: number; lastReset: number }>();
 const RATE_LIMIT = 10; // 10 mensajes
 const RATE_LIMIT_WINDOW = 60 * 1000; // 1 minuto
@@ -50,8 +53,12 @@ export async function POST(req: NextRequest) {
     }
 
     // 3. Llamada a OpenRouter
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 20000); // 20s timeout
+
     const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
       method: 'POST',
+      signal: controller.signal,
       headers: {
         'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
         'HTTP-Referer': 'https://juanpalacios.vercel.app',
@@ -104,6 +111,8 @@ REGLAS DE COMPORTAMIENTO:
       }),
     });
 
+    clearTimeout(timeoutId);
+
     if (!response.ok) {
       return NextResponse.json({ error: `API error: ${response.status}` }, { status: response.status });
     }
@@ -115,7 +124,11 @@ REGLAS DE COMPORTAMIENTO:
         'Connection': 'keep-alive',
       },
     });
-  } catch (error) {
+  } catch (error: unknown) {
+    if (error instanceof Error && error.name === 'AbortError') {
+      console.error('Chat API timeout');
+      return NextResponse.json({ error: 'Request timeout' }, { status: 504 });
+    }
     console.error('Error in chat API:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }

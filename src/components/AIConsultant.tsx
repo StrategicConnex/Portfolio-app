@@ -22,9 +22,12 @@ const AIConsultant = () => {
   
   // Update initial message when language changes if it's the only message
   useEffect(() => {
-    if (messages.length === 1 && messages[0].role === 'assistant') {
-      setMessages([{ role: 'assistant', content: t('ai.welcome') }])
-    }
+    setMessages(prev => {
+      if (prev.length === 1 && prev[0].role === 'assistant') {
+        return [{ role: 'assistant', content: t('ai.welcome') }]
+      }
+      return prev
+    })
   }, [language, t])
 
   const [input, setInput] = useState('')
@@ -94,7 +97,7 @@ const AIConsultant = () => {
                 return newMessages
               })
             }
-          } catch (e) {
+          } catch {
             // Ignore parse errors for incomplete chunks
           }
         }

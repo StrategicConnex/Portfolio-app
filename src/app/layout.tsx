@@ -138,8 +138,13 @@ export default function RootLayout({
         />
         <Script
           src="https://scaudit.vercel.app/scripts/vitals.js"
+          strategy="afterInteractive"
           data-project-id="7c9945ad-c235-484d-98fa-1d8fe7e9ee40"
-          defer
+          data-api-url="https://scaudit.vercel.app/api/telemetry/vitals"
+          data-sampling="1.0"
+          data-spa-tracking="true"
+          data-batch-size="10"
+          data-flush-interval="15000"
         />
       </head>
       <body className={inter.className}>

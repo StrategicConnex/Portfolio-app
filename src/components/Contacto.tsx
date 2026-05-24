@@ -40,9 +40,20 @@ export default function Contacto() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setStatus('sending')
-    // Simulate async send
-    await new Promise(r => setTimeout(r, 1200))
-    setStatus('sent')
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form)
+      })
+      if (!res.ok) {
+        setStatus('error')
+      } else {
+        setStatus('sent')
+      }
+    } catch {
+      setStatus('error')
+    }
   }
 
   const inputStyle: React.CSSProperties = {
@@ -144,6 +155,15 @@ export default function Contacto() {
                     </div>
                     <h3 style={{ color: '#4ade80', marginBottom: '0.5rem' }}>{t('contact.form.success')}</h3>
                     <p style={{ color: 'var(--muted)', fontSize: '0.88rem' }}>{t('contact.form.success_msg')}</p>
+                  </motion.div>
+                ) : status === 'error' ? (
+                  <motion.div key="error" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} style={{ textAlign: 'center', padding: '2rem 0' }}>
+                    <div style={{ width: 48, height: 48, margin: '0 auto 0.75rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                    </div>
+                    <h3 style={{ color: '#ef4444', marginBottom: '0.5rem' }}>Error</h3>
+                    <p style={{ color: 'var(--muted)', fontSize: '0.88rem', marginBottom: '1.5rem' }}>Hubo un problema al enviar el mensaje. Por favor, intenta de nuevo más tarde.</p>
+                    <button type="button" onClick={() => setStatus('idle')} style={{ padding: '0.6rem 1.2rem', background: 'transparent', border: '1px solid rgba(255,255,255,0.2)', color: 'var(--text)', borderRadius: 8, cursor: 'pointer', fontSize: '0.85rem' }}>Volver a intentar</button>
                   </motion.div>
                 ) : (
                   <motion.form key="form" onSubmit={handleSubmit}>
