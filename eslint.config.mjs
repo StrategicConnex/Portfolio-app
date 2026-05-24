@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Test/utility scripts (CommonJS, not subject to TS lint rules)
+    "scripts/**",
   ]),
 ]);
 

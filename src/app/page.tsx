@@ -11,6 +11,7 @@ const SIEMDashboard   = dynamic(() => import('@/components/SIEMDashboard'))
 const Stack           = dynamic(() => import('@/components/Stack'))
 const Certificaciones = dynamic(() => import('@/components/Certificaciones'))
 const AuditHub        = dynamic(() => import('@/components/AuditHub'))
+const SCAudit         = dynamic(() => import('@/components/SCAudit'))
 const Blog            = dynamic(() => import('@/components/Blog'))
 import { AskAICopilotShell } from '@/components/ask-ai/AskAICopilotShell'
 
@@ -30,6 +31,7 @@ export default function Home() {
         <TrustBadges />
         <SIEMDashboard />
         <AuditHub />
+        <SCAudit />
         <Blog />
         <Stack />
         <Certificaciones />

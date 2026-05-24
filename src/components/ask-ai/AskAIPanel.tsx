@@ -5,9 +5,8 @@ import { X, Minimize2, Maximize2, ArrowUp, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useChat } from '@ai-sdk/react';
 import { DefaultChatTransport } from 'ai';
-import { useState, useMemo, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Conversation, ConversationContent } from '@/components/ai-elements/conversation';
-import { useLanguage } from '@/context/LanguageContext';
 
 // Create transport outside component to avoid re-creation on every render
 const chatTransport = new DefaultChatTransport({ 
@@ -17,7 +16,6 @@ const chatTransport = new DefaultChatTransport({
 export function AskAIPanel() {
   const { isOpen, setIsOpen } = useAskAIStore();
   const [expanded, setExpanded] = useState(false);
-  const { language } = useLanguage();
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const { messages, sendMessage, status, error } = useChat({
