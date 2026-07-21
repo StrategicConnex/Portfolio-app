@@ -1,20 +1,44 @@
 'use client'
 
-import { useEffect, useMemo, useState } from "react"
-import Particles, { initParticlesEngine } from "@tsparticles/react"
+import { useMemo, useCallback } from "react"
+import Particles, { ParticlesProvider, useParticlesProvider } from "@tsparticles/react"
 import { loadLinksPreset } from "@tsparticles/preset-links"
+import type { Engine } from "@tsparticles/engine"
+
+function ParticlesInner({ options }: { options: Record<string, unknown> }) {
+  const { loaded } = useParticlesProvider()
+
+  if (!loaded) {
+    return (
+      <div 
+        style={{ position: 'absolute', inset: 0, zIndex: 0, background: '#000000' }}
+        aria-hidden="true"
+      />
+    )
+  }
+
+  return (
+    <div
+      style={{ position: 'absolute', inset: 0, zIndex: 0, background: '#000000', overflow: 'hidden' }}
+      aria-hidden="true"
+    >
+      <Particles
+        id="tsparticles"
+        options={options}
+        style={{ width: '100%', height: '100%', position: 'absolute', inset: 0 }}
+      />
+      <div style={{
+        position: 'absolute',
+        inset: 0,
+        background: 'radial-gradient(circle at center, transparent 0%, #000000 100%)',
+        pointerEvents: 'none',
+        zIndex: 1
+      }} />
+    </div>
+  )
+}
 
 export default function ParticleCanvas() {
-  const [init, setInit] = useState(false)
-
-  useEffect(() => {
-    initParticlesEngine(async (engine) => {
-      await loadLinksPreset(engine)
-    }).then(() => {
-      setInit(true)
-    })
-  }, [])
-
   const options = useMemo(() => ({
     preset: "links",
     background: {
@@ -102,33 +126,14 @@ export default function ParticleCanvas() {
     }
   }), [])
 
-  if (!init) {
-    return (
-      <div 
-        style={{ position: 'absolute', inset: 0, zIndex: 0, background: '#000000' }}
-        aria-hidden="true"
-      />
-    )
-  }
+  const initFn = useCallback(async (engine: Engine) => {
+    await loadLinksPreset(engine)
+  }, [])
 
   return (
-    <div
-      style={{ position: 'absolute', inset: 0, zIndex: 0, background: '#000000', overflow: 'hidden' }}
-      aria-hidden="true"
-    >
-      <Particles
-        id="tsparticles"
-        options={options as Record<string, unknown>}
-        style={{ width: '100%', height: '100%', position: 'absolute', inset: 0 }}
-      />
-      <div style={{
-        position: 'absolute',
-        inset: 0,
-        background: 'radial-gradient(circle at center, transparent 0%, #000000 100%)',
-        pointerEvents: 'none',
-        zIndex: 1
-      }} />
-    </div>
+    <ParticlesProvider init={initFn}>
+      <ParticlesInner options={options as Record<string, unknown>} />
+    </ParticlesProvider>
   )
 }
 

@@ -899,6 +899,7 @@ export const LanguageProvider = ({ children }: { children: ReactNode }) => {
   React.useEffect(() => {
     const saved = localStorage.getItem('portfolio_lang')
     if (saved === 'en') {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setLanguage('en')
     } else {
       setLanguage('es') // Spanish by default always
