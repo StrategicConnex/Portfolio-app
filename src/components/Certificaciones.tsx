@@ -113,7 +113,7 @@ export default function Certificaciones() {
             transition={{ duration: 0.5, delay: 0.4 }}
             className="text-lg font-semibold text-white mb-6 flex items-center gap-2"
           >
-            <Icon name="document" size={20} />
+            <Icon name="document" label="Cursos y Certificados" size={20} />
             Cursos y Certificados
           </motion.h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
@@ -138,7 +138,7 @@ export default function Certificaciones() {
                 >
                   <div className="flex justify-between items-start mb-3">
                     <div className="w-10 h-10 rounded-full bg-slate-800/50 flex items-center justify-center border border-slate-700/50 group-hover:bg-slate-800 transition-colors">
-                       <Icon name={isPdf ? 'document' : 'image'} size={20} />
+                       <Icon name={isPdf ? 'document' : 'image'} label={c.name} size={20} />
                     </div>
                     <span className="text-[10px] uppercase tracking-wider font-semibold text-slate-500 bg-slate-800/50 px-2 py-1 rounded-md">
                       {isPdf ? 'PDF' : 'IMG'}
