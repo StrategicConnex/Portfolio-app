@@ -1,244 +1,211 @@
 'use client'
 
-import { useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion } from 'framer-motion'
 import SectionHeader from './ui/SectionHeader'
 import FadeIn from './ui/FadeIn'
-import Icon from './ui/Icon'
 import { useLanguage } from '@/context/LanguageContext'
 
-type FormState = 'idle' | 'sending' | 'sent' | 'error'
-
-const projectTypes = [
-  'contact.type.audit',
-  'contact.type.siem',
-  'contact.type.arch',
-  'contact.type.network',
-  'contact.type.cloud',
-  'contact.type.automation',
-  'contact.type.compliance',
-  'contact.type.dev',
-  'contact.type.other',
-]
-
-const contactCards = [
-  { icon: 'linkedin', label: 'linkedin/juanfpalacios',        sub: 'LinkedIn',                href: 'https://linkedin.com/in/juanfpalacios',            color: '#0A66C2', external: true },
-  { icon: 'github', label: 'github/StrategicConnex',          sub: 'GitHub',                  href: 'https://github.com/StrategicConnex/',              color: '#333', external: true },
-  { icon: 'credly', label: 'credly.com/users/juan-palacios', sub: 'Certificaciones',         href: 'https://www.credly.com/users/juan-palacios.88e7ba6c', color: '#F9B400', external: true },
-  { icon: 'location', label: 'Neuquén, Argentina',             sub: 'Trabajo remoto o presencial', href: null,                                          color: 'var(--gold)' },
+const actions = [
+  {
+    label: 'LinkedIn',
+    sub: 'linkedin.com/in/juanfpalacios',
+    href: 'https://linkedin.com/in/juanfpalacios',
+    icon: (
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+      </svg>
+    ),
+    color: '#0A66C2',
+    bg: 'rgba(10,102,194,0.12)',
+    border: 'rgba(10,102,194,0.25)',
+    hoverBorder: 'rgba(10,102,194,0.6)',
+  },
+  {
+    label: 'Descargar CV',
+    sub: 'CV-JuanFelipePalacios.pdf',
+    href: '/CV-JuanFelipePalacios.pdf',
+    download: true,
+    icon: (
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
+        <polyline points="7 10 12 15 17 10" />
+        <line x1="12" y1="15" x2="12" y2="3" />
+      </svg>
+    ),
+    color: '#C5A46D',
+    bg: 'rgba(197,164,109,0.10)',
+    border: 'rgba(197,164,109,0.25)',
+    hoverBorder: 'rgba(197,164,109,0.6)',
+  },
+  {
+    label: 'Credly Badges',
+    sub: 'credly.com/users/juan-palacios',
+    href: 'https://www.credly.com/users/juan-palacios.88e7ba6c/badges/credly',
+    icon: (
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z" />
+      </svg>
+    ),
+    color: '#F9B400',
+    bg: 'rgba(249,180,0,0.10)',
+    border: 'rgba(249,180,0,0.25)',
+    hoverBorder: 'rgba(249,180,0,0.6)',
+  },
 ]
 
 export default function Contacto() {
   const { t } = useLanguage()
-  const [form, setForm]   = useState({ name: '', email: '', company: '', type: '', message: '' })
-  const [status, setStatus] = useState<FormState>('idle')
-
-  function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) {
-    setForm(f => ({ ...f, [e.target.name]: e.target.value }))
-  }
-
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault()
-    setStatus('sending')
-    try {
-      const res = await fetch('/api/contact', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form)
-      })
-      if (!res.ok) {
-        setStatus('error')
-      } else {
-        setStatus('sent')
-      }
-    } catch {
-      setStatus('error')
-    }
-  }
-
-  const inputStyle: React.CSSProperties = {
-    width: '100%', background: 'rgba(255,255,255,0.04)',
-    border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8,
-    padding: 'clamp(0.6rem, 1.5vw, 0.75rem) clamp(0.7rem, 1.5vw, 1rem)', color: 'var(--text)', fontSize: 'clamp(0.8rem, 1.5vw, 0.88rem)',
-    outline: 'none', fontFamily: 'inherit', boxSizing: 'border-box',
-    transition: 'border-color 0.2s',
-  }
 
   return (
-    <section id="contacto" style={{ padding: 'clamp(2rem, 5vw, 5rem) clamp(1rem, 5vw, 2rem)', background: 'var(--bg2)' }}>
-      <div style={{ maxWidth: 1100, margin: 'auto' }}>
-        <SectionHeader label={t('contact.label')} title={t('contact.title')} highlight={t('contact.highlight')} center />
+    <section
+      id="contacto"
+      style={{
+        padding: 'clamp(2rem, 5vw, 5rem) clamp(1rem, 5vw, 2rem)',
+        background: 'var(--bg2)',
+      }}
+    >
+      <div style={{ maxWidth: 640, margin: 'auto' }}>
+        <SectionHeader
+          label={t('contact.label')}
+          title={t('contact.title')}
+          highlight={t('contact.highlight')}
+          center
+        />
 
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.3fr] gap-6 lg:gap-12 items-start">
+        <FadeIn delay={0.05}>
+          <p
+            style={{
+              color: 'var(--muted)',
+              fontSize: 'clamp(0.82rem, 1.8vw, 0.92rem)',
+              lineHeight: 1.8,
+              textAlign: 'center',
+              marginBottom: 'clamp(1.5rem, 4vw, 2.5rem)',
+            }}
+          >
+            {t('contact.description')}
+          </p>
+        </FadeIn>
 
-          {/* LEFT — contact cards + availability */}
-          <div>
-            <FadeIn delay={0.05}>
-              <p style={{ color: 'var(--muted)', fontSize: 'clamp(0.8rem, 1.8vw, 0.9rem)', lineHeight: 1.8, marginBottom: 'clamp(1rem, 3vw, 1.75rem)' }}>
-                {t('contact.description')}
-              </p>
-            </FadeIn>
-
-            <FadeIn delay={0.18} direction="left">
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.85rem', marginBottom: '1.5rem' }}>
-                <motion.a
-                  href="https://linkedin.com/in/juanfpalacios"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  whileHover={{ y: -2 }}
-                  style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '0.85rem 1.2rem', background: 'rgba(10,102,194,0.12)', color: 'var(--text)', borderRadius: 999, fontWeight: 700, textDecoration: 'none', border: '1px solid rgba(10,102,194,0.18)' }}
-                >
-                  LinkedIn
-                </motion.a>
-                <motion.a
-                  href="/CV-JuanFelipePalacios.pdf"
-                  download
-                  whileHover={{ y: -2 }}
-                  style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '0.85rem 1.2rem', background: 'rgba(255,215,0,0.12)', color: 'var(--text)', borderRadius: 999, fontWeight: 700, textDecoration: 'none', border: '1px solid rgba(255,215,0,0.28)' }}
-                >
-                  {t('contact.download_cv')}
-                </motion.a>
-              </div>
-            </FadeIn>
-
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 'clamp(0.5rem, 1.5vw, 0.7rem)', marginBottom: '1.5rem' }}>
-              {contactCards.map((c, i) => (
-                <FadeIn key={i} delay={i * 0.07 + 0.1} direction="left">
-                  {c.href ? (
-                    <motion.a
-                      href={c.href}
-                      target={c.external ? '_blank' : undefined}
-                      rel={c.external ? 'noopener noreferrer' : undefined}
-                      whileHover={{ borderColor: c.color, x: 4 }}
-                      style={{ display: 'flex', alignItems: 'center', gap: '0.9rem', padding: '0.85rem 1.1rem', background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 10, textDecoration: 'none', color: 'var(--text)', transition: 'border-color 0.2s' }}
-                    >
-                      <div style={{ width: 38, height: 38, borderRadius: 8, background: `${c.color}18`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                        <Icon name={c.icon} label={c.label} size={24} />
-                      </div>
-                      <div><div style={{ fontSize: '0.84rem', fontWeight: 600 }}>{c.label}</div><div style={{ fontSize: '0.7rem', color: 'var(--muted)' }}>{c.sub}</div></div>
-                      <span style={{ marginLeft: 'auto', fontSize: '0.72rem', color: c.color, opacity: 0.6 }}>↗</span>
-                    </motion.a>
-                  ) : (
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.9rem', padding: '0.85rem 1.1rem', background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 10 }}>
-                      <div style={{ width: 38, height: 38, borderRadius: 8, background: `${c.color}18`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                    <Icon name={c.icon} label={c.label} size={24} />
-                  </div>
-                      <div><div style={{ fontSize: '0.84rem', fontWeight: 600 }}>{c.label}</div><div style={{ fontSize: '0.7rem', color: 'var(--muted)' }}>{c.sub}</div></div>
-                    </div>
-                  )}
-                </FadeIn>
-              ))}
-            </div>
-
-            <FadeIn delay={0.4}>
-              <motion.div
-                animate={{ boxShadow: ['0 0 0px rgba(74,222,128,0)', '0 0 18px rgba(74,222,128,0.2)', '0 0 0px rgba(74,222,128,0)'] }}
-                transition={{ repeat: Infinity, duration: 2.5 }}
-                style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', background: 'rgba(34,197,94,0.07)', color: '#4ade80', border: '1px solid rgba(34,197,94,0.22)', padding: '0.5rem 1.1rem', borderRadius: 20, fontSize: '0.82rem', fontWeight: 600 }}
+        {/* Action cards */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.9rem' }}>
+          {actions.map((a, i) => (
+            <FadeIn key={i} delay={i * 0.1 + 0.15} direction="up">
+              <motion.a
+                href={a.href}
+                target={a.download ? undefined : '_blank'}
+                rel={a.download ? undefined : 'noopener noreferrer'}
+                {...(a.download ? { download: true } : {})}
+                whileHover={{
+                  y: -3,
+                  borderColor: a.hoverBorder,
+                  boxShadow: `0 8px 32px ${a.color}22`,
+                }}
+                transition={{ duration: 0.2 }}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '1rem',
+                  padding: '1.1rem 1.4rem',
+                  background: a.bg,
+                  border: `1px solid ${a.border}`,
+                  borderRadius: 14,
+                  textDecoration: 'none',
+                  color: 'var(--text)',
+                  cursor: 'pointer',
+                }}
               >
-                <motion.div animate={{ opacity: [1, 0.3, 1] }} transition={{ repeat: Infinity, duration: 1.8 }} style={{ width: 8, height: 8, borderRadius: '50%', background: '#4ade80' }} />
-                {t('contact.availability')}
-              </motion.div>
+                {/* Icon circle */}
+                <div
+                  style={{
+                    width: 46,
+                    height: 46,
+                    borderRadius: '50%',
+                    background: `${a.color}20`,
+                    border: `1px solid ${a.border}`,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexShrink: 0,
+                    color: a.color,
+                  }}
+                >
+                  {a.icon}
+                </div>
+
+                {/* Text */}
+                <div style={{ minWidth: 0 }}>
+                  <div style={{ fontSize: '0.95rem', fontWeight: 700, color: 'var(--text)', marginBottom: 2 }}>
+                    {a.label}
+                  </div>
+                  <div
+                    style={{
+                      fontSize: '0.72rem',
+                      color: 'var(--muted)',
+                      whiteSpace: 'nowrap',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                    }}
+                  >
+                    {a.sub}
+                  </div>
+                </div>
+
+                {/* Arrow */}
+                <span
+                  style={{
+                    marginLeft: 'auto',
+                    fontSize: '1.1rem',
+                    color: a.color,
+                    opacity: 0.7,
+                    flexShrink: 0,
+                  }}
+                >
+                  {a.download ? '↓' : '↗'}
+                </span>
+              </motion.a>
             </FadeIn>
-          </div>
-
-          {/* RIGHT — qualified contact form */}
-          <FadeIn delay={0.15} direction="right">
-            <div style={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 16, padding: '2rem', position: 'relative', overflow: 'hidden' }}>
-              <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: 'linear-gradient(90deg, var(--blue), var(--gold))' }} />
-
-              <AnimatePresence mode="wait">
-                {status === 'sent' ? (
-                  <motion.div key="sent" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} style={{ textAlign: 'center', padding: '2rem 0' }}>
-                    <div style={{ width: 48, height: 48, margin: '0 auto 0.75rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      <Icon name="check" label={t('contact.form.success')} size={40} />
-                    </div>
-                    <h3 style={{ color: '#4ade80', marginBottom: '0.5rem' }}>{t('contact.form.success')}</h3>
-                    <p style={{ color: 'var(--muted)', fontSize: '0.88rem' }}>{t('contact.form.success_msg')}</p>
-                  </motion.div>
-                ) : status === 'error' ? (
-                  <motion.div key="error" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} style={{ textAlign: 'center', padding: '2rem 0' }}>
-                    <div style={{ width: 48, height: 48, margin: '0 auto 0.75rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
-                    </div>
-                    <h3 style={{ color: '#ef4444', marginBottom: '0.5rem' }}>Error</h3>
-                    <p style={{ color: 'var(--muted)', fontSize: '0.88rem', marginBottom: '1.5rem' }}>Hubo un problema al enviar el mensaje. Por favor, intenta de nuevo más tarde.</p>
-                    <button type="button" onClick={() => setStatus('idle')} style={{ padding: '0.6rem 1.2rem', background: 'transparent', border: '1px solid rgba(255,255,255,0.2)', color: 'var(--text)', borderRadius: 8, cursor: 'pointer', fontSize: '0.85rem' }}>Volver a intentar</button>
-                  </motion.div>
-                ) : (
-                  <motion.form key="form" onSubmit={handleSubmit}>
-                    <h3 style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text)', marginBottom: '0.3rem' }}>{t('contact.form.title')}</h3>
-                    <p style={{ fontSize: '0.75rem', color: 'var(--muted)', marginBottom: '1.5rem' }}>{t('contact.form.subtitle')}</p>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
-                      <div>
-                        <label style={{ fontSize: '0.72rem', color: 'var(--muted)', display: 'block', marginBottom: '0.3rem' }}>{t('contact.form.name')} *</label>
-                        <input required name="name" value={form.name} onChange={handleChange} placeholder={t('contact.form.name')} style={inputStyle}
-                          onFocus={e => e.currentTarget.style.borderColor = 'rgba(30,144,255,0.5)'}
-                          onBlur={e => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'}
-                        />
-                      </div>
-                      <div>
-                        <label style={{ fontSize: '0.72rem', color: 'var(--muted)', display: 'block', marginBottom: '0.3rem' }}>{t('contact.form.email')} *</label>
-                        <input required type="email" name="email" value={form.email} onChange={handleChange} placeholder="email@empresa.com" style={inputStyle}
-                          onFocus={e => e.currentTarget.style.borderColor = 'rgba(30,144,255,0.5)'}
-                          onBlur={e => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'}
-                        />
-                      </div>
-                    </div>
-
-                    <div style={{ marginBottom: '0.75rem' }}>
-                      <label style={{ fontSize: '0.72rem', color: 'var(--muted)', display: 'block', marginBottom: '0.3rem' }}>{t('contact.form.company')}</label>
-                      <input name="company" value={form.company} onChange={handleChange} placeholder="YPF, PAE, Vista Oil…" style={inputStyle}
-                        onFocus={e => e.currentTarget.style.borderColor = 'rgba(30,144,255,0.5)'}
-                        onBlur={e => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'}
-                      />
-                    </div>
-
-                    <div style={{ marginBottom: '0.75rem' }}>
-                      <label style={{ fontSize: '0.72rem', color: 'var(--muted)', display: 'block', marginBottom: '0.3rem' }}>{t('contact.form.type')}</label>
-                      <select required name="type" value={form.type} onChange={handleChange}
-                        style={{ ...inputStyle, appearance: 'none', cursor: 'pointer' }}
-                        onFocus={e => e.currentTarget.style.borderColor = 'rgba(30,144,255,0.5)'}
-                        onBlur={e => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'}
-                      >
-                        <option value="" disabled>{t('contact.form.type.placeholder')}</option>
-                        {projectTypes.map(pt => <option key={pt} value={pt}>{t(pt)}</option>)}
-                      </select>
-                    </div>
-
-                    <div style={{ marginBottom: '1.25rem' }}>
-                      <label style={{ fontSize: '0.72rem', color: 'var(--muted)', display: 'block', marginBottom: '0.3rem' }}>{t('contact.form.message')}</label>
-                      <textarea name="message" value={form.message} onChange={handleChange} rows={3} placeholder={t('contact.form.message.placeholder')}
-                        style={{ ...inputStyle, resize: 'vertical', minHeight: 80 }}
-                        onFocus={e => e.currentTarget.style.borderColor = 'rgba(30,144,255,0.5)'}
-                        onBlur={e => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'}
-                      />
-                    </div>
-
-                    <motion.button
-                      type="submit"
-                      disabled={status === 'sending'}
-                      whileHover={{ scale: 1.02, boxShadow: '0 0 24px rgba(30,144,255,0.3)' }}
-                      whileTap={{ scale: 0.97 }}
-                      style={{
-                        width: '100%', padding: '0.85rem',
-                        background: status === 'sending' ? 'rgba(30,144,255,0.5)' : 'var(--blue)',
-                        color: '#fff', fontWeight: 700, fontSize: '0.92rem',
-                        border: 'none', borderRadius: 8, cursor: status === 'sending' ? 'wait' : 'pointer',
-                      }}
-                    >
-                      {status === 'sending' ? t('contact.form.sending') : t('contact.form.send')}
-                    </motion.button>
-                    <p style={{ fontSize: '0.68rem', color: 'var(--muted)', textAlign: 'center', marginTop: '0.6rem' }}>
-                      {t('contact.form.footer')}
-                    </p>
-                  </motion.form>
-                )}
-              </AnimatePresence>
-            </div>
-          </FadeIn>
+          ))}
         </div>
+
+        {/* Availability badge */}
+        <FadeIn delay={0.5}>
+          <div style={{ display: 'flex', justifyContent: 'center', marginTop: '2rem' }}>
+            <motion.div
+              animate={{
+                boxShadow: [
+                  '0 0 0px rgba(74,222,128,0)',
+                  '0 0 18px rgba(74,222,128,0.2)',
+                  '0 0 0px rgba(74,222,128,0)',
+                ],
+              }}
+              transition={{ repeat: Infinity, duration: 2.5 }}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                background: 'rgba(34,197,94,0.07)',
+                color: '#4ade80',
+                border: '1px solid rgba(34,197,94,0.22)',
+                padding: '0.5rem 1.2rem',
+                borderRadius: 20,
+                fontSize: '0.82rem',
+                fontWeight: 600,
+              }}
+            >
+              <motion.div
+                animate={{ opacity: [1, 0.3, 1] }}
+                transition={{ repeat: Infinity, duration: 1.8 }}
+                style={{
+                  width: 8,
+                  height: 8,
+                  borderRadius: '50%',
+                  background: '#4ade80',
+                }}
+              />
+              {t('contact.availability')}
+            </motion.div>
+          </div>
+        </FadeIn>
       </div>
     </section>
   )
