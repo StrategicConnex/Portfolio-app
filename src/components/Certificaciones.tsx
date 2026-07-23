@@ -440,23 +440,31 @@ export default function Certificaciones() {
                       animate={{ opacity: 1, scale: 1 }}
                       exit={{ opacity: 0, scale: 0.9 }}
                       transition={{ duration: 0.3 }}
-                      whileHover={{ y: -4, borderColor: 'rgba(197,164,109,0.5)' }}
+                      whileHover={{ y: -4, borderColor: 'rgba(197,164,109,0.5)', boxShadow: '0 12px 24px -6px rgba(0,0,0,0.6)' }}
                       className="group flex flex-col p-4 rounded-xl cursor-pointer text-left relative overflow-hidden"
                       style={{
-                        background: 'var(--card)',
-                        border: '1px solid var(--border)',
-                        transition: 'border-color 0.2s ease-in-out, transform 0.2s ease-in-out',
+                        background: '#111827',
+                        border: '1px solid rgba(255, 255, 255, 0.08)',
+                        transition: 'border-color 0.2s ease-in-out, transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out',
                       }}
                     >
                       <div className="flex justify-between items-start mb-3">
-                        <div className="w-10 h-10 rounded-full bg-slate-800/50 flex items-center justify-center border border-slate-700/50 group-hover:bg-slate-800 transition-colors">
+                        <div className={`w-10 h-10 rounded-full flex items-center justify-center border transition-colors ${
+                          isPdf 
+                            ? 'bg-amber-500/10 border-amber-500/25 text-amber-400 group-hover:bg-amber-500/20' 
+                            : 'bg-blue-500/10 border-blue-500/25 text-blue-400 group-hover:bg-blue-500/20'
+                        }`}>
                           <Icon name={isPdf ? 'document' : 'image'} label={c.name} size={20} />
                         </div>
-                        <span className="text-[10px] uppercase tracking-wider font-semibold text-slate-500 bg-slate-800/50 px-2 py-1 rounded-md">
+                        <span className={`text-[10px] uppercase tracking-wider font-semibold px-2 py-0.5 rounded border ${
+                          isPdf
+                            ? 'bg-amber-500/10 text-amber-300 border-amber-500/20'
+                            : 'bg-blue-500/10 text-blue-300 border-blue-500/20'
+                        }`}>
                           {isPdf ? 'PDF' : 'IMG'}
                         </span>
                       </div>
-                      <h4 className="text-[13px] text-slate-300 font-medium leading-relaxed line-clamp-3 group-hover:text-white transition-colors">
+                      <h4 className="text-[13px] text-slate-100 font-medium leading-relaxed line-clamp-3 group-hover:text-amber-300 transition-colors">
                         {c.name}
                       </h4>
                     </motion.button>

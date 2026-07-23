@@ -4,6 +4,25 @@
 
 @custom-variant dark (&:is(.dark *));
 
+:root {
+  --bg: #0A192F;
+  --bg2: #111827;
+  --blue: #1E90FF;
+  --gold: #C5A46D;
+  --text: #E5E7EB;
+  --muted: rgba(255, 255, 255, 0.05);
+  --card: #111827;
+  --border: rgba(255, 255, 255, 0.1);
+  --background: #0A192F;
+  --foreground: #E5E7EB;
+  --card-foreground: #E5E7EB;
+  --secondary: #1e293b;
+  --secondary-foreground: #E5E7EB;
+  --muted-foreground: #94a3b8;
+  --accent: rgba(197, 164, 109, 0.15);
+  --accent-foreground: #C5A46D;
+}
+
 /* ── Hero Purdue radar — desktop only ── */
 .hero-radar { display: none !important; }
 @media (min-width: 1024px) { .hero-radar { display: block !important; } }
@@ -11,67 +30,6 @@
 .hero-content {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 2.5rem;
-  width: 100%;
-}
-
-@media (min-width: 1024px) {
-  .hero-content {
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    max-width: 1100px;
-    margin: 0 auto;
-    text-align: left;
-    gap: 4rem;
-  }
-}
-
-:root {
-  --bg: #0A192F;
-  --bg2: #111827;
-  --blue: #1E90FF;
-  --gold: #C5A46D;
-  --text: #E5E7EB;
-  --muted: oklch(0.97 0 0);
-  --card: oklch(1 0 0);
-  --border: oklch(0.922 0 0);
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
-}
-
-html {
-  scroll-behavior: smooth;
-  background: var(--bg);
 }
 
 section {
