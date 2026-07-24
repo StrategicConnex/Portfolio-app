@@ -1,8 +1,12 @@
 import type { Metadata, Viewport } from 'next'
+import { cookies, headers } from 'next/headers'
 import './globals.css'
 import { LanguageProvider } from '@/context/LanguageContext'
+import { SITE } from '@/lib/constants'
 import React from 'react'
 import Script from 'next/script'
+import { ObservabilityProvider } from '@/components/observability/ObservabilityProvider'
+import { HtmlLangUpdater } from '@/components/HtmlLangUpdater'
 
 export const viewport: Viewport = {
   themeColor: [
@@ -12,36 +16,24 @@ export const viewport: Viewport = {
 }
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://juanpalacios.vercel.app'),
+  metadataBase: new URL(SITE.url),
   title: 'Juan Felipe Palacios – Consultoría IT/OT Neuquén | Ciberseguridad para Oil & Gas en Vaca Muerta',
-  description:
-    'Consultoría IT/OT y ciberseguridad industrial para Oil & Gas en Vaca Muerta. Experiencia en IEC 62443, NIST, SCADA y redes críticas. Basado en Neuquén, Argentina.',
-  keywords: [
-    'Ciberseguridad Industrial', 'IT/OT', 'IEC 62443', 'NIST', 'SCADA',
-    'Ciberseguridad para Oil & Gas en Vaca Muerta', 'Consultoría IT/OT Neuquén', 'Oil & Gas', 'Vaca Muerta', 'Neuquén', 'Argentina',
-    'Security Onion', 'SIEM', 'Modelo Purdue', 'ISO 27001', 'SOX',
-    'Juan Felipe Palacios', 'Consultoría IT/OT', 'Infraestructura crítica', 'Neuquén',
-  ],
-  authors: [{ name: 'Juan Felipe Palacios', url: 'https://linkedin.com/in/juanfpalacios' }],
-  creator: 'Juan Felipe Palacios',
-  applicationName: 'Portfolio - Juan Felipe Palacios',
-  publisher: 'Juan Felipe Palacios',
+  description: SITE.description,
+  keywords: SITE.keywords,
+  authors: [{ name: SITE.name, url: SITE.social.linkedin }],
+  creator: SITE.creator,
+  applicationName: SITE.applicationName,
+  publisher: SITE.publisher,
   openGraph: {
     title: 'Juan Felipe Palacios – Consultoría IT/OT Neuquén | Ciberseguridad para Oil & Gas en Vaca Muerta',
     description: 'Referente en ciberseguridad industrial y consultoría IT/OT para Oil & Gas en Neuquén y Vaca Muerta.',
     type: 'website',
-    locale: 'es_AR',
-    url: 'https://juanpalacios.vercel.app',
-    siteName: 'Juan Felipe Palacios Portfolio',
+    locale: SITE.locale,
+    url: SITE.url,
+    siteName: SITE.applicationName,
     images: [
       {
-        url: 'https://juanpalacios.vercel.app/JuanPalacios.webp',
-        alt: 'Foto de perfil de Juan Felipe Palacios',
-        width: 1200,
-        height: 1200,
-      },
-      {
-        url: 'https://juanpalacios.vercel.app/JuanPalacios.webp',
+        url: SITE.profileImage,
         alt: 'Foto de perfil de Juan Felipe Palacios',
         width: 1200,
         height: 1200,
@@ -54,10 +46,10 @@ export const metadata: Metadata = {
     description: 'Consultoría IT/OT y Ciberseguridad Industrial para Oil & Gas en Vaca Muerta y Neuquén.',
     creator: '@juanfpalacios',
     site: '@juanfpalacios',
-    images: ['https://juanpalacios.vercel.app/JuanPalacios.webp'],
+    images: [SITE.profileImage],
   },
   robots: { index: true, follow: true },
-  alternates: { canonical: 'https://juanpalacios.vercel.app', languages: { 'es-AR': 'https://juanpalacios.vercel.app' } },
+  alternates: { canonical: SITE.url, languages: { 'es-AR': SITE.url, 'en': SITE.url } },
 }
 
 const jsonLd = {
@@ -65,15 +57,11 @@ const jsonLd = {
   '@graph': [
     {
       '@type': 'Person',
-      name: 'Juan Felipe Palacios',
+      name: SITE.name,
       jobTitle: 'Arquitecto IT/OT – Ciberseguridad Industrial',
       description: 'Especialista en ciberseguridad industrial con 20+ años en Oil & Gas. IEC 62443, NIST CSF, SCADA, Modelo Purdue. Basado en Neuquén, Argentina.',
-      url: 'https://juanpalacios.vercel.app',
-      sameAs: [
-        'https://linkedin.com/in/juanfpalacios',
-        'https://github.com/juanfpalacios',
-        'https://twitter.com/juanfpalacios'
-      ],
+      url: SITE.url,
+      sameAs: [SITE.social.linkedin, SITE.social.github, SITE.social.twitter],
       address: {
         '@type': 'PostalAddress',
         addressLocality: 'Neuquén',
@@ -81,9 +69,9 @@ const jsonLd = {
         addressCountry: 'AR',
       },
       knowsAbout: [
-        'Ciberseguridad Industrial Argentina', 'IEC 62443', 'NIST CSF', 'SCADA', 'Modelo Purdue', 
+        'Ciberseguridad Industrial Argentina', 'IEC 62443', 'NIST CSF', 'SCADA', 'Modelo Purdue',
         'Oil & Gas Vaca Muerta', 'SIEM Security Onion', 'Arquitectura IT/OT',
-        'Infraestructura Crítica', 'Seguridad de Redes', 'Continuidad de Negocio'
+        'Infraestructura Crítica', 'Seguridad de Redes', 'Continuidad de Negocio',
       ],
     },
     {
@@ -91,7 +79,7 @@ const jsonLd = {
       name: 'Juan Felipe Palacios – Consultoría IT/OT Neuquén',
       serviceType: 'Ciberseguridad para Oil & Gas en Vaca Muerta',
       description: 'Servicios de consultoría en ciberseguridad industrial, arquitectura de redes IT/OT y gestión de infraestructura crítica para el sector Oil & Gas en Vaca Muerta.',
-      url: 'https://juanpalacios.vercel.app',
+      url: SITE.url,
       areaServed: ['Neuquén', 'Argentina', 'Vaca Muerta'],
       address: {
         '@type': 'PostalAddress',
@@ -112,28 +100,94 @@ const jsonLd = {
         ],
       },
     },
+    {
+      '@type': 'BreadcrumbList',
+      '@id': `${SITE.url}/breadcrumb`,
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Inicio', item: SITE.url },
+        { '@type': 'ListItem', position: 2, name: 'Perfil Profesional', item: `${SITE.url}/#perfil` },
+        { '@type': 'ListItem', position: 3, name: 'Experiencia IT/OT', item: `${SITE.url}/#experiencia` },
+        { '@type': 'ListItem', position: 4, name: 'Servicios', item: `${SITE.url}/#servicios` },
+        { '@type': 'ListItem', position: 5, name: 'Certificaciones', item: `${SITE.url}/#certificaciones` },
+        { '@type': 'ListItem', position: 6, name: 'Contacto', item: `${SITE.url}/#contacto` },
+      ],
+    },
+    {
+      '@type': 'FAQPage',
+      '@id': `${SITE.url}/faq`,
+      mainEntity: [
+        {
+          '@type': 'Question',
+          name: '¿Qué servicios de ciberseguridad industrial ofreces?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'Ofrezco auditorías de seguridad OT/IT, implementación de SIEM (Security Onion), diseño de arquitectura basada en el modelo Purdue, consultoría en IEC 62443 y NIST CSF, análisis de vulnerabilidades y respuesta a incidentes para infraestructura crítica.',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: '¿Qué experiencia tienes en el sector Oil & Gas en Vaca Muerta?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'Cuento con más de 20 años de trayectoria en operación y seguridad de infraestructura TI y OT en el sector Oil & Gas en Vaca Muerta, Neuquén. He liderado proyectos de seguridad perimetral, segmentación de redes y monitoreo continuo con Security Onion, cumpliendo con estándares internacionales como IEC 62443 y SOX.',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: '¿Qué es el modelo Purdue en ciberseguridad OT?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'El modelo Purdue (ISA-95) es una arquitectura de referencia para redes industriales (OT) que segmenta los sistemas de control en seis niveles, desde sensores y actuadores (Nivel 0) hasta la red corporativa (Nivel 4). Su correcta implementación es clave para la seguridad de infraestructura crítica como la de Vaca Muerta.',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: '¿Cómo puedo contactarte para consultoría IT/OT?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'Puedes contactarme a través del formulario de contacto en mi sitio web, enviarme un mensaje por LinkedIn o descargar mi CV completo desde la sección de contacto. También puedes usar el asistente AI en la esquina inferior derecha para consultas rápidas.',
+          },
+        },
+      ],
+    },
   ],
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
+  const cookieStore = await cookies()
+  const headersStore = await headers()
+  const langCookie = cookieStore.get('portfolio_lang')
+
+  // Determine initial language: cookie → Accept-Language header → default 'es'
+  // This must match detectClientLanguage() in LanguageContext.tsx
+  let initialLang: 'es' | 'en' = 'es'
+  if (langCookie?.value === 'en') {
+    initialLang = 'en'
+  } else if (!langCookie) {
+    const acceptLanguage = headersStore.get('accept-language') || ''
+    if (acceptLanguage.startsWith('en')) {
+      initialLang = 'en'
+    }
+  }
+
   return (
-    <html lang="es" style={{ colorScheme: 'dark' }}>
+    <html lang={initialLang} suppressHydrationWarning style={{ colorScheme: 'dark' }}>
       <head>
         <meta name="color-scheme" content="dark" />
-        <link rel="canonical" href="https://juanpalacios.vercel.app" />
+        <link rel="canonical" href={SITE.url} />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
         <Script
-          src="https://scaudit.vercel.app/scripts/vitals.js"
+          src={SITE.scaudit.scriptUrl}
           strategy="afterInteractive"
-          data-project-id="7c9945ad-c235-484d-98fa-1d8fe7e9ee40"
-          data-api-url="https://scaudit.vercel.app/api/telemetry/vitals"
+          data-project-id={SITE.scaudit.projectId}
+          data-api-url={SITE.scaudit.apiUrl}
           data-sampling="1.0"
           data-spa-tracking="true"
           data-batch-size="10"
@@ -141,8 +195,11 @@ export default function RootLayout({
         />
       </head>
       <body className="font-sans antialiased bg-[#0f172a] text-slate-300">
-        <LanguageProvider>
-          {children}
+        <LanguageProvider initialLanguage={initialLang}>
+          <HtmlLangUpdater />
+          <ObservabilityProvider>
+            {children}
+          </ObservabilityProvider>
         </LanguageProvider>
       </body>
     </html>

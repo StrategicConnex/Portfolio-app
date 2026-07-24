@@ -151,7 +151,7 @@ export default function Navbar() {
             >
               <div className="flex justify-between items-center mb-4">
                 <span className="text-[var(--gold)] font-bold text-xl tracking-wider">MENU</span>
-                <button onClick={() => setMenuOpen(false)} className="text-slate-400 hover:text-white">
+                <button onClick={() => setMenuOpen(false)} className="text-slate-400 hover:text-white" aria-label="Cerrar menú">
                   <X size={24} />
                 </button>
               </div>

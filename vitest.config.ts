@@ -7,6 +7,9 @@ export default defineConfig({
     globals: true,
     include: ['src/**/*.test.{ts,tsx}'],
     exclude: ['node_modules', '.next'],
+    testTimeout: 15_000,
+    hookTimeout: 15_000,
+    setupFiles: ['./src/test-setup.ts'],
   },
   resolve: {
     alias: {

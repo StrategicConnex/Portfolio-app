@@ -12,6 +12,14 @@ const eslintConfig = defineConfig([
       },
     },
   },
+  // Disable img-element rule in test files (mocks need <img> for next/image)
+  {
+    files: ['**/*.test.tsx', '**/*.test.ts'],
+    rules: {
+      '@next/next/no-img-element': 'off',
+    },
+  },
+
   // Override default ignores of eslint-config-next.
   globalIgnores([
     // Default ignores of eslint-config-next:

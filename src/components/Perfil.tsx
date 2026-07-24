@@ -65,77 +65,103 @@ function MetricCard({ num, label, color, icon, img, delay }: { num: string; labe
       animate={inView ? { opacity: 1, scale: 1 } : {}}
       transition={{ delay, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
       whileHover={{ y: -5, scale: 1.02 }}
+      className="relative overflow-hidden flex flex-col justify-end p-6 rounded-2xl h-[240px] cursor-default"
       style={{
         background: 'var(--card)',
         border: '1px solid var(--border)',
-        borderRadius: 20,
-        height: '240px',
-        cursor: 'default',
-        position: 'relative',
-        overflow: 'hidden',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'flex-end',
-        padding: '1.5rem',
       }}
     >
       {/* Background Image */}
-      <div style={{ position: 'absolute', inset: 0, zIndex: 0 }}>
+      <div className="absolute inset-0 z-0">
         <Image 
           src={img} 
           alt={label} 
           fill 
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          style={{ objectFit: 'cover', opacity: 0.4, filter: 'grayscale(0.4) brightness(0.7)' }} 
+          className="object-cover opacity-40 grayscale-[40%] brightness-[0.7]"
         />
-        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.9) 20%, rgba(0,0,0,0.2) 100%)' }} />
+        <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.9) 20%, rgba(0,0,0,0.2) 100%)' }} />
       </div>
 
-      <div style={{ position: 'relative', zIndex: 1 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
-          <div style={{ width: 32, height: 32, borderRadius: 8, background: `${color}22`, display: 'flex', alignItems: 'center', justifyContent: 'center', border: `1px solid ${color}44` }}>
+      <div className="relative z-1">
+        <div className="flex items-center gap-3 mb-2">
+          <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: `${color}22`, border: `1px solid ${color}44` }}>
             <Icon name={icon} label={label} size={18} />
           </div>
-          <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#fff', letterSpacing: '-1px' }}>{num}</div>
+          <div className="text-[1.8rem] font-black text-white tracking-tight">{num}</div>
         </div>
-        <div style={{ fontSize: '0.82rem', color: 'rgba(255,255,255,0.7)', lineHeight: 1.3, fontWeight: 500 }}>{label}</div>
+        <div className="text-sm text-white/70 leading-tight font-medium">{label}</div>
       </div>
       
       {/* Accent bar */}
-      <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 3, background: color, opacity: 0.6 }} />
+      <div className="absolute top-0 left-0 right-0 h-[3px] opacity-60" style={{ background: color }} />
     </motion.div>
   )
 }
 
 export default function Perfil() {
-  const { t } = useLanguage()
+  const { t, language } = useLanguage()
 
   return (
-    <section id="perfil" style={{ padding: 'clamp(2rem, 5vw, 5rem) clamp(1rem, 5vw, 2rem)', background: 'var(--bg)' }}>
-      <div style={{ maxWidth: 1100, margin: 'auto' }}>
+    <section id="perfil" className="py-20 sm:py-32 px-4 sm:px-6 md:px-8" style={{ background: 'var(--bg)' }}>
+      <div className="max-w-[1100px] mx-auto">
         <SectionHeader label={t('profile.label')} title={t('profile.title')} highlight={t('profile.highlight')} />
 
         <FadeIn delay={0.1}>
-          <p style={{ color: 'var(--muted)', maxWidth: 840, marginBottom: '1.4rem', fontSize: 'clamp(0.85rem, 2vw, 0.97rem)', lineHeight: 1.75 }}>
-            {t('profile.description1')}
-          </p>
-          <p style={{ color: 'var(--muted)', maxWidth: 840, marginBottom: '3rem', fontSize: 'clamp(0.85rem, 2vw, 0.97rem)', lineHeight: 1.75 }}>
-            {t('profile.description2')}
-          </p>
+          <div className="flex flex-col md:flex-row items-start gap-8 md:gap-12 mb-12">
+            {/* Profile image — left */}
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.2, duration: 0.7, ease: 'easeOut' }}
+              className="relative w-[160px] h-[160px] sm:w-[200px] sm:h-[200px] md:w-[240px] md:h-[240px] flex-shrink-0 mx-auto md:mx-0"
+            >
+              <div className="relative w-full h-full rounded-2xl overflow-hidden border border-blue-500/20 shadow-[0_0_60px_rgba(30,144,255,0.08)] bg-slate-900 group">
+                <Image
+                  src="/JuanPalacios.jpg"
+                  alt="Foto de perfil de Juan Palacios"
+                  fill
+                  className="object-cover grayscale group-hover:grayscale-0 transition-all duration-1000 scale-105 group-hover:scale-100"
+                  sizes="(max-width: 640px) 160px, (max-width: 768px) 200px, 240px"
+                  quality={100}
+                  priority
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-transparent to-transparent opacity-60" />
+                {/* Corner accents */}
+                <div className="absolute top-2 right-2 w-5 h-5 border-t border-r border-blue-500/40 rounded-tr-md" />
+                <div className="absolute bottom-2 left-2 w-5 h-5 border-b border-l border-blue-500/40 rounded-bl-md" />
+                {/* Status indicator */}
+                <div className="absolute bottom-2 right-2 flex items-center gap-1.5 px-2 py-0.5 bg-black/60 backdrop-blur-md rounded-full border border-white/10">
+                  <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse shadow-[0_0_8px_#22c55e]" />
+                  <span className="text-[7px] text-white/70 uppercase tracking-tighter">{language === 'en' ? 'System Active' : 'Sistema Activo'}</span>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Bio text — right */}
+            <div className="flex-1 min-w-0">
+              <p className="text-sm md:text-[0.97rem] text-white mb-5 leading-relaxed">
+                {t('profile.description1')}
+              </p>
+              <p className="text-sm md:text-[0.97rem] text-white mb-5 leading-relaxed">
+                {t('profile.description2')}
+              </p>
+            </div>
+          </div>
         </FadeIn>
 
         {/* Metrics */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(clamp(180px, 100%, 200px), 1fr))', gap: 'clamp(0.75rem, 2vw, 1.25rem)', marginBottom: 'clamp(2rem, 5vw, 3.5rem)' }}>
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(180px,1fr))] gap-3 md:gap-5 mb-10 md:mb-14">
           {metrics.map((m, i) => <MetricCard key={m.label} {...m} delay={i * 0.1 + 0.2} />)}
         </div>
 
         {/* Competencias grouped */}
         <FadeIn delay={0.3}>
-          <div style={{ marginTop: '3rem', marginBottom: '1rem' }}>
-            <p style={{ fontSize: 'clamp(0.65rem, 1.5vw, 0.72rem)', color: 'var(--blue)', letterSpacing: '3px', textTransform: 'uppercase', marginBottom: 'clamp(0.75rem, 2vw, 1.25rem)' }}>
+          <div className="mt-12 mb-4">
+            <p className="text-[0.65rem] md:text-[0.72rem] text-[var(--blue)] tracking-[3px] uppercase mb-3 md:mb-5">
               Dominio técnico completo
             </p>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(clamp(250px, 100%, 280px), 1fr))', gap: 'clamp(0.75rem, 2vw, 1.25rem)' }}>
+            <div className="grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] gap-3 md:gap-5">
               {competencias.map((c, i) => (
                 <motion.div
                   key={c.grupo}
@@ -144,47 +170,32 @@ export default function Perfil() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.05, duration: 0.5 }}
-                  style={{ 
-                    background: 'var(--card)', 
-                    border: '1px solid var(--border)', 
-                    borderRadius: 12, 
-                    padding: 'clamp(0.75rem, 2vw, 1.2rem)', 
+                  className="relative overflow-hidden min-h-[160px] flex flex-col justify-start rounded-xl p-3 md:p-5"
+                  style={{
+                    background: 'var(--card)',
+                    border: '1px solid var(--border)',
                     transition: 'border-color 0.3s, transform 0.3s',
-                    position: 'relative',
-                    overflow: 'hidden',
-                    minHeight: '160px',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'flex-start'
                   }}
                 >
                   {/* Background Image */}
-                  <div style={{ position: 'absolute', inset: 0, zIndex: 0 }}>
+                  <div className="absolute inset-0 z-0">
                     <Image 
                       src={c.img} 
                       alt={c.grupo} 
                       fill 
                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                      style={{ objectFit: 'cover', opacity: 0.12, filter: 'grayscale(0.6) brightness(0.5)' }} 
+                      className="object-cover opacity-12 grayscale-[60%] brightness-[0.5]"
                     />
-                    <div style={{ position: 'absolute', inset: 0, background: `linear-gradient(135deg, rgba(0,0,0,0.95) 40%, rgba(0,0,0,0.6) 100%)` }} />
+                    <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, rgba(0,0,0,0.95) 40%, rgba(0,0,0,0.6) 100%)` }} />
                   </div>
 
-                  <div style={{ position: 'relative', zIndex: 1 }}>
-                    <div style={{ fontSize: 'clamp(0.75rem, 1.5vw, 0.82rem)', color: c.color, fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', marginBottom: '0.8rem' }}>
+                  <div className="relative z-1">
+                    <div className="text-sm font-bold tracking-wide uppercase mb-3" style={{ color: c.color }}>
                       {c.grupo}
                     </div>
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.35rem' }}>
+                    <div className="flex flex-wrap gap-1.5">
                       {c.items.map(item => (
-                        <span key={item} style={{
-                          background: 'rgba(255,255,255,0.05)',
-                          color: 'rgba(255,255,255,0.9)',
-                          border: '1px solid rgba(255,255,255,0.08)',
-                          padding: '0.2rem 0.55rem',
-                          borderRadius: 22,
-                          fontSize: 'clamp(0.7rem, 1.2vw, 0.78rem)',
-                          fontWeight: 500,
-                        }}>
+                        <span key={item} className="text-xs font-medium px-2 py-1 rounded-full bg-white/5 text-white/90 border border-white/10">
                           {item}
                         </span>
                       ))}
@@ -192,7 +203,7 @@ export default function Perfil() {
                   </div>
                   
                   {/* Left accent bar */}
-                  <div style={{ position: 'absolute', left: 0, top: '15%', bottom: '15%', width: 2, background: c.color, opacity: 0.5 }} />
+                  <div className="absolute left-0 top-[15%] bottom-[15%] w-[2px] opacity-50" style={{ background: c.color }} />
                 </motion.div>
               ))}
             </div>

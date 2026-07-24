@@ -1,0 +1,45 @@
+import type { TranslationModule } from './index'
+
+const es = {
+  'blog.label': 'Pensamiento Técnico',
+  'blog.title': 'Inteligencia',
+  'blog.highlight': 'IT/OT',
+  'blog.description': 'Análisis y reflexiones sobre la convergencia de redes, ciberseguridad industrial y el futuro de la infraestructura crítica.',
+  'blog.read_more': 'Leer más',
+  'blog.view_all': 'Ver todos los artículos',
+  'blog.post1.title': 'Implementando IEC 62443 en la Cuenca Neuquina',
+  'blog.post1.excerpt': 'Desafíos y estrategias para la segmentación de redes industriales en yacimientos no convencionales.',
+  'blog.post1.readTime': '5 min',
+  'blog.post1.tag': 'Vaca Muerta',
+  'blog.post2.title': 'SIEM para Convergencia IT/OT: Más allá del Firewall',
+  'blog.post2.excerpt': 'Cómo Security Onion y reglas personalizadas pueden detectar anomalías en protocolos Modbus y DNP3.',
+  'blog.post2.readTime': '7 min',
+  'blog.post2.tag': 'Security Onion',
+  'blog.post3.title': 'NIST CSF en Infraestructuras Críticas',
+  'blog.post3.excerpt': 'Guía práctica para la autoevaluación de madurez en ciberseguridad para empresas de servicios petroleros.',
+  'blog.post3.readTime': '6 min',
+  'blog.post3.tag': 'Compliance',
+} satisfies TranslationModule['es']
+
+const en: TranslationModule['en'] = {
+  'blog.label': 'Technical Thinking',
+  'blog.title': 'IT/OT',
+  'blog.highlight': 'Intelligence',
+  'blog.description': 'Analysis and reflections on network convergence, industrial cybersecurity, and the future of critical infrastructure.',
+  'blog.read_more': 'Read more',
+  'blog.view_all': 'View all articles',
+  'blog.post1.title': 'Implementing IEC 62443 in the Neuquén Basin',
+  'blog.post1.excerpt': 'Challenges and strategies for industrial network segmentation in unconventional reservoirs.',
+  'blog.post1.readTime': '5 min',
+  'blog.post1.tag': 'Vaca Muerta',
+  'blog.post2.title': 'SIEM for IT/OT Convergence: Beyond the Firewall',
+  'blog.post2.excerpt': 'How Security Onion and custom rules can detect anomalies in Modbus and DNP3 protocols.',
+  'blog.post2.readTime': '7 min',
+  'blog.post2.tag': 'Security Onion',
+  'blog.post3.title': 'NIST CSF in Critical Infrastructures',
+  'blog.post3.excerpt': 'Practical guide for cybersecurity maturity self-assessment for oil service companies.',
+  'blog.post3.readTime': '6 min',
+  'blog.post3.tag': 'Compliance',
+}
+
+export const blog = { es, en }

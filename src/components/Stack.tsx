@@ -70,58 +70,42 @@ function StackCard({ item, index }: { item: typeof categories[0]; index: number 
       animate={inView ? { opacity: 1, scale: 1 } : {}}
       transition={{ duration: 0.6, delay: index * 0.05, ease: [0.22, 1, 0.36, 1] }}
       whileHover={{ y: -5, borderColor: item.color + '88' }}
+      className="relative overflow-hidden cursor-default flex flex-col justify-end p-7 rounded-2xl min-h-[220px]"
       style={{
         background: 'var(--card)',
         border: '1px solid var(--border)',
-        borderRadius: 16,
-        padding: '1.6rem',
         transition: 'border-color 0.3s, transform 0.3s',
-        position: 'relative',
-        overflow: 'hidden',
-        cursor: 'default',
-        minHeight: '220px',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'flex-end',
       }}
     >
       {/* Background and Overlay */}
-      <div style={{ position: 'absolute', inset: 0, zIndex: 0 }}>
+      <div className="absolute inset-0 z-0">
         <Image 
           src={item.img} 
           alt={t(item.title)}
           fill
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          style={{ objectFit: 'cover', opacity: 0.15, filter: 'grayscale(0.5) brightness(0.6)' }}
+          className="object-cover opacity-15 grayscale-[50%] brightness-[0.6]"
         />
-        <div style={{ position: 'absolute', inset: 0, background: `linear-gradient(to top, rgba(0,0,0,1) 30%, transparent 100%)` }} />
+        <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(0,0,0,1) 30%, transparent 100%)' }} />
       </div>
 
-      <div style={{ position: 'relative', zIndex: 1 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
-          <div style={{ padding: '0.4rem', borderRadius: 8, background: `${item.color}15`, border: `1px solid ${item.color}33`, display: 'flex' }}>
+      <div className="relative z-1">
+        <div className="flex items-center gap-3 mb-2">
+          <div className="p-1.5 rounded-lg flex" style={{ background: `${item.color}15`, border: `1px solid ${item.color}33` }}>
             <Icon name={item.icon} label={t(item.cat)} size={20} />
           </div>
-          <div style={{ fontSize: '0.65rem', color: item.color, letterSpacing: '2px', textTransform: 'uppercase', fontWeight: 700 }}>
+          <div className="text-[0.65rem] uppercase font-bold tracking-wider" style={{ color: item.color }}>
             {t(item.cat)}
           </div>
         </div>
         
-        <div style={{ fontSize: '1.1rem', fontWeight: 700, color: '#fff', marginBottom: '0.75rem' }}>
+        <div className="text-lg font-bold text-white mb-3">
           {t(item.title)}
         </div>
 
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.35rem' }}>
+        <div className="flex flex-wrap gap-1.5">
           {item.tags.map(tagKey => (
-            <span key={tagKey} style={{
-              background: 'rgba(255,255,255,0.04)',
-              color: 'rgba(255,255,255,0.7)',
-              border: '1px solid rgba(255,255,255,0.1)',
-              padding: '0.15rem 0.55rem',
-              borderRadius: 20,
-              fontSize: '0.68rem',
-              fontWeight: 500,
-            }}>
+            <span key={tagKey} className="text-xs font-medium px-2 py-0.5 rounded-full bg-white/5 text-white/70 border border-white/10">
               {t(tagKey)}
             </span>
           ))}
@@ -133,12 +117,8 @@ function StackCard({ item, index }: { item: typeof categories[0]; index: number 
         initial={{ scaleX: 0 }}
         animate={inView ? { scaleX: 1 } : {}}
         transition={{ delay: index * 0.05 + 0.3, duration: 0.5 }}
-        style={{
-          position: 'absolute', top: 0, left: 0, right: 0, height: 2,
-          background: `linear-gradient(90deg, ${item.color}, transparent)`,
-          transformOrigin: 'left',
-          opacity: 0.7
-        }}
+        className="absolute top-0 left-0 right-0 h-[2px] opacity-70 origin-left"
+        style={{ background: `linear-gradient(90deg, ${item.color}, transparent)` }}
       />
     </motion.div>
   )
@@ -148,15 +128,11 @@ export default function Stack() {
   const { t } = useLanguage()
 
   return (
-    <section id="stack" style={{ padding: 'clamp(2rem, 5vw, 5rem) clamp(1rem, 5vw, 2rem)', background: 'var(--bg)' }}>
-      <div style={{ maxWidth: 1100, margin: 'auto' }}>
+    <section id="stack" className="py-20 sm:py-32 px-4 sm:px-6 md:px-8" style={{ background: 'var(--bg)' }}>
+      <div className="max-w-[1100px] mx-auto">
         <SectionHeader label={t('stack.label')} title={t('stack.title')} highlight={t('stack.highlight')} />
 
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(clamp(240px, 100%, 290px), 1fr))',
-          gap: 'clamp(0.75rem, 2vw, 1.25rem)',
-        }}>
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(240px,1fr))] gap-3 md:gap-5">
           {categories.map((item, i) => (
             <StackCard key={item.cat} item={item} index={i} />
           ))}

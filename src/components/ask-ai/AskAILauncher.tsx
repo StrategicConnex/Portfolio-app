@@ -20,6 +20,7 @@ export function AskAILauncher() {
           >
             <Button
               size="icon"
+              aria-label="Ask AI"
               className="w-14 h-14 rounded-full shadow-2xl bg-slate-950 border border-orange-500/30 hover:bg-slate-900"
               onClick={() => setIsOpen(true)}
             >

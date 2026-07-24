@@ -22,7 +22,10 @@ function Tooltip({ ...props }: TooltipPrimitive.Root.Props) {
 }
 
 function TooltipTrigger({ ...props }: TooltipPrimitive.Trigger.Props) {
-  return <TooltipPrimitive.Trigger data-slot="tooltip-trigger" {...props} />
+  // Render as <span> to avoid nested <button> when the child is a <Button> component.
+  // Base UI's Trigger renders a <button> by default; wrapping a <Button> inside it
+  // creates <button><button>...</button></button>, causing React hydration errors.
+  return <TooltipPrimitive.Trigger data-slot="tooltip-trigger" render={<span />} {...props} />
 }
 
 function TooltipContent({

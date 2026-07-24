@@ -1,5 +1,7 @@
 import { describe, it, expect, vi, beforeEach, beforeAll } from 'vitest'
 
+import { resetRateLimit } from '@/lib/rate-limit'
+
 const mockEmailsSend = vi.fn()
 function ResendMock() {
   return { emails: { send: mockEmailsSend } }
@@ -11,6 +13,10 @@ vi.mock('resend', () => ({
 
 let POST: typeof import('./route').POST
 beforeAll(async () => { POST = (await import('./route')).POST })
+
+beforeEach(() => {
+  resetRateLimit()
+})
 
 function mockRequest(body: unknown): Request {
   return new Request('http://localhost:3000/api/contact', {

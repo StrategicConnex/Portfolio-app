@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { Resend } from 'resend';
 import { z } from 'zod';
+import { checkRateLimit, getClientId } from '@/lib/rate-limit';
 
 export const contactSchema = z.object({
   name: z.string().min(1, 'Name is required').max(100),
@@ -106,6 +107,23 @@ export function escapeHtml(text: string): string {
 
 export async function POST(req: Request) {
   try {
+    // Rate limit: 5 requests per minute per IP
+    const clientId = getClientId(req);
+    const rateLimit = checkRateLimit(clientId, 5, 60_000);
+    
+    if (!rateLimit.allowed) {
+      return NextResponse.json(
+        { error: 'Demasiadas solicitudes. Intenta de nuevo en un minuto.' },
+        { 
+          status: 429,
+          headers: {
+            'Retry-After': String(Math.ceil(rateLimit.resetIn / 1000)),
+            'X-RateLimit-Remaining': '0',
+          }
+        }
+      );
+    }
+
     const body = await req.json();
     const parsed = contactSchema.safeParse(body);
 

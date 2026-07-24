@@ -4,6 +4,14 @@ import React, { useState } from 'react'
 import { motion } from 'framer-motion'
 import { X, ShieldCheck, ShieldAlert, Zap, Activity, Clock, Server, Download, CheckCircle2, ArrowLeft } from 'lucide-react'
 import caseData from '../data/caseStudyData.json'
+
+/** Metric entry in before/after sections. `sub` is optional (only in before.alerts). */
+interface CaseStudyMetric {
+  value: number
+  unit: string
+  label: string
+  sub?: string
+}
 import { Canvas } from '@react-three/fiber'
 import { OrbitControls, Sphere, Line } from '@react-three/drei'
 
@@ -108,8 +116,7 @@ export default function CaseStudyDetail({ onClose }: { onClose: () => void }) {
                   <p className="text-xs font-black text-red-400 uppercase tracking-widest mb-2">{data.label}</p>
                   <p className="text-4xl font-mono text-white mb-1">{data.value}</p>
                   <p className="text-sm text-slate-400">{data.unit}</p>
-                  {/* @ts-expect-error Data structure has optional sub field */}
-                  {data.sub && <p className="text-xs text-red-400/80 mt-2 font-medium">{data.sub}</p>}
+                  {(data as CaseStudyMetric).sub && <p className="text-xs text-red-400/80 mt-2 font-medium">{(data as CaseStudyMetric).sub}</p>}
                 </div>
               </motion.div>
             ))}

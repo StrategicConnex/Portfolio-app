@@ -1,7 +1,17 @@
 import dynamic from 'next/dynamic'
+import { Suspense } from 'react'
 import Navbar          from '@/components/Navbar'
 import Hero            from '@/components/Hero'
 import Perfil          from '@/components/Perfil'
+
+// Loading fallbacks for Suspense boundaries
+function SectionFallback() {
+  return <div className="py-20 sm:py-32 px-4 sm:px-6 md:px-8 bg-[var(--bg)] animate-pulse" aria-hidden="true" />
+}
+
+function SectionFallbackBg2() {
+  return <div className="py-20 sm:py-32 px-4 sm:px-6 md:px-8 bg-[var(--bg2)] animate-pulse" aria-hidden="true" />
+}
 
 // Dynamic imports for components below the fold
 const Arquitectura    = dynamic(() => import('@/components/Arquitectura'))
@@ -26,20 +36,44 @@ export default function Home() {
       <main>
         <Hero />
         <Perfil />
-        <Arquitectura />
-        <Experiencia />
-        <TrustBadges />
-        <SIEMDashboard />
-        <AuditHub />
-        <SCAudit />
-        <Blog />
-        <Stack />
-        <Certificaciones />
-        <Proyecto />
-        <Contacto />
+        <Suspense fallback={<SectionFallbackBg2 />}>
+          <Arquitectura />
+        </Suspense>
+        <Suspense fallback={<SectionFallback />}>
+          <Experiencia />
+        </Suspense>
+        <Suspense fallback={<SectionFallback />}>
+          <TrustBadges />
+        </Suspense>
+        <Suspense fallback={<SectionFallback />}>
+          <SIEMDashboard />
+        </Suspense>
+        <Suspense fallback={<SectionFallback />}>
+          <AuditHub />
+        </Suspense>
+        <Suspense fallback={<SectionFallback />}>
+          <SCAudit />
+        </Suspense>
+        <Suspense fallback={<SectionFallback />}>
+          <Blog />
+        </Suspense>
+        <Suspense fallback={<SectionFallback />}>
+          <Stack />
+        </Suspense>
+        <Suspense fallback={<SectionFallbackBg2 />}>
+          <Certificaciones />
+        </Suspense>
+        <Suspense fallback={<SectionFallback />}>
+          <Proyecto />
+        </Suspense>
+        <Suspense fallback={<SectionFallback />}>
+          <Contacto />
+        </Suspense>
       </main>
       <AskAICopilotShell />
-      <Footer />
+      <Suspense fallback={<div aria-hidden="true" />}>
+        <Footer />
+      </Suspense>
     </>
   )
 }

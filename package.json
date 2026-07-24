@@ -7,8 +7,15 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "eslint --fix"
+    ]
   },
   "dependencies": {
     "@ai-sdk/openai": "^4.0.0",
@@ -16,6 +23,7 @@
     "@base-ui/react": "^1.6.0",
     "@react-three/drei": "^10.7.7",
     "@react-three/fiber": "^9.6.1",
+    "@sentry/nextjs": "^10.67.0",
     "@streamdown/cjk": "^1.0.3",
     "@streamdown/code": "^1.1.1",
     "@streamdown/math": "^1.0.2",
@@ -24,6 +32,7 @@
     "@tsparticles/preset-links": "^4.2.1",
     "@tsparticles/react": "^4.2.1",
     "@types/three": "^0.185.0",
+    "@upstash/redis": "^1.38.0",
     "ai": "^7.0.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
@@ -32,6 +41,7 @@
     "lucide-react": "^1.21.0",
     "nanoid": "^5.1.16",
     "next": "16.2.9",
+    "posthog-js": "^1.407.2",
     "react": "19.2.7",
     "react-dom": "19.2.7",
     "resend": "^6.16.0",
@@ -45,15 +55,20 @@
     "zustand": "^5.0.14"
   },
   "devDependencies": {
+    "@axe-core/react": "^4.12.1",
+    "@playwright/test": "^1.61.1",
     "@tailwindcss/postcss": "^4",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
     "@types/node": "^26",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "axe-core": "^4.12.1",
     "eslint": "^10",
     "eslint-config-next": "16.2.9",
+    "husky": "^9.1.7",
     "jsdom": "^29.1.1",
+    "lint-staged": "^17.2.0",
     "shadcn": "^4.12.0",
     "sharp": "^0.35.2",
     "tailwindcss": "^4",

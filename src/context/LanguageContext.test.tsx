@@ -20,10 +20,14 @@ function createMockStorage() {
 beforeEach(() => {
   const mock = createMockStorage()
   vi.stubGlobal('localStorage', mock)
+  // Stub navigator.language to 'es-AR' so auto-detection defaults to Spanish
+  Object.defineProperty(navigator, 'language', { value: 'es-AR', configurable: true })
 })
 
 afterEach(() => {
   vi.unstubAllGlobals()
+  // Restore navigator.language
+  Object.defineProperty(navigator, 'language', { value: 'en-US', configurable: true })
 })
 
 function renderWithProvider(ui: ReactNode) {
