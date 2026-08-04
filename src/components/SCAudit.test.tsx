@@ -2,21 +2,19 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import SCAudit from './SCAudit'
 
-vi.mock('framer-motion', () => ({
-  motion: {
-    div: ({ children, ...props }: React.PropsWithChildren<Record<string, unknown>>) =>
-      <div {...(props as Record<string, unknown>)}>{children}</div>,
-    span: ({ children, ...props }: React.PropsWithChildren<Record<string, unknown>>) =>
-      <span {...(props as Record<string, unknown>)}>{children}</span>,
-  },
-  AnimatePresence: ({ children }: React.PropsWithChildren) => <>{children}</>,
-  useInView: () => true,
-}))
+vi.mock('framer-motion', async () => {
+  const { createMotionMock } = await import('@/test-utils/framer-motion')
+  return {
+    motion: createMotionMock(['div', 'span']),
+    AnimatePresence: ({ children }: React.PropsWithChildren) => <>{children}</>,
+    useInView: () => true,
+  }
+})
 
-vi.mock('next/image', () => ({
-  default: ({ alt, ...props }: Record<string, unknown>) =>
-    <img {...(props as React.ImgHTMLAttributes<HTMLImageElement>)} alt={alt as string} />,
-}))
+vi.mock('next/image', async () => {
+  const { createImageMock } = await import('@/test-utils/framer-motion')
+  return createImageMock()
+})
 
 const mockT = vi.fn((key: string) => {
   const m: Record<string, string> = {

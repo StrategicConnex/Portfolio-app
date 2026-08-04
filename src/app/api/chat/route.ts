@@ -13,12 +13,14 @@ export async function POST(request: NextRequest) {
     const { hostname, protocol } = new URL(request.url)
     const origin = `${protocol}//${hostname}`
     
+    // NOTE: Do NOT forward client-supplied X-Forwarded-For / X-Real-Ip headers.
+    // These are trust boundaries set by the hosting platform (Vercel). Forwarding
+    // raw client values would let an attacker spoof their IP and bypass the
+    // rate limiter in /api/ask-ai (which keys on the client identifier).
     const response = await fetch(`${origin}/api/ask-ai`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'X-Forwarded-For': request.headers.get('x-forwarded-for') ?? '',
-        'X-Real-Ip': request.headers.get('x-real-ip') ?? '',
       },
       body: JSON.stringify(body),
     })

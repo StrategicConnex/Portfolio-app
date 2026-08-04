@@ -123,7 +123,7 @@ export default function Perfil() {
                   fill
                   className="object-cover grayscale group-hover:grayscale-0 transition-all duration-1000 scale-105 group-hover:scale-100"
                   sizes="(max-width: 640px) 160px, (max-width: 768px) 200px, 240px"
-                  quality={100}
+                  quality={75}
                   priority
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-transparent to-transparent opacity-60" />

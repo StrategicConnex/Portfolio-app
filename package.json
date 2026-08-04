@@ -40,7 +40,7 @@
     "framer-motion": "^12.42.0",
     "lucide-react": "^1.21.0",
     "nanoid": "^5.1.16",
-    "next": "16.2.9",
+    "next": "^16.3.0",
     "posthog-js": "^1.407.2",
     "react": "19.2.7",
     "react-dom": "19.2.7",
@@ -54,6 +54,22 @@
     "zod": "^4.4.3",
     "zustand": "^5.0.14"
   },
+  "overrides": {
+    "fast-uri": "3.1.5",
+    "dompurify": "3.4.12",
+    "eslint-plugin-import": {
+      "minimatch@3.1.5": {
+        "brace-expansion": "1.1.18"
+      }
+    },
+    "js-yaml": "4.3.1",
+    "undici": "7.29.0",
+    "ip-address": "10.4.0",
+    "postcss": "8.5.25",
+    "hono": "4.12.34",
+    "@modelcontextprotocol/sdk": "1.30.0",
+    "@hono/node-server": "2.0.12"
+  },
   "devDependencies": {
     "@axe-core/react": "^4.12.1",
     "@playwright/test": "^1.61.1",
@@ -65,7 +81,7 @@
     "@types/react-dom": "^19",
     "axe-core": "^4.12.1",
     "eslint": "^10",
-    "eslint-config-next": "16.2.9",
+    "eslint-config-next": "^16.3.0",
     "husky": "^9.1.7",
     "jsdom": "^29.1.1",
     "lint-staged": "^17.2.0",

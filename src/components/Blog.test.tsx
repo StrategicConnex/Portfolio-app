@@ -1,16 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import Blog from './Blog'
-import React from 'react'
 
-vi.mock('framer-motion', () => ({
-  motion: {
-    div: ({ children, ...props }: React.PropsWithChildren<Record<string, unknown>>) =>
-      <div {...(props as Record<string, unknown>)}>{children}</div>,
-    button: ({ children, ...props }: React.PropsWithChildren<Record<string, unknown>>) =>
-      <button {...(props as Record<string, unknown>)}>{children}</button>,
-  },
-}))
+vi.mock('framer-motion', async () => {
+  const { createMotionMock } = await import('@/test-utils/framer-motion')
+  return { motion: createMotionMock(['div', 'button']) }
+})
 
 const mockT = vi.fn((key: string) => {
   const m: Record<string, string> = {

@@ -3,21 +3,13 @@ import { render, screen, fireEvent, act } from '@testing-library/react'
 import Navbar from './Navbar'
 
 // Mock framer-motion
-vi.mock('framer-motion', () => ({
-  motion: {
-    nav: ({ children, ...props }: React.PropsWithChildren<Record<string, unknown>>) =>
-      <nav {...(props as Record<string, unknown>)} data-mock="motion-nav">{children}</nav>,
-    a: ({ children, ...props }: React.PropsWithChildren<Record<string, unknown>>) =>
-      <a {...(props as Record<string, unknown>)}>{children}</a>,
-    button: ({ children, ...props }: React.PropsWithChildren<Record<string, unknown>>) =>
-      <button {...(props as Record<string, unknown>)}>{children}</button>,
-    div: ({ children, ...props }: React.PropsWithChildren<Record<string, unknown>>) =>
-      <div {...(props as Record<string, unknown>)}>{children}</div>,
-    span: ({ children, ...props }: React.PropsWithChildren<Record<string, unknown>>) =>
-      <span {...(props as Record<string, unknown>)}>{children}</span>,
-  },
-  AnimatePresence: ({ children }: React.PropsWithChildren) => <>{children}</>,
-}))
+vi.mock('framer-motion', async () => {
+  const { createMotionMock } = await import('@/test-utils/framer-motion')
+  return {
+    motion: createMotionMock(['nav', 'a', 'button', 'div', 'span']),
+    AnimatePresence: ({ children }: React.PropsWithChildren) => <>{children}</>,
+  }
+})
 
 const mockSetLanguage = vi.fn()
 const mockT = vi.fn((key: string) => {
@@ -132,7 +124,7 @@ describe('Navbar', () => {
 
   it('should render the scroll progress bar', () => {
     renderNavbar()
-    const navs = document.querySelectorAll('[data-mock="motion-nav"]')
+    const navs = document.querySelectorAll('nav')
     expect(navs.length).toBe(1)
   })
 

@@ -2,50 +2,10 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { render, screen, fireEvent, act } from '@testing-library/react'
 import Certificaciones from './Certificaciones'
 
-vi.mock('framer-motion', () => {
-  const MockMotionDiv = ({ children, ...props }: React.PropsWithChildren<Record<string, unknown>>) => {
-    const skip = ['initial', 'animate', 'transition', 'exit', 'whileInView', 'viewport', 'variants', 'layout', 'layoutId']
-    const rest: Record<string, unknown> = {}
-    for (const [k, v] of Object.entries(props)) {
-      if (!skip.includes(k)) rest[k] = v
-    }
-    return <div {...(rest as Record<string, unknown>)}>{children}</div>
-  }
-
-  const MockMotionHeading = ({ children, ...props }: React.PropsWithChildren<Record<string, unknown>>) => {
-    const skip = ['initial', 'animate', 'transition', 'layout', 'layoutId']
-    const rest: Record<string, unknown> = {}
-    for (const [k, v] of Object.entries(props)) {
-      if (!skip.includes(k)) rest[k] = v
-    }
-    return <h3 {...(rest as Record<string, unknown>)}>{children}</h3>
-  }
-  
-  const MockMotionButton = ({ children, ...props }: React.PropsWithChildren<Record<string, unknown>>) => {
-    const skip = ['whileHover', 'whileTap', 'initial', 'animate', 'transition', 'layout', 'layoutId']
-    const rest: Record<string, unknown> = {}
-    for (const [k, v] of Object.entries(props)) {
-      if (!skip.includes(k)) rest[k] = v
-    }
-    return <button {...(rest as Record<string, unknown>)}>{children}</button>
-  }
-
-  const MockMotionSpan = ({ children, ...props }: React.PropsWithChildren<Record<string, unknown>>) => {
-    const skip = ['layoutId', 'transition', 'initial', 'animate']
-    const rest: Record<string, unknown> = {}
-    for (const [k, v] of Object.entries(props)) {
-      if (!skip.includes(k)) rest[k] = v
-    }
-    return <span {...(rest as Record<string, unknown>)}>{children}</span>
-  }
-
+vi.mock('framer-motion', async () => {
+  const { createMotionMock } = await import('@/test-utils/framer-motion')
   return {
-    motion: {
-      div: MockMotionDiv,
-      button: MockMotionButton,
-      h3: MockMotionHeading,
-      span: MockMotionSpan,
-    },
+    motion: createMotionMock(['div', 'button', 'h3', 'span']),
     AnimatePresence: ({ children }: React.PropsWithChildren) => <>{children}</>,
     useInView: () => true,
   }
