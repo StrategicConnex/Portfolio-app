@@ -42,3 +42,9 @@ next-env.d.ts
 
 .vercel
 .env*.local
+
+# local tool database (Freebuff)
+.freebuff/
+
+# playwright test report (generated artifact)
+playwright-report/
