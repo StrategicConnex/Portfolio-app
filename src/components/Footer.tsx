@@ -11,7 +11,7 @@ export default function Footer() {
       style={{
         color: 'var(--muted)',
         borderColor: 'var(--border)',
-        background: 'var(--bg)',
+        background: 'rgba(10,25,47,0.65)',
       }}
     >
       <p>

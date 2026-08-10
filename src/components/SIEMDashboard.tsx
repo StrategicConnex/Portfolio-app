@@ -213,7 +213,7 @@ export default function SIEMDashboard() {
   }, [])
 
   return (
-    <section id="siem" className="py-20 px-6 bg-slate-950">
+    <section id="siem" className="py-20 px-6 bg-slate-950/40">
       <div className="max-w-6xl mx-auto">
         <SectionHeader label={t('siem.label')} title={t('siem.title')} highlight={t('siem.highlight')} />
 

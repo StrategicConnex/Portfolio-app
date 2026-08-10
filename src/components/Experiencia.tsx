@@ -121,7 +121,7 @@ TimelineItem.displayName = 'TimelineItem'
 export default function Experiencia() {
   const { t } = useLanguage()
   return (
-    <section id="experiencia" className="py-20 px-6 bg-slate-900">
+    <section id="experiencia" className="py-20 px-6 bg-slate-900/40">
       <div className="max-w-6xl mx-auto">
         <SectionHeader label={t('experience.label')} title={t('experience.title')} highlight={t('experience.highlight')} />
 
