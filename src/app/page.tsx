@@ -28,12 +28,15 @@ import { AskAICopilotShell } from '@/components/ask-ai/AskAICopilotShell'
 const Proyecto        = dynamic(() => import('@/components/Proyecto'))
 const Contacto        = dynamic(() => import('@/components/Contacto'))
 const Footer          = dynamic(() => import('@/components/Footer'))
+import DatacenterMount from '@/components/datacenter/DatacenterMount'
 
 export default function Home() {
   return (
     <>
+      <DatacenterMount />
       <Navbar />
-      <main>
+      {/* z-40: el contenido DOM se apila por encima del canvas fijo (SPEC §2) */}
+      <main className="relative z-40">
         <Hero />
         <Perfil />
         <Suspense fallback={<SectionFallbackBg2 />}>
@@ -71,9 +74,11 @@ export default function Home() {
         </Suspense>
       </main>
       <AskAICopilotShell />
-      <Suspense fallback={<div aria-hidden="true" />}>
-        <Footer />
-      </Suspense>
+      <div className="relative z-40">
+        <Suspense fallback={<div aria-hidden="true" />}>
+          <Footer />
+        </Suspense>
+      </div>
     </>
   )
 }

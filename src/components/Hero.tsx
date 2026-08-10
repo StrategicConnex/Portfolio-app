@@ -7,8 +7,7 @@ import type { Variants } from 'framer-motion'
 import { useLanguage } from '@/context/LanguageContext'
 import dynamic from 'next/dynamic'
 
-const ParticleCanvas = dynamic(() => import('./ParticleCanvas'), { ssr: false })
-const RadarSweep     = dynamic(() => import('./RadarSweep'),     { ssr: false })
+const RadarSweep = dynamic(() => import('./RadarSweep'), { ssr: false })
 
 const TEXT_VARIANTS: Variants = {
   hidden: { opacity: 0, y: 30 },
@@ -29,10 +28,8 @@ export default function Hero() {
   return (
     <section
       id="home"
-      className="min-h-screen flex items-center justify-center text-center relative overflow-hidden bg-[var(--bg)] px-4 py-20"
+      className="min-h-screen flex items-center justify-center text-center relative overflow-hidden px-4 py-20"
     >
-      <ParticleCanvas />
-
       <div className="hero-radar invisible lg:visible">
         <RadarSweep />
       </div>
