@@ -110,10 +110,10 @@ describe('Hero', () => {
     expect(screen.getByText('SISTEMA ACTIVO')).toBeDefined()
   })
 
-  it('should render dynamic components (ParticleCanvas, RadarSweep)', () => {
+  it('should render dynamic components (RadarSweep)', () => {
     render(<Hero />)
     const dynamicComponents = screen.getAllByTestId('dynamic-component')
-    expect(dynamicComponents.length).toBe(2)
+    expect(dynamicComponents.length).toBe(1)
   })
 
   it('should render decorative gradient orb', () => {
