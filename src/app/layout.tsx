@@ -7,6 +7,7 @@ import React from 'react'
 import Script from 'next/script'
 import { ObservabilityProvider } from '@/components/observability/ObservabilityProvider'
 import { HtmlLangUpdater } from '@/components/HtmlLangUpdater'
+import { fontSans, fontHeading, fontMono } from './fonts'
 
 export const viewport: Viewport = {
   themeColor: [
@@ -194,7 +195,9 @@ export default async function RootLayout({
           data-flush-interval="15000"
         />
       </head>
-      <body className="font-sans antialiased bg-[#0f172a] text-slate-300">
+      <body
+        className={`${fontSans.variable} ${fontHeading.variable} ${fontMono.variable} font-sans antialiased bg-[#0f172a] text-slate-300`}
+      >
         <LanguageProvider initialLanguage={initialLang}>
           <HtmlLangUpdater />
           <ObservabilityProvider>

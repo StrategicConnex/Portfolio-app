@@ -39,11 +39,17 @@ section {
 body {
   background: var(--bg);
   color: var(--text);
-  font-family: 'Inter', system-ui, sans-serif;
+  font-family: var(--font-sans, 'Inter', system-ui, sans-serif);
   line-height: 1.7;
   overflow-x: hidden;
   font-size: 16px;
   -webkit-font-smoothing: antialiased;
+}
+
+/* Tipografía editorial (SPEC §4): Space Grotesk para títulos/narrativa. */
+h1, h2, h3 {
+  font-family: var(--font-heading, var(--font-sans, inherit));
+  letter-spacing: -0.015em;
 }
 
 @media (max-width: 768px) {
@@ -126,9 +132,9 @@ body {
   margin-bottom: 2.5rem;
 }
 
-/* Monospace utility */
+/* Monospace utility (SPEC §4): JetBrains Mono self-hosted, HUD/telemetría. */
 .mono {
-  font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', ui-monospace, monospace;
+  font-family: var(--font-mono, 'JetBrains Mono', 'Fira Code', 'Cascadia Code', ui-monospace, monospace);
 }
 
 /* Responsive Utilities */
