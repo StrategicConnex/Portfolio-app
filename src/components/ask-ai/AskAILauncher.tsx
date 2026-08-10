@@ -18,14 +18,19 @@ export function AskAILauncher() {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
-            <Button
-              size="icon"
-              aria-label="Ask AI"
-              className="w-14 h-14 rounded-full shadow-2xl bg-slate-950 border border-orange-500/30 hover:bg-slate-900"
-              onClick={() => setIsOpen(true)}
-            >
-              <MessageSquare className="w-6 h-6 text-orange-500" />
-            </Button>
+            <div className="relative">
+              {/* AI Node Console: anillo de pulso + halo (decorativo, aria-hidden) */}
+              <span aria-hidden="true" className="absolute inset-0 rounded-full border border-[#C5A46D]/40 animate-ping" />
+              <span aria-hidden="true" className="absolute -inset-1.5 rounded-full border border-[#C5A46D]/20" />
+              <Button
+                size="icon"
+                aria-label="Ask AI"
+                className="w-14 h-14 rounded-full shadow-2xl bg-slate-950 border border-[#C5A46D]/40 hover:bg-slate-900 hover:border-[#C5A46D]/70"
+                onClick={() => setIsOpen(true)}
+              >
+                <MessageSquare className="w-6 h-6 text-[#C5A46D]" />
+              </Button>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

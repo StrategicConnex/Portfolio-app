@@ -28,8 +28,8 @@ export function AskAIHeader({
   return (
     <div className="flex items-center justify-between px-4 py-3 border-b border-slate-800 bg-slate-900/50 flex-shrink-0">
       <div className="flex items-center gap-2 min-w-0">
-        <div className="w-8 h-8 rounded-lg bg-orange-500/15 border border-orange-500/25 flex items-center justify-center flex-shrink-0">
-          <MessageSquare className="w-4 h-4 text-orange-500" />
+        <div className="w-8 h-8 rounded-full bg-[#C5A46D]/10 border border-[#C5A46D]/30 shadow-[0_0_12px_rgba(197,164,109,0.25)] flex items-center justify-center flex-shrink-0">
+          <MessageSquare className="w-4 h-4 text-[#C5A46D]" />
         </div>
         <div className="flex flex-col min-w-0">
           <div className="flex items-center gap-2">
