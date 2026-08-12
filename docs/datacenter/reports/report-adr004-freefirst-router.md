@@ -56,6 +56,28 @@ modelos fuera de alcance → se reporta, no se cambia sin aprobación.
 - Umbral de calidad (brecha 4) y fallback mid-stream (brecha 6) — tocan el
   contrato de streaming sagrado; requieren su propio ADR.
 
+## ADENDUM — POOL REORDENADO (aprobado por el usuario, misma sesión)
+
+El default de `OPENROUTER_MODEL_POOL` en la ruta ahora usa **scores inline**
+(verificados contra OpenRouter):
+`google/gemma-4-31b-it:free:9,google/gemma-4-26b-a4b-it:free:6,openrouter/free:1`
+— `inclusionai/ling-3.0-flash:free` **retirado** (404 "unavailable for free").
+`openrouter/free` (alias inconsistente, a veces content vacío) queda de
+último con score 1. `.env.example` local (gitignored) documentado; el código
+es el default efectivo.
+
+**Validación e2e (navegador real, server 3100):** la telemetría confirma que
+TODOS los requests rutean a `gemma-4-31b-it:free` primero (score 9), y el
+probe capturó **`text-delta` + `[DONE]`** (respuesta con texto real).
+
+**Hallazgo honesto (transitorio, upstream):** el pool free compartido de
+Google AI Studio devuelve **429 intermitentes** (`rate-limited upstream`,
+12 hits en la sesión). El error ocurre **mid-stream** (el SDK ya reintentó
+3× internamente) → el seam no puede hacer fallback: el cliente ve "An error
+occurred.". Es la **brecha 6 diferida del ADR** (fallback mid-stream).
+**Mitigación disponible:** reintentar (transitorio), key propia de Google
+AI Studio (remedy de OpenRouter), o implementar brecha 6 (requiere ADR).
+
 ## ARCHITECTURAL IMPACT: LOW en la superficie (módulo nuevo + seam), RISKY por tocar la ruta (aprobado)
 ## ACCESSIBILITY / CSP / I18N: SIN CAMBIO · COPILOT: lógica sagrada byte-idéntica
-## NEXT: fix de pool por env (decisión del usuario) · probar el retry en 5xx forzado cuando se apruebe el cambio de lista
+## NEXT: (opcional) ADR para brecha 6 — fallback mid-stream ante 429/5xx del provider · probar el retry en 5xx forzado

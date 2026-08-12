@@ -16,9 +16,16 @@ export const maxDuration = 30;
 // Free models (suffix :free) cost $0 on OpenRouter. Configurable via env vars.
 // The pool is tried in order; if one fails, the next is attempted automatically.
 
+// Default pool, verified against OpenRouter (2026-08-12). The numeric suffix
+// is the FreeFirstRouter score (ADR-004): higher = tried first; `:free` never
+// collides (non-numeric). `inclusionai/ling-3.0-flash:free` was removed —
+// OpenRouter returns 404 "unavailable for free".
+//  - google/gemma-4-31b-it:free    → responde (score 9)
+//  - google/gemma-4-26b-a4b-it:free → responde (score 6)
+//  - openrouter/free                → alias inconsistente, a veces content vacío (score 1)
 const FREE_MODEL_POOL = (
   process.env.OPENROUTER_MODEL_POOL ||
-  'openrouter/free,google/gemma-4-31b-it:free,google/gemma-4-26b-a4b-it:free,inclusionai/ling-3.0-flash:free'
+  'google/gemma-4-31b-it:free:9,google/gemma-4-26b-a4b-it:free:6,openrouter/free:1'
 ).split(',').map(s => s.trim()).filter(Boolean);
 
 /** Paid fallback model (used only if all free models fail) */
