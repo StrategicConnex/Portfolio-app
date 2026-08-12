@@ -1,6 +1,7 @@
 # ADR-004: Router FREE-first del SC Platform en la orquestación del AI Copilot
 
-**Status:** Proposed (requiere aprobación explícita para ejecutar — clasificado RISKY, SPEC §56)
+**Status:** ✅ Implemented (aprobado por el usuario, 2026-08-12 — `report-adr004-freefirst-router.md`)
+**Status previo:** Proposed (requiere aprobación explícita para ejecutar — clasificado RISKY, SPEC §56)
 **Date:** 2026-08-12
 **Branch:** `feat/living-datacenter`
 **Relates to:** CONSTITUTION RULE 04 (AI Copilot sagrado), SPEC §56 (change control), skill `.agents/sc-platform-universal-ai-skill` (orchestrator/router.py, docs/ROUTING_POLICY.md), ADR-002 (CSP/backend)
@@ -110,6 +111,11 @@ la política), consumido por la ruta en la construcción de `modelsToTry`:
 
 ---
 
-**Decisión de ejecución:** NO se modifica código en esta pasada (evaluación +
-ADR). Si se aprueba, la implementación es ~1 archivo nuevo + 2 líneas en la ruta,
-con su reporte de fase según SPEC §37.
+**Decisión de ejecución:** ✅ IMPLEMENTADA (aprobación explícita del usuario).
+`src/lib/ask-ai/routing/freeFirst.ts` + swap del seam en `ask-ai/route.ts`
+(streamText byte-idéntico) + `freeFirst.test.ts` (22 tests). Reporte de fase:
+`docs/datacenter/reports/report-adr004-freefirst-router.md`.
+**Hallazgo del probe (pre-existente):** el pool default tiene entradas obsoletas
+(`openrouter/free` devuelve content vacío; `inclusionai/ling-3.0-flash:free` ya
+no es free → 404). Fix recomendado por env (scores/reorder), fuera del alcance
+de este ADR (la lista de modelos se mantiene — ver Consequences).

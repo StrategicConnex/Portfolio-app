@@ -8,6 +8,7 @@ import { buildRagContext } from '@/lib/ask-ai/rag/retrieve';
 import { retrieveCombined } from '@/lib/ask-ai/rag/embeddings';
 import { askAiTools } from '@/lib/ask-ai/tools/registry';
 import { generateConversationSummary, shouldSummarize } from '@/lib/ask-ai/memory/conversation-memory';
+import { FreeFirstRouter, isTransientError, type FallbackReason } from '@/lib/ask-ai/routing/freeFirst';
 
 export const maxDuration = 30;
 
@@ -195,18 +196,22 @@ ${toolDescriptions}
 
 ${sources.length > 0 ? `${language === 'en' ? 'Available sources for this query:' : 'Fuentes disponibles para esta consulta:'} ${sources.map((s) => s.title).join(', ')}.` : ''}`;
 
-    // ─── Model fallback loop ──────────────────────────────────────────────────
-    // Try free models first (no credit cost). If all fail, try the paid fallback.
-    // Free models use `:free` suffix — OpenRouter charges $0 for these.
-    
-    const modelsToTry: string[] = [
-      ...FREE_MODEL_POOL,
-      ...(PAID_MODEL ? [PAID_MODEL] : []),
-    ];
+    // ─── Model fallback loop (FreeFirstRouter — ADR-004) ──────────────────────
+    // Free candidates first, ordered by score; retry transient failures once
+    // within a total attempt budget; paid fallback only after free exhausts.
+    // Telemetry per attempt: model, latency, success, fallback reason.
+    // The streamText call below stays byte-identical (sacred, CONSTITUTION R4).
+    const router = new FreeFirstRouter({
+      freePool: FREE_MODEL_POOL.join(','),
+      paidModel: PAID_MODEL || undefined,
+    });
 
     const provider = createProvider();
     let lastError: unknown;
-    for (const modelId of modelsToTry) {
+    let lastReason: FallbackReason = 'pool-exhausted';
+    for (const step of router.iterate()) {
+      const { modelId, attempt, isRetry } = step;
+      const startedAt = Date.now();
       try {
         const result = streamText({
           model: provider(modelId),
@@ -215,11 +220,33 @@ ${sources.length > 0 ? `${language === 'en' ? 'Available sources for this query:
           maxOutputTokens: 4096,
           system: systemPrompt,
         });
+        router.log({
+          model: modelId,
+          attempt,
+          isRetry,
+          ok: true,
+          latencyMs: Date.now() - startedAt,
+          reason: 'none',
+        });
         return result.toUIMessageStreamResponse();
       } catch (error) {
         lastError = error;
-        console.warn(`[AskAI] Model ${modelId} failed:`, error);
-        // Continue to next model in pool
+        const transient = isTransientError(error);
+        step.transient = transient;
+        lastReason = transient
+          ? isRetry
+            ? 'transient-retry-exhausted'
+            : 'transient'
+          : 'permanent-error';
+        router.log({
+          model: modelId,
+          attempt,
+          isRetry,
+          ok: false,
+          latencyMs: Date.now() - startedAt,
+          reason: lastReason,
+        });
+        console.warn(`[AskAI] Model ${modelId} failed (${lastReason}):`, error);
       }
     }
 
