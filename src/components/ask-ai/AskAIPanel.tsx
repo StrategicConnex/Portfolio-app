@@ -129,7 +129,7 @@ export function AskAIPanel() {
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: 20, scale: 0.95 }}
           transition={{ duration: 0.2 }}
-          className={`fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 flex flex-col relative bg-slate-950/95 backdrop-blur-xl border border-slate-800/80 shadow-[0_0_30px_rgba(30,144,255,0.08)] overflow-hidden ${
+          className={`fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 flex flex-col bg-slate-950/95 backdrop-blur-xl border border-slate-800/80 shadow-[0_0_30px_rgba(30,144,255,0.08)] overflow-hidden ${
             expanded
               ? 'w-[calc(100vw-2rem)] sm:w-[calc(100vw-3rem)] h-[calc(100vh-2rem)] sm:h-[calc(100vh-3rem)] max-w-5xl'
               : 'w-[calc(100vw-2rem)] sm:w-[420px] h-[calc(100vh-6rem)] sm:h-[640px] max-h-[80vh] sm:max-h-[85vh]'

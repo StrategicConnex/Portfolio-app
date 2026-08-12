@@ -19,9 +19,11 @@ export function AskAILauncher() {
             whileTap={{ scale: 0.95 }}
           >
             <div className="relative">
-              {/* AI Node Console: anillo de pulso + halo (decorativo, aria-hidden) */}
-              <span aria-hidden="true" className="absolute inset-0 rounded-full border border-[#C5A46D]/40 animate-ping" />
-              <span aria-hidden="true" className="absolute -inset-1.5 rounded-full border border-[#C5A46D]/20" />
+              {/* AI Node Console: anillo de pulso + halo (decorativo, aria-hidden).
+                  pointer-events-none: sin esto los spans cubren el botón e
+                  interceptan el click — regresión Fase 7 corregida. */}
+              <span aria-hidden="true" className="pointer-events-none absolute inset-0 rounded-full border border-[#C5A46D]/40 animate-ping" />
+              <span aria-hidden="true" className="pointer-events-none absolute -inset-1.5 rounded-full border border-[#C5A46D]/20" />
               <Button
                 size="icon"
                 aria-label="Ask AI"
