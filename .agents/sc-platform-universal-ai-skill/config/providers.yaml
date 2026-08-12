@@ -1,0 +1,6 @@
+providers:
+  openrouter: {enabled: true, adapter: adapters.openrouter}
+  gemini: {enabled: true, adapter: adapters.gemini}
+  deepseek: {enabled: true, adapter: adapters.deepseek}
+  antigravity: {enabled: true, adapter: adapters.antigravity}
+  generic: {enabled: true, adapter: adapters.generic}

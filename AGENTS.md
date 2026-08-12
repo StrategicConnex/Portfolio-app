@@ -19,3 +19,18 @@ Cualquier trabajo sobre la experiencia 3D del portfolio está gobernado por dos 
 
 Reglas mínimas que no requieren leer los documentos completos: el DOM es la fuente de verdad (el 3D es decorativo, `aria-hidden`, `pointer-events: none`); nunca modificar la lógica del AI Copilot (solo styling); nunca agregar dependencias externas en runtime (la CSP lo prohíbe); nunca interceptar el scroll nativo; respetar `prefers-reduced-motion` con `StaticPoster`; **nunca eliminar la foto ni el texto del Hero** (`#home`) — a lo sumo reacomodarlos sobre el canvas.
 <!-- END:living-datacenter -->
+
+<!-- BEGIN:sc-platform-universal-ai-skill -->
+# SC PLATFORM UNIVERSAL AI SKILL v1.0 (ingeniería multi-agente)
+
+Paquete de ingeniería universal vendorizado en `.agents/sc-platform-universal-ai-skill/` (también instalado en `~/.sc-platform-universal-ai-skill` para otros hosts). Aplica como **brain común** sobre cualquier tarea de ingeniería del repo — léelo junto a los docs del datacenter, no como reemplazo:
+
+- `core/PRIME_DIRECTIVE.md` — OBSERVE → MODEL → PLAN → IMPLEMENT → VERIFY → REPORT; inspeccionar antes de modificar, cambios mínimos reversibles, nunca inventar hechos del proyecto, nunca exponer secretos.
+- `core/COMMON_BRAIN.md` — contexto compartido de ingeniería (estándares y trade-offs).
+- `docs/AGENT_PROTOCOL.md` — flujo: contexto compartido → análisis de especialista → hallazgos estructurados → resolución de conflictos del orquestador. Los hallazgos de **seguridad tienen prioridad sobre conveniencia**; las decisiones de arquitectura exigen trade-offs explícitos.
+- `docs/ROUTING_POLICY.md` — routing de modelos FREE-first con fallback pago solo tras fallo/umbral de calidad (aplica al AI Copilot si se integra routing).
+- `agents/*.md` — especialistas (architecture, frontend, 3d, security, devsecops, testing, ux, database, documentation) a consultar según el dominio de la tarea.
+- `orchestrator/`, `adapters/`, `config/`, `website-intelligence/` — solo si la tarea toca orquestación multi-agente, adaptadores de proveedor o comparación de sitios.
+
+**Prioridad de documentos:** si una directiva del SC Platform choca con CONSTITUTION/SPEC del datacenter, **ganan los invariantes del proyecto** (DOM-first, Copilot sagrado, CSP estricta, zero external runtime).
+<!-- END:sc-platform-universal-ai-skill -->
