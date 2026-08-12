@@ -11,7 +11,7 @@ Portfolio personal de consultoría en IT/OT y ciberseguridad industrial. Especia
 - **State**: Zustand (UI), Context API (i18n), localStorage (persistencia)
 - **Testing**: Vitest, Testing Library, axe-core (accesibilidad)
 - **CI/CD**: GitHub Actions (lint, typecheck, test, build)
-- **Observabilidad**: PostHog (analytics), Sentry (errores)
+- **Observabilidad**: PostHog (analytics)
 - **Rate Limiting**: Upstash Redis + fallback in-memory
 - **RUM**: StrategicAudit Pro (`https://scaudit.vercel.app/scripts/vitals.js`)
 
@@ -25,7 +25,7 @@ Portfolio personal de consultoría en IT/OT y ciberseguridad industrial. Especia
 | **4** | Tools de ciberseguridad (DNS, SSL, HTTP Headers, WHOIS) | ✅ |
 | **5** | Enterprise hardening (CSP, ErrorBoundary, localStorage, Zod) | ✅ |
 | **6** | Tool Result Cards UI (6 tarjetas visuales especializadas) | ✅ |
-| **7** | Mega Enterprise (Upstash Redis, Memory System, PostHog/Sentry, OSINT tools) | ✅ |
+| **7** | Mega Enterprise (Upstash Redis, Memory System, PostHog, OSINT tools) | ✅ |
 | **8** | RAG semántico TF-IDF, modularización de componentes, observabilidad en layout | ✅ |
 | **9** | Tests unitarios (29 tests), .env.example, CI/CD, README actualizado | ✅ |
 
@@ -59,6 +59,17 @@ Portfolio personal de consultoría en IT/OT y ciberseguridad industrial. Especia
 │  └─ Stream response (AI SDK)               │
 └─────────────────────────────────────────────┘
 ```
+
+## API Server (Express)
+
+Backend standalone en `server/` (Express 5 + TypeScript + pino + JWT), con arquitectura por capas `controllers → services → repositories`, error handling centralizado (`AppError`), validación Zod y graceful shutdown. Es un paquete independiente con sus propios tests (Vitest + supertest).
+
+```bash
+cd server && npm install && cp .env.example .env
+npm run server:dev      # desde la raíz: http://localhost:3001
+```
+
+Ver `server/README.md` para endpoints, arquitectura y cómo conectar PostgreSQL.
 
 ## Desarrollo Local
 
@@ -99,7 +110,6 @@ Ver `.env.example` para la lista completa. Las principales:
 | `UPSTASH_REDIS_REST_TOKEN` | ❌ | Token de Upstash Redis |
 | `RESEND_API_KEY` | ✅ | API key para formulario de contacto |
 | `NEXT_PUBLIC_POSTHOG_KEY` | ❌ | API key de PostHog (analytics) |
-| `SENTRY_DSN` | ❌ | DSN de Sentry (error tracking) |
 
 ## Verificación Pre-Deploy
 

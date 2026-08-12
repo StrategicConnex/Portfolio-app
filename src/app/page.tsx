@@ -29,10 +29,19 @@ const Proyecto        = dynamic(() => import('@/components/Proyecto'))
 const Contacto        = dynamic(() => import('@/components/Contacto'))
 const Footer          = dynamic(() => import('@/components/Footer'))
 import DatacenterMount from '@/components/datacenter/DatacenterMount'
+import StaticPoster from '@/components/datacenter/StaticPoster'
 
 export default function Home() {
   return (
     <>
+      {/*
+        Capa base Z-10 (SPEC §9, §25): StaticPoster siempre presente en el HTML
+        inicial — progressive enhancement Nivel 1 (pinta sin JS). En modo
+        reduce-motion / tier LOW / sin WebGL es el LCP (fetchpriority=high +
+        preload condicional en <head>); en modo normal el canvas opaco (Z-20)
+        lo cubre sin cambio visual.
+      */}
+      <StaticPoster />
       <DatacenterMount />
       <Navbar />
       {/* z-40: el contenido DOM se apila por encima del canvas fijo (SPEC §2) */}

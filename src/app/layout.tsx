@@ -180,6 +180,18 @@ export default async function RootLayout({
       <head>
         <meta name="color-scheme" content="dark" />
         <link rel="canonical" href={SITE.url} />
+        {/*
+          Preload del póster StaticPoster (LCP en modo estático). El <img> ya
+          está en el HTML inicial (capa base Z-10); este <link rel="preload">
+          adelanta su fetch al parseo del head cuando aplica reduce-motion
+          (OS) o el toggle manual persistido (datacenter-reduce-motion). CSP:
+          script-src 'unsafe-inline' ✓.
+        */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var r=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;var m=window.localStorage&&window.localStorage.getItem('datacenter-reduce-motion');if(r||m==='1'){var l=document.createElement('link');l.rel='preload';l.as='image';l.href='/images/cold-cathedral-poster.webp';l.fetchPriority='high';document.head.appendChild(l);}}catch(e){}})();`,
+          }}
+        />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

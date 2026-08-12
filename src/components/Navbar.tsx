@@ -25,14 +25,24 @@ export default function Navbar() {
   const [progress,  setProgress]  = useState(0)
 
   useEffect(() => {
+    // rAF-throttle: el evento scroll dispara hasta ~120 Hz; batch a 1 update/frame
+    // evita re-renders del navbar por cada evento (vercel-react-best-practices).
+    let raf = 0
     const onScroll = () => {
-      setScrolled(window.scrollY > 20)
-      const maxScroll = document.documentElement.scrollHeight - window.innerHeight
-      setProgress(maxScroll > 0 ? (window.scrollY / maxScroll) * 100 : 0)
+      if (raf) return
+      raf = requestAnimationFrame(() => {
+        raf = 0
+        setScrolled(window.scrollY > 20)
+        const maxScroll = document.documentElement.scrollHeight - window.innerHeight
+        setProgress(maxScroll > 0 ? (window.scrollY / maxScroll) * 100 : 0)
+      })
     }
     window.addEventListener('scroll', onScroll, { passive: true })
     onScroll()
-    return () => window.removeEventListener('scroll', onScroll)
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+      if (raf) cancelAnimationFrame(raf)
+    }
   }, [])
 
   // highlight active section via IntersectionObserver

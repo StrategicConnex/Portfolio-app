@@ -25,6 +25,8 @@ Z 10  StaticPoster (fallback / reduced-motion / tier LOW / sin WebGL)
 
 El Canvas: `aria-hidden="true"`, `pointer-events="none"`, `position: fixed; inset: 0`. Nunca bloquea pointer events, teclado, enlaces, botones, formularios ni el Copilot.
 
+**Capa base (Z-10):** `StaticPoster` se renderiza **siempre en el HTML inicial** (server-side, desde `page.tsx`) — progressive enhancement Nivel 1 (pinta sin JS). En modo normal el canvas opaco (Z-20) la cubre sin cambio visual; en reduce-motion / tier LOW / sin WebGL / error / context lost es la capa visible y el **LCP** (ver §25).
+
 ## 3. Sistema visual
 
 **Tokens** (no hardcodear valores): centralizar en `src/lib/datacenter.tokens.ts` — colores, luz, fog, cámara, motion, partículas, materiales, calidad.
@@ -112,7 +114,7 @@ Prioridad: **Instancing → Merged geometry → Procedural → GLB optimizado**.
 
 ## 12. Asset Policy
 
-Primera opción: **procedural** (Lightformer, luces, fog, partículas — sin assets). Segunda: GLB optimizado con pipeline `gltf-transform` (`--compress draco --texture-compress avif --resize 2048 --instance --dedup --flatten --join`), validado con `gltf-transform inspect` y gltf.report. Todo self-hosted en `/public` (CSP). Payload 3D total **< 3 MB**; excepciones requieren demostrar impacto. Detalle: racks 5–10K tris (máx 20K con LOD), texturas 1–2K (KTX2/AVIF), atlas.
+Primera opción: **procedural** (Lightformer, luces, fog, partículas — sin assets). Segunda: GLB optimizado con pipeline `gltf-transform` (flags verificados 4.4.2: `--compress draco --texture-compress ktx2 --texture-size 2048 --instance --flatten --join --join-named false --simplify false` — ver [`ASSET-PIPELINE.md §6`](./ASSET-PIPELINE.md#6-optimización-post-authoring-spec-12--comando-concreto)), validado con `gltf-transform inspect` y gltf.report. Todo self-hosted en `/public` (CSP). Payload 3D total **< 3 MB**; excepciones requieren demostrar impacto. Detalle: racks 5–10K tris (máx 20K con LOD), texturas 1–2K (KTX2/AVIF), atlas. **Contrato de authoring (Blender → gltf-transform → R3F): [`ASSET-PIPELINE.md`](./ASSET-PIPELINE.md)** — decimate 6–8K tris, atlas 2K con RMA, Principled BSDF sin emission (LEDs como meshes `leds_*` con material emisivo asignado en runtime), export limpio, naming `{asset}_vNN.glb`.
 
 ## 13. HUD System
 
@@ -186,14 +188,18 @@ Desktop: experiencia completa. Tablet: geometría/DPR/partículas reducidos. Mob
 
 ## 25. StaticPoster
 
+**Medición LCP (Lighthouse móvil emulado, reduce-motion, Chromium 1228):** baseline 13.62 s → **6.04 s** (−56%, consistente en 2 corridas); elemento LCP = el póster (`body > div > img`) con las 3 checks de discovery en verde (`fetchpriority=high applied`, `requestDiscoverable`, `eagerlyLoaded`). Reports: `docs/datacenter/reports/lcp-lighthouse/`. Restricción de Chromium documentada en el código: una imagen con borde inferior ≥ viewport no entra al conjunto de candidatos LCP → la altura del `<img>` es `calc(100vh - 1px)` (full-bleed visual, candidato LCP real).
+
 El fallback no parece "modo error": parece "modo operational / low power". Mantiene marca, identidad, concepto datacenter, jerarquía visual y navegación: rack oscuro, nodo central, luces de estado, telemetría estática (CSS/DOM, sin animación bajo reduced-motion).
+
+**Visual actual:** el póster "Cold Cathedral" (`public/images/cold-cathedral-poster.webp`, exportado de `artwork/living-datacenter/canvas.png`, 42 KB). Es la **capa base Z-10 siempre presente en el HTML inicial** (server-side desde `page.tsx`); el canvas opaco Z-20 la cubre en modo normal. Se renderiza como `<img>` (no background-image) con `fetchpriority="high"` y dimensiones explícitas (1400×1867) para ser el **LCP correcto en modo estático** (pinta sin esperar hidratación); el `<head>` (layout) inyecta un `<link rel="preload" as="image">` condicional cuando aplica reduce-motion (OS o toggle manual). Scrim radial sutil para legibilidad del DOM (Z-40). `aria-hidden`, `pointer-events: none`.
 
 ## 26. Failure Strategy + Error Boundary
 
 - WebGL no disponible / Three.js falla / GLB falla → fallback procedural o StaticPoster.
 - GPU débil → tier LOW/STATIC. Reduced motion → estático. JS pesado sin cargar → sitio DOM usable.
-- `webglcontextlost` en el canvas → desmontar + StaticPoster (nunca excepción no capturada).
-- `<DatacenterErrorBoundary fallback={<StaticPoster />}><DatacenterCanvas /></DatacenterErrorBoundary>` — un error de Three.js nunca tumba el portfolio.
+- `webglcontextlost` en el canvas → desmontar el canvas; el póster base Z-10 queda visible (nunca excepción no capturada).
+- `<DatacenterErrorBoundary><DatacenterCanvas /></DatacenterErrorBoundary>` — un error de Three.js nunca tumba el portfolio; el fallback del boundary desmonta el canvas (el póster base ya está en el DOM, sin duplicarlo).
 - Consolidación de contextos y ciclo de vida del modal: ver `ADR-003`.
 
 ## 27. Copilot Visual Event Bus
@@ -216,6 +222,8 @@ Dev-only: `DatacenterDebugPanel` (FPS, draw calls, triángulos, DPR, tier, escen
 
 Chrome/Firefox/Safari/Edge desktop; Chrome Android; Safari iOS. Prioridad crítica: iPhone, Android mid-range, Android low-end.
 
+**QA de dispositivo:** el gate de performance en mobile se valida con el checklist [`QA-DEVICE-CHECKLIST.md`](./QA-DEVICE-CHECKLIST.md) (FPS del canvas, TBT, batería, bundle 3D y CWV en dispositivo real, con baseline local de referencia).
+
 ## 31. Performance Contract (relativo al baseline)
 
 **Medir primero, fijar números después.** En la Fase 0 se registra el baseline real (bundle, CWV, draw calls actuales). Los contratos se expresan como **deltas de la capa 3D**, no como absolutos de página (la app base ya supera 200 KB de JS; un absoluto < 200 KB es irreal):
@@ -223,6 +231,12 @@ Chrome/Firefox/Safari/Edge desktop; Chrome Android; Safari iOS. Prioridad críti
 - Capa 3D: assets < 3 MB (ideal: 0 si procedural puro) · draw calls < 50 · triángulos < 250K mobile / < 500K desktop · +1 contexto WebGL (o 0 en STATIC).
 - Página: LCP, CLS < 0.1, INP — sin regresión respecto al baseline medido.
 - Objetivos Lighthouse (aspiracionales, no gate): Performance ≥ 90, A11y ≥ 95, Best Practices = 100, SEO ≥ 95. Gate real = deltas del baseline + CWV de campo (field data).
+
+## 31b. Auditoría de performance local (medida, 2026-08-10)
+
+**Lighthouse móvil emulado (build de producción local, Chromium 1228):** Performance 50, Accessibility 95 ✓, Best Practices 96 (fails: `errors-in-console` = CORS de SCAudit RUM en localhost — solo entorno local; `valid-source-maps` = build prod sin sourcemaps, estándar), SEO 100 ✓. LCP 4.8–6.5 s, FCP 1.2–1.7 s, TBT 1.2–1.6 s, CLS 0. Reports: `docs/datacenter/reports/perf-audit/`.
+
+**Bundle:** ~1.28 MB JS gz + 793 KB imágenes (content, `sizes` correctos) + 112 KB fonts ≈ 2.3 MB total (presupuesto soft §43: 1.5 MB). **Hallazgo estructural de Next 16/Turbopack:** el HTML inicial emite `<script async>` para TODOS los chunks dinámicos del grafo RSC (incluidas las secciones `next/dynamic` y el bundle 3D) — `next/dynamic` NO evita la descarga, solo la ejecución diferida. En reduce-motion el bundle 3D (~231 KB gz) igual se descarga y ejecuta. Cambios aplicados en esta auditoría: (1) `DatacenterCanvas` como chunk lazy dentro de `DatacenterExperience` (reduce-motion: TBT 1610→1450 ms, unused JS 724→712 KiB; normal: neutro, TBT 1150–1490 ms); (2) rAF-throttle del scroll del `Navbar`. Para eliminar la descarga del bundle 3D en reduce-motion haría falta sacar el canvas del grafo RSC de la página (cambio arquitectónico, fuera del alcance seguro).
 
 ## 32. Dependency Governance
 

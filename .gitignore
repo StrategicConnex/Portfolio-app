@@ -48,3 +48,15 @@ next-env.d.ts
 
 # playwright test report (generated artifact)
 playwright-report/
+
+# standalone express api server (server/)
+/server/node_modules
+/server/dist
+/server/.env
+!/server/.env.example
+
+# gltf-transform pipeline output (scripts/glb-pipeline.mjs)
+/.glb-pipeline/
+
+# Screenshots de QA regenerables (verify-*.mjs)
+artwork/living-datacenter/refcheck/

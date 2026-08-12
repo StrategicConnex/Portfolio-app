@@ -29,6 +29,8 @@ const eslintConfig = defineConfig([
     "next-env.d.ts",
     // Test/utility scripts (CommonJS, not subject to TS lint rules)
     "scripts/**",
+    // Standalone Express API server (own package, toolchain, and lint config)
+    "server/**",
   ]),
 ]);
 

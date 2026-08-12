@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Hoja de contacto — Living Datacenter × Meshy</title>
+<style>
+  :root{color-scheme:dark}
+  body{font-family:system-ui,-apple-system,sans-serif;background:#070d18;color:#c9d6e8;margin:0;padding:24px;max-width:1200px;margin:0 auto}
+  h1{font-size:20px;margin:0 0 4px}h1 small{color:#5b7aa0;font-weight:400;font-size:13px}
+  .sub{color:#5b7aa0;font-size:13px;margin:0 0 24px}
+  section.asset{background:#0b1424;border:1px solid #1c2b45;border-radius:10px;padding:16px 18px;margin-bottom:20px}
+  header h2{margin:0 0 12px;font-size:16px;color:#e8f0fb}
+  .slot{color:#5b7aa0;font-weight:400;font-size:12px;margin-left:8px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+  .panel{border:1px solid #16233c;border-radius:8px;padding:10px;background:#0a1420;min-height:220px}
+  .panel h3{margin:0 0 8px;font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:#7fa3c9}
+  .panel img{width:100%;max-height:190px;object-fit:contain;background:#050b14;border-radius:4px;display:block}
+  .cap{font-size:11px;color:#5b7aa0;margin-top:6px;font-family:ui-monospace,monospace;word-break:break-all}
+  .empty{color:#3d5678;font-size:12px;padding:60px 8px;text-align:center;border:1px dashed #1c2b45;border-radius:4px}
+  .glb-hit{font-size:13px;color:#9fe8b0;margin-top:10px}
+  .raw-hits{margin-top:10px;font-size:12px}.muted{color:#3d5678}
+  .note{margin:10px 0 4px;font-size:12px;color:#8fa8c8}
+  .camfit{margin-top:8px;font-size:11px;color:#9fc8ff;font-family:ui-monospace,monospace;border-top:1px dashed #16233c;padding-top:6px}
+  .cmp-stage{position:relative;margin:0 auto}
+  .cmp-overlay{position:absolute;top:4px;left:4px;object-fit:contain;opacity:.5;pointer-events:none;background:#050b14;border-radius:4px}
+  .cmp-slider{display:flex;align-items:center;gap:8px;margin-top:8px;font-size:11px;color:#7fa3c9}
+  .cmp-slider input{flex:1;accent-color:#5aa0ff}
+  .cmp-val{font-family:ui-monospace,monospace;color:#9fc8ff;min-width:34px;text-align:right}
+  .verdict{font-size:13px;color:#e8f0fb;border-top:1px solid #16233c;padding-top:8px;margin-top:8px}
+</style></head>
+<body>
+  <h1>Hoja de contacto comparativa <small>Living Datacenter × Meshy.ai</small></h1>
+  <p class="sub">Referencia ↔ footprint del slot ↔ output de Meshy ↔ runtime. Metodología y criterios: <code>docs/datacenter/MESHY-CONTACT-SHEET.md</code>. Regenerar con <code>node artwork/living-datacenter/meshy-contact-sheet.mjs</code>.</p>
+<section class="asset">
+  <header><h2>Rack 42U <span class="slot">heroRack · S1 · baseline server_rack_v02.glb</span></h2></header>
+  <div class="grid">
+    <div class="panel"><h3>Referencia (kit)</h3><a href="04-rack/ref-apc-netshelter-ar2580.jpg" target="_blank"><img src="04-rack/ref-apc-netshelter-ar2580.jpg" alt="ref-apc-netshelter-ar2580.jpg"/></a><div class="cap">ref-apc-netshelter-ar2580.jpg</div>
+<a href="04-rack/ref-apc-netshelter-sx-alt.jpg" target="_blank"><img src="04-rack/ref-apc-netshelter-sx-alt.jpg" alt="ref-apc-netshelter-sx-alt.jpg"/></a><div class="cap">ref-apc-netshelter-sx-alt.jpg</div></div>
+    <div class="panel"><h3>Footprint del slot</h3><svg viewBox="0 0 99.66666666666667 228" width="100%" style="max-width:99.66666666666667px;display:block;margin:0 auto">
+  <rect x="4" y="4" width="91.66666666666667" height="220" rx="3" fill="rgba(90,160,255,0.06)" stroke="rgba(90,160,255,0.5)" stroke-width="1.5" stroke-dasharray="6 4"/>
+  <line x1="4" y1="224" x2="95.66666666666667" y2="224" stroke="#4ade80" stroke-width="2"/>
+  <text x="49.833333333333336" y="108" text-anchor="middle" fill="#9fc8ff" font-family="monospace" font-size="12">1 × 2.4 × 0.9</text>
+  <text x="49.833333333333336" y="126" text-anchor="middle" fill="#5b7aa0" font-family="monospace" font-size="11">aspecto 0.42:1</text>
+</svg><div class="cap">chassis · plinth · door · units · leds_status · leds_power · fasteners · 6–8K tris</div><div class="camfit">📷 S1: 20→32% alto desktop · en frame · ✅ COINCIDE</div></div>
+    <div class="panel"><h3>Output Meshy</h3><a href="04-rack/raw/server_rack_v03-preview.webp" target="_blank"><img src="04-rack/raw/server_rack_v03-preview.webp" alt="Output Meshy"/></a><div class="cap">server_rack_v03-preview.webp</div></div>
+    <div class="panel"><h3>Comparación (overlay)</h3>
+  <div class="cmp" data-cmp="04-rack">
+    <div class="cmp-stage" style="width:99.66666666666667px"><svg viewBox="0 0 99.66666666666667 228" width="100%" style="max-width:99.66666666666667px;display:block;margin:0 auto">
+  <rect x="4" y="4" width="91.66666666666667" height="220" rx="3" fill="rgba(90,160,255,0.06)" stroke="rgba(90,160,255,0.5)" stroke-width="1.5" stroke-dasharray="6 4"/>
+  <line x1="4" y1="224" x2="95.66666666666667" y2="224" stroke="#4ade80" stroke-width="2"/>
+  <text x="49.833333333333336" y="108" text-anchor="middle" fill="#9fc8ff" font-family="monospace" font-size="12">1 × 2.4 × 0.9</text>
+  <text x="49.833333333333336" y="126" text-anchor="middle" fill="#5b7aa0" font-family="monospace" font-size="11">aspecto 0.42:1</text>
+</svg>
+      <img class="cmp-overlay" src="04-rack/raw/server_rack_v03-preview.webp" style="width:91.66666666666667px;height:220px" alt="Render de Rack 42U superpuesto al footprint del slot"/>
+    </div>
+    <label class="cmp-slider">Opacidad <input type="range" min="0" max="100" value="50"/><span class="cmp-val">50%</span></label>
+    <div class="cap">server_rack_v03-preview.webp — arrastra la opacidad para alinear la silueta con la caja del slot (sin deformar: contain)</div>
+  </div></div>
+    <div class="panel"><h3>Runtime en el sitio</h3><a href="04-rack/raw/server_rack_v03-runtime.png" target="_blank"><img src="04-rack/raw/server_rack_v03-runtime.png" alt="Runtime en el sitio"/></a><div class="cap">server_rack_v03-runtime.png</div></div>
+  </div>
+  <div class="raw-hits"><div class="glb-hit">📦 <b>server_rack_v03.glb</b> · 74 KB</div></div>
+  <p class="note">Puerta de malla: plano con alpha/normal map en runtime (bridge §4) — NO geometría de rejilla.</p>
+  <p class="verdict">Veredicto: <b>PENDIENTE</b> <span class="muted">(editar en contact-sheet-state.json y re-correr)</span></p>
+</section>
+<section class="asset">
+  <header><h2>Switch 1U <span class="slot">networkSwitch · S2/S3 · baseline network_switch_v01.glb</span></h2></header>
+  <div class="grid">
+    <div class="panel"><h3>Referencia (kit)</h3><a href="01-switch/ref-cisco-9300x.jpg" target="_blank"><img src="01-switch/ref-cisco-9300x.jpg" alt="ref-cisco-9300x.jpg"/></a><div class="cap">ref-cisco-9300x.jpg</div></div>
+    <div class="panel"><h3>Footprint del slot</h3><svg viewBox="0 0 308 228" width="100%" style="max-width:308px;display:block;margin:0 auto">
+  <rect x="4" y="4" width="300" height="220" rx="3" fill="rgba(90,160,255,0.06)" stroke="rgba(90,160,255,0.5)" stroke-width="1.5" stroke-dasharray="6 4"/>
+  <line x1="4" y1="224" x2="304" y2="224" stroke="#4ade80" stroke-width="2"/>
+  <text x="154" y="108" text-anchor="middle" fill="#9fc8ff" font-family="monospace" font-size="12">0.82 × 0.07 × 0.5</text>
+  <text x="154" y="126" text-anchor="middle" fill="#5b7aa0" font-family="monospace" font-size="11">aspecto 11.71:1</text>
+</svg><div class="cap">chassis · leds_status (+ cara de puertos) · 4–6K tris</div><div class="camfit">📷 S3: 1.4→2.7% alto · móvil FUERA entry/mid · ❌ sub-legible (slot cercano pendiente)</div></div>
+    <div class="panel"><h3>Output Meshy</h3><div class="empty">Pendiente — descargar de Meshy a raw/<asset>-preview.png</div></div>
+    <div class="panel"><h3>Comparación (overlay)</h3><div class="empty">Sube raw/<asset>-preview.png (render del output post-proceso) para superponerlo al footprint con opacidad ajustable.</div></div>
+    <div class="panel"><h3>Runtime en el sitio</h3><div class="empty">Pendiente — correr el probe y copiar la captura a raw/<asset>-runtime.png</div></div>
+  </div>
+  <div class="raw-hits muted">Sin output descargado en raw/ — la fila queda pendiente.</div>
+  <p class="note">Grid de puertos como normal map bakeado — cero geometría por puerto.</p>
+  <p class="verdict">Veredicto: <b>PENDIENTE</b> <span class="muted">(editar en contact-sheet-state.json y re-correr)</span></p>
+</section>
+<section class="asset">
+  <header><h2>Storage 2U-4U <span class="slot">storageUnit · S4 (protagonista) · baseline storage_unit_v01.glb</span></h2></header>
+  <div class="grid">
+    <div class="panel"><h3>Referencia (kit)</h3><a href="02-storage/ref-me5-front-lcd.jpg" target="_blank"><img src="02-storage/ref-me5-front-lcd.jpg" alt="ref-me5-front-lcd.jpg"/></a><div class="cap">ref-me5-front-lcd.jpg</div></div>
+    <div class="panel"><h3>Footprint del slot</h3><svg viewBox="0 0 308 228" width="100%" style="max-width:308px;display:block;margin:0 auto">
+  <rect x="4" y="4" width="300" height="220" rx="3" fill="rgba(90,160,255,0.06)" stroke="rgba(90,160,255,0.5)" stroke-width="1.5" stroke-dasharray="6 4"/>
+  <line x1="4" y1="224" x2="304" y2="224" stroke="#4ade80" stroke-width="2"/>
+  <text x="154" y="108" text-anchor="middle" fill="#9fc8ff" font-family="monospace" font-size="12">1.8 × 1 × 1.2</text>
+  <text x="154" y="126" text-anchor="middle" fill="#5b7aa0" font-family="monospace" font-size="11">aspecto 1.80:1</text>
+</svg><div class="cap">chassis · bezel_slats · leds_lcd · leds_status · rear_controllers · 6–8K tris</div><div class="camfit">📷 S4: FUERA en entry · 13→10% alto desktop · ⚠️ protagonista chico</div></div>
+    <div class="panel"><h3>Output Meshy</h3><a href="02-storage/raw/storage_unit_v02-preview.webp" target="_blank"><img src="02-storage/raw/storage_unit_v02-preview.webp" alt="Output Meshy"/></a><div class="cap">storage_unit_v02-preview.webp</div></div>
+    <div class="panel"><h3>Comparación (overlay)</h3>
+  <div class="cmp" data-cmp="02-storage">
+    <div class="cmp-stage" style="width:308px"><svg viewBox="0 0 308 228" width="100%" style="max-width:308px;display:block;margin:0 auto">
+  <rect x="4" y="4" width="300" height="220" rx="3" fill="rgba(90,160,255,0.06)" stroke="rgba(90,160,255,0.5)" stroke-width="1.5" stroke-dasharray="6 4"/>
+  <line x1="4" y1="224" x2="304" y2="224" stroke="#4ade80" stroke-width="2"/>
+  <text x="154" y="108" text-anchor="middle" fill="#9fc8ff" font-family="monospace" font-size="12">1.8 × 1 × 1.2</text>
+  <text x="154" y="126" text-anchor="middle" fill="#5b7aa0" font-family="monospace" font-size="11">aspecto 1.80:1</text>
+</svg>
+      <img class="cmp-overlay" src="02-storage/raw/storage_unit_v02-preview.webp" style="width:300px;height:220px" alt="Render de Storage 2U-4U superpuesto al footprint del slot"/>
+    </div>
+    <label class="cmp-slider">Opacidad <input type="range" min="0" max="100" value="50"/><span class="cmp-val">50%</span></label>
+    <div class="cap">storage_unit_v02-preview.webp — arrastra la opacidad para alinear la silueta con la caja del slot (sin deformar: contain)</div>
+  </div></div>
+    <div class="panel"><h3>Runtime en el sitio</h3><a href="02-storage/raw/storage_unit_v02-runtime.png" target="_blank"><img src="02-storage/raw/storage_unit_v02-runtime.png" alt="Runtime en el sitio"/></a><div class="cap">storage_unit_v02-runtime.png</div></div>
+  </div>
+  <div class="raw-hits"><div class="glb-hit">📦 <b>storage_unit_v02.glb</b> · 73 KB</div></div>
+  <p class="note">Footprint 1.8×1.0×1.2 base-origen — NO proporciones 2U reales (bug corregido, §5 ASSET-PIPELINE).</p>
+  <p class="verdict">Veredicto: <b>PENDIENTE</b> <span class="muted">(editar en contact-sheet-state.json y re-correr)</span></p>
+</section>
+<section class="asset">
+  <header><h2>Display SIEM <span class="slot">siemDisplay · S1/S3/S4/S5 · baseline siem_display_v01.glb</span></h2></header>
+  <div class="grid">
+    <div class="panel"><h3>Referencia (kit)</h3><a href="03-display/ref-soc-videowall.jpg" target="_blank"><img src="03-display/ref-soc-videowall.jpg" alt="ref-soc-videowall.jpg"/></a><div class="cap">ref-soc-videowall.jpg</div></div>
+    <div class="panel"><h3>Footprint del slot</h3><svg viewBox="0 0 308 228" width="100%" style="max-width:308px;display:block;margin:0 auto">
+  <rect x="4" y="4" width="300" height="220" rx="3" fill="rgba(90,160,255,0.06)" stroke="rgba(90,160,255,0.5)" stroke-width="1.5" stroke-dasharray="6 4"/>
+  <line x1="4" y1="224" x2="304" y2="224" stroke="#4ade80" stroke-width="2"/>
+  <text x="154" y="108" text-anchor="middle" fill="#9fc8ff" font-family="monospace" font-size="12">1.62 × 0.9 × 0.12</text>
+  <text x="154" y="126" text-anchor="middle" fill="#5b7aa0" font-family="monospace" font-size="11">aspecto 1.80:1</text>
+</svg><div class="cap">frame · screen · back_panel · 3–4K tris</div><div class="camfit">📷 S5: 4.4→8.7% (pulso) · S3: 12→30% legible · ⚠️ UI se lee en S3</div></div>
+    <div class="panel"><h3>Output Meshy</h3><div class="empty">Pendiente — descargar de Meshy a raw/<asset>-preview.png</div></div>
+    <div class="panel"><h3>Comparación (overlay)</h3><div class="empty">Sube raw/<asset>-preview.png (render del output post-proceso) para superponerlo al footprint con opacidad ajustable.</div></div>
+    <div class="panel"><h3>Runtime en el sitio</h3><div class="empty">Pendiente — correr el probe y copiar la captura a raw/<asset>-runtime.png</div></div>
+  </div>
+  <div class="raw-hits muted">Sin output descargado en raw/ — la fila queda pendiente.</div>
+  <p class="note">Solo marco físico; pantalla = quad a +z, UI como textura/DOM separada (nunca en geometría).</p>
+  <p class="verdict">Veredicto: <b>PENDIENTE</b> <span class="muted">(editar en contact-sheet-state.json y re-correr)</span></p>
+</section>
+<script>
+// QA-only — nunca en el bundle del sitio: opacidad del overlay en la hoja de contacto
+;(function () {
+  document.querySelectorAll('.cmp-slider input[type=range]').forEach(function (inp) {
+    var upd = function () {
+      var cmp = inp.closest('.cmp')
+      var ov = cmp.querySelector('.cmp-overlay')
+      if (ov) ov.style.opacity = inp.value / 100
+      cmp.querySelector('.cmp-val').textContent = inp.value + '%'
+    }
+    inp.addEventListener('input', upd)
+  })
+})()
+</script>
+</body></html>

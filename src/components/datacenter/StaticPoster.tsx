@@ -1,8 +1,27 @@
 /**
- * StaticPoster — fallback "modo operational / low power" (SPEC §25).
- * Puramente decorativo (aria-hidden) y estático (sin animación): se muestra
- * con reduced-motion, sin WebGL, tier LOW, error del canvas o context lost.
- * No debe parecer un modo error: mantiene la identidad visual del datacenter.
+ * StaticPoster — capa base Z-10 "modo operational / low power" (SPEC §9, §25).
+ * Se renderiza SIEMPRE en el HTML inicial (page.tsx, server-side): es la capa
+ * de progressive enhancement Nivel 1, visible cuando no hay canvas (reduced-
+ * motion, sin WebGL, tier LOW, error del canvas o context lost) y cubierta
+ * por el canvas opaco Z-20 en modo normal.
+ *
+ * Puramente decorativo (aria-hidden, pointer-events none) y estático (sin
+ * animación). El visual es el póster "Cold Cathedral" (canvas.png exportado a
+ * webp), que mantiene la identidad del datacenter: torre central con
+ * temperatura cyan→ámbar, telemetría clínica y banda de especificación. Un
+ * scrim sutil garantiza legibilidad del DOM (Z-40) sin apagar la pieza.
+ *
+ * LCP: se renderiza como <img> (no background-image) con fetchpriority="high"
+ * y dimensiones explícitas para que, en modo estático, sea el Largest
+ * Contentful Paint correcto y temprano (pinta sin esperar hidratación). El
+ * <head> (layout.tsx) adelanta el fetch con un <link rel="preload">
+ * condicional cuando aplica reduce-motion.
+ *
+ * Detalle crítico de Chromium (verificado empíricamente, Chromium 1228):
+ * Chrome NO registra como candidato LCP una imagen cuyo borde inferior
+ * toca o supera el borde inferior del viewport (altura >= 100vh). Por eso la
+ * altura es `calc(100vh - 1px)`: sigue siendo full-bleed (el fondo oscuro del
+ * wrapper cubre el px inferior) pero entra en el conjunto de candidatos LCP.
  */
 export default function StaticPoster() {
   return (
@@ -13,101 +32,37 @@ export default function StaticPoster() {
         inset: 0,
         zIndex: 10,
         pointerEvents: 'none',
-        background:
-          'radial-gradient(ellipse at 50% 30%, #0d1b2e 0%, #050b14 55%, #02060c 100%)',
         overflow: 'hidden',
+        background: '#02060c',
       }}
     >
-      {/* Rejilla técnica */}
+      {/* Cold Cathedral poster — LCP en modo estático */}
+      {/* eslint-disable-next-line @next/next/no-img-element -- <img> directo de /public evita el round-trip del optimizador (mejor LCP); el póster ya es un webp optimizado de 42 KB y el preload del <head> apunta a esta misma URL. */}
+      <img
+        data-poster-img
+        src="/images/cold-cathedral-poster.webp"
+        alt=""
+        width={1400}
+        height={1867}
+        fetchPriority="high"
+        style={{
+          position: 'absolute',
+          inset: 0,
+          width: '100%',
+          height: 'calc(100vh - 1px)',
+          objectFit: 'cover',
+          objectPosition: 'center',
+        }}
+      />
+      {/* Scrim de legibilidad para el contenido DOM (Z-40) */}
       <div
         style={{
           position: 'absolute',
           inset: 0,
-          backgroundImage:
-            'linear-gradient(rgba(30,144,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(30,144,255,0.05) 1px, transparent 1px)',
-          backgroundSize: '48px 48px',
+          background:
+            'radial-gradient(ellipse at 50% 45%, rgba(2,6,12,0.30) 0%, rgba(2,6,12,0.62) 100%)',
         }}
       />
-
-      {/* Rack central */}
-      <div
-        style={{
-          position: 'absolute',
-          left: '50%',
-          top: '50%',
-          transform: 'translate(-50%, -50%)',
-          width: 'min(340px, 70vw)',
-          height: 'min(480px, 70vh)',
-          border: '1px solid rgba(30,144,255,0.25)',
-          borderRadius: 8,
-          background: 'linear-gradient(180deg, rgba(13,27,46,0.9), rgba(5,11,20,0.95))',
-          boxShadow: '0 0 80px rgba(30,144,255,0.08), inset 0 0 40px rgba(0,0,0,0.6)',
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'space-between',
-          padding: '16px 14px',
-        }}
-      >
-        {/* LEDs de estado */}
-        <div style={{ display: 'flex', gap: 10, justifyContent: 'center' }}>
-          <span style={led('#22c55e')} />
-          <span style={led('#1e90ff')} />
-          <span style={led('#f59e0b')} />
-        </div>
-
-        {/* Unidades del rack */}
-        {Array.from({ length: 6 }).map((_, i) => (
-          <div
-            key={i}
-            style={{
-              height: 44,
-              borderRadius: 4,
-              border: '1px solid rgba(255,255,255,0.06)',
-              background: 'rgba(255,255,255,0.025)',
-              display: 'flex',
-              alignItems: 'center',
-              padding: '0 10px',
-              gap: 8,
-            }}
-          >
-            <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'rgba(30,144,255,0.5)' }} />
-            <span
-              style={{
-                fontFamily: "'JetBrains Mono', ui-monospace, monospace",
-                fontSize: 9,
-                letterSpacing: 1,
-                color: 'rgba(148,163,184,0.55)',
-              }}
-            >
-              U{String(20 - i).padStart(2, '0')} · {i % 2 === 0 ? 'CORE' : 'STORE'} · ONLINE
-            </span>
-          </div>
-        ))}
-
-        {/* Telemetría */}
-        <div
-          style={{
-            fontFamily: "'JetBrains Mono', ui-monospace, monospace",
-            fontSize: 10,
-            letterSpacing: 2,
-            color: 'rgba(94,234,212,0.5)',
-            textAlign: 'center',
-          }}
-        >
-          SYS IDLE · SAFE MODE · LOW POWER
-        </div>
-      </div>
     </div>
   )
-}
-
-function led(color: string) {
-  return {
-    width: 10,
-    height: 10,
-    borderRadius: '50%',
-    background: color,
-    boxShadow: `0 0 8px ${color}`,
-    display: 'inline-block',
-  } as const
 }

@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, beforeAll } from 'vitest'
 
-import { resetRateLimit } from '@/lib/rate-limit'
+import { resetRateLimit } from '@/lib/rate-limit-upstash'
 
 const mockEmailsSend = vi.fn()
 function ResendMock() {
@@ -15,6 +15,9 @@ let POST: typeof import('./route').POST
 beforeAll(async () => { POST = (await import('./route')).POST })
 
 beforeEach(() => {
+  // Force the in-memory fallback so the test is hermetic (no real Redis calls)
+  delete process.env.UPSTASH_REDIS_REST_URL
+  delete process.env.UPSTASH_REDIS_REST_TOKEN
   resetRateLimit()
 })
 

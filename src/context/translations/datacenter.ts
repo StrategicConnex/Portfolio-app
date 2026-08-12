@@ -18,6 +18,22 @@ const es: TranslationModule['es'] = {
   'dc.scene.resilience.title': 'RESILIENCIA Y PROFUNDIDAD',
   // Escena 05 - Connection Point
   'dc.scene.connection.title': 'PUNTO DE CONEXIÓN',
+  // Fase del recorrido (audit G1 — numeración de escena en HUD)
+  'dc.phase.label': 'FASE',
+  // Nodo focal por sección (audit G2 — label diegético de la baliza)
+  'dc.focus.home': 'IDENTIDAD',
+  'dc.focus.perfil': 'PERFIL',
+  'dc.focus.arquitectura': 'ARQUITECTURA',
+  'dc.focus.stack': 'STACK',
+  'dc.focus.confianza': 'CONFIANZA',
+  'dc.focus.experiencia': 'EXPERIENCIA',
+  'dc.focus.proyecto': 'PROYECTOS',
+  'dc.focus.certificaciones': 'CERTIFICACIONES',
+  'dc.focus.siem': 'SIEM · SOC',
+  'dc.focus.audit-hub': 'AUDIT HUB',
+  'dc.focus.scaudit': 'SECURITY AUDIT',
+  'dc.focus.blog': 'CONOCIMIENTO',
+  'dc.focus.contacto': 'CONEXIÓN',
   // Status de sistema (HUD)
   'dc.status.online': 'EN LÍNEA',
   'dc.status.secure': 'SEGURO',
@@ -34,6 +50,16 @@ const es: TranslationModule['es'] = {
   'dc.node.siem': 'SIEM',
   'dc.node.nist': 'NIST',
   'dc.node.iso': 'ISO 27001',
+  // Datos encarnados (audit G3 — labels cortos de marcos de cumplimiento)
+  'dc.data.iso': 'ISO 27001',
+  'dc.data.iec': 'IEC 62443',
+  'dc.data.nist': 'NIST CSF',
+  'dc.data.gdpr': 'GDPR · LGPD',
+  // Datos encarnados (audit G3 — severidades de amenaza del SIEM)
+  'dc.data.threat.critical': 'CRÍTICO',
+  'dc.data.threat.high': 'ALTO',
+  'dc.data.threat.medium': 'MEDIO',
+  'dc.data.threat.low': 'BAJO',
 }
 
 const en: TranslationModule['en'] = {
@@ -44,6 +70,22 @@ const en: TranslationModule['en'] = {
   'dc.scene.data.title': 'DATA IN MOTION',
   'dc.scene.resilience.title': 'RESILIENCE & DEPTH',
   'dc.scene.connection.title': 'CONNECTION POINT',
+  // Fase del recorrido (audit G1 — numeración de escena en HUD)
+  'dc.phase.label': 'PHASE',
+  // Nodo focal por sección (audit G2 — label diegético de la baliza)
+  'dc.focus.home': 'IDENTITY',
+  'dc.focus.perfil': 'PROFILE',
+  'dc.focus.arquitectura': 'ARCHITECTURE',
+  'dc.focus.stack': 'STACK',
+  'dc.focus.confianza': 'TRUST',
+  'dc.focus.experiencia': 'EXPERIENCE',
+  'dc.focus.proyecto': 'PROJECTS',
+  'dc.focus.certificaciones': 'CERTIFICATIONS',
+  'dc.focus.siem': 'SIEM · SOC',
+  'dc.focus.audit-hub': 'AUDIT HUB',
+  'dc.focus.scaudit': 'SECURITY AUDIT',
+  'dc.focus.blog': 'KNOWLEDGE',
+  'dc.focus.contacto': 'CONNECTION',
   'dc.status.online': 'ONLINE',
   'dc.status.secure': 'SECURE',
   'dc.status.storage': 'STORAGE',
@@ -57,7 +99,17 @@ const en: TranslationModule['en'] = {
   'dc.node.cisco': 'Cisco Networks',
   'dc.node.siem': 'SIEM',
   'dc.node.nist': 'NIST',
+  // Datos encarnados (audit G3 — labels cortos de marcos de cumplimiento)
+  'dc.data.iso': 'ISO 27001',
+  'dc.data.iec': 'IEC 62443',
+  'dc.data.nist': 'NIST CSF',
+  'dc.data.gdpr': 'GDPR · LGPD',
   'dc.node.iso': 'ISO 27001',
+  // Datos encarnados (audit G3 — severidades de amenaza del SIEM)
+  'dc.data.threat.critical': 'CRITICAL',
+  'dc.data.threat.high': 'HIGH',
+  'dc.data.threat.medium': 'MEDIUM',
+  'dc.data.threat.low': 'LOW',
 }
 
 /** Mapea label de `src/data/mindmap.ts` → clave i18n (nunca texto hardcoded). */

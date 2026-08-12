@@ -1,14 +1,14 @@
 'use client'
 
 import { Component, type ReactNode } from 'react'
-import StaticPoster from './StaticPoster'
 
 type Props = { children: ReactNode }
 type State = { hasError: boolean }
 
 /**
  * Aísla el 3D: un error de Three.js nunca debe tumbar el portfolio (SPEC §26).
- * Fallback ⇒ StaticPoster.
+ * Fallback ⇒ desmontar el canvas: StaticPoster (capa base Z-10) ya está
+ * siempre en el HTML inicial (page.tsx), así que queda visible sin duplicarlo.
  */
 export default class DatacenterErrorBoundary extends Component<Props, State> {
   state: State = { hasError: false }
@@ -23,7 +23,8 @@ export default class DatacenterErrorBoundary extends Component<Props, State> {
   }
 
   render() {
-    if (this.state.hasError) return <StaticPoster />
+    // El póster base (Z-10) ya está en el DOM; solo hay que retirar el canvas roto
+    if (this.state.hasError) return null
     return this.props.children
   }
 }

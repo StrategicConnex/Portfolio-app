@@ -72,36 +72,52 @@ export async function safeFetch(
   url: string,
   options: RequestInit & SafeFetchOptions = {},
 ): Promise<Response> {
-  const validation = validateUrl(url);
-  if (!validation.valid) {
-    throw new Error(validation.error);
-  }
-
   const timeout = options.timeout ?? DEFAULT_OPTIONS.timeout;
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), timeout);
+  const maxRedirects = options.maxRedirects ?? DEFAULT_OPTIONS.maxRedirects;
+  let currentUrl = url;
+  let redirectsFollowed = 0;
 
-  try {
-    const response = await fetch(url, {
-      ...options,
-      signal: options.signal ?? controller.signal,
-      redirect: 'manual', // Handle redirects manually to validate each step
-    });
-
-    // Handle redirects with validation
-    if (response.status >= 300 && response.status < 400) {
-      const redirectUrl = response.headers.get('location');
-      if (redirectUrl) {
-        const redirectValidation = validateUrl(redirectUrl);
-        if (!redirectValidation.valid) {
-          throw new Error(`Redirect blocked: ${redirectValidation.error}`);
-        }
-      }
+  while (true) {
+    const validation = validateUrl(currentUrl);
+    if (!validation.valid) {
+      throw new Error(validation.error);
     }
 
-    return response;
-  } finally {
-    clearTimeout(timeoutId);
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), timeout);
+
+    try {
+      const response = await fetch(currentUrl, {
+        ...options,
+        signal: options.signal ?? controller.signal,
+        redirect: 'manual', // Handle redirects manually to validate each step
+      });
+
+      // Handle redirects with validation
+      if (response.status >= 300 && response.status < 400) {
+        const redirectUrl = response.headers.get('location');
+        if (redirectUrl) {
+          if (redirectsFollowed >= maxRedirects) {
+            throw new Error(`Maximum redirects (${maxRedirects}) exceeded`);
+          }
+
+          // Resolve relative/absolute redirect URLs against current URL
+          const resolvedUrl = new URL(redirectUrl, currentUrl).href;
+          const redirectValidation = validateUrl(resolvedUrl);
+          if (!redirectValidation.valid) {
+            throw new Error(`Redirect blocked: ${redirectValidation.error}`);
+          }
+
+          currentUrl = resolvedUrl;
+          redirectsFollowed++;
+          continue;
+        }
+      }
+
+      return response;
+    } finally {
+      clearTimeout(timeoutId);
+    }
   }
 }
 

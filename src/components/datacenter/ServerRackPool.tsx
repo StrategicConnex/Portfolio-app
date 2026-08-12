@@ -1,21 +1,25 @@
 'use client'
 
 import { useMemo } from 'react'
-import { Instances, Instance } from '@react-three/drei'
+import { ContactShadows, Instances, Instance } from '@react-three/drei'
 import type { QualityProfile } from '@/hooks/useAdaptiveQuality'
 import {
   BACKGROUND_RACKS,
   CORRIDOR_RACKS,
+  GLB_ASSETS,
+  HERO_RACK_GLB_POS,
   HERO_RACK_POS,
   HERO_UNIT_OFFSETS,
   TIER_COUNTS,
   UNIT_OFFSETS,
 } from '@/lib/datacenter.layout'
+import GlbAsset from './GlbAsset'
+import { getChassisBump, getChassisMap, getUnitBump } from '@/lib/datacenterTextures'
 
 /**
- * Racks del datacenter con GPU instancing (SPEC §20): 2 draw calls totales
- * (cabinets + unidades) sin importar cuántos racks haya. El conteo se
- * escala por tier de calidad.
+ * Racks del datacenter con GPU instancing (SPEC §20): 2 draw calls para el
+ * corredor/fondo (cabinets + unidades) sin importar cuántos racks haya, más
+ * el slot del rack hero (S1). El conteo se escala por tier de calidad.
  */
 export default function ServerRackPool({ profile }: { profile: QualityProfile }) {
   const counts = TIER_COUNTS[profile] ?? TIER_COUNTS.MEDIUM
@@ -31,11 +35,38 @@ export default function ServerRackPool({ profile }: { profile: QualityProfile })
 
   return (
     <group>
-      {/* Gabinetes */}
+      {/* Sombra de contacto del rack hero (bake 1 frame — frameloop demand,
+          SPEC §10): aterriza el protagonista de S1 sobre el piso elevado. */}
+      <ContactShadows
+        position={[0, -0.002, 0]}
+        opacity={0.35}
+        scale={5}
+        blur={2.6}
+        far={2.5}
+        resolution={256}
+        frames={1}
+        color="#000000"
+      />
+
+      {/* Rack hero (S1): slot GLB con fallback procedural (SPEC §37). El GLB
+          (server_rack_v02.glb, origen en base) se posiciona en HERO_RACK_GLB_POS
+          (base en el piso y=0); el fallback procedural es centro-anclado en
+          HERO_RACK_POS y se posiciona solo. */}
+      <GlbAsset path={GLB_ASSETS.heroRack} position={HERO_RACK_GLB_POS} fallback={<ProceduralHeroRack />} />
+
+      {/* Gabinetes del corredor + fondo: material compartido (instancing) con
+          el detalle PBR procedural del chasis (juntas + ventilación). El map
+          multiplica el color por instancia — la variación de fila se conserva. */}
       <Instances limit={64} castShadow={false}>
         <boxGeometry args={[1, 2.4, 0.9]} />
-        <meshStandardMaterial color="#0d1524" metalness={0.7} roughness={0.4} />
-        <Instance position={HERO_RACK_POS} scale={[1.15, 1.25, 1]} color="#101a30" />
+        <meshStandardMaterial
+          color="#0d1524"
+          metalness={0.7}
+          roughness={0.4}
+          map={getChassisMap()}
+          bumpMap={getChassisBump()}
+          bumpScale={0.03}
+        />
         {corridor.map((r, i) => (
           <Instance key={`c-${i}`} position={r.position} color={r.color} />
         ))}
@@ -54,14 +85,9 @@ export default function ServerRackPool({ profile }: { profile: QualityProfile })
           roughness={0.5}
           emissive="#1E90FF"
           emissiveIntensity={0.32}
+          bumpMap={getUnitBump()}
+          bumpScale={0.05}
         />
-        {HERO_UNIT_OFFSETS.map((u, i) => (
-          <Instance
-            key={`hu-${i}`}
-            position={[HERO_RACK_POS[0] + u[0], HERO_RACK_POS[1] + u[1], HERO_RACK_POS[2] + u[2]]}
-            color={i % 3 === 2 ? '#22d3ee' : '#1c3357'}
-          />
-        ))}
         {corridor.map((r, i) =>
           UNIT_OFFSETS.map((u, j) => (
             <Instance
@@ -71,6 +97,46 @@ export default function ServerRackPool({ profile }: { profile: QualityProfile })
             />
           )),
         )}
+      </Instances>
+    </group>
+  )
+}
+
+/** Rack hero (S1) procedural — misma geometría/material que antes formaba parte
+ * de los pools; ahora aislado para que el GLB pueda reemplazarlo (SPEC §37). */
+function ProceduralHeroRack() {
+  return (
+    <group>
+      <Instances limit={2}>
+        <boxGeometry args={[1, 2.4, 0.9]} />
+        <meshStandardMaterial
+          color="#0d1524"
+          metalness={0.7}
+          roughness={0.4}
+          map={getChassisMap()}
+          bumpMap={getChassisBump()}
+          bumpScale={0.03}
+        />
+        <Instance position={HERO_RACK_POS} scale={[1.15, 1.25, 1]} color="#101a30" />
+      </Instances>
+      <Instances limit={16}>
+        <boxGeometry args={[0.94, 0.07, 0.6]} />
+        <meshStandardMaterial
+          color="#16263f"
+          metalness={0.5}
+          roughness={0.5}
+          emissive="#1E90FF"
+          emissiveIntensity={0.32}
+          bumpMap={getUnitBump()}
+          bumpScale={0.05}
+        />
+        {HERO_UNIT_OFFSETS.map((u, i) => (
+          <Instance
+            key={`hu-${i}`}
+            position={[HERO_RACK_POS[0] + u[0], HERO_RACK_POS[1] + u[1], HERO_RACK_POS[2] + u[2]]}
+            color={i % 3 === 2 ? '#22d3ee' : '#1c3357'}
+          />
+        ))}
       </Instances>
     </group>
   )

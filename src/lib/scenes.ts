@@ -60,8 +60,12 @@ export const SCENES: SceneConfig[] = [
     id: 'resilience',
     sections: ['audit-hub', 'scaudit', 'blog'],
     camera: {
-      entry: { position: [1, 0.8, 3], lookAt: [-1, 0.5, 0], fov: 42 },
-      mid: { position: [0, -1.5, 4.5], lookAt: [0, -0.8, -1], fov: 55 },
+      // Fit del storage protagonista (MESHY-CONTACT-SHEET §1b, gap G4): el entry
+      // anterior (y=0.8 mirando al centro) dejaba la unidad FUERA del frustum en
+      // la 1ª mitad de la escena; ahora la cámara desciende desde el inicio
+      // mirando a la línea de storage (y≈-2.4) y el mid se acerca (z=3.2).
+      entry: { position: [0, -0.5, 3.2], lookAt: [0, -1.2, -2], fov: 50 },
+      mid: { position: [0, -1.5, 3.2], lookAt: [0, -1.8, -2.5], fov: 55 },
       exit: { position: [0, -1, 7], lookAt: [0, -0.5, -2], fov: 58 },
     },
     fog: { near: 8, far: 24 },

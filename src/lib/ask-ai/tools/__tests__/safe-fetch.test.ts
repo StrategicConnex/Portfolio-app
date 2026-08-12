@@ -1,5 +1,5 @@
-import { describe, it, expect } from 'vitest';
-import { validateUrl, extractDomain } from '../safe-fetch';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { validateUrl, extractDomain, safeFetch } from '../safe-fetch';
 
 describe('safe-fetch', () => {
   describe('validateUrl', () => {
@@ -72,6 +72,115 @@ describe('safe-fetch', () => {
 
     it('should handle localhost', () => {
       expect(extractDomain('localhost')).toBeNull();
+    });
+  });
+
+  describe('safeFetch redirects', () => {
+    const originalFetch = global.fetch;
+
+    beforeEach(() => {
+      global.fetch = vi.fn();
+    });
+
+    afterEach(() => {
+      global.fetch = originalFetch;
+      vi.clearAllMocks();
+    });
+
+    it('should follow a single redirect to the final URL', async () => {
+      const mockFetch = vi.mocked(global.fetch);
+      mockFetch.mockResolvedValueOnce(
+        new Response(null, { status: 301, headers: { location: 'https://example.com/final' } }) as Response,
+      );
+      mockFetch.mockResolvedValueOnce(
+        new Response('final content', { status: 200 }) as Response,
+      );
+
+      const response = await safeFetch('https://example.com/redirect');
+      expect(response.status).toBe(200);
+      expect(mockFetch).toHaveBeenCalledTimes(2);
+      expect(mockFetch).toHaveBeenNthCalledWith(1, 'https://example.com/redirect', expect.any(Object));
+      expect(mockFetch).toHaveBeenNthCalledWith(2, 'https://example.com/final', expect.any(Object));
+    });
+
+    it('should follow multiple redirects up to the limit', async () => {
+      const mockFetch = vi.mocked(global.fetch);
+      mockFetch.mockResolvedValueOnce(
+        new Response(null, { status: 302, headers: { location: 'https://example.com/step2' } }) as Response,
+      );
+      mockFetch.mockResolvedValueOnce(
+        new Response(null, { status: 302, headers: { location: 'https://example.com/step3' } }) as Response,
+      );
+      mockFetch.mockResolvedValueOnce(
+        new Response('final', { status: 200 }) as Response,
+      );
+
+      const response = await safeFetch('https://example.com/step1');
+      expect(response.status).toBe(200);
+      expect(mockFetch).toHaveBeenCalledTimes(3);
+    });
+
+    it('should throw when redirect limit is exceeded', async () => {
+      const mockFetch = vi.mocked(global.fetch);
+      mockFetch.mockResolvedValue(
+        new Response(null, { status: 302, headers: { location: 'https://example.com/loop' } }) as Response,
+      );
+
+      await expect(safeFetch('https://example.com/start', { maxRedirects: 3 })).rejects.toThrow(
+        'Maximum redirects (3) exceeded',
+      );
+      expect(mockFetch).toHaveBeenCalledTimes(4);
+    });
+
+    it('should resolve relative redirect URLs', async () => {
+      const mockFetch = vi.mocked(global.fetch);
+      mockFetch.mockResolvedValueOnce(
+        new Response(null, { status: 301, headers: { location: '/final-path' } }) as Response,
+      );
+      mockFetch.mockResolvedValueOnce(
+        new Response('ok', { status: 200 }) as Response,
+      );
+
+      const response = await safeFetch('https://example.com/start');
+      expect(response.status).toBe(200);
+      expect(mockFetch).toHaveBeenNthCalledWith(2, 'https://example.com/final-path', expect.any(Object));
+    });
+
+    it('should block redirects to private IPs', async () => {
+      const mockFetch = vi.mocked(global.fetch);
+      mockFetch.mockResolvedValueOnce(
+        new Response(null, { status: 302, headers: { location: 'http://192.168.1.1/evil' } }) as Response,
+      );
+
+      await expect(safeFetch('https://example.com/start')).rejects.toThrow('Redirect blocked');
+      expect(mockFetch).toHaveBeenCalledTimes(1);
+    });
+
+    it('should return non-redirect responses directly', async () => {
+      const mockFetch = vi.mocked(global.fetch);
+      mockFetch.mockResolvedValueOnce(
+        new Response('content', { status: 200 }) as Response,
+      );
+
+      const response = await safeFetch('https://example.com/page');
+      expect(response.status).toBe(200);
+      expect(mockFetch).toHaveBeenCalledTimes(1);
+    });
+
+    it('should return 4xx responses without following', async () => {
+      const mockFetch = vi.mocked(global.fetch);
+      mockFetch.mockResolvedValueOnce(
+        new Response('not found', { status: 404 }) as Response,
+      );
+
+      const response = await safeFetch('https://example.com/missing');
+      expect(response.status).toBe(404);
+      expect(mockFetch).toHaveBeenCalledTimes(1);
+    });
+
+    it('should validate the initial URL before fetching', async () => {
+      await expect(safeFetch('http://localhost:3000')).rejects.toThrow('Blocked');
+      expect(global.fetch).not.toHaveBeenCalled();
     });
   });
 });

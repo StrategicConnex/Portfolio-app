@@ -8,6 +8,7 @@ import { DATACENTER_TOKENS } from '@/lib/datacenter.tokens'
 import { useSectionProgress } from '@/hooks/useSectionProgress'
 import { useDatacenterCamera } from '@/hooks/useDatacenterCamera'
 import { setActiveScene } from '@/lib/activeScene'
+import { publishFocusSection } from '@/lib/focusNode'
 
 const { settleMs } = DATACENTER_TOKENS.camera
 
@@ -44,6 +45,9 @@ export default function DatacenterCamera({ fogRef }: { fogRef: React.RefObject<T
     // HUD (SPEC §13): publica la escena activa — idempotente, sin re-renders si no cambia.
     const scene = resolveSceneForSection(progress.ref.current.active)
     if (scene) setActiveScene(SCENES.indexOf(scene))
+    // Nodo focal (audit G2): sección activa → baliza 3D. El DOM es la fuente
+    // de verdad; el 3D observa (FocusNodeLayer). Idempotente, sin re-renders.
+    publishFocusSection(progress.ref.current.active >= 0 ? ALL_SECTIONS[progress.ref.current.active] : null)
     if (performance.now() < settleUntil.current) invalidate()
   })
 

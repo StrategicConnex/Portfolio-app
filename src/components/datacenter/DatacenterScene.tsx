@@ -10,7 +10,11 @@ import PurdueHologram from './PurdueHologram'
 import MicroAnimDriver from './MicroAnimDriver'
 import HudLabel from './HudLabel'
 import CopilotNode from './CopilotNode'
+import FocusNodeLayer from './FocusNodeLayer'
+import ServerSwitchPool from './ServerSwitchPool'
+import SiemDisplayPanel from './SiemDisplayPanel'
 import DatacenterFloor from './DatacenterFloor'
+import DataRings from './DataRings'
 import { DATACENTER_TOKENS } from '@/lib/datacenter.tokens'
 
 const { colors } = DATACENTER_TOKENS
@@ -27,12 +31,16 @@ export default function DatacenterScene({ profile }: { profile: QualityProfile }
     <>
       <MicroAnimDriver profile={profile} />
       <CopilotNode />
+      <FocusNodeLayer />
       <DatacenterFloor />
+      <DataRings />
       <ServerRackPool profile={profile} />
       <BackupUnits count={counts.backupUnits} />
       <DustParticles count={counts.particles} />
       {profile !== 'LOW' && (
         <>
+          <ServerSwitchPool profile={profile} />
+          <SiemDisplayPanel profile={profile} />
           <DataStreams />
           <PurdueHologram />
         </>

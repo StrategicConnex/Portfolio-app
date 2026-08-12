@@ -71,7 +71,7 @@ export default function Hero() {
           <motion.div
             custom={1} variants={TEXT_VARIANTS} initial="hidden" animate="visible"
           >
-            <span className="inline-flex items-center gap-2 border border-blue-500/30 bg-blue-500/5 text-blue-400 text-[9px] sm:text-[10px] tracking-[2px] sm:tracking-[4px] py-1 px-3 sm:py-1.5 sm:px-4 rounded-full uppercase font-bold">
+            <span className="inline-flex items-center gap-2 border border-blue-500/30 bg-blue-500/5 text-blue-400 text-[9px] sm:text-[10px] tracking-[2px] sm:tracking-[4px] py-1 px-3 sm:py-1.5 sm:px-4 rounded-full uppercase font-bold font-mono">
               {t('hero.protocol')}
             </span>
           </motion.div>

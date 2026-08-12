@@ -14,13 +14,29 @@ export default function DatacenterEnvironment() {
     <>
       {/* Las luces (ambient/dir/acentos) viven en SceneLighting: transiciones
           atmosféricas por escena (SPEC §3). Acá solo el env map procedural. */}
-      <Environment resolution={256}>
+      <Environment resolution={512}>
         <Lightformer
           intensity={1.4}
           color={t.primaryCold}
           position={[0, 5, 0]}
           rotation={[Math.PI / 2, 0, 0]}
           scale={[10, 10, 1]}
+        />
+        {/* Pasillos (NRG): tiras largas de luz de techo a lo largo del corredor
+            — los metales/chasis captan franjas de reflexión, no puntos. */}
+        <Lightformer
+          intensity={0.8}
+          color="#dfe9ff"
+          position={[0, 4.6, -3]}
+          rotation={[Math.PI / 2, 0, 0]}
+          scale={[14, 1, 1]}
+        />
+        <Lightformer
+          intensity={0.5}
+          color="#dfe9ff"
+          position={[0, 4.6, -8]}
+          rotation={[Math.PI / 2, 0, 0]}
+          scale={[14, 1, 1]}
         />
         <Lightformer
           intensity={0.7}
@@ -35,6 +51,13 @@ export default function DatacenterEnvironment() {
           position={[5, -1, 1]}
           rotation={[0, -Math.PI / 2, 0]}
           scale={[6, 2, 1]}
+        />
+        {/* Profundidad: glow frío al fondo del pasillo */}
+        <Lightformer
+          intensity={0.35}
+          color={t.dataCyan}
+          position={[0, 1, -12]}
+          scale={[18, 6, 1]}
         />
         <Lightformer
           intensity={0.9}

@@ -1,18 +1,28 @@
 'use client'
 
+import dynamic from 'next/dynamic'
 import { useHardwareDetection } from '@/hooks/useHardwareDetection'
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion'
 import { useAdaptiveQuality } from '@/hooks/useAdaptiveQuality'
 import { useWebGLContextManager } from '@/hooks/useWebGLContextManager'
 import DatacenterErrorBoundary from './DatacenterErrorBoundary'
-import DatacenterCanvas from './DatacenterCanvas'
-import StaticPoster from './StaticPoster'
+
+// Canvas 3D en chunk separado (SPEC §43): solo se descarga cuando el perfil
+// NO es STATIC. En reduce-motion / tier LOW / sin WebGL el bundle three+R3F
+// (~230 KB gz) nunca llega al cliente. En modo normal se difiere al montaje.
+const DatacenterCanvas = dynamic(() => import('./DatacenterCanvas'), {
+  ssr: false,
+  loading: () => null,
+})
 
 /**
  * Orquestador del Living Datacenter (SPEC §2, §9, §25, §26):
- * decide Canvas 3D vs StaticPoster según perfil de calidad (hardware +
+ * decide si el Canvas 3D (Z-20) se monta según perfil de calidad (hardware +
  * reduced-motion + WebGL + runtime FPS) y estado del context manager.
- * Incluye el toggle manual "Reduce Motion" (SPEC §8).
+ * StaticPoster (Z-10) es la capa base siempre presente en el HTML inicial
+ * (page.tsx); aquí solo se decide el canvas. El bundle 3D es un chunk lazy
+ * (next/dynamic): en perfiles STATIC nunca se descarga. Incluye el toggle
+ * manual "Reduce Motion" (SPEC §8).
  */
 export default function DatacenterExperience() {
   const { reduced, toggle } = usePrefersReducedMotion()
@@ -20,13 +30,11 @@ export default function DatacenterExperience() {
   const profile = useAdaptiveQuality({ tier, webglSupported, reduced, coarsePointer })
   const { contextLost } = useWebGLContextManager()
 
-  const showPoster = profile === 'STATIC' || contextLost
+  const canvasActive = profile !== 'STATIC' && !contextLost
 
   return (
     <>
-      {showPoster ? (
-        <StaticPoster />
-      ) : (
+      {canvasActive && (
         <DatacenterErrorBoundary>
           <DatacenterCanvas profile={profile} />
         </DatacenterErrorBoundary>

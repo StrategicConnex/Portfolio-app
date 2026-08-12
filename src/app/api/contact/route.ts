@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
 import { Resend } from 'resend';
 import { z } from 'zod';
-import { checkRateLimit, getClientId } from '@/lib/rate-limit';
+import { checkRateLimitDistributed } from '@/lib/rate-limit-upstash';
+import { getClientId } from '@/lib/rate-limit';
 
 export const contactSchema = z.object({
   name: z.string().min(1, 'Name is required').max(100),
@@ -107,9 +108,9 @@ export function escapeHtml(text: string): string {
 
 export async function POST(req: Request) {
   try {
-    // Rate limit: 5 requests per minute per IP
+    // Rate limit: 5 requests per minute per IP (distributed via Upstash when available)
     const clientId = getClientId(req);
-    const rateLimit = checkRateLimit(clientId, 5, 60_000);
+    const rateLimit = await checkRateLimitDistributed(clientId, 5, 60_000);
     
     if (!rateLimit.allowed) {
       return NextResponse.json(

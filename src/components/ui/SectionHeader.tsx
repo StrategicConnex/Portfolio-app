@@ -15,16 +15,18 @@ export default function SectionHeader({
 }: SectionHeaderProps) {
   return (
     <FadeIn className={center ? 'text-center' : ''}>
+      {/* Eyebrow editorial (audit G6): mono teletipo + tracking amplio */}
       <p
-        className="text-xs tracking-[3px] uppercase mb-1"
+        className="font-mono text-[0.68rem] tracking-[0.3em] uppercase mb-1.5 opacity-80"
         style={{ color: 'var(--blue)' }}
       >
         {label}
       </p>
       <h2
-        className="font-bold mb-3"
+        className="font-bold tracking-tight mb-3"
         style={{
-          fontSize: 'clamp(1.6rem, 3vw, 2.2rem)',
+          fontSize: 'clamp(1.75rem, 3.6vw, 2.6rem)',
+          lineHeight: 1.12,
           color: 'var(--text)',
         }}
       >

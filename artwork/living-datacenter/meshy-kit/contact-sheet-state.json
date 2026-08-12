@@ -1,0 +1,72 @@
+{
+  "04-rack": {
+    "asset": "Rack 42U",
+    "slot": "heroRack · S1",
+    "footprint": {
+      "w": 1,
+      "h": 2.4,
+      "d": 0.9,
+      "aspect": 0.417
+    },
+    "baseline": "server_rack_v02.glb",
+    "output": {
+      "file": "server_rack_v03.glb",
+      "size": "74 KB"
+    },
+    "preview": "server_rack_v03-preview.webp",
+    "runtime": "server_rack_v03-runtime.png",
+    "verdict": null,
+    "notes": ""
+  },
+  "01-switch": {
+    "asset": "Switch 1U",
+    "slot": "networkSwitch · S2/S3",
+    "footprint": {
+      "w": 0.82,
+      "h": 0.07,
+      "d": 0.5,
+      "aspect": 11.714
+    },
+    "baseline": "network_switch_v01.glb",
+    "output": null,
+    "preview": null,
+    "runtime": null,
+    "verdict": null,
+    "notes": ""
+  },
+  "02-storage": {
+    "asset": "Storage 2U-4U",
+    "slot": "storageUnit · S4 (protagonista)",
+    "footprint": {
+      "w": 1.8,
+      "h": 1,
+      "d": 1.2,
+      "aspect": 1.8
+    },
+    "baseline": "storage_unit_v01.glb",
+    "output": {
+      "file": "storage_unit_v02.glb",
+      "size": "73 KB"
+    },
+    "preview": "storage_unit_v02-preview.webp",
+    "runtime": "storage_unit_v02-runtime.png",
+    "verdict": null,
+    "notes": ""
+  },
+  "03-display": {
+    "asset": "Display SIEM",
+    "slot": "siemDisplay · S1/S3/S4/S5",
+    "footprint": {
+      "w": 1.62,
+      "h": 0.9,
+      "d": 0.12,
+      "aspect": 1.8
+    },
+    "baseline": "siem_display_v01.glb",
+    "output": null,
+    "preview": null,
+    "runtime": null,
+    "verdict": null,
+    "notes": ""
+  }
+}
