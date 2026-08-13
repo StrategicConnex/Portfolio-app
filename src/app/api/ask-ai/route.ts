@@ -1,4 +1,4 @@
-import { streamText, type UIMessage, convertToModelMessages } from 'ai';
+import { streamText, createUIMessageStreamResponse, type UIMessage, convertToModelMessages } from 'ai';
 import { createOpenAI } from '@ai-sdk/openai';
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
@@ -8,7 +8,8 @@ import { buildRagContext } from '@/lib/ask-ai/rag/retrieve';
 import { retrieveCombined } from '@/lib/ask-ai/rag/embeddings';
 import { askAiTools } from '@/lib/ask-ai/tools/registry';
 import { generateConversationSummary, shouldSummarize } from '@/lib/ask-ai/memory/conversation-memory';
-import { FreeFirstRouter, isTransientError, type FallbackReason } from '@/lib/ask-ai/routing/freeFirst';
+import { FreeFirstRouter } from '@/lib/ask-ai/routing/freeFirst';
+import { withMidStreamFallback } from '@/lib/ask-ai/routing/midStreamFallback';
 
 export const maxDuration = 30;
 
@@ -203,66 +204,41 @@ ${toolDescriptions}
 
 ${sources.length > 0 ? `${language === 'en' ? 'Available sources for this query:' : 'Fuentes disponibles para esta consulta:'} ${sources.map((s) => s.title).join(', ')}.` : ''}`;
 
-    // ─── Model fallback loop (FreeFirstRouter — ADR-004) ──────────────────────
+    // ─── Model fallback (FreeFirstRouter ADR-004 + mid-stream ADR-005) ────────
     // Free candidates first, ordered by score; retry transient failures once
     // within a total attempt budget; paid fallback only after free exhausts.
     // Telemetry per attempt: model, latency, success, fallback reason.
-    // The streamText call below stays byte-identical (sacred, CONSTITUTION R4).
+    // The streamText call below stays byte-identical (sacred, CONSTITUTION R4);
+    // withMidStreamFallback (ADR-005) absorbs pre-stream AND mid-stream
+    // failures inside the stream and falls back without leaking failed models.
     const router = new FreeFirstRouter({
       freePool: FREE_MODEL_POOL.join(','),
       paidModel: PAID_MODEL || undefined,
     });
 
     const provider = createProvider();
-    let lastError: unknown;
-    let lastReason: FallbackReason = 'pool-exhausted';
-    for (const step of router.iterate()) {
-      const { modelId, attempt, isRetry } = step;
-      const startedAt = Date.now();
-      try {
-        const result = streamText({
-          model: provider(modelId),
-          messages: modelMessages,
-          tools: askAiTools,
-          maxOutputTokens: 4096,
-          system: systemPrompt,
-        });
-        router.log({
-          model: modelId,
-          attempt,
-          isRetry,
-          ok: true,
-          latencyMs: Date.now() - startedAt,
-          reason: 'none',
-        });
-        return result.toUIMessageStreamResponse();
-      } catch (error) {
-        lastError = error;
-        const transient = isTransientError(error);
-        step.transient = transient;
-        lastReason = transient
-          ? isRetry
-            ? 'transient-retry-exhausted'
-            : 'transient'
-          : 'permanent-error';
-        router.log({
-          model: modelId,
-          attempt,
-          isRetry,
-          ok: false,
-          latencyMs: Date.now() - startedAt,
-          reason: lastReason,
-        });
-        console.warn(`[AskAI] Model ${modelId} failed (${lastReason}):`, error);
-      }
-    }
 
-    // All models failed
-    console.error('[AskAI] All models in pool failed:', lastError);
-    return NextResponse.json(
-      { error: language === 'en' ? 'AI service unavailable. Try again later.' : 'Servicio de IA no disponible. Intenta de nuevo más tarde.' },
-      { status: 503 },
-    );
+    return createUIMessageStreamResponse({
+      stream: withMidStreamFallback({
+        plan: router.routePlan(),
+        maxRetriesPerModel: router.maxRetriesPerModel,
+        maxTotalAttempts: router.maxTotalAttempts,
+        makeStream: (modelId) =>
+          streamText({
+            model: provider(modelId),
+            messages: modelMessages,
+            tools: askAiTools,
+            maxOutputTokens: 4096,
+            system: systemPrompt,
+          }).stream,
+        onAttempt: (entry) => {
+          router.log(entry);
+          if (!entry.ok) {
+            console.warn(`[AskAI] Model ${entry.model} failed (${entry.reason}): ${entry.errorText ?? 'no detail'}`);
+          }
+        },
+      }),
+    });
   } catch (error) {
     console.error('Ask AI error:', error);
     return NextResponse.json(

@@ -11,8 +11,9 @@
  *   4. (paid) — appended after free candidates.
  *   5. Record model, latency, success and fallback reason per attempt.
  *
- * NOT implemented (deferred in ADR-004): quality threshold (4) and mid-stream
- * fallback (6) — both touch the sacred streaming contract.
+ * NOT implemented here: quality threshold (4) — deferred in ADR-004.
+ * Mid-stream fallback (6) now lives in `./midStreamFallback` (ADR-005),
+ * which reuses the attempt budget and telemetry contract defined here.
  *
  * The pool format is backwards compatible: entries are comma-separated model
  * ids; an optional NUMERIC score suffix (`model:free:9` or `model:9`) is
@@ -43,7 +44,8 @@ export type FallbackReason =
   | 'transient'
   | 'transient-retry-exhausted'
   | 'permanent-error'
-  | 'pool-exhausted';
+  | 'pool-exhausted'
+  | 'mid-stream-error'; // ADR-005: fatal error after the stream committed content
 
 export interface AttemptStep {
   modelId: string;
@@ -60,6 +62,8 @@ export interface RoutingAttemptLog {
   ok: boolean;
   latencyMs: number;
   reason: FallbackReason;
+  /** Client-safe error description for failed attempts (telemetry only). */
+  errorText?: string;
 }
 
 export type RoutingLogger = (entry: RoutingAttemptLog) => void;
@@ -108,7 +112,7 @@ export function routePlan(
 // ─── Transient error classification ─────────────────────────────────────────
 
 const TRANSIENT_RE =
-  /(rate.?limit|too many requests|quota|429|timeout|timed out|etimedout|econnreset|econnrefused|socket hang up|fetch failed|network error|undici|502|503|504|\b5\d{2}\b|abort)/i;
+  /(rate.?limit|too many requests|quota|429|timeout|timed out|etimedout|econnreset|econnrefused|socket hang up|fetch failed|network error|undici|502|503|504|\b5\d{2}\b|abort|failed after \d+ attempts)/i;
 
 /**
  * Classify an error as transient (worth a retry within budget) vs permanent.
@@ -198,6 +202,16 @@ export class FreeFirstRouter {
   /** Ordered model ids: free by score desc + paid last. */
   routePlan(): string[] {
     return routePlan(parsePool(this.cfg.freePool), this.cfg.paidModel);
+  }
+
+  /** Retries per model on transient errors (budget shared with the stream wrapper). */
+  get maxRetriesPerModel(): number {
+    return this.cfg.maxRetriesPerModel;
+  }
+
+  /** Hard cap on total attempts per request (budget shared with the stream wrapper). */
+  get maxTotalAttempts(): number {
+    return this.cfg.maxTotalAttempts;
   }
 
   /** Iterate the plan with retry-on-transient within the attempt budget. */

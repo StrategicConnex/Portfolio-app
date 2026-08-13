@@ -1,6 +1,7 @@
 # ADR-004: Router FREE-first del SC Platform en la orquestación del AI Copilot
 
 **Status:** ✅ Implemented (aprobado por el usuario, 2026-08-12 — `report-adr004-freefirst-router.md`)
+**Nota:** la brecha 6 (fallback mid-stream) quedó diferida aquí y fue implementada en **ADR-005** (2026-08-13).
 **Status previo:** Proposed (requiere aprobación explícita para ejecutar — clasificado RISKY, SPEC §56)
 **Date:** 2026-08-12
 **Branch:** `feat/living-datacenter`

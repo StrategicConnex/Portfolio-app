@@ -94,6 +94,15 @@ describe('isTransientError', () => {
     expect(isTransientError(Object.assign(new Error('quota'), { status: 429 }))).toBe(true);
   });
 
+  it('classifies the SDK internal-retry wrapper as transient', () => {
+    // The AI SDK retries 429/5xx/network up to 3× internally and then wraps the
+    // final failure without the original status — the wrapper itself is the
+    // transient signal (permanent errors like 400 never trigger internal retries).
+    expect(
+      isTransientError(new Error('Failed after 3 attempts. Last error: AI_APICallError: Provider returned error')),
+    ).toBe(true);
+  });
+
   it('treats 4xx/validation errors as permanent', () => {
     expect(isTransientError(new Error('400 Bad Request'))).toBe(false);
     expect(isTransientError(Object.assign(new Error('auth'), { status: 401 }))).toBe(false);
