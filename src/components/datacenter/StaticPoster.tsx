@@ -33,7 +33,7 @@ export default function StaticPoster() {
         zIndex: 10,
         pointerEvents: 'none',
         overflow: 'hidden',
-        background: '#02060c',
+        background: '#04080F',
       }}
     >
       {/* Cold Cathedral poster — LCP en modo estático */}

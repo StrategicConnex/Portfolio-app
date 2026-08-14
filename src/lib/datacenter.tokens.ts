@@ -6,13 +6,16 @@
  */
 export const DATACENTER_TOKENS = {
   colors: {
-    bg: '#050b14',
-    primaryCold: '#1E90FF',
+    // P0 audit de diseño: fondo unificado DOM↔3D y azul instrumental (#4DA3FF,
+    // mismo hue, menos chroma que el dodger #1E90FF plantilla). Champagne para
+    // el clímax de conexión (S5/hero). El resto de la semántica no cambia.
+    bg: '#04080f',
+    primaryCold: '#4DA3FF',
     secondaryBlue: '#38bdf8',
     dataCyan: '#22d3ee',
     securityAmber: '#f59e0b',
     warningRed: '#ef4444',
-    gold: '#C5A46D',
+    gold: '#E8D5AC',
     white: '#ffffff',
   },
   fog: {

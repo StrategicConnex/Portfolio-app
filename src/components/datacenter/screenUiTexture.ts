@@ -90,7 +90,7 @@ export function getSiemUiTexture(w = SIEM_UI_W, h = SIEM_UI_H): THREE.CanvasText
   if (!ctx) throw new Error('2d context unavailable')
 
   const l = siemUiLayout(w, h)
-  ctx.fillStyle = '#050b14'
+  ctx.fillStyle = '#04080f'
   ctx.fillRect(0, 0, w, h)
 
   ctx.strokeStyle = 'rgba(34, 211, 238, 0.07)'

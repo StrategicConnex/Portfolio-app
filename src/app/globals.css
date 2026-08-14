@@ -5,22 +5,24 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --bg: #0A192F;
-  --bg2: #111827;
-  --blue: #1E90FF;
-  --gold: #C5A46D;
-  --text: #E5E7EB;
+  /* P0 audit de diseño: fondo unificado DOM↔3D (mismo #04080F del canvas),
+     azul instrumental #4DA3FF y champagne #E8D5AC como acentos del sistema. */
+  --bg: #04080F;
+  --bg2: #070D18;
+  --blue: #4DA3FF;
+  --gold: #E8D5AC;
+  --text: #F4F7FB;
   --muted: rgba(255, 255, 255, 0.05);
-  --card: #111827;
+  --card: #0B1526;
   --border: rgba(255, 255, 255, 0.1);
-  --background: #0A192F;
-  --foreground: #E5E7EB;
-  --card-foreground: #E5E7EB;
+  --background: #04080F;
+  --foreground: #F4F7FB;
+  --card-foreground: #F4F7FB;
   --secondary: #1e293b;
-  --secondary-foreground: #E5E7EB;
-  --muted-foreground: #94a3b8;
-  --accent: rgba(197, 164, 109, 0.15);
-  --accent-foreground: #C5A46D;
+  --secondary-foreground: #F4F7FB;
+  --muted-foreground: #8FA6C2;
+  --accent: rgba(232, 213, 172, 0.15);
+  --accent-foreground: #E8D5AC;
 }
 
 /* ── Hero Purdue radar — desktop only ── */
@@ -49,7 +51,8 @@ body {
 /* Tipografía editorial (SPEC §4): Space Grotesk para títulos/narrativa. */
 h1, h2, h3 {
   font-family: var(--font-heading, var(--font-sans, inherit));
-  letter-spacing: -0.015em;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
 }
 
 @media (max-width: 768px) {
@@ -64,14 +67,14 @@ h1, h2, h3 {
 }
 
 ::selection {
-  background: rgba(30,144,255,0.3);
+  background: rgba(77,163,255,0.35);
   color: #fff;
 }
 
 /* Custom scrollbar */
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: var(--bg); }
-::-webkit-scrollbar-thumb { background: rgba(30,144,255,0.4); border-radius: 3px; }
+::-webkit-scrollbar-thumb { background: rgba(77,163,255,0.4); border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--blue); }
 
 /* Glassmorphism utility */
@@ -91,10 +94,10 @@ h1, h2, h3 {
 
 /* Glow effects */
 .glow-blue {
-  box-shadow: 0 0 20px rgba(30,144,255,0.2), 0 0 40px rgba(30,144,255,0.1);
+  box-shadow: 0 0 20px rgba(77,163,255,0.2), 0 0 40px rgba(77,163,255,0.1);
 }
 .glow-gold {
-  box-shadow: 0 0 20px rgba(197,164,109,0.2), 0 0 40px rgba(197,164,109,0.1);
+  box-shadow: 0 0 20px rgba(232,213,172,0.2), 0 0 40px rgba(232,213,172,0.1);
 }
 
 /* Data flow animation */
@@ -106,9 +109,9 @@ h1, h2, h3 {
 
 /* Tag utility */
 .tech-tag {
-  background: rgba(30,144,255,0.08);
+  background: rgba(77,163,255,0.08);
   color: var(--blue);
-  border: 1px solid rgba(30,144,255,0.2);
+  border: 1px solid rgba(77,163,255,0.2);
   padding: 0.2rem 0.65rem;
   border-radius: 20px;
   font-size: 0.72rem;
@@ -118,7 +121,7 @@ h1, h2, h3 {
   white-space: nowrap;
 }
 .tech-tag:hover {
-  background: rgba(30,144,255,0.18);
+  background: rgba(77,163,255,0.18);
   border-color: var(--blue);
   transform: translateY(-1px);
 }
@@ -130,6 +133,36 @@ h1, h2, h3 {
   background: linear-gradient(90deg, var(--blue), var(--gold));
   border-radius: 2px;
   margin-bottom: 2.5rem;
+}
+
+/* ══ P0 · audit de diseño — cine, cohesión y editorial (SPEC §3) ══ */
+
+/* Vignette cinematográfica: sobre el canvas (z-20), bajo el contenido (z-40).
+   Estática (sin animación) — segura para prefers-reduced-motion. */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0) 52%, rgba(1, 4, 8, 0.55) 100%);
+}
+
+/* Eyebrow mono editorial (teletipo de fase/etiqueta) */
+.eyebrow {
+  font-family: var(--font-mono, 'JetBrains Mono', 'Fira Code', 'Cascadia Code', ui-monospace, monospace);
+  font-size: 0.6875rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--blue);
+}
+
+/* Hairline divider editorial */
+.hairline {
+  height: 1px;
+  border: 0;
+  background: linear-gradient(90deg, rgba(77, 163, 255, 0.5), rgba(232, 213, 172, 0.25), transparent);
 }
 
 /* Monospace utility (SPEC §4): JetBrains Mono self-hosted, HUD/telemetría. */
@@ -229,7 +262,7 @@ h1, h2, h3 {
   background: linear-gradient(
     to bottom,
     transparent 0%,
-    rgba(30, 144, 255, 0.05) 50%,
+    rgba(77, 163, 255, 0.05) 50%,
     transparent 100%
   );
   animation: scanline 8s linear infinite;

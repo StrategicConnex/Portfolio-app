@@ -162,7 +162,7 @@ function ModalViewer({ file, onClose }: ModalViewerProps) {
                 <span className="text-[11px] font-semibold uppercase tracking-wide px-2 py-0.5 rounded flex-shrink-0"
                   style={{
                     color: 'var(--accent)',
-                    background: 'rgba(197,164,109,0.12)',
+                    background: 'rgba(232,213,172,0.12)',
                   }}
                 >
                   {isPdf ? 'PDF' : 'Imagen'}
@@ -288,7 +288,7 @@ export default function Certificaciones() {
     <>
       <ModalViewer file={activeFile} onClose={closeFile} />
 
-      <section id="certificaciones" className="py-10 sm:py-16 px-4 sm:px-8" style={{ background: 'rgba(17,24,39,0.5)' }}>
+      <section id="certificaciones" className="py-10 sm:py-16 px-4 sm:px-8" style={{ background: 'rgba(4,8,15,0.30)' }}>
         <div ref={ref} className="max-w-[1100px] mx-auto">
           <SectionHeader label={t('certs.label')} title={t('certs.title')} highlight={t('certs.highlight')} />
 
@@ -300,7 +300,7 @@ export default function Certificaciones() {
                 initial={{ opacity: 0, y: 15 }}
                 animate={inView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.5, delay: i * 0.05 + 0.1 }}
-                whileHover={{ scale: 1.02, borderColor: c.tier === 'gold' ? 'rgba(197,164,109,0.5)' : 'rgba(30,144,255,0.5)' }}
+                whileHover={{ scale: 1.02, borderColor: c.tier === 'gold' ? 'rgba(232,213,172,0.5)' : 'rgba(77,163,255,0.5)' }}
                 className="flex items-center gap-3.5 p-4 rounded-xl transition-colors"
                 style={{
                   background: 'var(--card)',
@@ -311,9 +311,9 @@ export default function Certificaciones() {
                   className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0"
                   style={{
                     background: c.tier === 'gold'
-                      ? 'rgba(197,164,109,0.15)'
+                      ? 'rgba(232,213,172,0.15)'
                       : c.tier === 'blue'
-                      ? 'rgba(30,144,255,0.12)'
+                      ? 'rgba(77,163,255,0.12)'
                       : 'rgba(148,163,184,0.1)',
                   }}
                 >
@@ -398,7 +398,7 @@ export default function Certificaciones() {
                       animate={{ opacity: 1, scale: 1 }}
                       exit={{ opacity: 0, scale: 0.9 }}
                       transition={{ duration: 0.3 }}
-                      whileHover={{ y: -4, borderColor: 'rgba(197,164,109,0.5)', boxShadow: '0 12px 24px -6px rgba(0,0,0,0.6)' }}
+                      whileHover={{ y: -4, borderColor: 'rgba(232,213,172,0.5)', boxShadow: '0 12px 24px -6px rgba(0,0,0,0.6)' }}
                       className="group flex flex-col p-4 rounded-xl cursor-pointer text-left relative overflow-hidden"
                       aria-label={`Ver ${c.name}`}
                       style={{

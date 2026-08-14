@@ -135,7 +135,7 @@ export default function Proyecto() {
                 }}
                 className={`text-left p-6 rounded-2xl border transition-all duration-300 relative overflow-hidden group ${
                   activeCase === i 
-                    ? 'bg-blue-600/10 border-blue-500/50 shadow-[0_0_20px_rgba(30,144,255,0.1)]' 
+                    ? 'bg-[var(--blue)]/10 border-[var(--blue)]/50 shadow-[0_0_20px_rgba(77,163,255,0.1)]' 
                     : 'bg-white/5 border-white/10 hover:bg-white/10'
                 }`}
               >
@@ -318,7 +318,7 @@ export default function Proyecto() {
             exit={{ opacity: 0 }}
             className="fixed inset-0 z-[110] bg-slate-950/90 backdrop-blur-md flex flex-col items-center justify-center font-mono"
           >
-            <div className="w-[min(90vw,600px)] p-6 bg-black/50 border border-blue-500/20 rounded-lg shadow-[0_0_50px_rgba(30,144,255,0.1)] relative overflow-hidden">
+            <div className="w-[min(90vw,600px)] p-6 bg-black/50 border border-[var(--blue)]/25 rounded-lg shadow-[0_0_50px_rgba(77,163,255,0.1)] relative overflow-hidden">
               <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-blue-500 to-transparent opacity-50" />
               <div className="flex gap-2 mb-4 border-b border-white/10 pb-2">
                 <div className="w-3 h-3 rounded-full bg-red-500/50 border border-red-500" />

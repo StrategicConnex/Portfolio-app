@@ -11,7 +11,7 @@ export const nodes: NodeDefinition[] = [
   {
     label: 'Convergencia IT/OT',
     pos: [0, 0, 0],
-    color: '#C5A46D',
+    color: '#E8D5AC',
     particleCount: 300,
     subs: ['Modelo Purdue', 'Visión integrada'],
     related: ['SCADA', 'Firewalls Industriales', 'SIEM', 'Virtualización'],

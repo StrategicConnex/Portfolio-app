@@ -17,7 +17,7 @@ const BlogCard = ({ post, index }: { post: BlogPost; index: number }) => {
       viewport={{ once: true }}
       className="group relative"
     >
-      <div className="glass scanline-container rounded-2xl p-6 h-full flex flex-col border border-white/5 hover:border-blue-500/30 transition-all duration-500 hover:shadow-[0_10px_40px_rgba(30,144,255,0.1)] group-hover:-translate-y-1">
+      <div className="glass scanline-container rounded-2xl p-6 h-full flex flex-col border border-white/5 hover:border-[var(--blue)]/30 transition-all duration-500 hover:shadow-[0_10px_40px_rgba(77,163,255,0.1)] group-hover:-translate-y-1">
         <div className="flex items-center gap-2 mb-4">
           <span className="text-[10px] font-bold text-blue-500 px-2 py-0.5 rounded-full bg-blue-500/10 border border-blue-500/20 uppercase tracking-wider">
             {post.category}
@@ -60,7 +60,7 @@ export default function Blog() {
   const { t } = useLanguage()
 
   return (
-    <section id="blog" className="py-24 sm:py-32 bg-slate-950/40">
+    <section id="blog" className="py-24 sm:py-32 bg-[#04080f]/30">
       <div className="max-w-6xl mx-auto px-6">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16">
           <div className="max-w-2xl">

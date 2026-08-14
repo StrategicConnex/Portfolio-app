@@ -28,16 +28,16 @@ export function buildEmailHtml(data: z.infer<typeof contactSchema>): string {
   <style>
     body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0f172a; margin: 0; padding: 0; }
     .container { max-width: 600px; margin: 0 auto; padding: 32px 24px; }
-    .header { border-bottom: 2px solid #1e90ff; padding-bottom: 16px; margin-bottom: 24px; }
+    .header { border-bottom: 2px solid #4DA3FF; padding-bottom: 16px; margin-bottom: 24px; }
     .header h1 { color: #e2e8f0; font-size: 22px; font-weight: 700; margin: 0; }
     .header p { color: #64748b; font-size: 13px; margin: 4px 0 0; }
     .field { margin-bottom: 20px; }
-    .field-label { color: #1e90ff; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 4px; }
+    .field-label { color: #4DA3FF; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 4px; }
     .field-value { color: #e2e8f0; font-size: 15px; line-height: 1.5; background: rgba(255,255,255,0.04); border-radius: 8px; padding: 10px 14px; border: 1px solid rgba(255,255,255,0.08); }
     .divider { height: 1px; background: rgba(255,255,255,0.08); margin: 24px 0; }
     .footer { text-align: center; color: #475569; font-size: 12px; margin-top: 32px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.06); }
-    .badge { display: inline-block; background: rgba(30,144,255,0.12); color: #1e90ff; border: 1px solid rgba(30,144,255,0.2); font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 20px; }
-    .tag { display: inline-block; background: rgba(197,164,109,0.12); color: #c5a46d; border: 1px solid rgba(197,164,109,0.2); font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 12px; text-transform: uppercase; letter-spacing: 1px; }
+    .badge { display: inline-block; background: rgba(77,163,255,0.12); color: #4DA3FF; border: 1px solid rgba(77,163,255,0.2); font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 20px; }
+    .tag { display: inline-block; background: rgba(232,213,172,0.12); color: #E8D5AC; border: 1px solid rgba(232,213,172,0.2); font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 12px; text-transform: uppercase; letter-spacing: 1px; }
   </style>
 </head>
 <body>

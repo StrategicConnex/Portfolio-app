@@ -60,9 +60,9 @@ export default function DatacenterExperience() {
           justifyContent: 'center',
           fontSize: 15,
           cursor: 'pointer',
-          color: reduced ? 'rgba(148,163,184,0.9)' : 'rgba(30,144,255,0.9)',
+          color: reduced ? 'rgba(148,163,184,0.9)' : 'rgba(77,163,255,0.9)',
           background: 'rgba(2,6,12,0.55)',
-          border: reduced ? '1px solid rgba(148,163,184,0.3)' : '1px solid rgba(30,144,255,0.35)',
+          border: reduced ? '1px solid rgba(148,163,184,0.3)' : '1px solid rgba(77,163,255,0.35)',
           backdropFilter: 'blur(6px)',
           WebkitBackdropFilter: 'blur(6px)',
         }}

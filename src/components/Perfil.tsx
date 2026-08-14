@@ -18,7 +18,7 @@ const metrics = [
 const competencias = [
   {
     grupo: 'Ciberseguridad Industrial',
-    color: '#1E90FF',
+    color: '#4DA3FF',
     items: ['Modelo Purdue', 'IEC 62443', 'NIST CSF', 'ISO 27001', 'SOX', 'SIEM – Security Onion', 'IAM', 'Firewalls Industriales'],
     img: '/comp_cyber.webp'
   },
@@ -36,7 +36,7 @@ const competencias = [
   },
   {
     grupo: 'OT / Control Industrial',
-    color: '#C5A46D',
+    color: '#E8D5AC',
     items: ['SCADA', 'Modbus', 'OPC UA', 'DNP3', 'Edge Computing', 'Veeam Backup', 'Backup Exec', 'Control Industrial'],
     img: '/comp_ot.webp'
   },
@@ -103,7 +103,7 @@ export default function Perfil() {
   const { t, language } = useLanguage()
 
   return (
-    <section id="perfil" className="py-20 sm:py-32 px-4 sm:px-6 md:px-8" style={{ background: 'rgba(10,25,47,0.45)' }}>
+    <section id="perfil" className="py-20 sm:py-32 px-4 sm:px-6 md:px-8" style={{ background: 'rgba(4,8,15,0.30)' }}>
       <div className="max-w-[1100px] mx-auto">
         <SectionHeader label={t('profile.label')} title={t('profile.title')} highlight={t('profile.highlight')} />
 
@@ -116,7 +116,7 @@ export default function Perfil() {
               transition={{ delay: 0.2, duration: 0.7, ease: 'easeOut' }}
               className="relative w-[160px] h-[160px] sm:w-[200px] sm:h-[200px] md:w-[240px] md:h-[240px] flex-shrink-0 mx-auto md:mx-0"
             >
-              <div className="relative w-full h-full rounded-2xl overflow-hidden border border-blue-500/20 shadow-[0_0_60px_rgba(30,144,255,0.08)] bg-slate-900 group">
+              <div className="relative w-full h-full rounded-2xl overflow-hidden border border-[var(--blue)]/25 shadow-[0_0_60px_rgba(77,163,255,0.08)] bg-slate-900 group">
                 <Image
                   src="/JuanPalacios.jpg"
                   alt="Foto de perfil de Juan Palacios"

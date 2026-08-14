@@ -12,7 +12,7 @@ const categories = [
     icon: 'shield',
     cat: 'stack.cat.security',
     title: 'stack.title.security',
-    color: '#1E90FF',
+    color: '#4DA3FF',
     tags: ['stack.tag.siem', 'stack.tag.firewalls', 'stack.tag.iam', 'stack.tag.iec', 'stack.tag.nist', 'stack.tag.iso', 'stack.tag.sox', 'stack.tag.purdue', 'stack.tag.ir'],
     img: '/stack_seguridad.webp',
   },
@@ -36,7 +36,7 @@ const categories = [
     icon: 'automation',
     cat: 'stack.cat.ot',
     title: 'stack.title.ot',
-    color: '#C5A46D',
+    color: '#E8D5AC',
     tags: ['stack.tag.scada', 'stack.tag.modbus', 'stack.tag.opc', 'stack.tag.dnp3', 'stack.tag.edge', 'stack.tag.veeam', 'stack.tag.industrial_control'],
     img: '/stack_ot.webp',
   },
@@ -128,7 +128,7 @@ export default function Stack() {
   const { t } = useLanguage()
 
   return (
-    <section id="stack" className="py-20 sm:py-32 px-4 sm:px-6 md:px-8" style={{ background: 'rgba(10,25,47,0.45)' }}>
+    <section id="stack" className="py-20 sm:py-32 px-4 sm:px-6 md:px-8" style={{ background: 'rgba(4,8,15,0.30)' }}>
       <div className="max-w-[1100px] mx-auto">
         <SectionHeader label={t('stack.label')} title={t('stack.title')} highlight={t('stack.highlight')} />
 

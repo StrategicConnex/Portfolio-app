@@ -33,7 +33,7 @@ const companies = [
     full: 'Oilfield Production Services SRL',
     years: '2013 – 2024',
     sector: 'Oil & Gas',
-    color: '#C5A46D',
+    color: '#E8D5AC',
     icon: 'oil',
   },
   {
@@ -72,7 +72,7 @@ function BadgePill({ delay, children }: { delay: number; children: React.ReactNo
 
 export default function TrustBadges() {
   return (
-    <section id="confianza" style={{ padding: 'clamp(2rem, 5vw, 4rem) clamp(1rem, 5vw, 2rem)', background: 'rgba(17,24,39,0.45)', borderTop: '1px solid var(--border)' }}>
+    <section id="confianza" style={{ padding: 'clamp(2rem, 5vw, 4rem) clamp(1rem, 5vw, 2rem)', background: 'rgba(4,8,15,0.30)', borderTop: '1px solid var(--border)' }}>
       <div style={{ maxWidth: 1100, margin: 'auto' }}>
         <SectionHeader label="Validación profesional" title="Empresas &" highlight="Estándares" />
 

@@ -121,15 +121,15 @@ TimelineItem.displayName = 'TimelineItem'
 export default function Experiencia() {
   const { t } = useLanguage()
   return (
-    <section id="experiencia" className="py-20 px-6 bg-slate-900/40">
+    <section id="experiencia" className="py-20 px-6 bg-[#04080f]/30">
       <div className="max-w-6xl mx-auto">
         <SectionHeader label={t('experience.label')} title={t('experience.title')} highlight={t('experience.highlight')} />
 
         <FadeIn delay={0.05}>
           <div className="flex flex-wrap gap-3 mb-10 md:mb-14">
             {[
-              { label: t('experience.badge.years'), color: '#C5A46D' },
-              { label: t('experience.badge.location'), color: '#1E90FF' },
+              { label: t('experience.badge.years'), color: '#E8D5AC' },
+              { label: t('experience.badge.location'), color: '#4DA3FF' },
               { label: t('experience.badge.tech'), color: '#10B981' },
             ].map(b => (
               <span key={b.label} 

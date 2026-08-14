@@ -30,9 +30,9 @@ describe('hexToRgba', () => {
     expect(hexToRgba('#FF0000', 0.5)).toBe('rgba(255, 0, 0, 0.5)')
   })
 
-  it('should convert #1E90FF (DodgerBlue) correctly', () => {
-    const result = hexToRgba('#1E90FF', 1)
-    expect(result).toBe('rgba(30, 144, 255, 1)')
+  it('should convert #4DA3FF (DodgerBlue) correctly', () => {
+    const result = hexToRgba('#4DA3FF', 1)
+    expect(result).toBe('rgba(77, 163, 255, 1)')
   })
 
   it('should handle alpha of 0', () => {
@@ -40,7 +40,7 @@ describe('hexToRgba', () => {
   })
 
   it('should handle alpha of 0.5', () => {
-    const result = hexToRgba('#C5A46D', 0.5)
+    const result = hexToRgba('#E8D5AC', 0.5)
     expect(result).toMatch(/^rgba\(\d+, \d+, \d+, 0\.5\)$/)
   })
 
@@ -132,7 +132,7 @@ describe('randomizeThreatCounts', () => {
 describe('randomizeZones', () => {
   const base = [
     { labelKey: 'siem.zone.enterprise', pct: 98, color: '#10B981', events: 1204 },
-    { labelKey: 'siem.zone.field', pct: 97, color: '#C5A46D', events: 87 },
+    { labelKey: 'siem.zone.field', pct: 97, color: '#E8D5AC', events: 87 },
   ]
 
   it('should return the same number of items', () => {

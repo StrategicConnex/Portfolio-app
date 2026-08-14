@@ -46,7 +46,7 @@ export default function DatacenterFloor() {
         </mesh>
         {/* Rejilla técnica sutil */}
         <lineSegments geometry={grid}>
-          <lineBasicMaterial color="#1e90ff" transparent opacity={0.1} />
+          <lineBasicMaterial color="#4DA3FF" transparent opacity={0.1} />
         </lineSegments>
       </group>
     </>

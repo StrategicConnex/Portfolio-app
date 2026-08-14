@@ -22,15 +22,15 @@ export function AskAILauncher() {
               {/* AI Node Console: anillo de pulso + halo (decorativo, aria-hidden).
                   pointer-events-none: sin esto los spans cubren el botón e
                   interceptan el click — regresión Fase 7 corregida. */}
-              <span aria-hidden="true" className="pointer-events-none absolute inset-0 rounded-full border border-[#C5A46D]/40 animate-ping" />
-              <span aria-hidden="true" className="pointer-events-none absolute -inset-1.5 rounded-full border border-[#C5A46D]/20" />
+              <span aria-hidden="true" className="pointer-events-none absolute inset-0 rounded-full border border-[#E8D5AC]/40 animate-ping" />
+              <span aria-hidden="true" className="pointer-events-none absolute -inset-1.5 rounded-full border border-[#E8D5AC]/20" />
               <Button
                 size="icon"
                 aria-label="Ask AI"
-                className="w-14 h-14 rounded-full shadow-2xl bg-slate-950 border border-[#C5A46D]/40 hover:bg-slate-900 hover:border-[#C5A46D]/70"
+                className="w-14 h-14 rounded-full shadow-2xl bg-slate-950 border border-[#E8D5AC]/40 hover:bg-slate-900 hover:border-[#E8D5AC]/70"
                 onClick={() => setIsOpen(true)}
               >
-                <MessageSquare className="w-6 h-6 text-[#C5A46D]" />
+                <MessageSquare className="w-6 h-6 text-[#E8D5AC]" />
               </Button>
             </div>
           </motion.div>

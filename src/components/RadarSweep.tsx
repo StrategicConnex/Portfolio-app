@@ -25,8 +25,8 @@ export default function RadarSweep() {
     // Static blips (Purdue zones)
     const blips = [
       { a: 0.8,  r: 0.35, label: 'L0', color: '#F97316' },
-      { a: 2.1,  r: 0.55, label: 'L1', color: '#C5A46D' },
-      { a: 3.8,  r: 0.70, label: 'L2', color: '#1E90FF' },
+      { a: 2.1,  r: 0.55, label: 'L1', color: '#E8D5AC' },
+      { a: 3.8,  r: 0.70, label: 'L2', color: '#4DA3FF' },
       { a: 5.2,  r: 0.48, label: 'L3', color: '#06B6D4' },
       { a: 1.5,  r: 0.82, label: 'L4', color: '#10B981' },
     ]
@@ -39,7 +39,7 @@ export default function RadarSweep() {
       c.fillRect(0, 0, W, H)
 
       // Concentric rings (Purdue levels)
-      const ringColors = ['#F97316', '#C5A46D', '#1E90FF', '#06B6D4', '#10B981']
+      const ringColors = ['#F97316', '#E8D5AC', '#4DA3FF', '#06B6D4', '#10B981']
       for (let i = 1; i <= 5; i++) {
         const rr = (R / 5) * i
         c.beginPath()
@@ -50,7 +50,7 @@ export default function RadarSweep() {
       }
 
       // Cross lines
-      c.strokeStyle = 'rgba(30,144,255,0.1)'
+      c.strokeStyle = 'rgba(77,163,255,0.1)'
       c.lineWidth = 0.5
       c.beginPath(); c.moveTo(cx - R, cy); c.lineTo(cx + R, cy); c.stroke()
       c.beginPath(); c.moveTo(cx, cy - R); c.lineTo(cx, cy + R); c.stroke()
@@ -60,8 +60,8 @@ export default function RadarSweep() {
       c.translate(cx, cy)
       c.rotate(angle)
       const grad = c.createLinearGradient(0, 0, R, 0)
-      grad.addColorStop(0, 'rgba(30,144,255,0.5)')
-      grad.addColorStop(1, 'rgba(30,144,255,0)')
+      grad.addColorStop(0, 'rgba(77,163,255,0.5)')
+      grad.addColorStop(1, 'rgba(77,163,255,0)')
       c.beginPath()
       c.moveTo(0, 0)
       c.arc(0, 0, R, -0.3, 0.01)
@@ -73,7 +73,7 @@ export default function RadarSweep() {
       c.beginPath()
       c.moveTo(0, 0)
       c.lineTo(R, 0)
-      c.strokeStyle = '#1E90FF'
+      c.strokeStyle = '#4DA3FF'
       c.lineWidth = 1.5
       c.stroke()
       c.restore()
@@ -98,16 +98,16 @@ export default function RadarSweep() {
       // Center dot
       c.beginPath()
       c.arc(cx, cy, 5, 0, Math.PI * 2)
-      c.fillStyle = '#C5A46D'
+      c.fillStyle = '#E8D5AC'
       c.shadowBlur = 12
-      c.shadowColor = '#C5A46D'
+      c.shadowColor = '#E8D5AC'
       c.fill()
       c.shadowBlur = 0
 
       // Border circle
       c.beginPath()
       c.arc(cx, cy, R, 0, Math.PI * 2)
-      c.strokeStyle = 'rgba(30,144,255,0.3)'
+      c.strokeStyle = 'rgba(77,163,255,0.3)'
       c.lineWidth = 1.5
       c.stroke()
 
@@ -139,14 +139,14 @@ export default function RadarSweep() {
     >
       <canvas
         ref={canvasRef}
-        style={{ borderRadius: '50%', boxShadow: '0 0 40px rgba(30,144,255,0.15)' }}
+        style={{ borderRadius: '50%', boxShadow: '0 0 40px rgba(77,163,255,0.15)' }}
       />
       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', alignItems: 'flex-start' }}>
         {[
           { color: '#10B981', label: 'L4 Enterprise' },
           { color: '#06B6D4', label: 'L3 Operations' },
-          { color: '#1E90FF', label: 'L2 Supervisory' },
-          { color: '#C5A46D', label: 'L1 Control' },
+          { color: '#4DA3FF', label: 'L2 Supervisory' },
+          { color: '#E8D5AC', label: 'L1 Control' },
           { color: '#F97316', label: 'L0 Field' },
         ].map(z => (
           <div key={z.label} style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>

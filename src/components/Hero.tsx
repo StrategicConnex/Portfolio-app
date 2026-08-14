@@ -36,7 +36,7 @@ export default function Hero() {
 
       <div
         aria-hidden="true"
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] rounded-full bg-[radial-gradient(circle,rgba(30,144,255,0.07)_0%,transparent_70%)] pointer-events-none z-0"
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] rounded-full bg-[radial-gradient(circle,rgba(77,163,255,0.08)_0%,transparent_70%)] pointer-events-none z-0"
       />
 
       <div className="hero-content relative z-10 max-w-6xl w-full flex flex-col lg:flex-row items-center justify-center gap-12 lg:gap-24 px-4">
@@ -45,7 +45,7 @@ export default function Hero() {
           className="hero-avatar relative z-10"
           custom={0} variants={TEXT_VARIANTS} initial="hidden" animate="visible"
         >
-          <div className="relative w-[150px] h-[150px] sm:w-[200px] sm:h-[200px] md:w-[240px] md:h-[240px] lg:w-[360px] lg:h-[360px] rounded-3xl overflow-hidden border border-blue-500/20 shadow-[0_0_80px_rgba(30,144,255,0.1)] bg-slate-900 group">
+          <div className="relative w-[150px] h-[150px] sm:w-[200px] sm:h-[200px] md:w-[240px] md:h-[240px] lg:w-[360px] lg:h-[360px] rounded-3xl overflow-hidden border border-[var(--blue)]/25 shadow-[0_0_80px_rgba(77,163,255,0.12)] bg-slate-900 group">
             <Image
               src="/JuanPalacios.jpg"
               alt="Foto de perfil de Juan Palacios"
@@ -56,8 +56,8 @@ export default function Hero() {
               priority
             />
             <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-transparent to-transparent opacity-60" />
-            <div className="absolute top-3 right-3 w-6 h-6 border-t border-r border-blue-500/40 rounded-tr-md sm:top-4 sm:right-4 sm:w-8 sm:h-8 sm:border-t-2 sm:border-r-2" />
-            <div className="absolute bottom-3 left-3 w-6 h-6 border-b border-l border-blue-500/40 rounded-bl-md sm:bottom-4 sm:left-4 sm:w-8 sm:h-8 sm:border-b-2 sm:border-l-2" />
+            <div className="absolute top-3 right-3 w-6 h-6 border-t border-r border-[var(--blue)]/50 rounded-tr-md sm:top-4 sm:right-4 sm:w-8 sm:h-8 sm:border-t-2 sm:border-r-2" />
+            <div className="absolute bottom-3 left-3 w-6 h-6 border-b border-l border-[var(--blue)]/50 rounded-bl-md sm:bottom-4 sm:left-4 sm:w-8 sm:h-8 sm:border-b-2 sm:border-l-2" />
             
             <div className="absolute bottom-3 right-3 flex items-center gap-1.5 px-2.5 py-0.5 bg-black/60 backdrop-blur-md rounded-full border border-white/10 sm:bottom-4 sm:right-4 sm:gap-2 sm:px-3 sm:py-1">
               <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse shadow-[0_0_8px_#22c55e]" />
@@ -78,10 +78,10 @@ export default function Hero() {
 
           <motion.h1
             custom={1} variants={TEXT_VARIANTS} initial="hidden" animate="visible"
-            className="text-[clamp(1.3rem,7vw,2.5rem)] lg:text-[clamp(2.2rem,5vw,3.8rem)] font-extrabold leading-[1.1] tracking-tighter text-white"
+            className="text-[clamp(1.5rem,7vw,3rem)] lg:text-[clamp(2.6rem,5vw,4.4rem)] font-extrabold leading-[1.05] tracking-tighter text-white"
           >
             {t('hero.title.first')}{' '}
-            <span className="text-blue-500">
+            <span className="text-[var(--blue)]">
               {t('hero.title.last')}
             </span>
             <span className="block text-[0.32em] sm:text-[0.38em] mt-3 sm:mt-4 text-[var(--gold)] font-medium tracking-[0.1em] sm:tracking-[0.14em] uppercase opacity-90 leading-relaxed max-w-[280px] sm:max-w-xl mx-auto lg:mx-0">
@@ -102,8 +102,8 @@ export default function Hero() {
               {t('hero.role')}
             </p>
             <div className="flex justify-center lg:justify-start">
-              <p className="text-[9px] sm:text-[11px] text-slate-500 font-medium max-w-2xl opacity-80 border-l-2 border-blue-600/40 pl-3 sm:pl-4 py-0.5 sm:py-1 text-left">
-                {t('hero.role_details')} | <span className="text-blue-500/70">#CulturaSegura</span>
+              <p className="text-[9px] sm:text-[11px] text-slate-500 font-medium max-w-2xl opacity-80 border-l-2 border-[var(--blue)]/40 pl-3 sm:pl-4 py-0.5 sm:py-1 text-left">
+                {t('hero.role_details')} | <span className="text-[var(--blue)]/70">#CulturaSegura</span>
               </p>
             </div>
           </motion.div>
@@ -121,9 +121,9 @@ export default function Hero() {
           >
             <motion.a
               href="#experiencia"
-              whileHover={{ x: 5, backgroundColor: '#3b82f6' }}
+              whileHover={{ x: 5, backgroundColor: '#6FB2FF' }}
               whileTap={{ scale: 0.98 }}
-              className="px-6 py-3 sm:px-8 sm:py-3.5 rounded-xl bg-blue-600 text-white font-bold text-[9px] sm:text-[10px] uppercase tracking-[2px] transition-all shadow-lg shadow-blue-900/20"
+              className="px-6 py-3 sm:px-8 sm:py-3.5 rounded-xl bg-[var(--blue)] text-white font-bold text-[9px] sm:text-[10px] uppercase tracking-[2px] transition-all shadow-lg shadow-[#4DA3FF]/25"
             >
               {t('hero.cta.history')}
             </motion.a>
@@ -148,7 +148,7 @@ export default function Hero() {
             <motion.div
               animate={{ y: [0, 8, 0] }}
               transition={{ repeat: Infinity, duration: 2, ease: 'easeInOut' }}
-              className="w-[1.5px] h-7 bg-gradient-to-b from-blue-500 to-transparent rounded"
+              className="w-[1.5px] h-7 bg-gradient-to-b from-[var(--blue)] to-transparent rounded"
             />
           </motion.div>
         </div>

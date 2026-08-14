@@ -83,7 +83,7 @@ export default function ServerRackPool({ profile }: { profile: QualityProfile })
           color="#16263f"
           metalness={0.5}
           roughness={0.5}
-          emissive="#1E90FF"
+          emissive="#4DA3FF"
           emissiveIntensity={0.32}
           bumpMap={getUnitBump()}
           bumpScale={0.05}
@@ -125,7 +125,7 @@ function ProceduralHeroRack() {
           color="#16263f"
           metalness={0.5}
           roughness={0.5}
-          emissive="#1E90FF"
+          emissive="#4DA3FF"
           emissiveIntensity={0.32}
           bumpMap={getUnitBump()}
           bumpScale={0.05}

@@ -53,10 +53,10 @@ function applyRuntimeMaterials(root: THREE.Object3D) {
     const cc = clearcoatForMesh(name)
     if (name.startsWith('leds')) {
       // LCD del storage (ME5) → cyan de datos; LEDs de estado → azul boot
-      mat.emissive = new THREE.Color(name === 'leds_lcd' ? '#22d3ee' : '#1E90FF')
+      mat.emissive = new THREE.Color(name === 'leds_lcd' ? '#22d3ee' : '#4DA3FF')
       mat.emissiveIntensity = name === 'leds_lcd' ? 0.6 : 0.8
     } else if (name === 'units') {
-      mat.emissive = new THREE.Color('#1E90FF')
+      mat.emissive = new THREE.Color('#4DA3FF')
       mat.emissiveIntensity = 0.32
       // Ranuras de ventilación de unidad (bump) — detalle que lee de cerca
       mat.bumpMap = getUnitBump()

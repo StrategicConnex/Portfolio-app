@@ -75,7 +75,7 @@ export default function Navbar() {
       >
         {/* Scroll Progress Bar */}
         <div 
-          className="absolute top-0 left-0 h-[3px] bg-gradient-to-r from-blue-500 to-[var(--gold)] transition-all duration-150 ease-out z-[101]"
+          className="absolute top-0 left-0 h-[3px] bg-gradient-to-r from-[var(--blue)] to-[var(--gold)] transition-all duration-150 ease-out z-[101]"
           style={{ width: `${progress}%` }} 
         />
 
@@ -100,14 +100,14 @@ export default function Navbar() {
                   <a
                     href={link.href}
                     className={`nav-link text-[10px] uppercase tracking-wider transition-colors duration-300 font-medium relative py-1 ${
-                      isActive ? 'text-blue-400' : 'text-slate-400 hover:text-blue-400'
+                      isActive ? 'text-[var(--blue)]' : 'text-slate-400 hover:text-[var(--blue)]'
                     }`}
                   >
                     {label}
                     {isActive && (
                       <motion.span
                         layoutId="nav-dot"
-                        className="absolute bottom-[-6px] left-0 right-0 h-[2.5px] bg-blue-500 rounded-full"
+                        className="absolute bottom-[-6px] left-0 right-0 h-[2.5px] bg-[var(--blue)] rounded-full"
                         transition={{ type: 'spring', stiffness: 350, damping: 30 }}
                       />
                     )}
@@ -125,7 +125,7 @@ export default function Navbar() {
               onClick={() => setLanguage(language === 'es' ? 'en' : 'es')}
               className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-xs font-bold text-slate-300 hover:bg-white/10 hover:text-white transition-all group"
             >
-              <Languages size={14} className="text-blue-500 group-hover:rotate-12 transition-transform" />
+              <Languages size={14} className="text-[var(--blue)] group-hover:rotate-12 transition-transform" />
               <span className="uppercase tracking-widest">{language}</span>
             </motion.button>
 
@@ -175,7 +175,7 @@ export default function Navbar() {
                     transition={{ delay: i * 0.05 }}
                     onClick={() => setMenuOpen(false)}
                     className={`text-lg font-medium transition-colors ${
-                      active === link.href.slice(1) ? 'text-blue-400' : 'text-slate-400'
+                      active === link.href.slice(1) ? 'text-[var(--blue)]' : 'text-slate-400'
                     }`}
                   >
                     {t(link.key) || link.label}
@@ -188,13 +188,13 @@ export default function Navbar() {
                 <div className="flex gap-4">
                   <button 
                     onClick={() => setLanguage('es')}
-                    className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${language === 'es' ? 'bg-blue-500 text-white' : 'bg-white/5 text-slate-400 hover:bg-white/10'}`}
+                    className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${language === 'es' ? 'bg-[var(--blue)] text-white' : 'bg-white/5 text-slate-400 hover:bg-white/10'}`}
                   >
                     ESPAÑOL
                   </button>
                   <button 
                     onClick={() => setLanguage('en')}
-                    className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${language === 'en' ? 'bg-blue-500 text-white' : 'bg-white/5 text-slate-400 hover:bg-white/10'}`}
+                    className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${language === 'en' ? 'bg-[var(--blue)] text-white' : 'bg-white/5 text-slate-400 hover:bg-white/10'}`}
                   >
                     ENGLISH
                   </button>

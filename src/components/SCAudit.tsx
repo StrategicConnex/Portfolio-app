@@ -69,8 +69,8 @@ const SCAudit = () => {
       aria-label={t('scaudit.label')}
     >
       {/* ── Background separators ── */}
-      <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[#1E90FF30] to-transparent" />
-      <div className="absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[#C5A46D20] to-transparent" />
+      <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[#4DA3FF30] to-transparent" />
+      <div className="absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[#E8D5AC20] to-transparent" />
 
       {/* ── Decorative gradient orb ── */}
       <div
@@ -239,7 +239,7 @@ const SCAudit = () => {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-sm font-bold tracking-tight text-white transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
-                style={{ background: 'linear-gradient(135deg, #1E90FF, #1a6bcc)', boxShadow: '0 0 24px rgba(30,144,255,0.3)' }}
+                style={{ background: 'linear-gradient(135deg, #4DA3FF, #2E6FCF)', boxShadow: '0 0 24px rgba(77,163,255,0.3)' }}
               >
                 <span aria-hidden="true">→</span>
                 {t('scaudit.cta.primary')}

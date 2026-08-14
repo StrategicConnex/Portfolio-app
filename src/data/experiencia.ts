@@ -3,7 +3,7 @@ export const JOBS = [
     periodKey:  'exp.ypy.period',
     company: 'YPY Oilfield Services',
     roleKey:    'exp.ypy.role',
-    color:   '#1E90FF',
+    color:   '#4DA3FF',
     badgeKey:   'exp.ypy.badge',
     achievements: [
       { icon: 'security', textKey: 'exp.ypy.ach.1' },
@@ -26,7 +26,7 @@ export const JOBS = [
     periodKey:  'exp.ops.period',
     company: 'Oilfield Production Services SRL',
     roleKey:    'exp.ops.role',
-    color:   '#C5A46D',
+    color:   '#E8D5AC',
     badgeKey:   'exp.ops.badge',
     achievements: [
       { icon: 'network', textKey: 'exp.ops.ach.1' },

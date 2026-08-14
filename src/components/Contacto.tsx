@@ -32,10 +32,10 @@ const actions = [
         <line x1="12" y1="15" x2="12" y2="3" />
       </svg>
     ),
-    color: '#C5A46D',
-    bg: 'rgba(197,164,109,0.10)',
-    border: 'rgba(197,164,109,0.25)',
-    hoverBorder: 'rgba(197,164,109,0.6)',
+    color: '#E8D5AC',
+    bg: 'rgba(232,213,172,0.10)',
+    border: 'rgba(232,213,172,0.25)',
+    hoverBorder: 'rgba(232,213,172,0.6)',
   },
   {
     label: 'Credly Badges',

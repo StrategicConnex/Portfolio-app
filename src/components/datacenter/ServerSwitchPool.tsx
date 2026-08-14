@@ -42,7 +42,7 @@ export default function ServerSwitchPool({ profile }: { profile: QualityProfile 
           color="#16263f"
           metalness={0.85}
           roughness={0.4}
-          emissive="#1E90FF"
+          emissive="#4DA3FF"
           emissiveIntensity={0.18}
         />
         {slots.map((s, i) => (
@@ -64,7 +64,7 @@ function ProceduralSwitch({ position }: { position: [number, number, number] }) 
         color="#16263f"
         metalness={0.85}
         roughness={0.4}
-        emissive="#1E90FF"
+        emissive="#4DA3FF"
         emissiveIntensity={0.18}
       />
     </mesh>
