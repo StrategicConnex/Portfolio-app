@@ -1,7 +1,7 @@
 'use client'
 
 import { useMemo } from 'react'
-import { Instances, Instance } from '@react-three/drei'
+import { ContactShadows, Instances, Instance } from '@react-three/drei'
 import { BACKUP_UNITS, GLB_ASSETS } from '@/lib/datacenter.layout'
 import GlbAsset from './GlbAsset'
 
@@ -22,6 +22,11 @@ export default function BackupUnits({ count }: { count: number }) {
 
   return (
     <group>
+      {/* Sombras de contacto del pool de storage (P1): aterrizan las unidades
+          sobre el piso técnico (y=-2.9) — bake 1 frame (frameloop demand). */}
+      <ContactShadows position={[0, -2.885, -5]} opacity={0.4} scale={[8, 4]} blur={2.6} far={1.6} resolution={256} frames={1} color="#000000" />
+      <ContactShadows position={[0, -2.885, -10]} opacity={0.35} scale={[6, 4]} blur={2.6} far={1.6} resolution={256} frames={1} color="#000000" />
+
       {/* Slot GLB de la unidad protagonista (S4) — fallback = misma geometría.
           El GLB es base-origin (0..1.2 en su frame) y el bloque procedural es
           centro-anclado: la base del GLB debe caer en position.y − scale.y/2. */}

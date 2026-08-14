@@ -68,7 +68,7 @@ export default function DatacenterCanvas({ profile }: { profile: QualityProfile 
           attach="fog"
           args={[DATACENTER_TOKENS.colors.bg, DATACENTER_TOKENS.fog.near, DATACENTER_TOKENS.fog.far]}
         />
-        <DatacenterEnvironment />
+        <DatacenterEnvironment profile={profile} />
         <SceneLighting />
         <DatacenterScene profile={profile} />
         <DatacenterCamera fogRef={fogRef} />

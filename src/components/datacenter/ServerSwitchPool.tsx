@@ -28,6 +28,15 @@ export default function ServerSwitchPool({ profile }: { profile: QualityProfile 
 
   return (
     <group>
+      {/* Sombra de contacto simulada del switch protagonista (P1): cuelga de la
+          cara frontal del rack (z=-2.05) — un ContactShadows horizontal no
+          aplica sobre una superficie vertical; un plano AO oscuro en la cara
+          del rack (detrás del chasis 0.5) lo separa de la superficie. */}
+      <mesh position={[-2.6, 1.9, -2.055]} renderOrder={1}>
+        <planeGeometry args={[0.9, 0.12]} />
+        <meshBasicMaterial color="#000000" transparent opacity={0.45} depthWrite={false} />
+      </mesh>
+
       {/* Slot GLB protagonista (S3, origen de streams) — fallback = chasis aislado */}
       <GlbAsset
         path={GLB_ASSETS.networkSwitch}

@@ -32,7 +32,7 @@ export default function DatacenterScene({ profile }: { profile: QualityProfile }
       <MicroAnimDriver profile={profile} />
       <CopilotNode />
       <FocusNodeLayer />
-      <DatacenterFloor />
+      <DatacenterFloor profile={profile} />
       <DataRings />
       <ServerRackPool profile={profile} />
       <BackupUnits count={counts.backupUnits} />
