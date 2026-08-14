@@ -53,16 +53,19 @@ export const SCENES: SceneConfig[] = [
   {
     id: 'data-in-motion',
     sections: ['experiencia', 'proyecto', 'certificaciones', 'siem'],
-    // P3 push-in más profundo: la cámara avanza por el corredor hasta z=1.6
-    // (delante de la columna de anillos KPI en z=-1.6, que quedan en frame
-    // bajo) mirando a lo largo del pasillo — "close-up con rack focus" del
-    // mapa narrativo §5 con más profundidad. Sin atravesar los racks (z<-2.5):
-    // los Html labels quedarían detrás de la cámara (proyección espejada) —
-    // diferido hasta resolver la oclusión de labels.
+    // P3 push-in profundo + P4 ATRAVIESO de racks (lección Hanwha, SPEC §3):
+    // el push-in de P3 ahora CONTINÚA dentro del corredor hasta z=-4.7 (entre
+    // las filas 1 y 2 de racks, que flanquean a x=±2.6) mirando a lo largo del
+    // pasillo con las filas recediendo en perspectiva. La cámara va a x=1.1
+    // (no x=0) para no atravesar el slot del display SIEM (x=0, half-width
+    // 0.81, z=-2.0) ni la columna de anillos KPI (x=0, z=-1.6). Los HudLabel
+    // se cullan al pasar el plano de cámara (HudLabel.labelFacingOpacity):
+    // sin proyección espejada — el dato cede al entorno, el copy del DOM lleva
+    // el mensaje en el tramo profundo.
     camera: {
       entry: { position: [1.2, 1.7, 5.5], lookAt: [0.4, 1, -1.5], fov: 52 },
       mid: { position: [1.8, 1.5, 3.5], lookAt: [0, 1, -2], fov: 45 },
-      exit: { position: [0.8, 1.2, 1.6], lookAt: [0, 1.2, -3.5], fov: 44 },
+      exit: { position: [1.1, 1.3, -4.7], lookAt: [0.3, 1.2, -8.5], fov: 46 },
     },
     fog: { near: 9, far: 26 },
     visualEvents: ['activateDataStreams', 'activateTelemetry', 'focusSecurityNode'],

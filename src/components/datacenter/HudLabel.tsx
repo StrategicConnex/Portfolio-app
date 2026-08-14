@@ -3,6 +3,7 @@
 import { useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { Html } from '@react-three/drei'
+import * as THREE from 'three'
 import { useLanguage } from '@/context/LanguageContext'
 import { useActiveScene } from '@/lib/activeScene'
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion'
@@ -39,6 +40,28 @@ export function formatPhase(sceneIndex: number, total: number): string {
   return `${pad(sceneIndex + 1)}/${pad(total)}`
 }
 
+/**
+ * Cull tras la cámara (audit P4 — lección Hanwha): el `Html` de drei proyecta
+ * el DOM con transform espejada cuando el ancla queda DETRÁS del plano de
+ * cámara. El label se desvanece según el coseno del ángulo entre la dirección
+ * de la cámara y el vector hacia el ancla: opacidad plena hasta cos ≈ 0.18
+ * (~80° del eje de visión) y 0 en el plano (nunca se ve la proyección
+ * espejada). Con `prefers-reduced-motion` → snap (defensivo: el canvas
+ * normalmente no monta en modo reduce).
+ */
+export const LABEL_FADE_COS = 0.18
+
+export function labelFacingOpacity(facing: number, reduced: boolean, fadeCos = LABEL_FADE_COS): number {
+  if (reduced) return facing > 0 ? 1 : 0
+  return THREE.MathUtils.clamp(facing / fadeCos, 0, 1)
+}
+
+// Vectores temporales compartidos entre instancias (single-thread): sin
+// allocations dentro del frame (SPEC §32).
+const _worldPos = new THREE.Vector3()
+const _toLabel = new THREE.Vector3()
+const _camDir = new THREE.Vector3()
+
 const VARIANT_STYLE = {
   scene: { size: '0.62rem', letterSpacing: '0.22em', opacity: 0.92 },
   node: { size: '0.5rem', letterSpacing: '0.14em', opacity: 0.78 },
@@ -72,6 +95,11 @@ export default function HudLabel({
   const valueRef = useRef<HTMLDivElement>(null)
   const startRef = useRef<number | null>(null)
   const doneRef = useRef(false)
+  // Cull tras la cámara: anchor del grupo en el grafo de escena (mundo real) y
+  // div raíz del label (opacidad).
+  const anchorRef = useRef<THREE.Group>(null)
+  const rootRef = useRef<HTMLDivElement>(null)
+  const style = VARIANT_STYLE[variant]
 
   // Escribe el texto animado DIRECTAMENTE en el DOM (sin setState, SPEC §32).
   // La invalidación la aporta MicroAnimDriver; al completar el contador deja
@@ -80,21 +108,39 @@ export default function HudLabel({
   // arrancar cuando `valueRef.current` existe (DOM montado), no al montar el
   // componente React — si no, la animación termina antes de ser visible.
   useFrame((state) => {
-    if (!spec || reduced || doneRef.current) return
-    if (!valueRef.current) return // espera al mount real del Html
-    if (startRef.current === null) startRef.current = state.clock.elapsedTime
-    const elapsed = (state.clock.elapsedTime - startRef.current) * 1000
-    const p = easeOutCubic(elapsed / COUNT_UP_MS)
-    if (valueRef.current) valueRef.current.textContent = formatCounter(spec, p)
-    if (p >= 1) {
-      doneRef.current = true
-      if (valueRef.current) valueRef.current.textContent = formatCounter(spec, 1)
+    if (spec && !reduced && !doneRef.current && valueRef.current) {
+      if (startRef.current === null) startRef.current = state.clock.elapsedTime
+      const elapsed = (state.clock.elapsedTime - startRef.current) * 1000
+      const p = easeOutCubic(elapsed / COUNT_UP_MS)
+      if (valueRef.current) valueRef.current.textContent = formatCounter(spec, p)
+      if (p >= 1) {
+        doneRef.current = true
+        if (valueRef.current) valueRef.current.textContent = formatCounter(spec, 1)
+      }
+    }
+
+    // Cull: oculta el label cuando su ancla queda detrás de la cámara (o al
+    // pasar el plano durante el atravieso de racks) — sin setState, escritura
+    // directa a style (SPEC §32). El Html de drei proyecta espejado detrás del
+    // plano; la opacidad 0 elimina el artefacto ANTES de que ocurra.
+    if (anchorRef.current && rootRef.current) {
+      anchorRef.current.updateWorldMatrix(true, false)
+      anchorRef.current.getWorldPosition(_worldPos)
+      _toLabel.copy(_worldPos).sub(state.camera.position)
+      const lenSq = _toLabel.lengthSq()
+      if (lenSq < 1e-8) {
+        // Ancla degenerada (en la posición de la cámara): nunca visible.
+        rootRef.current.style.opacity = '0'
+      } else {
+        _toLabel.divideScalar(Math.sqrt(lenSq))
+        state.camera.getWorldDirection(_camDir)
+        rootRef.current.style.opacity = String(style.opacity * labelFacingOpacity(_toLabel.dot(_camDir), reduced))
+      }
     }
   })
 
   if (scene !== undefined && activeScene !== scene) return null
 
-  const style = VARIANT_STYLE[variant]
   // Numeración de fase del recorrido (audit G1): solo los labels de escena
   // (scene) llevan `PHASE 0n/05` — los status de boot y nodos de Purdue no.
   const phaseLine =
@@ -103,8 +149,10 @@ export default function HudLabel({
       : null
 
   return (
-    <Html position={position} transform distanceFactor={distanceFactor} zIndexRange={[30, 20]}>
+    <group ref={anchorRef} position={position}>
+    <Html transform distanceFactor={distanceFactor} zIndexRange={[30, 20]}>
       <div
+        ref={rootRef}
         data-testid="hud-label"
         style={{
           fontFamily: 'var(--font-mono, ui-monospace, monospace)',
@@ -159,5 +207,6 @@ export default function HudLabel({
         {t(labelKey)}
       </div>
     </Html>
+    </group>
   )
 }
