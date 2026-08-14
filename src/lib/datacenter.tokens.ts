@@ -28,3 +28,23 @@ export const DATACENTER_TOKENS = {
     settleMs: 650,
   },
 } as const
+
+/**
+ * Phase Gate (P2 — firma del sitio): temperatura de color por fase para el
+ * overlay DOM fijo z-30. El índice del array sigue el orden de `SCENES`
+ * (boot → architecture → data-in-motion → resilience → connection) y por
+ * tanto el índice del store `activeScene` (0-4). Arco azul → cian → ámbar →
+ * champagne; `edgeAlpha` es la intensidad del tinte en el borde del frame
+ * (el centro queda casi limpio — la lectura del DOM Z-40 no se toca).
+ */
+export const PHASE_TINTS: ReadonlyArray<{
+  sceneId: string
+  color: string
+  edgeAlpha: number
+}> = [
+  { sceneId: 'boot', color: '#4DA3FF', edgeAlpha: 0.16 },
+  { sceneId: 'architecture', color: '#38bdf8', edgeAlpha: 0.17 },
+  { sceneId: 'data-in-motion', color: '#22d3ee', edgeAlpha: 0.19 },
+  { sceneId: 'resilience', color: '#f59e0b', edgeAlpha: 0.17 },
+  { sceneId: 'connection', color: '#E8D5AC', edgeAlpha: 0.26 },
+]

@@ -148,6 +148,31 @@ body::after {
   background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0) 52%, rgba(1, 4, 8, 0.55) 100%);
 }
 
+/* ══ P2 · Phase Gate — firma del sitio: temperatura de color por fase (SPEC §3) ══
+   Overlay DOM fijo Z-30 (bajo el contenido Z-40, sobre el canvas Z-20),
+   pointer-events none. Las 5 capas (una por fase) cruzan por opacidad; la
+   vignette body::after (también Z-30) pinta encima y compone el tinte. */
+.phase-gate {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.phase-gate-layer {
+  position: absolute;
+  inset: 0;
+  transition: opacity 700ms ease;
+  will-change: opacity;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .phase-gate-layer {
+    transition: none;
+  }
+}
+
 /* Eyebrow mono editorial (teletipo de fase/etiqueta) */
 .eyebrow {
   font-family: var(--font-mono, 'JetBrains Mono', 'Fira Code', 'Cascadia Code', ui-monospace, monospace);

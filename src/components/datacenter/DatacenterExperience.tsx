@@ -6,6 +6,7 @@ import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion'
 import { useAdaptiveQuality } from '@/hooks/useAdaptiveQuality'
 import { useWebGLContextManager } from '@/hooks/useWebGLContextManager'
 import DatacenterErrorBoundary from './DatacenterErrorBoundary'
+import PhaseGate from './PhaseGate'
 
 // Canvas 3D en chunk separado (SPEC §43): solo se descarga cuando el perfil
 // NO es STATIC. En reduce-motion / tier LOW / sin WebGL el bundle three+R3F
@@ -39,6 +40,10 @@ export default function DatacenterExperience() {
           <DatacenterCanvas profile={profile} />
         </DatacenterErrorBoundary>
       )}
+
+      {/* Phase Gate (P2): temperatura de color de la fase activa — solo con
+          canvas vivo; en STATIC el poster tiene su propia temperatura. */}
+      {canvasActive && <PhaseGate reduced={reduced} />}
 
       {/* Toggle manual de motion safety — control real, no decorativo */}
       <button
