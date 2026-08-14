@@ -37,10 +37,15 @@ export const SCENES: SceneConfig[] = [
   {
     id: 'architecture',
     sections: ['perfil', 'arquitectura', 'stack', 'confianza'],
+    // P3 encuadre asimétrico (regla de tercios, SPEC §3): la cámara deriva a
+    // la derecha y el pasillo recede a la izquierda — el sujeto (corredor +
+    // Purdue) ocupa el tercio izquierdo y el espacio negativo a la derecha
+    // queda para el copy del DOM. S1/S4 no se tocan: S1 es el reveal
+    // simétrico (tesis del boot) y S4 tiene el fit del storage validado (G4).
     camera: {
-      entry: { position: [0, 1.4, 9], lookAt: [0, 0.5, -1], fov: 48 },
-      mid: { position: [0, 1.8, 7], lookAt: [0, 0.5, -2], fov: 50 },
-      exit: { position: [1.5, 1.8, 6], lookAt: [0, 1, -2], fov: 52 },
+      entry: { position: [0.8, 1.4, 9], lookAt: [0.4, 0.5, -1.5], fov: 48 },
+      mid: { position: [1.4, 1.8, 7], lookAt: [0.1, 0.6, -2.5], fov: 50 },
+      exit: { position: [2.2, 1.8, 5.5], lookAt: [-0.3, 1, -3], fov: 52 },
     },
     fog: { near: 12, far: 30 },
     visualEvents: ['showCorridor', 'activateTopology'],
@@ -48,10 +53,16 @@ export const SCENES: SceneConfig[] = [
   {
     id: 'data-in-motion',
     sections: ['experiencia', 'proyecto', 'certificaciones', 'siem'],
+    // P3 push-in más profundo: la cámara avanza por el corredor hasta z=1.6
+    // (delante de la columna de anillos KPI en z=-1.6, que quedan en frame
+    // bajo) mirando a lo largo del pasillo — "close-up con rack focus" del
+    // mapa narrativo §5 con más profundidad. Sin atravesar los racks (z<-2.5):
+    // los Html labels quedarían detrás de la cámara (proyección espejada) —
+    // diferido hasta resolver la oclusión de labels.
     camera: {
-      entry: { position: [1.5, 1.8, 6], lookAt: [0, 1, -2], fov: 52 },
-      mid: { position: [2.5, 1.6, 3.5], lookAt: [0, 1, -0.5], fov: 45 },
-      exit: { position: [1, 0.8, 3], lookAt: [-1, 0.5, 0], fov: 42 },
+      entry: { position: [1.2, 1.7, 5.5], lookAt: [0.4, 1, -1.5], fov: 52 },
+      mid: { position: [1.8, 1.5, 3.5], lookAt: [0, 1, -2], fov: 45 },
+      exit: { position: [0.8, 1.2, 1.6], lookAt: [0, 1.2, -3.5], fov: 44 },
     },
     fog: { near: 9, far: 26 },
     visualEvents: ['activateDataStreams', 'activateTelemetry', 'focusSecurityNode'],
@@ -76,11 +87,13 @@ export const SCENES: SceneConfig[] = [
     sections: ['contacto'],
     camera: {
       // Ascenso y giro: desde el nivel bajo hacia una vista amplia ALTA y
-      // oblicua que revela el datacenter completo (mirar a lo largo del
-      // corredor desde z=18 veía los racks de punta — clímax sin lectura).
+      // oblicua que revela el datacenter completo. P3: reveal DIAGONAL — la
+      // cámara sube desde x=0 y se desplaza a x≈1.6 mirando hacia x≈-0.8,
+      // ambas filas de racks se ven en perspectiva cruzada (líneas de fuga),
+      // con el espacio negativo para el CTA del DOM.
       entry: { position: [0, -0.5, 8], lookAt: [0, 0, -1.5], fov: 55 },
-      mid: { position: [1.5, 4.5, 12], lookAt: [0, 0.5, -3], fov: 58 },
-      exit: { position: [0, 6.5, 15], lookAt: [0, 0, -4], fov: 60 },
+      mid: { position: [2, 4.5, 12], lookAt: [-0.6, 0.5, -3], fov: 58 },
+      exit: { position: [1.6, 6.5, 15], lookAt: [-0.8, 0, -4], fov: 60 },
     },
     // Fog amplio: el pull-back final debe REVELAR el datacenter completo
     // (la cámara está a z 14-18; near 20/far 44 niebla todo — clímax oscuro).
