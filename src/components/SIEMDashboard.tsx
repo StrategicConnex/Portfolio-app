@@ -213,8 +213,15 @@ export default function SIEMDashboard() {
   }, [])
 
   return (
-    <section id="siem" className="py-20 px-6 bg-[#04080f]/30">
-      <div className="max-w-6xl mx-auto">
+    <section id="siem" className="py-20 px-6 bg-[#04080f]/20">
+      {/* P4-cierre editorial: la sección siem cubre el tramo profundo del
+          atravieso de racks (cámara dentro del corredor). Contenedor
+          estrecho (max-w-4xl) → gutters más anchos con el canvas NÍTIDO a los
+          lados (el glass de la tarjeta usa backdrop-blur — desenfoca lo que
+          cubre) y scrim al 20% (vs 30% del resto) para que los streams y los
+          vent tiles se lean detrás del contenido sin perder legibilidad
+          (las tarjetas glass mantienen su propio fondo para el texto). */}
+      <div className="max-w-4xl mx-auto">
         <SectionHeader label={t('siem.label')} title={t('siem.title')} highlight={t('siem.highlight')} />
 
         <FadeIn delay={0.1}>
