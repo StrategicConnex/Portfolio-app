@@ -111,6 +111,16 @@ con render visualmente idéntico al JPEG (diff 0.5/255 en S1).
 
 El contrato §3.4 exige la puerta como **plano con alpha/normal map** (cero geometría de rejilla). Implementado en runtime para `server_rack_v02` (`src/components/datacenter/meshDoorTexture.ts`): la puerta viaja PBR-neutral en el GLB y `GlbMesh` le inyecta un `CanvasTexture` procedural — patrón **24×8 barras** (el mismo high-poly de bake del §3.4) — como `alphaMap` (cutout) + `bumpMap`, con el chasis hueco por delante para que las unidades con glow se vean a través de los huecos (look AR2580; verificado: 47 transiciones barra/hueco en el probe visual). Cero assets externos (R5), singleton por app. **Un output de Meshy con rejilla geométrica real viola el presupuesto** — se decima y se re-bakea (§4.1 de [`MESHY-CONTACT-SHEET.md`](./MESHY-CONTACT-SHEET.md)).
 
+### Constraint verificada: outputs Tripo = single-mesh + textura horneada (P5)
+
+Los outputs Tripo promovidos (`server_rack_v03`, `storage_unit_v02`) vienen como **UN mesh** (`tripo_node_<uuid>`) + **UNA textura horneada** con `metalness=0` y `roughness=0.9` (verificado en el chunk JSON del GLB con `artwork/living-datacenter/dump-glb-pbr.mjs`). Consecuencias verificadas en runtime (P5, métricas sobre crops idénticos a la baseline):
+
+1. **Los bridges por nombre de mesh JAMÁS disparan** en estos outputs (ni clearcoat G5, ni LEDs emisivos, ni puerta) — los nombres canónicos (`chassis`, `leds_*`, `door`…) no existen; el runtime ve `tripo_node_*`.
+2. **Subir la respuesta PBR en runtime NO es el lever del look:** (a) `metalness` 0.35–0.4 **diluye el albedo horneado** (la textura lleva la iluminación de Tripo, no es albedo limpio) — medido: cálido S4 0.66→0.16%, imagen más oscura; (b) `roughness` 0.45–0.5 + `envMapIntensity` 1.4 = **no-op** (cálido 0.27–1.20% vs 0.66–0.81% baseline, dentro del ruido; sin ganancia de especular).
+3. **El lever real es re-bake del asset** (pipeline, no runtime): textura con canales PBR separados (o re-export con meshes nombrados `chassis`/`bezel_slats`/`leds_*` que permitan el bridge §4) — queda como recomendación del audit P5 ([report-p5-glb-materiality](./reports/report-p5-glb-materiality.md)).
+
+**Verificación pre-promoción (obligatoria al integrar cualquier output de Meshy/Tripo):** correr `artwork/living-datacenter/dump-glb-pbr.mjs <asset>.glb` y revisar: (a) nombres de mesh contra el set canónico del bridge, (b) `metallicFactor`/`roughnessFactor` (si 0/0.9 → matte horneado), (c) nº de materiales/texturas (1+1 = texto horneado). Si el output es single-mesh matte, decidir antes de promover: aceptar el look horneado o planear re-bake — **no** intentar corregirlo en runtime.
+
 ---
 
 ## 5. EXPORT — contrato (verbatim) + convención de nombres
