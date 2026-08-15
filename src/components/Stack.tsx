@@ -129,7 +129,7 @@ export default function Stack() {
   const { t } = useLanguage()
 
   return (
-    <section id="stack" className="relative z-10 py-20 sm:py-32 px-4 sm:px-6 md:px-8" style={{ background: 'rgba(4,8,15,0.85)' }}>
+    <section id="stack" className="relative z-10 py-20 sm:py-32 px-4 sm:px-6 md:px-8" style={{ background: 'rgba(4,8,15,0.92)' }}>
       <div className="max-w-[1100px] mx-auto">
         <SectionHeader label={t('stack.label')} title={t('stack.title')} highlight={t('stack.highlight')} />
 

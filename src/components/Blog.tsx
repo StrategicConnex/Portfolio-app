@@ -62,7 +62,7 @@ export default function Blog() {
   const { t } = useLanguage()
 
   return (
-    <section id="blog" className="relative z-10 py-24 sm:py-32 bg-[#04080f]/85 overflow-hidden">
+    <section id="blog" className="relative z-10 py-24 sm:py-32 bg-[#04080f]/92 overflow-hidden">
       {/* Hero visual: SOC/SIEM display fotorrealista */}
       <HeroVisual
         src="/hero/display-s5.jpg"

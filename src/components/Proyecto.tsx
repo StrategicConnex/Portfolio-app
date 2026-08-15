@@ -115,7 +115,7 @@ export default function Proyecto() {
   }
 
   return (
-    <section id="proyecto" className="relative z-10 py-24 sm:py-32 overflow-hidden bg-[#04080f]/85">
+    <section id="proyecto" className="relative z-10 py-24 sm:py-32 overflow-hidden bg-[#04080f]/92">
       <div className="max-w-6xl mx-auto px-6">
         <SectionHeader 
           label={t('projects.label')} 

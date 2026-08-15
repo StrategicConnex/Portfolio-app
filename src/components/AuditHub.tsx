@@ -118,7 +118,7 @@ const AuditHub = () => {
   }, [severityFilter])
 
   return (
-    <section id="audit-hub" className="relative z-10 py-24 sm:py-32 overflow-hidden bg-[#04080f]/85">
+    <section id="audit-hub" className="relative z-10 py-24 sm:py-32 overflow-hidden bg-[#04080f]/92">
       {/* Hero visual: storage fotorrealista como decoración */}
       <HeroVisual
         src="/hero/storage-s4.png"

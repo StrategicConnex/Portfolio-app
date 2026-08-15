@@ -41,7 +41,7 @@ export default function BackupUnits({ count }: { count: number }) {
   )
 }
 
-/** Unidad procedural aislada para el fallback del slot (misma geometría/color). */
+/** Unidad procedural aislada para el fallback del slot — storage array detallado. */
 function ProceduralBackupUnit({
   position,
   scale,
@@ -49,11 +49,61 @@ function ProceduralBackupUnit({
   position: [number, number, number]
   scale: [number, number, number]
 }) {
+  const px = position[0]
+  const py = position[1]
+  const pz = position[2]
+  const sx = scale[0]
+  const sy = scale[1]
+  const sz = scale[2]
+
   return (
-    <Instances limit={2}>
-      <boxGeometry args={[1, 1, 1]} />
-      <meshStandardMaterial color="#0d1524" metalness={0.6} roughness={0.5} />
-      <Instance position={position} scale={scale} color="#111c30" />
-    </Instances>
+    <group>
+      {/* Chasis principal */}
+      <Instances limit={2}>
+        <boxGeometry args={[1, 1, 1]} />
+        <meshStandardMaterial color="#0d1524" metalness={0.6} roughness={0.5} />
+        <Instance position={position} scale={scale} color="#111c30" />
+      </Instances>
+
+      {/* Bezel frontal — marco metálico alrededor del panel */}
+      <mesh position={[px, py, pz + sz * 0.51]} scale={[sx * 1.01, sy * 1.005, sz * 0.015]}>
+        <boxGeometry args={[1, 1, 1]} />
+        <meshStandardMaterial color="#1a2540" metalness={0.85} roughness={0.3} />
+      </mesh>
+
+      {/* Panel interior (zona lisa del storage) */}
+      <mesh position={[px, py, pz + sz * 0.515]} scale={[sx * 0.92, sy * 0.92, sz * 0.008]}>
+        <boxGeometry args={[1, 1, 1]} />
+        <meshStandardMaterial color="#0b1524" metalness={0.5} roughness={0.6} />
+      </mesh>
+
+      {/* LED status strip — 4 indicadores en la parte inferior */}
+      {Array.from({ length: 4 }).map((_, i) => (
+        <mesh
+          key={`sled-${i}`}
+          position={[px - sx * 0.3 + i * sx * 0.2, py - sy * 0.42, pz + sz * 0.52]}
+          scale={[0.02, 0.02, 0.008]}
+        >
+          <boxGeometry args={[1, 1, 1]} />
+          <meshStandardMaterial
+            color={i < 3 ? '#16a34a' : '#c27a3a'}
+            emissive={i < 3 ? '#16a34a' : '#c27a3a'}
+            emissiveIntensity={1.2}
+          />
+        </mesh>
+      ))}
+
+      {/* Hot-swap handle indicators — 2 líneas horizontales sutiles */}
+      {Array.from({ length: 2 }).map((_, i) => (
+        <mesh
+          key={`handle-${i}`}
+          position={[px - sx * 0.15 + i * sx * 0.3, py, pz + sz * 0.52]}
+          scale={[sx * 0.12, sy * 0.04, sz * 0.005]}
+        >
+          <boxGeometry args={[1, 1, 1]} />
+          <meshStandardMaterial color="#1a2a44" metalness={0.8} roughness={0.35} />
+        </mesh>
+      ))}
+    </group>
   )
 }

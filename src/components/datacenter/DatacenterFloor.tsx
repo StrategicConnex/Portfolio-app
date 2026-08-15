@@ -90,7 +90,7 @@ export default function DatacenterFloor({ profile }: { profile: QualityProfile }
               metalness={0.4}
               roughness={0.7}
               emissive="#22d3ee"
-              emissiveIntensity={0.22}
+              emissiveIntensity={0.45}
             />
             {vents.map((p, i) => (
               <Instance key={i} position={p} />

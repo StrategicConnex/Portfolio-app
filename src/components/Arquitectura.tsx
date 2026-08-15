@@ -16,7 +16,7 @@ export default function Arquitectura() {
   const { t } = useLanguage()
 
   return (
-    <section id="arquitectura" className="relative z-10 py-20 sm:py-32 px-4 sm:px-6 md:px-8" style={{ background: 'rgba(4,8,15,0.85)' }}>
+    <section id="arquitectura" className="relative z-10 py-20 sm:py-32 px-4 sm:px-6 md:px-8" style={{ background: 'rgba(4,8,15,0.92)' }}>
       <div className="max-w-[1100px] mx-auto">
         <SectionHeader label={t('arch.label')} title={t('arch.title')} highlight={t('arch.highlight')} />
 

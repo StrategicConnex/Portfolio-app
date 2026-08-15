@@ -71,7 +71,7 @@ function BadgePill({ delay, children }: { delay: number; children: React.ReactNo
 }
 
 export default function TrustBadges() {
-  return (      <section id="confianza" className="relative z-10" style={{ padding: 'clamp(2rem, 5vw, 4rem) clamp(1rem, 5vw, 2rem)', background: 'rgba(4,8,15,0.85)', borderTop: '1px solid var(--border)' }}>
+  return (      <section id="confianza" className="relative z-10" style={{ padding: 'clamp(2rem, 5vw, 4rem) clamp(1rem, 5vw, 2rem)', background: 'rgba(4,8,15,0.92)', borderTop: '1px solid var(--border)' }}>
       <div style={{ maxWidth: 1100, margin: 'auto' }}>
         <SectionHeader label="Validación profesional" title="Empresas &" highlight="Estándares" />
 

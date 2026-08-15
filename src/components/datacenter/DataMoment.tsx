@@ -91,7 +91,24 @@ function MetricCard({
 
 export default function DataMoment() {
   const scene = useActiveScene()
-  const active = scene === 2 // S3 = Data in Motion
+  const sceneActive = scene === 2 // S3 = Data in Motion
+  const sectionRef = useRef<HTMLElement | null>(null)
+  const [inView, setInView] = useState(false)
+
+  // IntersectionObserver: solo visible cuando S3 está en el viewport
+  useEffect(() => {
+    const section = document.getElementById('siem')
+    if (!section) return
+    sectionRef.current = section
+    const obs = new IntersectionObserver(
+      ([entry]) => setInView(entry.isIntersecting),
+      { threshold: 0.15 },
+    )
+    obs.observe(section)
+    return () => obs.disconnect()
+  }, [])
+
+  const active = sceneActive && inView
 
   // No renderizar nada cuando no estamos en S3 — evita que AnimatePresence
   // mantenga el DOM fijo cubriendo el viewport.

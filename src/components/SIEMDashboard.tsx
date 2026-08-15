@@ -215,7 +215,7 @@ export default function SIEMDashboard() {
   }, [])
 
   return (
-    <section id="siem" className="relative z-10 py-20 px-6 bg-[#04080f]/85 overflow-hidden">
+    <section id="siem" className="relative z-10 py-20 px-6 bg-[#04080f]/92 overflow-hidden">
       {/* Hero visual: switch fotorrealista como decoración lateral */}
       <HeroVisual
         src="/hero/switch-s3.jpg"

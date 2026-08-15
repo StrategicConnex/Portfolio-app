@@ -36,8 +36,8 @@ function MetricRing({ metric }: { metric: EmbodiedMetric }) {
 
   useFrame((_, delta) => {
     pulse.current = reduced ? 1 : Math.min(1, pulse.current + delta / 0.6)
-    if (baseMat.current) baseMat.current.opacity = 0.14 * pulse.current
-    if (arcMat.current) arcMat.current.opacity = 0.8 * pulse.current
+    if (baseMat.current) baseMat.current.opacity = 0.2 * pulse.current
+    if (arcMat.current) arcMat.current.opacity = 0.95 * pulse.current
   })
 
   const radius = metric.radius ?? 0.55
@@ -47,12 +47,12 @@ function MetricRing({ metric }: { metric: EmbodiedMetric }) {
       {/* Fondo del anillo: arco completo tenue */}
       <mesh>
         <torusGeometry args={[radius, 0.025, 8, 48, Math.PI * 2]} />
-        <meshBasicMaterial ref={baseMat} color={metric.color} transparent opacity={0.14} depthWrite={false} />
+        <meshBasicMaterial ref={baseMat} color={metric.color} transparent opacity={0.2} depthWrite={false} />
       </mesh>
-      {/* Progreso: arco proporcional al valor */}
+      {/* Progreso: arco proporcional al valor — más grueso y brillante */}
       <mesh rotation={[0, 0, -Math.PI / 2]}>
-        <torusGeometry args={[radius, 0.045, 8, 48, arc]} />
-        <meshBasicMaterial ref={arcMat} color={metric.color} transparent opacity={0.8} depthWrite={false} />
+        <torusGeometry args={[radius, 0.06, 8, 48, arc]} />
+        <meshBasicMaterial ref={arcMat} color={metric.color} transparent opacity={0.95} depthWrite={false} />
       </mesh>
       <HudLabel
         position={[0, 0, 0.15]}

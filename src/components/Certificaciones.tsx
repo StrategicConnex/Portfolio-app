@@ -288,7 +288,7 @@ export default function Certificaciones() {
     <>
       <ModalViewer file={activeFile} onClose={closeFile} />
 
-      <section id="certificaciones" className="relative z-10 py-10 sm:py-16 px-4 sm:px-8" style={{ background: 'rgba(4,8,15,0.85)' }}>
+      <section id="certificaciones" className="relative z-10 py-10 sm:py-16 px-4 sm:px-8" style={{ background: 'rgba(4,8,15,0.92)' }}>
         <div ref={ref} className="max-w-[1100px] mx-auto">
           <SectionHeader label={t('certs.label')} title={t('certs.title')} highlight={t('certs.highlight')} />
 
