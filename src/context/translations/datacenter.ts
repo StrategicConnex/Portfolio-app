@@ -7,6 +7,7 @@ import type { TranslationModule } from './index'
  */
 const es: TranslationModule['es'] = {
   // Escena 01 - Boot Sequence (narrativa de arranque)
+  'dc.scene.boot.title': 'SISTEMA ACTIVO',
   'dc.scene.boot.status': 'INICIALIZANDO SISTEMA',
   'dc.scene.boot.network': 'RED EN LÍNEA',
   'dc.scene.boot.ai': 'NÚCLEO IA LISTO',
@@ -20,6 +21,13 @@ const es: TranslationModule['es'] = {
   'dc.scene.connection.title': 'PUNTO DE CONEXIÓN',
   // Fase del recorrido (audit G1 — numeración de escena en HUD)
   'dc.phase.label': 'FASE',
+  // Eje Purdue del storyline (audit P7c — nivel IEC 62443 en el HUD)
+  'dc.purdue.label': 'NIVEL',
+  'dc.purdue.enterprise': 'EMPRESA',
+  'dc.purdue.operations': 'OPERACIONES',
+  'dc.purdue.dmz': 'DMZ',
+  'dc.purdue.control': 'CONTROL',
+  'dc.purdue.internet': 'INTERNET',
   // Nodo focal por sección (audit G2 — label diegético de la baliza)
   'dc.focus.home': 'IDENTIDAD',
   'dc.focus.perfil': 'PERFIL',
@@ -63,6 +71,7 @@ const es: TranslationModule['es'] = {
 }
 
 const en: TranslationModule['en'] = {
+  'dc.scene.boot.title': 'SYSTEM ACTIVE',
   'dc.scene.boot.status': 'SYSTEM INITIALIZING',
   'dc.scene.boot.network': 'NETWORK ONLINE',
   'dc.scene.boot.ai': 'AI CORE READY',
@@ -72,6 +81,13 @@ const en: TranslationModule['en'] = {
   'dc.scene.connection.title': 'CONNECTION POINT',
   // Fase del recorrido (audit G1 — numeración de escena en HUD)
   'dc.phase.label': 'PHASE',
+  // Eje Purdue del storyline (audit P7c — nivel IEC 62443 en el HUD)
+  'dc.purdue.label': 'LEVEL',
+  'dc.purdue.enterprise': 'ENTERPRISE',
+  'dc.purdue.operations': 'OPERATIONS',
+  'dc.purdue.dmz': 'DMZ',
+  'dc.purdue.control': 'CONTROL',
+  'dc.purdue.internet': 'INTERNET',
   // Nodo focal por sección (audit G2 — label diegético de la baliza)
   'dc.focus.home': 'IDENTITY',
   'dc.focus.perfil': 'PROFILE',

@@ -10,6 +10,7 @@ import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion'
 import { SCENES } from '@/lib/scenes'
 import { DATACENTER_TOKENS } from '@/lib/datacenter.tokens'
 import { parseCounter, formatCounter, easeOutCubic } from '@/lib/datacenterData'
+import { purdueForScene } from '@/lib/datacenter.storyline'
 
 type HudLabelProps = {
   /** Posición 3D del label (anclada al mundo, no a pantalla). */
@@ -147,6 +148,10 @@ export default function HudLabel({
     variant === 'scene' && scene !== undefined
       ? `${t('dc.phase.label')} ${formatPhase(scene, SCENES.length)}`
       : null
+  // Eje Purdue del storyline (audit P7c): el nivel IEC 62443 de la escena
+  // (NIVEL 04 · EMPRESA …) — solo en labels de escena, bajo la fase.
+  const purdue = variant === 'scene' && scene !== undefined ? purdueForScene(scene) : null
+  const purdueLine = purdue ? `${t('dc.purdue.label')} ${purdue.level} · ${t(purdue.nameKey)}` : null
 
   return (
     <group ref={anchorRef} position={position}>
@@ -184,6 +189,20 @@ export default function HudLabel({
             }}
           >
             {phaseLine}
+          </div>
+        )}
+        {purdueLine && (
+          <div
+            style={{
+              fontSize: '0.4rem',
+              letterSpacing: '0.32em',
+              color,
+              opacity: 0.75,
+              marginBottom: '0.2rem',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            {purdueLine}
           </div>
         )}
         {value !== undefined && (
