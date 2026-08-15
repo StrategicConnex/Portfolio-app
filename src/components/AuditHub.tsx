@@ -5,6 +5,7 @@ import React, { memo, useState, useMemo } from 'react'
 import SectionHeader from './ui/SectionHeader'
 import FadeIn from './ui/FadeIn'
 import { useLanguage } from '@/context/LanguageContext'
+import HeroVisual from './ui/HeroVisual'
 import { 
   COMPLIANCE_MARCOS, 
   AUDIT_FINDINGS, 
@@ -118,6 +119,15 @@ const AuditHub = () => {
 
   return (
     <section id="audit-hub" className="relative z-10 py-24 sm:py-32 overflow-hidden bg-[#04080f]/85">
+      {/* Hero visual: storage fotorrealista como decoración */}
+      <HeroVisual
+        src="/hero/storage-s4.png"
+        alt=""
+        position="left"
+        opacity={0.12}
+        className="w-[350px] h-[350px] lg:w-[450px] lg:h-[450px]"
+      />
+
       {/* Background FX */}
       <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[#3B82F640] to-transparent" />
       <div className="absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[#3B82F620] to-transparent" />

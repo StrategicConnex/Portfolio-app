@@ -4,12 +4,9 @@ import { useMemo } from 'react'
 import { Instances, Instance } from '@react-three/drei'
 import type { QualityProfile } from '@/hooks/useAdaptiveQuality'
 import {
-  GLB_ASSETS,
-  SWITCH_PROTAGONIST_GLB_POS,
   SWITCH_SLOTS,
   TIER_COUNTS,
 } from '@/lib/datacenter.layout'
-import GlbAsset from './GlbAsset'
 
 /**
  * Switches 1U (ASSET-SCENE-MAP §5, gap G4): pool instanciado de chasis 1U en la
@@ -37,12 +34,8 @@ export default function ServerSwitchPool({ profile }: { profile: QualityProfile 
         <meshBasicMaterial color="#000000" transparent opacity={0.45} depthWrite={false} />
       </mesh>
 
-      {/* Slot GLB protagonista (S3, origen de streams) — fallback = chasis aislado */}
-      <GlbAsset
-        path={GLB_ASSETS.networkSwitch}
-        position={SWITCH_PROTAGONIST_GLB_POS}
-        fallback={<ProceduralSwitch position={SWITCH_PROTAGONIST_GLB_POS} />}
-      />
+      {/* Switch protagonista (S3): procedural — GLB removido, imagen realista en DOM. */}
+      <ProceduralSwitch position={[-2.6, 1.9, 0.2]} />
 
       {/* Chasis 1U instanciados en los racks del corredor — 1 draw call */}
       <Instances limit={64}>

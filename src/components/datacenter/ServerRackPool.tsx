@@ -6,14 +6,11 @@ import type { QualityProfile } from '@/hooks/useAdaptiveQuality'
 import {
   BACKGROUND_RACKS,
   CORRIDOR_RACKS,
-  GLB_ASSETS,
-  HERO_RACK_GLB_POS,
   HERO_RACK_POS,
   HERO_UNIT_OFFSETS,
   TIER_COUNTS,
   UNIT_OFFSETS,
 } from '@/lib/datacenter.layout'
-import GlbAsset from './GlbAsset'
 import { getChassisBump, getChassisMap, getUnitBump } from '@/lib/datacenterTextures'
 
 /**
@@ -48,11 +45,9 @@ export default function ServerRackPool({ profile }: { profile: QualityProfile })
         color="#000000"
       />
 
-      {/* Rack hero (S1): slot GLB con fallback procedural (SPEC §37). El GLB
-          (server_rack_v02.glb, origen en base) se posiciona en HERO_RACK_GLB_POS
-          (base en el piso y=0); el fallback procedural es centro-anclado en
-          HERO_RACK_POS y se posiciona solo. */}
-      <GlbAsset path={GLB_ASSETS.heroRack} position={HERO_RACK_GLB_POS} fallback={<ProceduralHeroRack />} />
+      {/* Rack hero (S1): procedural — el GLB fue removido en favor de imagen
+          realista en el DOM layer (hybrid approach). */}
+      <ProceduralHeroRack />
 
       {/* Gabinetes del corredor + fondo: material compartido (instancing) con
           el detalle PBR procedural del chasis (juntas + ventilación). El map

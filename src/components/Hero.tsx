@@ -6,6 +6,7 @@ import { motion } from 'framer-motion'
 import type { Variants } from 'framer-motion'
 import { useLanguage } from '@/context/LanguageContext'
 import dynamic from 'next/dynamic'
+import HeroVisual from './ui/HeroVisual'
 
 const RadarSweep = dynamic(() => import('./RadarSweep'), { ssr: false })
 
@@ -33,6 +34,15 @@ export default function Hero() {
       <div className="hero-radar invisible lg:visible">
         <RadarSweep />
       </div>
+
+      {/* Hero visual: rack fotorrealista como silhouette decorativa */}
+      <HeroVisual
+        src="/hero/rack-s1.png"
+        alt=""
+        position="right"
+        opacity={0.12}
+        className="w-[350px] h-[350px] lg:w-[500px] lg:h-[500px]"
+      />
 
       <div
         aria-hidden="true"

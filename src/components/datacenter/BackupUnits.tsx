@@ -2,8 +2,7 @@
 
 import { useMemo } from 'react'
 import { ContactShadows, Instances, Instance } from '@react-three/drei'
-import { BACKUP_UNITS, GLB_ASSETS } from '@/lib/datacenter.layout'
-import GlbAsset from './GlbAsset'
+import { BACKUP_UNITS } from '@/lib/datacenter.layout'
 
 /** Unidades de backup / mass storage (Escena 4). La unidad protagonista —la más
  * cercana a cámara ([0,-2.4,-4])— es slot GLB (`storage_unit_v02.glb`, Tripo)
@@ -27,20 +26,8 @@ export default function BackupUnits({ count }: { count: number }) {
       <ContactShadows position={[0, -2.885, -5]} opacity={0.4} scale={[8, 4]} blur={2.6} far={1.6} resolution={256} frames={1} color="#000000" />
       <ContactShadows position={[0, -2.885, -10]} opacity={0.35} scale={[6, 4]} blur={2.6} far={1.6} resolution={256} frames={1} color="#000000" />
 
-      {/* Slot GLB de la unidad protagonista (S4) — fallback = misma geometría.
-          El GLB es base-origin (0..1.2 en su frame) y el bloque procedural es
-          centro-anclado: la base del GLB debe caer en position.y − scale.y/2. */}
-      {first && (
-        <GlbAsset
-          path={GLB_ASSETS.storageUnit}
-          position={[
-            first.position[0],
-            first.position[1] - first.scale[1] / 2,
-            first.position[2],
-          ]}
-          fallback={<ProceduralBackupUnit position={first.position} scale={first.scale} />}
-        />
-      )}
+      {/* Unidad protagonista (S4): procedural — GLB removido, imagen realista en DOM. */}
+      {first && <ProceduralBackupUnit position={first.position} scale={first.scale} />}
 
       <Instances limit={16}>
         <boxGeometry args={[1, 1, 1]} />

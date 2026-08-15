@@ -6,6 +6,7 @@ import SectionHeader from './ui/SectionHeader'
 import FadeIn from './ui/FadeIn'
 import Icon from './ui/Icon'
 import { useLanguage } from '@/context/LanguageContext'
+import HeroVisual from './ui/HeroVisual'
 import { 
   LOG_LINES, 
   PURDUE_ZONES, 
@@ -213,7 +214,16 @@ export default function SIEMDashboard() {
   }, [])
 
   return (
-    <section id="siem" className="relative z-10 py-20 px-6 bg-[#04080f]/85">
+    <section id="siem" className="relative z-10 py-20 px-6 bg-[#04080f]/85 overflow-hidden">
+      {/* Hero visual: switch fotorrealista como decoración lateral */}
+      <HeroVisual
+        src="/hero/switch-s3.jpg"
+        alt=""
+        position="right"
+        opacity={0.15}
+        className="w-[300px] h-[300px] lg:w-[400px] lg:h-[400px]"
+      />
+
       {/* P4-cierre editorial: la sección siem cubre el tramo profundo del
           atravieso de racks (cámara dentro del corredor). Contenedor
           estrecho (max-w-4xl) → gutters más anchos con el canvas NÍTIDO a los

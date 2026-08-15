@@ -1,8 +1,7 @@
 'use client'
 
 import type { QualityProfile } from '@/hooks/useAdaptiveQuality'
-import { DISPLAY_SLOTS, GLB_ASSETS } from '@/lib/datacenter.layout'
-import GlbAsset from './GlbAsset'
+import { DISPLAY_SLOTS } from '@/lib/datacenter.layout'
 import { getSiemUiTexture } from './screenUiTexture'
 
 /**
@@ -20,12 +19,7 @@ export default function SiemDisplayPanel({ profile }: { profile: QualityProfile 
   return (
     <group>
       {slots.map((slot) => (
-        <GlbAsset
-          key={slot.scene}
-          path={GLB_ASSETS.siemDisplay}
-          position={slot.position}
-          fallback={<ProceduralDisplay position={slot.position} />}
-        />
+        <ProceduralDisplay key={slot.scene} position={slot.position} />
       ))}
     </group>
   )
