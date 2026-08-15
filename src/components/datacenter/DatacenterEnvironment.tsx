@@ -30,8 +30,9 @@ export default function DatacenterEnvironment({ profile }: { profile: QualityPro
       {/* Las luces (ambient/dir/acentos) viven en SceneLighting: transiciones
           atmosféricas por escena (SPEC §3). Acá solo el env map procedural. */}
       <Environment resolution={ENV_RESOLUTION[profile] ?? 512}>
+        {/* Techo principal — ilumina la parte superior de los chasis */}
         <Lightformer
-          intensity={1.4}
+          intensity={1.8}
           color={t.primaryCold}
           position={[0, 5, 0]}
           rotation={[Math.PI / 2, 0, 0]}
@@ -40,32 +41,50 @@ export default function DatacenterEnvironment({ profile }: { profile: QualityPro
         {/* Pasillos (NRG): tiras largas de luz de techo a lo largo del corredor
             — los metales/chasis captan franjas de reflexión, no puntos. */}
         <Lightformer
-          intensity={0.8}
+          intensity={1.1}
           color="#dfe9ff"
           position={[0, 4.6, -3]}
           rotation={[Math.PI / 2, 0, 0]}
-          scale={[14, 1, 1]}
-        />
-        <Lightformer
-          intensity={0.5}
-          color="#dfe9ff"
-          position={[0, 4.6, -8]}
-          rotation={[Math.PI / 2, 0, 0]}
-          scale={[14, 1, 1]}
+          scale={[14, 1.5, 1]}
         />
         <Lightformer
           intensity={0.7}
+          color="#dfe9ff"
+          position={[0, 4.6, -8]}
+          rotation={[Math.PI / 2, 0, 0]}
+          scale={[14, 1.5, 1]}
+        />
+        {/* Tira adicional para profundidad — reflections en los racks del fondo */}
+        <Lightformer
+          intensity={0.4}
+          color="#b8c8e0"
+          position={[0, 4.6, -14]}
+          rotation={[Math.PI / 2, 0, 0]}
+          scale={[14, 1, 1]}
+        />
+        {/* Lateral cyan — reflejos fríos en los costados de los chasis */}
+        <Lightformer
+          intensity={0.9}
           color={t.dataCyan}
           position={[-5, 1, -1]}
           rotation={[0, Math.PI / 2, 0]}
           scale={[8, 2, 1]}
         />
+        {/* Lateral ámbar — reflejos cálidos en el lado opuesto */}
         <Lightformer
-          intensity={0.5}
+          intensity={0.65}
           color={t.securityAmber}
           position={[5, -1, 1]}
           rotation={[0, -Math.PI / 2, 0]}
           scale={[6, 2, 1]}
+        />
+        {/* Fill frontal sutil — ilumina las caras frontales de los racks */}
+        <Lightformer
+          intensity={0.3}
+          color="#e8eeff"
+          position={[0, 2, 6]}
+          rotation={[0, Math.PI, 0]}
+          scale={[12, 4, 1]}
         />
         {/* Profundidad: glow frío al fondo del pasillo */}
         <Lightformer
@@ -99,15 +118,23 @@ export default function DatacenterEnvironment({ profile }: { profile: QualityPro
           rotation={[0, Math.PI / 2, 0]}
           scale={[10, 0.35, 1]}
         />
-        {/* P1 · ring cyan sobre el rack hero (S1): corona de reflexión en la
-            parte superior del gabinete durante el boot. */}
+        {/* Ring cyan sobre el rack hero (S1): corona de reflexión */}
         <Lightformer
-          intensity={0.5}
+          intensity={0.7}
           form="ring"
           color={t.dataCyan}
           position={[0, 3.4, 2.5]}
           rotation={[Math.PI / 2, 0, 0]}
           scale={[3, 3, 1]}
+        />
+        {/* Ring ámbar sobre backup units (S4): corona cálida */}
+        <Lightformer
+          intensity={0.4}
+          form="ring"
+          color={t.securityAmber}
+          position={[0, -1.5, -6]}
+          rotation={[Math.PI / 2, 0, 0]}
+          scale={[2.5, 2.5, 1]}
         />
       </Environment>
     </>

@@ -11,6 +11,7 @@ import DatacenterEnvironment from './DatacenterEnvironment'
 import SceneLighting from './SceneLighting'
 import DatacenterCamera from './DatacenterCamera'
 import DatacenterScene from './DatacenterScene'
+import DatacenterPostFX from './DatacenterPostFX'
 
 const DPR: Record<QualityProfile, [number, number]> = {
   ULTRA: [1, 2],
@@ -71,6 +72,7 @@ export default function DatacenterCanvas({ profile }: { profile: QualityProfile 
         <DatacenterEnvironment profile={profile} />
         <SceneLighting />
         <DatacenterScene profile={profile} />
+        <DatacenterPostFX />
         <DatacenterCamera fogRef={fogRef} />
       </Canvas>
     </div>
