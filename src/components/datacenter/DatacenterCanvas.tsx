@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
+import { installConsoleFilter } from '@/lib/consoleFilter'
 import { Canvas } from '@react-three/fiber'
 import * as THREE from 'three'
 import type { QualityProfile } from '@/hooks/useAdaptiveQuality'
@@ -12,6 +13,9 @@ import SceneLighting from './SceneLighting'
 import DatacenterCamera from './DatacenterCamera'
 import DatacenterScene from './DatacenterScene'
 import DatacenterPostFX from './DatacenterPostFX'
+
+// Suppress known Three.js/postprocessing warnings (X4122 shader precision, Clock deprecation)
+installConsoleFilter()
 
 const DPR: Record<QualityProfile, [number, number]> = {
   ULTRA: [1, 2],
