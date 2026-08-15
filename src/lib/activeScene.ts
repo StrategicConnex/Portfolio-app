@@ -30,5 +30,5 @@ export function subscribeActiveScene(listener: () => void): () => void {
 
 /** Hook para componentes React (HUDs): re-render solo al cruzar de escena. */
 export function useActiveScene(): number {
-  return useSyncExternalStore(subscribeActiveScene, getActiveScene)
+  return useSyncExternalStore(subscribeActiveScene, getActiveScene, getActiveScene)
 }
