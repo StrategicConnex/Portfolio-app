@@ -230,6 +230,36 @@ export function photonFailoverTint(state: FailoverState): { sizeBoost: number; o
 }
 
 /**
+ * P7a.1 — MOVIMIENTO DEL FAILOVER (el corte se hace físico, no solo de
+ * color): además del material, la ruta A modula la VELOCIDAD de su tráfico y
+ * su RE-RUTEO hacia la ruta B durante la ventana del evento:
+ *   normal   — A fluye normal (speed 1), todo en su ruta (reroute 0)
+ *   fault    — A se degrada: su tráfico se LENTIFICA (speed 0.35) y empieza
+ *              a derivar visiblemente hacia B (reroute 0.35) — el ámbar en
+ *              movimiento entre las filas cuenta el comienzo del corte
+ *   dead     — A se detiene (speed 0) y su tráfico quedó re-encaminado en B
+ *              (reroute 1): la fila frontal queda VACÍA — el corte es físico
+ *   recover  — A se recupera: el tráfico vuelve a su ruta (reroute 0.5) y
+ *              reanuda el flujo (speed 0.6)
+ *   restored — estado normal
+ * Los puntos de B fluyen SIEMPRE (es el respaldo que toma el control).
+ */
+export type FailoverMotion = { speedA: number; reroute: number }
+
+export function failoverMotion(state: FailoverState): FailoverMotion {
+  switch (state) {
+    case 'fault':
+      return { speedA: 0.35, reroute: 0.35 }
+    case 'dead':
+      return { speedA: 0, reroute: 1 }
+    case 'recover':
+      return { speedA: 0.6, reroute: 0.5 }
+    default:
+      return { speedA: 1, reroute: 0 }
+  }
+}
+
+/**
  * Ventana de llegada (pulso del clímax, P7d): el bloom sube al llegar al nodo
  * central (PHOTON_NODE_GLOBAL) y se desvanece cuando el fotón parte por el haz
  * (P7e). 0 antes de la ventana, 1 exactamente en el nodo, 0 al partir.

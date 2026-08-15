@@ -5,7 +5,7 @@ import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { ALL_SECTIONS, computeSceneProgress, resolveSceneForSection } from '@/lib/scenes'
 import { samplePath } from '@/lib/datacenter.layout'
-import { failoverEvent, type FailoverState } from '@/lib/datacenter.storyline'
+import { failoverEvent, failoverMotion, type FailoverState } from '@/lib/datacenter.storyline'
 import { useSectionProgress } from '@/hooks/useSectionProgress'
 import { useActiveScene } from '@/lib/activeScene'
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion'
@@ -24,11 +24,18 @@ const FAULT_DARK = new THREE.Color('#7f1d1d')
  * progreso de scroll (datacenter.storyline.failoverEvent):
  *   normal → A degrada (ámbar) y B despierta → A muere y B transporta todo
  *   → A se recupera y B vuelve a standby → restaurado.
- * El tráfico (puntos animados como DataStreams) fluye SIEMPRE en ambas rutas;
- * lo que cambia es el material (color + opacidad) que narra el corte y el
- * reroute. Determinístico por scroll (reversible), sin setState (mutación de
- * material en useFrame, SPEC §32), invalidado por MicroAnimDriver. En tier
- * STATIC/LOW no se monta; con reduced-motion no hay evento (defensivo).
+ *
+ * P7a.1 — el corte se hace FÍSICO, no solo de color: la ruta A modula su
+ * velocidad y su re-ruteo hacia B (failoverMotion). En `fault` el tráfico de
+ * A se LENTIFICA y deriva visiblemente hacia la fila B; en `dead` A se
+ * DETIENE (speed 0) y su tráfico quedó re-encaminado en B — la fila frontal
+ * queda VACÍA (el corte se ve); en `recover` el tráfico vuelve a su ruta y
+ * reanuda. B fluye SIEMPRE (es el respaldo que toma el control). Misma
+ * arquitectura: determinístico por scroll (reversible), suavizado
+ * exponencial (SPEC §16), sin setState (escritura directa en useFrame,
+ * SPEC §32), 2 draw calls intactos (las posiciones se re-escriben en los
+ * mismos Points). En tier STATIC/LOW no se monta; con reduced-motion no hay
+ * evento (defensivo).
  */
 type MatTarget = { color: THREE.Color; opacity: number }
 
@@ -90,6 +97,10 @@ export default function FailoverStreams() {
   // Colores actuales (para lerp sin allocaciones por frame).
   const curColor = useRef({ primary: CYAN.clone(), backup: CYAN.clone() })
   const curOpacity = useRef({ primary: 0.9, backup: 0.14 })
+  // Movimiento del failover (P7a.1): velocidad de A y re-ruteo hacia B,
+  // suavizados con el mismo lerp exponencial del material.
+  const curSpeedA = useRef(1)
+  const curReroute = useRef(0)
 
   // Solo en la escena de resiliencia (S4).
   const visible = activeScene === 3
@@ -105,30 +116,41 @@ export default function FailoverStreams() {
     const posB = attrB.array as Float32Array
     const offset = (state.clock.elapsedTime * 1.6) % 1
 
-    // Anima los puntos de ambas rutas (siempre fluyendo).
-    for (let i = 0; i < PER_PATH; i++) {
-      const tt = (i / (PER_PATH - 1) + offset) % 1
-      const a = samplePath(ROUTES.primary, tt)
-      const b = samplePath(ROUTES.backup, tt)
-      posP[i * 3] = a[0]
-      posP[i * 3 + 1] = a[1]
-      posP[i * 3 + 2] = a[2]
-      posB[i * 3] = b[0]
-      posB[i * 3 + 1] = b[1]
-      posB[i * 3 + 2] = b[2]
-    }
-    attrP.needsUpdate = true
-    attrB.needsUpdate = true
-
     // Estado del evento: determinístico por progreso de la escena S4.
     const p = progress.ref.current
     const scene = resolveSceneForSection(p.active)
     const sp = scene && scene.id === 'resilience' ? computeSceneProgress(scene, p.active, p.section) : 1
     const ev = staticReduced ? null : failoverEvent(sp)
+    const motion = ev ? failoverMotion(ev.primary) : failoverMotion('normal')
     const tP = ev ? TARGETS.primary[ev.primary] : TARGETS.primary.normal
     const tB = ev ? TARGETS.backup[ev.backup] : TARGETS.backup.normal
 
+    // Suaviza el movimiento (SPEC §16 — nunca cortes bruscos).
     const k = 1 - Math.exp(-LERP_RATE * Math.min(delta, 0.1))
+    curSpeedA.current += (motion.speedA - curSpeedA.current) * k
+    curReroute.current += (motion.reroute - curReroute.current) * k
+
+    // P7a.1 — el corte físico: A se lentifica (fault) y se DETIENE (dead),
+    // mientras su tráfico deriva hacia la fila B (reroute). B fluye siempre.
+    const offsetA = offset * curSpeedA.current
+    const reroute = curReroute.current
+    for (let i = 0; i < PER_PATH; i++) {
+      const tt = (i / (PER_PATH - 1) + offsetA) % 1
+      const a = samplePath(ROUTES.primary, tt)
+      const b = samplePath(ROUTES.backup, tt)
+      // Deriva de A hacia el punto equivalente de B (misma t — los puntos
+      // cruzan lateralmente entre las filas; con reroute 1, A vive en B).
+      posP[i * 3] = a[0] + (b[0] - a[0]) * reroute
+      posP[i * 3 + 1] = a[1] + (b[1] - a[1]) * reroute
+      posP[i * 3 + 2] = a[2] + (b[2] - a[2]) * reroute
+      const bt = (i / (PER_PATH - 1) + offset) % 1
+      const bp = samplePath(ROUTES.backup, bt)
+      posB[i * 3] = bp[0]
+      posB[i * 3 + 1] = bp[1]
+      posB[i * 3 + 2] = bp[2]
+    }
+    attrP.needsUpdate = true
+    attrB.needsUpdate = true
     if (primaryMat.current) {
       curOpacity.current.primary += (tP.opacity - curOpacity.current.primary) * k
       curColor.current.primary.lerp(tP.color, k)

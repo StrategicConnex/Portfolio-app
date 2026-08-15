@@ -6,6 +6,7 @@ import {
   BEAM_TARGET,
   buildPhotonPath,
   connectionBeamStrength,
+  failoverMotion,
   FAILOVER_TIMELINE,
   failoverEvent,
   photonArrival,
@@ -50,6 +51,35 @@ describe('failoverEvent (audit P7a — semántica de red real)', () => {
     const a = failoverEvent(0.55)
     const b = failoverEvent(0.55)
     expect(a).toEqual(b)
+  })
+})
+
+describe('failoverMotion (P7a.1 — el corte se hace físico)', () => {
+  it('normal y restored: A fluye a velocidad plena en su ruta', () => {
+    expect(failoverMotion('normal')).toEqual({ speedA: 1, reroute: 0 })
+    expect(failoverMotion('restored')).toEqual({ speedA: 1, reroute: 0 })
+  })
+
+  it('dead: A se detiene (speed 0) y su tráfico quedó re-encaminado en B (reroute 1)', () => {
+    expect(failoverMotion('dead')).toEqual({ speedA: 0, reroute: 1 })
+  })
+
+  it('la degradación es progresiva: speedA baja y reroute sube a través del evento', () => {
+    const seq = ['normal', 'fault', 'dead', 'recover', 'restored'] as const
+    const speeds = seq.map((s) => failoverMotion(s).speedA)
+    const reroutes = seq.map((s) => failoverMotion(s).reroute)
+    // speedA: 1 → 0.35 → 0 → 0.6 → 1 (la fila frontal se vacía y reanuda)
+    expect(speeds[0]).toBe(1)
+    expect(speeds[1]).toBeLessThan(speeds[0])
+    expect(speeds[2]).toBe(0)
+    expect(speeds[3]).toBeGreaterThan(speeds[2])
+    expect(speeds[4]).toBe(1)
+    // reroute: 0 → 0.35 → 1 → 0.5 → 0 (el tráfico deriva a B y vuelve)
+    expect(reroutes[0]).toBe(0)
+    expect(reroutes[1]).toBeGreaterThan(reroutes[0])
+    expect(reroutes[2]).toBe(1)
+    expect(reroutes[3]).toBeLessThan(reroutes[2])
+    expect(reroutes[4]).toBe(0)
   })
 })
 
