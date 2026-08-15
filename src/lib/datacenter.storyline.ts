@@ -54,3 +54,128 @@ export function failoverEvent(sceneProgress: number): FailoverSnapshot {
   if (p < FAILOVER_TIMELINE.restored) return { primary: 'recover', backup: 'recover' }
   return { primary: 'restored', backup: 'restored' }
 }
+
+/**
+ * P7d — FOTÓN (hilo de continuidad del storyline): una partícula de luz que
+ * nace en el boot, viaja con los streams de data, SOBREVIVE al failover de
+ * resilience (cabalgando la ruta B, la superviviente) y llega al nodo central
+ * en connection. Un único path continuo (5 tramos, uno por escena, conectados
+ * extremo-a-extremo) parametrizado por progreso GLOBAL — el fotón nunca salta
+ * en las fronteras de escena.
+ *
+ * Cada tramo está anclado a la geometría real del layout:
+ *   S1 boot   — nace en la cara frontal del rack hero (y 0.35) y asciende
+ *   S2 core   — viaja por el pasillo sobre los anillos KPI (x=0, z=-1.6)
+ *   S3 data   — cabalga el stream izquierdo (x=-2.6, y=1.7, como STREAM_PATHS),
+ *               cruza el pasillo (hop este-oeste) y empieza a descender
+ *   S4 res    — desciende al nivel de storage y recorre la RUTA B del failover
+ *               ([-4.6,-1.75,-6.4]→[0,-1.75,-7.2]→[4.6,-1.75,-6.4] — la misma
+ *               geometría de FailoverStreams: el fotón sobrevive porque va en
+ *               la ruta que transporta todo durante la ventana dead)
+ *   S5 conn   — asciende por el pasillo y llega al nodo central (display SIEM
+ *               de S5, [0, 2.0, -1.85] frente a la pantalla)
+ */
+export const PHOTON_SEGMENTS: [number, number, number][][] = [
+  // S1 boot — nacimiento en el rack hero. El tramo va DELANTE del rack
+  // (z ≥ 0.62 > cara frontal z≈0.45): el GLB hero es opaco y si el fotón
+  // pasara a z<0.45 quedaría oculto detrás de la cara frontal.
+  [
+    [0, 0.35, 0.62],
+    [0, 1.5, 0.62],
+    [0, 2.35, 0.45],
+  ],
+  // S2 core — viaje por el pasillo
+  [
+    [0, 2.35, 0.45],
+    [0, 2.3, -1.5],
+    [0.4, 1.9, -2.5],
+  ],
+  // S3 data — stream izquierdo + hop este-oeste + descenso
+  [
+    [0.4, 1.9, -2.5],
+    [-2.2, 1.7, -4.7],
+    [-2.6, 1.7, -6.9],
+    [0, 1.6, -6.9],
+    [2.6, 1.7, -6.9],
+    [0, 0.8, -6.4],
+  ],
+  // S4 resilience — ruta B del failover (la superviviente)
+  [
+    [0, 0.8, -6.4],
+    [0, -1.6, -6.4],
+    [-4.6, -1.75, -6.4],
+    [0, -1.75, -7.2],
+    [4.6, -1.75, -6.4],
+    [3.2, -0.8, -4.8],
+  ],
+  // S5 connection — ascenso al nodo central
+  [
+    [3.2, -0.8, -4.8],
+    [1.5, 0.6, -3.2],
+    [0, 1.5, -2.5],
+    [0, 2.0, -1.85],
+  ],
+]
+
+/**
+ * Arco de temperatura del fotón (mismo arco del Phase Gate, SPEC §3):
+ * azul (nacimiento) → cian (los streams) → ámbar (el nivel protegido) →
+ * champagne (la llegada). La identidad del fotón ES el arco del sitio en una
+ * sola partícula.
+ */
+export const PHOTON_COLOR_BY_SCENE: string[] = [
+  '#8fb7ff', // S1 boot — azul instrumental
+  '#7fd4e8', // S2 core — transición
+  '#22d3ee', // S3 data — cian de los streams
+  '#f59e0b', // S4 resilience — ámbar del nivel protegido
+  '#E8D5AC', // S5 connection — champagne de la llegada
+]
+
+/**
+ * Path continuo del fotón: concatenación de los 5 tramos (los tramos están
+ * autorados conectados extremo-a-extremo, así que `samplePath` nunca salta
+ * en las fronteras de escena — el contrato de continuidad lo testea la suite).
+ */
+export function buildPhotonPath(): [number, number, number][] {
+  return PHOTON_SEGMENTS.flat()
+}
+
+/**
+ * Progreso GLOBAL del fotón (0..1): el viaje completo. Cada escena aporta
+ * 1/5 del progreso, con el progreso interno de la escena (computeSceneProgress)
+ * interpolando dentro de su tramo. Clamps por seguridad; fuera de rango
+ * (antes de la primera sección) el fotón espera en su nacimiento.
+ */
+export function photonGlobalProgress(sceneIndex: number, sceneProgress: number): number {
+  if (sceneIndex < 0) return 0
+  if (sceneIndex >= PHOTON_SEGMENTS.length) return 1
+  const p = Math.min(1, Math.max(0, sceneProgress))
+  return Math.min(1, Math.max(0, (sceneIndex + p) / PHOTON_SEGMENTS.length))
+}
+
+/**
+ * El momento del failover (P7a) modula al fotón (P7d): durante la ventana
+ * `dead` el fotón es EL portador — brilla más (intensidad + tamaño). El fotón
+ * sobrevive porque va en la ruta B; el evento lo subraya con un pulso de
+ * intensidad, sin cambiar su identidad.
+ */
+export function photonFailoverTint(state: FailoverState): { sizeBoost: number; opacityBoost: number } {
+  switch (state) {
+    case 'fault':
+      return { sizeBoost: 0.08, opacityBoost: 0.06 }
+    case 'dead':
+      return { sizeBoost: 0.28, opacityBoost: 0.22 }
+    case 'recover':
+      return { sizeBoost: 0.12, opacityBoost: 0.1 }
+    default:
+      return { sizeBoost: 0, opacityBoost: 0 }
+  }
+}
+
+/**
+ * Ventana de llegada (pulso del clímax): 0 antes, 1 en el nodo. Último 10% del
+ * progreso global (el final del tramo de connection).
+ */
+export function photonArrival(global: number): number {
+  return Math.min(1, Math.max(0, (global - 0.9) / 0.1))
+}

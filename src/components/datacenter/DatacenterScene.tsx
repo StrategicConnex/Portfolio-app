@@ -6,6 +6,7 @@ import ServerRackPool from './ServerRackPool'
 import DustParticles from './DustParticles'
 import DataStreams from './DataStreams'
 import FailoverStreams from './FailoverStreams'
+import StoryPhoton from './StoryPhoton'
 import BackupUnits from './BackupUnits'
 import PurdueHologram from './PurdueHologram'
 import MicroAnimDriver from './MicroAnimDriver'
@@ -44,6 +45,7 @@ export default function DatacenterScene({ profile }: { profile: QualityProfile }
           <SiemDisplayPanel profile={profile} />
           <DataStreams />
           <FailoverStreams />
+          <StoryPhoton />
           <PurdueHologram />
         </>
       )}
