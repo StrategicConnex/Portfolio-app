@@ -6,6 +6,7 @@ import Image from 'next/image'
 import SectionHeader from './ui/SectionHeader'
 import Icon from './ui/Icon'
 import StaggerReveal from './ui/StaggerReveal'
+import HoverCard from './ui/HoverCard'
 import { useLanguage } from '@/context/LanguageContext'
 
 const categories = [
@@ -70,14 +71,12 @@ function StackCard({ item, index }: { item: typeof categories[0]; index: number 
       initial={{ opacity: 0, scale: 0.98 }}
       animate={inView ? { opacity: 1, scale: 1 } : {}}
       transition={{ duration: 0.6, delay: index * 0.05, ease: [0.22, 1, 0.36, 1] }}
-      whileHover={{ y: -5, borderColor: item.color + '88' }}
-      className="relative overflow-hidden cursor-default flex flex-col justify-end p-7 rounded-2xl min-h-[220px]"
-      style={{
-        background: 'var(--card)',
-        border: '1px solid var(--border)',
-        transition: 'border-color 0.3s, transform 0.3s',
-      }}
+      className="relative"
     >
+      <HoverCard
+        accentColor={item.color}
+        className="relative overflow-hidden cursor-default flex flex-col justify-end p-7 min-h-[220px] rounded-2xl"
+      >
       {/* Background and Overlay */}
       <div className="absolute inset-0 z-0">
         <Image 
@@ -121,6 +120,7 @@ function StackCard({ item, index }: { item: typeof categories[0]; index: number 
         className="absolute top-0 left-0 right-0 h-[2px] opacity-70 origin-left"
         style={{ background: `linear-gradient(90deg, ${item.color}, transparent)` }}
       />
+      </HoverCard>
     </motion.div>
   )
 }

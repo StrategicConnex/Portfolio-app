@@ -7,6 +7,7 @@ import { useLanguage } from '@/context/LanguageContext'
 import { ArrowRight, BookOpen, Clock, Tag } from 'lucide-react'
 import HeroVisual from './ui/HeroVisual'
 import StaggerReveal from './ui/StaggerReveal'
+import HoverCard from './ui/HoverCard'
 
 const BlogCard = ({ post, index }: { post: BlogPost; index: number }) => {
   const { t } = useLanguage()
@@ -19,7 +20,7 @@ const BlogCard = ({ post, index }: { post: BlogPost; index: number }) => {
       viewport={{ once: true }}
       className="group relative"
     >
-      <div className="glass scanline-container rounded-2xl p-6 h-full flex flex-col border border-white/5 hover:border-[var(--blue)]/30 transition-all duration-500 hover:shadow-[0_10px_40px_rgba(77,163,255,0.1)] group-hover:-translate-y-1">
+      <HoverCard className="glass scanline-container p-6 h-full flex flex-col">
         <div className="flex items-center gap-2 mb-4">
           <span className="text-[10px] font-bold text-blue-500 px-2 py-0.5 rounded-full bg-blue-500/10 border border-blue-500/20 uppercase tracking-wider">
             {post.category}
@@ -53,7 +54,7 @@ const BlogCard = ({ post, index }: { post: BlogPost; index: number }) => {
             <ArrowRight size={14} className="group-hover/btn:translate-x-1 transition-transform" />
           </button>
         </div>
-      </div>
+      </HoverCard>
     </motion.div>
   )
 }
