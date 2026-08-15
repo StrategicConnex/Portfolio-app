@@ -29,19 +29,10 @@ export const HERO_RACK_POS: [number, number, number] = [0, 1.2, 0]
 export const HERO_RACK_GLB_POS: [number, number, number] = [0, 0, 0]
 
 /**
- * Manifesto de assets GLB (ASSET-PIPELINE.md §8). `null` = geometría
- * procedural (default). Al añadir un asset a `/public/assets/3d/`, asignar su
- * ruta aquí: el slot (`GlbAsset`) lo intenta con fallback procedural (SPEC §37),
- * y `?dc-glb=<nombre>` permite forzarlo en runtime para QA.
- *
- * GLBs generados por `scripts/gen-assets.mjs` (gates de autoría + payload < 3 MB).
- * `heroRack` y `storageUnit` tienen slot en la escena; `networkSwitch` y
- * `siemDisplay` se montarán con `ServerSwitchPool`/`SiemDisplayPanel`
- * (ASSET-SCENE-MAP §5) — el manifiesto ya los declara listos.
- *
- * Outputs Tripo promovidos (SPEC §52): `server_rack_v03` (S1 hero) y
- * `storage_unit_v02` (S4 protagonista, ex-Catalyst reasignado). El switch
- * vuelve al v01 1U procedural hasta que exista un output real de switch.
+ * Manifesto de assets GLB — DESHABILITADO (codebase cleaner).
+ * Los GLBs fueron removidos de la escena 3D en favor de imágenes
+ * realistas en el DOM layer (hybrid approach). Los archivos GLB
+ * permanecen en /public/assets/3d/ como backup.
  */
 export const GLB_ASSETS: {
   heroRack: string | null
@@ -49,10 +40,10 @@ export const GLB_ASSETS: {
   storageUnit: string | null
   siemDisplay: string | null
 } = {
-  heroRack: '/assets/3d/server_rack_v03.glb',
-  networkSwitch: '/assets/3d/network_switch_v01.glb',
-  storageUnit: '/assets/3d/storage_unit_v02.glb',
-  siemDisplay: '/assets/3d/siem_display_v01.glb',
+  heroRack: null,
+  networkSwitch: null,
+  storageUnit: null,
+  siemDisplay: null,
 }
 
 /** Unidades (servidores) por rack del pasillo. */
