@@ -60,7 +60,7 @@ export default function Blog() {
   const { t } = useLanguage()
 
   return (
-    <section id="blog" className="py-24 sm:py-32 bg-[#04080f]/30">
+    <section id="blog" className="relative z-10 py-24 sm:py-32 bg-[#04080f]/85">
       <div className="max-w-6xl mx-auto px-6">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16">
           <div className="max-w-2xl">

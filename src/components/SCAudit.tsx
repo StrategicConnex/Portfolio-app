@@ -65,7 +65,7 @@ const SCAudit = () => {
   return (
     <section
       id="scaudit"
-      className="py-24 sm:py-32 relative overflow-hidden"
+      className="relative z-10 py-24 sm:py-32 overflow-hidden bg-[#04080f]/85"
       aria-label={t('scaudit.label')}
     >
       {/* ── Background separators ── */}

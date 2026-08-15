@@ -213,7 +213,7 @@ export default function SIEMDashboard() {
   }, [])
 
   return (
-    <section id="siem" className="py-20 px-6 bg-[#04080f]/20">
+    <section id="siem" className="relative z-10 py-20 px-6 bg-[#04080f]/85">
       {/* P4-cierre editorial: la sección siem cubre el tramo profundo del
           atravieso de racks (cámara dentro del corredor). Contenedor
           estrecho (max-w-4xl) → gutters más anchos con el canvas NÍTIDO a los

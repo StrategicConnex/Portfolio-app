@@ -117,7 +117,7 @@ const AuditHub = () => {
   }, [severityFilter])
 
   return (
-    <section id="audit-hub" className="py-24 sm:py-32 relative overflow-hidden">
+    <section id="audit-hub" className="relative z-10 py-24 sm:py-32 overflow-hidden bg-[#04080f]/85">
       {/* Background FX */}
       <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[#3B82F640] to-transparent" />
       <div className="absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[#3B82F620] to-transparent" />

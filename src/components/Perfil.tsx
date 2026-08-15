@@ -103,7 +103,7 @@ export default function Perfil() {
   const { t, language } = useLanguage()
 
   return (
-    <section id="perfil" className="py-20 sm:py-32 px-4 sm:px-6 md:px-8" style={{ background: 'rgba(4,8,15,0.30)' }}>
+    <section id="perfil" className="relative z-10 py-20 sm:py-32 px-4 sm:px-6 md:px-8" style={{ background: 'rgba(4,8,15,0.85)' }}>
       <div className="max-w-[1100px] mx-auto">
         <SectionHeader label={t('profile.label')} title={t('profile.title')} highlight={t('profile.highlight')} />
 

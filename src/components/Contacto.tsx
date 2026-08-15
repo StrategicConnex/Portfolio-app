@@ -59,6 +59,7 @@ export default function Contacto() {
   return (
     <section
       id="contacto"
+      className="relative z-10"
       style={{
         padding: 'clamp(2rem, 5vw, 5rem) clamp(1rem, 5vw, 2rem)',
         background: 'var(--bg2)',

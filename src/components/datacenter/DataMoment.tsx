@@ -1,7 +1,7 @@
 'use client'
 
 import { useRef, useEffect, useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { useActiveScene } from '@/lib/activeScene'
 
 /**
@@ -93,37 +93,37 @@ export default function DataMoment() {
   const scene = useActiveScene()
   const active = scene === 2 // S3 = Data in Motion
 
+  // No renderizar nada cuando no estamos en S3 — evita que AnimatePresence
+  // mantenga el DOM fijo cubriendo el viewport.
+  if (!active) return null
+
   return (
-    <AnimatePresence>
-      {active && (
-        <motion.div
-          key="data-moment"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.5 }}
-          aria-hidden="true"
-          className="fixed inset-0 z-40 pointer-events-none flex items-center justify-center"
-        >
-          {/* Backdrop sutil: solo oscurece lo suficiente para que los números se lean */}
-          <div className="absolute inset-0 bg-[#04080f]/40" />
+    <motion.div
+      key="data-moment"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.5 }}
+      aria-hidden="true"
+      className="fixed inset-0 z-[35] pointer-events-none flex items-center justify-center"
+    >
+      {/* Backdrop sutil: solo oscurece lo suficiente para que los números se lean */}
+      <div className="absolute inset-0 bg-[#04080f]/50" />
 
-          {/* Métricas gigantes */}
-          <div className="relative z-10 grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-8 max-w-6xl w-full px-6">
-            {METRICS.map((m, i) => (
-              <MetricCard key={m.label} metric={m} active={active} index={i} />
-            ))}
-          </div>
+      {/* Métricas gigantes */}
+      <div className="relative z-10 grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-8 max-w-6xl w-full px-6">
+        {METRICS.map((m, i) => (
+          <MetricCard key={m.label} metric={m} active={active} index={i} />
+        ))}
+      </div>
 
-          {/* Línea decorativa inferior */}
-          <motion.div
-            initial={{ scaleX: 0 }}
-            animate={active ? { scaleX: 1 } : { scaleX: 0 }}
-            transition={{ duration: 1.2, delay: 0.6, ease: [0.22, 1, 0.36, 1] }}
-            className="absolute bottom-[15%] left-[10%] right-[10%] h-[1px] bg-gradient-to-r from-transparent via-[var(--blue)]/30 to-transparent origin-center"
-          />
-        </motion.div>
-      )}
-    </AnimatePresence>
+      {/* Línea decorativa inferior */}
+      <motion.div
+        initial={{ scaleX: 0 }}
+        animate={{ scaleX: 1 }}
+        transition={{ duration: 1.2, delay: 0.6, ease: [0.22, 1, 0.36, 1] }}
+        className="absolute bottom-[15%] left-[10%] right-[10%] h-[1px] bg-gradient-to-r from-transparent via-[var(--blue)]/30 to-transparent origin-center"
+      />
+    </motion.div>
   )
 }
