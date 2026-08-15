@@ -29,6 +29,7 @@ const Proyecto        = dynamic(() => import('@/components/Proyecto'))
 const Contacto        = dynamic(() => import('@/components/Contacto'))
 const Footer          = dynamic(() => import('@/components/Footer'))
 import DatacenterMount from '@/components/datacenter/DatacenterMount'
+import DataMoment from '@/components/datacenter/DataMoment'
 import StaticPoster from '@/components/datacenter/StaticPoster'
 
 export default function Home() {
@@ -43,6 +44,7 @@ export default function Home() {
       */}
       <StaticPoster />
       <DatacenterMount />
+      <DataMoment />
       <Navbar />
       {/* z-40: el contenido DOM se apila por encima del canvas fijo (SPEC §2) */}
       <main className="relative z-40">
