@@ -7,6 +7,7 @@ import FadeIn from './ui/FadeIn'
 import Icon from './ui/Icon'
 import { useLanguage } from '@/context/LanguageContext'
 import HeroVisual from './ui/HeroVisual'
+import SlideReveal from './ui/SlideReveal'
 import { 
   LOG_LINES, 
   PURDUE_ZONES, 
@@ -232,7 +233,10 @@ export default function SIEMDashboard() {
           vent tiles se lean detrás del contenido sin perder legibilidad
           (las tarjetas glass mantienen su propio fondo para el texto). */}
       <div className="max-w-4xl mx-auto">
-        <SectionHeader label={t('siem.label')} title={t('siem.title')} highlight={t('siem.highlight')} />
+        {/* P5 hero moment: dramatic slide reveal for SIEM title */}
+        <SlideReveal color="var(--blue)" direction="left" className="mb-2">
+          <SectionHeader label={t('siem.label')} title={t('siem.title')} highlight={t('siem.highlight')} />
+        </SlideReveal>
 
         <FadeIn delay={0.1}>
           <p className="text-slate-400 mb-2 text-sm max-w-2xl">

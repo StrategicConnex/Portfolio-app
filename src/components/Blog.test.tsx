@@ -4,7 +4,12 @@ import Blog from './Blog'
 
 vi.mock('framer-motion', async () => {
   const { createMotionMock } = await import('@/test-utils/framer-motion')
-  return { motion: createMotionMock(['div', 'button']) }
+  return {
+    motion: createMotionMock(['div', 'button']),
+    useInView: () => true,
+    useScroll: () => ({ scrollYProgress: { get: () => 0 } }),
+    useTransform: () => ({ get: () => 0 }),
+  }
 })
 
 const mockT = vi.fn((key: string) => {

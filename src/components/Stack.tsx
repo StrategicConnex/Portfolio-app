@@ -5,6 +5,7 @@ import { useRef } from 'react'
 import Image from 'next/image'
 import SectionHeader from './ui/SectionHeader'
 import Icon from './ui/Icon'
+import StaggerReveal from './ui/StaggerReveal'
 import { useLanguage } from '@/context/LanguageContext'
 
 const categories = [
@@ -132,11 +133,13 @@ export default function Stack() {
       <div className="max-w-[1100px] mx-auto">
         <SectionHeader label={t('stack.label')} title={t('stack.title')} highlight={t('stack.highlight')} />
 
-        <div className="grid grid-cols-[repeat(auto-fit,minmax(240px,1fr))] gap-3 md:gap-5">
-          {categories.map((item, i) => (
-            <StackCard key={item.cat} item={item} index={i} />
-          ))}
-        </div>
+        <StaggerReveal stagger={0.08} direction="scale">
+          <div className="grid grid-cols-[repeat(auto-fit,minmax(240px,1fr))] gap-3 md:gap-5">
+            {categories.map((item, i) => (
+              <StackCard key={item.cat} item={item} index={i} />
+            ))}
+          </div>
+        </StaggerReveal>
       </div>
     </section>
   )

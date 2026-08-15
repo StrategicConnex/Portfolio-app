@@ -6,6 +6,7 @@ import Image from 'next/image'
 import SectionHeader from './ui/SectionHeader'
 import FadeIn from './ui/FadeIn'
 import Icon from './ui/Icon'
+import StaggerReveal from './ui/StaggerReveal'
 import { useLanguage } from '@/context/LanguageContext'
 
 const metrics = [
@@ -150,26 +151,24 @@ export default function Perfil() {
           </div>
         </FadeIn>
 
-        {/* Metrics */}
-        <div className="grid grid-cols-[repeat(auto-fit,minmax(180px,1fr))] gap-3 md:gap-5 mb-10 md:mb-14">
-          {metrics.map((m, i) => <MetricCard key={m.label} {...m} delay={i * 0.1 + 0.2} />)}
-        </div>
+        {/* Metrics — P4 stagger reveal */}
+        <StaggerReveal stagger={0.1} direction="scale">
+          <div className="grid grid-cols-[repeat(auto-fit,minmax(180px,1fr))] gap-3 md:gap-5 mb-10 md:mb-14">
+            {metrics.map((m, i) => <MetricCard key={m.label} {...m} delay={i * 0.1 + 0.2} />)}
+          </div>
+        </StaggerReveal>
 
-        {/* Competencias grouped */}
+        {/* Competencias grouped — P4 stagger reveal */}
         <FadeIn delay={0.3}>
           <div className="mt-12 mb-4">
             <p className="text-[0.65rem] md:text-[0.72rem] text-[var(--blue)] tracking-[3px] uppercase mb-3 md:mb-5">
               Dominio técnico completo
             </p>
             <div className="grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] gap-3 md:gap-5">
-              {competencias.map((c, i) => (
+              {competencias.map((c) => (
                 <motion.div
                   key={c.grupo}
                   whileHover={{ y: -4, borderColor: c.color + '88' }}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.05, duration: 0.5 }}
                   className="relative overflow-hidden min-h-[160px] flex flex-col justify-start rounded-xl p-3 md:p-5"
                   style={{
                     background: 'var(--card)',

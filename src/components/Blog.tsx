@@ -6,6 +6,7 @@ import { BLOG_POSTS, BlogPost } from '@/data/blog'
 import { useLanguage } from '@/context/LanguageContext'
 import { ArrowRight, BookOpen, Clock, Tag } from 'lucide-react'
 import HeroVisual from './ui/HeroVisual'
+import StaggerReveal from './ui/StaggerReveal'
 
 const BlogCard = ({ post, index }: { post: BlogPost; index: number }) => {
   const { t } = useLanguage()
@@ -94,14 +95,16 @@ export default function Blog() {
           </motion.button>
         </div>
 
-        {/* P1 asymmetric masonry: first post spans 2 cols (feature), rest in 1 col */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
-          {BLOG_POSTS.map((post, i) => (
-            <div key={post.id} className={i === 0 ? 'md:col-span-2' : ''}>
-              <BlogCard post={post} index={i} />
-            </div>
-          ))}
-        </div>
+        {/* P1 asymmetric masonry + P4 stagger reveal */}
+        <StaggerReveal stagger={0.12} direction="up">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
+            {BLOG_POSTS.map((post, i) => (
+              <div key={post.id} className={i === 0 ? 'md:col-span-2' : ''}>
+                <BlogCard post={post} index={i} />
+              </div>
+            ))}
+          </div>
+        </StaggerReveal>
       </div>
     </section>
   )

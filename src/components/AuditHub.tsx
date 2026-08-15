@@ -3,9 +3,9 @@
 import { motion, AnimatePresence } from 'framer-motion'
 import React, { memo, useState, useMemo } from 'react'
 import SectionHeader from './ui/SectionHeader'
-import FadeIn from './ui/FadeIn'
 import { useLanguage } from '@/context/LanguageContext'
 import HeroVisual from './ui/HeroVisual'
+import SlideReveal from './ui/SlideReveal'
 import { 
   COMPLIANCE_MARCOS, 
   AUDIT_FINDINGS, 
@@ -133,14 +133,15 @@ const AuditHub = () => {
       <div className="absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[#3B82F620] to-transparent" />
 
       <div className="container px-4 mx-auto max-w-7xl">
-        <FadeIn>
+        {/* P5 hero moment: dramatic slide reveal for Audit title */}
+        <SlideReveal color="var(--blue)" direction="right" className="mb-2">
           <SectionHeader 
             label={t('audit.label')} 
             title={t('audit.title')} 
             highlight={t('audit.highlight')} 
             center={false}
           />
-        </FadeIn>
+        </SlideReveal>
 
         {/* ─── Giant Data Strip (P1): stats full-width, numbers massive ─── */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 mt-12 sm:mt-16 border-t border-b border-white/5 py-6 sm:py-8">
