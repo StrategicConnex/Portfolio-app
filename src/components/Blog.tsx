@@ -84,9 +84,12 @@ export default function Blog() {
           </motion.button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {/* P1 asymmetric masonry: first post spans 2 cols (feature), rest in 1 col */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
           {BLOG_POSTS.map((post, i) => (
-            <BlogCard key={post.id} post={post} index={i} />
+            <div key={post.id} className={i === 0 ? 'md:col-span-2' : ''}>
+              <BlogCard post={post} index={i} />
+            </div>
           ))}
         </div>
       </div>

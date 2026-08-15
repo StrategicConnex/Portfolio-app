@@ -14,10 +14,10 @@ import {
 
 /* ─── Sub-components ─── */
 
-const StatCard = ({ label, value, color }: { label: string, value: string | number, color: string }) => (
-  <div className="glass rounded-xl p-4 sm:p-5 flex flex-col items-center justify-center text-center transition-all duration-300 hover:border-white/20 hover:bg-white/[0.06] group">
+const StatCard = ({ label, value, color, giant }: { label: string, value: string | number, color: string, giant?: boolean }) => (
+  <div className={`${giant ? 'text-center py-4 sm:py-6' : 'glass rounded-xl p-4 sm:p-5'} flex flex-col items-center justify-center transition-all duration-300 group`}>
     <div className="text-[0.6rem] sm:text-[0.65rem] text-slate-500 uppercase tracking-[0.2em] mb-1.5 group-hover:text-slate-400 transition-colors font-bold">{label}</div>
-    <div className="text-2xl sm:text-3xl font-bold font-mono transition-all duration-300" style={{ color, textShadow: `0 0 20px ${color}40` }}>{value}</div>
+    <div className={`${giant ? 'text-5xl sm:text-6xl md:text-7xl font-black tracking-tighter' : 'text-2xl sm:text-3xl font-bold'} font-mono transition-all duration-300`} style={{ color, textShadow: giant ? `0 0 40px ${color}30` : `0 0 20px ${color}40` }}>{value}</div>
   </div>
 )
 
@@ -132,18 +132,16 @@ const AuditHub = () => {
           />
         </FadeIn>
 
-        <div className="grid grid-cols-1 xl:grid-cols-12 gap-8 mt-12 sm:mt-16">
-          
-          {/* ─── Column 1: Summary Stats (Vertical on big screen, horizontal on small) ─── */}
-          <div className="xl:col-span-3 grid grid-cols-2 xl:grid-cols-1 gap-4 order-2 xl:order-1">
-            <StatCard label={t('audit.stats.controls')} value={`${AUDIT_SUMMARY.passed}/${AUDIT_SUMMARY.totalControls}`} color="#3B82F6" />
-            <StatCard label={t('audit.stats.risk_gap')} value={`${Math.round(((AUDIT_SUMMARY.totalControls - AUDIT_SUMMARY.passed) / AUDIT_SUMMARY.totalControls) * 100)}%`} color="#EF4444" />
-            <StatCard label={t('audit.stats.next_cycle')} value={AUDIT_SUMMARY.nextAuditDate} color="#8B5CF6" />
-            <StatCard label={t('audit.stats.global_compliance')} value={`${Math.round(COMPLIANCE_MARCOS.reduce((a, b) => a + b.progress, 0) / COMPLIANCE_MARCOS.length)}%`} color="#10B981" />
-          </div>
+        {/* ─── Giant Data Strip (P1): stats full-width, numbers massive ─── */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 mt-12 sm:mt-16 border-t border-b border-white/5 py-6 sm:py-8">
+          <StatCard label={t('audit.stats.controls')} value={`${AUDIT_SUMMARY.passed}/${AUDIT_SUMMARY.totalControls}`} color="#3B82F6" giant />
+          <StatCard label={t('audit.stats.risk_gap')} value={`${Math.round(((AUDIT_SUMMARY.totalControls - AUDIT_SUMMARY.passed) / AUDIT_SUMMARY.totalControls) * 100)}%`} color="#EF4444" giant />
+          <StatCard label={t('audit.stats.next_cycle')} value={AUDIT_SUMMARY.nextAuditDate} color="#8B5CF6" giant />
+          <StatCard label={t('audit.stats.global_compliance')} value={`${Math.round(COMPLIANCE_MARCOS.reduce((a, b) => a + b.progress, 0) / COMPLIANCE_MARCOS.length)}%`} color="#10B981" giant />
+        </div>
 
-          {/* ─── Column 2: Main Console ─── */}
-          <div className="xl:col-span-9 order-1 xl:order-2">
+        {/* ─── Main Console ─── */}
+        <div className="mt-10">
             <div className="glass scanline-container rounded-2xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)] backdrop-blur-2xl">
               
               {/* Console Header / Tabs */}
@@ -353,7 +351,6 @@ const AuditHub = () => {
               </div>
             </div>
           </div>
-        </div>
       </div>
     </section>
   )

@@ -1,4 +1,5 @@
 import FadeIn from './FadeIn'
+import TextReveal from './TextReveal'
 
 interface SectionHeaderProps {
   label: string
@@ -18,7 +19,7 @@ export default function SectionHeader({
       {/* Eyebrow editorial (G6 + P0): mono teletipo + tracking amplio */}
       <p className="eyebrow mb-2">{label}</p>
       <h2
-        className="font-bold tracking-tight mb-3"
+        className="font-bold tracking-tight mb-3 overflow-hidden"
         style={{
           fontSize: 'clamp(2rem, 5vw, 3.5rem)',
           lineHeight: 1.05,
@@ -26,7 +27,12 @@ export default function SectionHeader({
           color: 'var(--text)',
         }}
       >
-        {title}{' '}
+        <TextReveal
+          as="span"
+          lines={[title]}
+          className="block"
+          lineClassName="block"
+        />
         {highlight && (
           <span style={{ color: 'var(--gold)' }}>{highlight}</span>
         )}

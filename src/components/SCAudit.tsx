@@ -152,30 +152,29 @@ const SCAudit = () => {
 
           {/* Right: feature cards grid */}
           <FadeIn direction="right" delay={0.2}>
-            <div className="grid grid-cols-2 gap-3">
+            {/* P1 full-bleed feature strip: inline, no cards, alternating alignment */}
+            <div className="space-y-0 divide-y divide-white/[0.04]">
               {FEATURES.map((f, i) => (
                 <motion.div
                   key={f.key}
-                  initial={{ opacity: 0, y: 16 }}
-                  whileInView={{ opacity: 1, y: 0 }}
+                  initial={{ opacity: 0, x: i % 2 === 0 ? -20 : 20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
-                  transition={{ duration: 0.45, delay: 0.05 * i }}
-                  className={`glass rounded-xl p-4 border transition-all duration-300 cursor-default group ${f.accent}`}
+                  transition={{ duration: 0.5, delay: 0.04 * i }}
+                  className="flex items-start gap-4 py-4 px-2 group hover:bg-white/[0.02] transition-colors rounded-lg"
                 >
-                  <div className="flex items-start gap-3">
-                    <span
-                      className={`text-xl leading-none mt-0.5 flex-shrink-0 ${f.color}`}
-                      aria-hidden="true"
-                    >
-                      {f.icon}
-                    </span>
-                    <div className="min-w-0">
-                      <div className={`text-[0.72rem] font-bold mb-0.5 transition-colors ${f.color}`}>
-                        {t(`scaudit.feat.${f.key}.name`)}
-                      </div>
-                      <div className="text-[0.65rem] text-slate-500 leading-relaxed line-clamp-2 group-hover:text-slate-400 transition-colors">
-                        {t(`scaudit.feat.${f.key}.desc`)}
-                      </div>
+                  <span
+                    className={`text-2xl leading-none mt-0.5 flex-shrink-0 ${f.color}`}
+                    aria-hidden="true"
+                  >
+                    {f.icon}
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <div className={`text-[0.8rem] font-bold mb-0.5 transition-colors ${f.color}`}>
+                      {t(`scaudit.feat.${f.key}.name`)}
+                    </div>
+                    <div className="text-[0.7rem] text-slate-500 leading-relaxed group-hover:text-slate-400 transition-colors">
+                      {t(`scaudit.feat.${f.key}.desc`)}
                     </div>
                   </div>
                 </motion.div>
