@@ -45,6 +45,40 @@ asignan factores PBR por región.
 
 ## 3. Workflow Blender genérico (aplica a ambos assets)
 
+### 3.0 Automatización headless (nuevo en P6a.1)
+
+El split canónico está automatizado en `artwork/living-datacenter/blender-p6a-split.py`
+(Blender ≥ 3.6, headless — sin tocar la GUI):
+
+```bash
+# 1. Inspeccionar el GLB antes de cortar (imprime las islas UV + regiones a separar):
+blender --background --factory-startup --python artwork/living-datacenter/blender-p6a-split.py -- \
+  --asset rack --input public/assets/3d/server_rack_v03.glb \
+  --tex artwork/living-datacenter/meshy-kit/04-rack/raw/server_rack_v03_tex-src.jpg \
+  --out public/assets/3d/server_rack_v04.glb --dry-run
+
+# 2. Ejecutar el split (exporta el GLB versionado con meshes canónicos + PBR del contrato):
+#    (mismo comando sin --dry-run; storage: --asset storage --input public/assets/3d/storage_unit_v02.glb \
+#     --tex artwork/living-datacenter/meshy-kit/02-storage/raw/storage_unit_v02_tex-src.jpg \
+#     --out public/assets/3d/storage_unit_v03.glb)
+
+# 3. Verificación pre-promoción (fuera de Blender):
+node artwork/living-datacenter/dump-glb-pbr.mjs public/assets/3d/server_rack_v04.glb public/assets/3d/storage_unit_v03.glb
+```
+
+**Cómo funciona:** importa el GLB, corrige el anclaje (base y=0, sin re-escalar),
+carga el albedo full-res del provenance (`meshy-kit/<asset>/raw/*_tex-src.jpg`) como
+Base Color compartido y separa por región con filtros configurados por asset
+(`axis`/`axis_range` = banda espacial del centroide, `uv_bounds` = rango de islas
+UV). A cada región le asigna su material Principled del contrato (§4) — los
+`leds_*` con baseColor apagado (el runtime les da el emisivo, bridge). Exporta
+GLB con `Triangulate` AL FINAL, `Apply Transforms`, sin cámaras/luces/animaciones.
+
+**Regla de seguridad:** si una región no se aísla con los filtros (p.ej. los LEDs
+están horneados en el mismo UV del chassis, muy común en Tripo), el script lo
+**reporta y deja esa geometría en `chassis`** — nunca corta a ciegas. Ajustar los
+filtros con el diagnóstico del `--dry-run`.
+
 ### 3.1 Preparación
 
 1. **Fuente:** usar el GLB de PROVENANCE (textura full-res del `meshy-kit/`), NO el optimizado de `/public/assets/3d/` (que ya fue extraído y convertido a WebP 2048²).
