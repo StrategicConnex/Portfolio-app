@@ -11,10 +11,13 @@ import {
   buildPhotonPath,
   failoverEvent,
   photonArrival,
+  photonDeparture,
   photonFailoverTint,
   photonGlobalProgress,
   PHOTON_COLOR_BY_SCENE,
+  PHOTON_NODE_GLOBAL,
 } from '@/lib/datacenter.storyline'
+import { getGlowTexture, pointGeometry } from './glowTexture'
 
 const TRAIL_COUNT = 7
 const TRAIL_GAP = 0.008 // separación de la estela en progreso global
@@ -22,38 +25,9 @@ const LERP_RATE = 5 // suavizado del color/estado (SPEC §16 — nunca cortes br
 const BASE_SIZE = 0.16
 const BREATH = 0.03 // deriva viva de la cabeza (mínima, SPEC §3 restraint)
 
-let glowCache: THREE.CanvasTexture | null = null
-
 /** Colores del arco de temperatura pre-computados (cero allocations por frame,
  *  SPEC §32). */
 const SCENE_COLORS: THREE.Color[] = PHOTON_COLOR_BY_SCENE.map((c) => new THREE.Color(c))
-
-/** Glow radial procedural (patrón singleton de meshDoorTexture): el fotón se
- *  lee como LUZ, no como cuadrado (el defecto del audit "solo cuadrados"). */
-function getPhotonGlow(): THREE.CanvasTexture {
-  if (glowCache) return glowCache
-  const size = 64
-  const canvas = document.createElement('canvas')
-  canvas.width = size
-  canvas.height = size
-  const ctx = canvas.getContext('2d')
-  if (!ctx) throw new Error('2d context unavailable')
-  const g = ctx.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2)
-  g.addColorStop(0, 'rgba(255,255,255,1)')
-  g.addColorStop(0.35, 'rgba(255,255,255,0.7)')
-  g.addColorStop(1, 'rgba(255,255,255,0)')
-  ctx.fillStyle = g
-  ctx.fillRect(0, 0, size, size)
-  const tex = new THREE.CanvasTexture(canvas)
-  glowCache = tex
-  return tex
-}
-
-function pointGeometry(count: number): THREE.BufferGeometry {
-  const g = new THREE.BufferGeometry()
-  g.setAttribute('position', new THREE.BufferAttribute(new Float32Array(count * 3), 3))
-  return g
-}
 
 /**
  * P7d — EL FOTÓN (hilo de continuidad del storyline, audit de narrativa):
@@ -77,7 +51,7 @@ export default function StoryPhoton() {
   const progress = useSectionProgress(ALL_SECTIONS)
   const { reduced } = usePrefersReducedMotion()
   const path = useMemo(() => buildPhotonPath(), [])
-  const glow = useMemo(() => getPhotonGlow(), [])
+  const glow = useMemo(() => getGlowTexture(), [])
   const headGeo = useMemo(() => pointGeometry(1), [])
   const trailGeo = useMemo(() => pointGeometry(TRAIL_COUNT), [])
   const headRef = useRef<THREE.Points>(null)
@@ -100,8 +74,9 @@ export default function StoryPhoton() {
     const scene = resolveSceneForSection(p.active)
     const sceneIndex = scene ? SCENES.indexOf(scene) : -1
     const sp = scene ? computeSceneProgress(scene, p.active, p.section) : 0
-    // reduced-motion: el fotón espera estático en el nodo de llegada.
-    const global = reduced ? 1 : photonGlobalProgress(sceneIndex, sp)
+    // reduced-motion: el fotón espera estático en el nodo central (no viaja
+    // por el haz — defensivo: el canvas normalmente no monta en modo reduce).
+    const global = reduced ? PHOTON_NODE_GLOBAL : photonGlobalProgress(sceneIndex, sp)
 
     // Posición de la cabeza + estela (t a lo largo del path, clamped en los
     // extremos — el fotón se congrega en su nacimiento y se asienta al llegar).
@@ -136,13 +111,16 @@ export default function StoryPhoton() {
       boost = photonFailoverTint(failoverEvent(sp).primary)
     }
 
-    // Llegada (S5): bloom + respiración del clímax.
+    // Llegada (S5, P7d) + partida por el haz (P7e): bloom en el nodo central,
+    // luego el fotón continúa viajando por el haz hacia el clúster distante —
+    // se encoge levemente al receder hacia la niebla (dep 0→1).
     const arr = reduced ? 1 : photonArrival(global)
+    const dep = reduced ? 0 : photonDeparture(global)
     const breathe = 1 + 0.9 * arr + 0.35 * arr * Math.sin(state.clock.elapsedTime * 3)
 
     if (headMat.current) {
-      curSize.current += (BASE_SIZE * (1 + boost.sizeBoost) * breathe - curSize.current) * k
-      curOpacity.current += (Math.min(1, 0.95 * (1 + boost.opacityBoost) + 0.05 * arr) - curOpacity.current) * k
+      curSize.current += (BASE_SIZE * (1 + boost.sizeBoost) * breathe * (1 - 0.3 * dep) - curSize.current) * k
+      curOpacity.current += (Math.min(1, 0.95 * (1 + boost.opacityBoost) + 0.05 * arr) * (1 - 0.25 * dep) - curOpacity.current) * k
       headMat.current.size = curSize.current
       headMat.current.opacity = curOpacity.current
       headMat.current.color.copy(curColor.current)
@@ -150,8 +128,8 @@ export default function StoryPhoton() {
     if (trailMat.current) {
       trailColor.current.lerp(curColor.current, k * 0.6)
       trailMat.current.color.copy(trailColor.current)
-      trailMat.current.size = BASE_SIZE * 0.38 * (1 + boost.sizeBoost * 0.5) * (1 + arr * 0.6)
-      trailMat.current.opacity = Math.min(1, 0.35 + 0.1 * boost.opacityBoost + 0.25 * arr)
+      trailMat.current.size = BASE_SIZE * 0.38 * (1 + boost.sizeBoost * 0.5) * (1 + arr * 0.6) * (1 - 0.4 * dep)
+      trailMat.current.opacity = Math.min(1, 0.35 + 0.1 * boost.opacityBoost + 0.25 * arr) * (1 - 0.4 * dep)
     }
   })
 

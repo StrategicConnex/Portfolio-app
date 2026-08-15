@@ -5,7 +5,6 @@
  * renderiza. Uso: node ab-photon.mjs <tag>
  */
 import { chromium } from 'playwright'
-import sharp from 'sharp'
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'

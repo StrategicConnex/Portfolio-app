@@ -7,6 +7,7 @@ import DustParticles from './DustParticles'
 import DataStreams from './DataStreams'
 import FailoverStreams from './FailoverStreams'
 import StoryPhoton from './StoryPhoton'
+import ConnectionBeam from './ConnectionBeam'
 import BackupUnits from './BackupUnits'
 import PurdueHologram from './PurdueHologram'
 import MicroAnimDriver from './MicroAnimDriver'
@@ -46,6 +47,7 @@ export default function DatacenterScene({ profile }: { profile: QualityProfile }
           <DataStreams />
           <FailoverStreams />
           <StoryPhoton />
+          <ConnectionBeam />
           <PurdueHologram />
         </>
       )}

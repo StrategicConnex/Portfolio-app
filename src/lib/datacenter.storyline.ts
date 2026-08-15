@@ -72,8 +72,11 @@ export function failoverEvent(sceneProgress: number): FailoverSnapshot {
  *               ([-4.6,-1.75,-6.4]→[0,-1.75,-7.2]→[4.6,-1.75,-6.4] — la misma
  *               geometría de FailoverStreams: el fotón sobrevive porque va en
  *               la ruta que transporta todo durante la ventana dead)
- *   S5 conn   — asciende por el pasillo y llega al nodo central (display SIEM
- *               de S5, [0, 2.0, -1.85] frente a la pantalla)
+ *   S5 conn   — asciende por el pasillo, llega al nodo central (display SIEM
+ *               de S5, [0, 2.0, -1.85] frente a la pantalla) y CONTINÚA por el
+ *               haz hacia el clúster distante (P7e): los últimos 2 puntos del
+ *               tramo son colineales con BEAM_ORIGIN→BEAM_TARGET (testeado) —
+ *               el fotón enciende el haz y viaja por él hacia la red.
  */
 export const PHOTON_SEGMENTS: [number, number, number][][] = [
   // S1 boot — nacimiento en el rack hero. El tramo va DELANTE del rack
@@ -108,14 +111,68 @@ export const PHOTON_SEGMENTS: [number, number, number][][] = [
     [4.6, -1.75, -6.4],
     [3.2, -0.8, -4.8],
   ],
-  // S5 connection — ascenso al nodo central
+  // S5 connection — ascenso al nodo central y partida por el haz (P7e)
+  // (los 2 últimos puntos son colineales con el haz — el fotón viaja por él)
   [
     [3.2, -0.8, -4.8],
     [1.5, 0.6, -3.2],
     [0, 1.5, -2.5],
     [0, 2.0, -1.85],
+    [-2.25, 2.45, -11.82],
+    [-4, 2.8, -19.57],
   ],
 ]
+
+/** Progreso GLOBAL en el que el fotón está en el nodo central (índice del nodo
+ *  sobre el path total): el bloom de llegada (P7d) y la partida por el haz
+ *  (P7e) se anclan a esta constante, no a literales dispersos. */
+export const PHOTON_NODE_GLOBAL = 21 / 23
+
+/**
+ * P7e — CONEXIÓN COMO WAN (el clímax): el nodo central de S5 enciende un haz
+ * de luz hacia un clúster distante fuera de frame — el resto de la red — al
+ * borde de la niebla (fog S5 near 18 / far 55). El datacenter es UN nodo, no
+ * el mundo; el reveal diagonal del P3 muestra el haz emergiendo del nodo y
+ * desvaneciéndose en lo desconocido.
+ */
+export const BEAM_ORIGIN: [number, number, number] = [0, 2.0, -1.85]
+export const BEAM_TARGET: [number, number, number] = [-5, 3, -24]
+
+/** Puntos del clúster distante (la "granja" de la red, al borde de la niebla):
+ *  retícula 4×3 con jitter determinístico alrededor del target. */
+export function beamClusterPoints(count = 12): [number, number, number][] {
+  const pts: [number, number, number][] = []
+  for (let i = 0; i < count; i++) {
+    const col = i % 4
+    const row = Math.floor(i / 4)
+    const jx = ((i * 37) % 10) / 10 - 0.5
+    const jy = ((i * 53) % 10) / 10 - 0.5
+    pts.push([
+      BEAM_TARGET[0] - 1.35 + col * 0.9 + jx * 0.35,
+      BEAM_TARGET[1] - 0.7 + row * 0.55 + jy * 0.3,
+      BEAM_TARGET[2] + jx * 0.4,
+    ])
+  }
+  return pts
+}
+
+/** Intensidad del haz (0 antes de S5, 1 en el reveal completo): ventana
+ *  determinística por progreso global — el haz se enciende cuando la cámara
+ *  del reveal diagonal ya está de vuelta (sp ≈ 0.2 de connection). */
+export function connectionBeamStrength(global: number): number {
+  return Math.min(1, Math.max(0, (global - 0.84) / 0.1))
+}
+
+/** Punto a lo largo del haz (0 = origen/nodo, 1 = target/clúster) — la misma
+ *  línea que recorre el fotón en su último tramo (colinealidad testeada). */
+export function beamPointAlong(t: number): [number, number, number] {
+  const tt = Math.min(1, Math.max(0, t))
+  return [
+    BEAM_ORIGIN[0] + (BEAM_TARGET[0] - BEAM_ORIGIN[0]) * tt,
+    BEAM_ORIGIN[1] + (BEAM_TARGET[1] - BEAM_ORIGIN[1]) * tt,
+    BEAM_ORIGIN[2] + (BEAM_TARGET[2] - BEAM_ORIGIN[2]) * tt,
+  ]
+}
 
 /**
  * Arco de temperatura del fotón (mismo arco del Phase Gate, SPEC §3):
@@ -173,9 +230,19 @@ export function photonFailoverTint(state: FailoverState): { sizeBoost: number; o
 }
 
 /**
- * Ventana de llegada (pulso del clímax): 0 antes, 1 en el nodo. Último 10% del
- * progreso global (el final del tramo de connection).
+ * Ventana de llegada (pulso del clímax, P7d): el bloom sube al llegar al nodo
+ * central (PHOTON_NODE_GLOBAL) y se desvanece cuando el fotón parte por el haz
+ * (P7e). 0 antes de la ventana, 1 exactamente en el nodo, 0 al partir.
  */
 export function photonArrival(global: number): number {
-  return Math.min(1, Math.max(0, (global - 0.9) / 0.1))
+  const g = Math.min(1, Math.max(0, global))
+  const rise = Math.min(1, Math.max(0, (g - 0.84) / (PHOTON_NODE_GLOBAL - 0.84)))
+  const fade = 1 - Math.min(1, Math.max(0, (g - PHOTON_NODE_GLOBAL) / 0.05))
+  return rise * fade
+}
+
+/** Partida por el haz (P7e): 0 en el nodo central, 1 en el clúster distante —
+ *  el fotón continúa el viaje más allá del datacenter, hacia la red. */
+export function photonDeparture(global: number): number {
+  return Math.min(1, Math.max(0, (global - PHOTON_NODE_GLOBAL) / (1 - PHOTON_NODE_GLOBAL)))
 }

@@ -1,12 +1,19 @@
 import { describe, expect, it } from 'vitest'
 import {
+  beamClusterPoints,
+  beamPointAlong,
+  BEAM_ORIGIN,
+  BEAM_TARGET,
   buildPhotonPath,
+  connectionBeamStrength,
   FAILOVER_TIMELINE,
   failoverEvent,
   photonArrival,
+  photonDeparture,
   photonFailoverTint,
   photonGlobalProgress,
   PHOTON_COLOR_BY_SCENE,
+  PHOTON_NODE_GLOBAL,
   PHOTON_SEGMENTS,
   purdueForScene,
   PURDUE_BY_SCENE,
@@ -99,11 +106,70 @@ describe('fotón P7d — path continuo (hilo de continuidad)', () => {
     expect(photonFailoverTint('restored')).toEqual({ sizeBoost: 0, opacityBoost: 0 })
   })
 
-  it('photonArrival: 0 antes de la ventana final, 1 en el nodo, clamped', () => {
+  it('photonArrival: el bloom sube al llegar al nodo y se desvanece al partir por el haz (P7e)', () => {
     expect(photonArrival(0.8)).toBe(0)
-    expect(photonArrival(0.9)).toBe(0)
-    expect(photonArrival(0.95)).toBeCloseTo(0.5)
-    expect(photonArrival(1)).toBeCloseTo(1)
-    expect(photonArrival(1.5)).toBe(1)
+    expect(photonArrival(0.84)).toBe(0)
+    // Mitad de la subida (0.84 → PHOTON_NODE_GLOBAL)
+    const riseMid = (0.84 + PHOTON_NODE_GLOBAL) / 2
+    expect(photonArrival(riseMid)).toBeCloseTo(0.5)
+    // Exactamente en el nodo: bloom pleno
+    expect(photonArrival(PHOTON_NODE_GLOBAL)).toBeCloseTo(1)
+    // Al partir por el haz, el bloom se desvanece
+    expect(photonArrival(1)).toBe(0)
+    expect(photonArrival(1.5)).toBe(0)
+  })
+
+  it('photonDeparture: 0 en el nodo, 1 en el clúster distante (P7e)', () => {
+    expect(photonDeparture(0.8)).toBe(0)
+    expect(photonDeparture(PHOTON_NODE_GLOBAL)).toBeCloseTo(0)
+    const mid = (PHOTON_NODE_GLOBAL + 1) / 2
+    expect(photonDeparture(mid)).toBeCloseTo(0.5)
+    expect(photonDeparture(1)).toBeCloseTo(1)
+    expect(photonDeparture(2)).toBe(1)
+  })
+
+  it('P7e haz: el último tramo del fotón es colineal con BEAM_ORIGIN→BEAM_TARGET', () => {
+    const s5 = PHOTON_SEGMENTS[4]
+    const node = s5[s5.length - 3] // el nodo central [0, 2.0, -1.85]
+    const last = s5[s5.length - 1]
+    const beamDir = [BEAM_TARGET[0] - BEAM_ORIGIN[0], BEAM_TARGET[1] - BEAM_ORIGIN[1], BEAM_TARGET[2] - BEAM_ORIGIN[2]]
+    const photonDir = [last[0] - node[0], last[1] - node[1], last[2] - node[2]]
+    const norm = (v: number[]) => {
+      const l = Math.hypot(v[0], v[1], v[2])
+      return [v[0] / l, v[1] / l, v[2] / l]
+    }
+    const a = norm(beamDir)
+    const b = norm(photonDir)
+    const dot = a[0] * b[0] + a[1] * b[1] + a[2] * b[2]
+    expect(dot).toBeGreaterThan(0.999)
+  })
+
+  it('connectionBeamStrength: ventana determinística del clímax', () => {
+    expect(connectionBeamStrength(0.8)).toBe(0)
+    expect(connectionBeamStrength(0.84)).toBe(0)
+    expect(connectionBeamStrength(0.89)).toBeCloseTo(0.5)
+    expect(connectionBeamStrength(0.95)).toBe(1)
+    expect(connectionBeamStrength(1)).toBe(1)
+  })
+
+  it('beamPointAlong: 0 en el origen (nodo), 1 en el target (clúster), clamped', () => {
+    expect(beamPointAlong(0)).toEqual(BEAM_ORIGIN)
+    expect(beamPointAlong(1)).toEqual(BEAM_TARGET)
+    const mid = beamPointAlong(0.5)
+    expect(mid[0]).toBeCloseTo((BEAM_ORIGIN[0] + BEAM_TARGET[0]) / 2)
+    expect(beamPointAlong(-1)[0]).toBe(BEAM_ORIGIN[0])
+    expect(beamPointAlong(2)[2]).toBe(BEAM_TARGET[2])
+  })
+
+  it('beamClusterPoints: retícula determinística alrededor del target', () => {
+    const a = beamClusterPoints()
+    const b = beamClusterPoints()
+    expect(a).toHaveLength(12)
+    expect(a).toEqual(b) // determinístico
+    for (const pt of a) {
+      expect(Math.abs(pt[0] - BEAM_TARGET[0])).toBeLessThan(2.5)
+      expect(Math.abs(pt[1] - BEAM_TARGET[1])).toBeLessThan(1.6)
+      expect(Math.abs(pt[2] - BEAM_TARGET[2])).toBeLessThan(0.6)
+    }
   })
 })
