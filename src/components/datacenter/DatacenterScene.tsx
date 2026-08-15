@@ -18,6 +18,9 @@ import ServerSwitchPool from './ServerSwitchPool'
 import SiemDisplayPanel from './SiemDisplayPanel'
 import DatacenterFloor from './DatacenterFloor'
 import DataRings from './DataRings'
+import HeroFlash from './HeroFlash'
+import EnergyCut from './EnergyCut'
+import NodeGlow from './NodeGlow'
 import { DATACENTER_TOKENS } from '@/lib/datacenter.tokens'
 
 const { colors } = DATACENTER_TOKENS
@@ -48,7 +51,10 @@ export default function DatacenterScene({ profile }: { profile: QualityProfile }
           <FailoverStreams />
           <StoryPhoton />
           <ConnectionBeam />
+          <NodeGlow />
           <PurdueHologram />
+          <HeroFlash />
+          <EnergyCut />
         </>
       )}
 
