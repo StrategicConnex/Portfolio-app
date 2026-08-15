@@ -5,23 +5,25 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  /* P0 audit de diseño: fondo unificado DOM↔3D (mismo #04080F del canvas),
-     azul instrumental #4DA3FF y champagne #E8D5AC como acentos del sistema. */
+  /* P0 DESIGN OVERHAUL: paleta reducida, surface para cards, amber rojizo. */
   --bg: #04080F;
   --bg2: #070D18;
+  --surface: #0d1520;
   --blue: #4DA3FF;
+  --cyan: #22d3ee;
+  --amber: #c27a3a;
   --gold: #E8D5AC;
   --text: #F4F7FB;
   --muted: rgba(255, 255, 255, 0.05);
-  --card: #0B1526;
-  --border: rgba(255, 255, 255, 0.1);
+  --card: #0d1520;
+  --border: rgba(255, 255, 255, 0.08);
   --background: #04080F;
   --foreground: #F4F7FB;
   --card-foreground: #F4F7FB;
   --secondary: #1e293b;
   --secondary-foreground: #F4F7FB;
   --muted-foreground: #8FA6C2;
-  --accent: rgba(232, 213, 172, 0.15);
+  --accent: rgba(232, 213, 172, 0.12);
   --accent-foreground: #E8D5AC;
 }
 
@@ -77,27 +79,19 @@ h1, h2, h3 {
 ::-webkit-scrollbar-thumb { background: rgba(77,163,255,0.4); border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--blue); }
 
-/* Glassmorphism utility */
+/* Glassmorphism — P0: más sutil, sin blur agresivo */
 .glass {
-  background: rgba(255,255,255,0.04);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(13, 21, 32, 0.6);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,0.06);
 }
 
-/* Animated gradient text */
-.gradient-text {
-  background: linear-gradient(135deg, var(--blue), var(--gold));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-/* Glow effects */
+/* Glow effects — P0: más sutiles, un solo color */
 .glow-blue {
-  box-shadow: 0 0 20px rgba(77,163,255,0.2), 0 0 40px rgba(77,163,255,0.1);
+  box-shadow: 0 0 30px rgba(77,163,255,0.08);
 }
 .glow-gold {
-  box-shadow: 0 0 20px rgba(232,213,172,0.2), 0 0 40px rgba(232,213,172,0.1);
+  box-shadow: 0 0 30px rgba(232,213,172,0.08);
 }
 
 /* Data flow animation */

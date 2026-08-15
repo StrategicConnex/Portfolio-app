@@ -55,11 +55,11 @@ export default function DatacenterScene({ profile }: { profile: QualityProfile }
       {/* HUD diegético (SPEC §13): visible solo cuando su escena está activa. */}
       {profile !== 'LOW' && (
         <>
-          <HudLabel position={[-4.6, 3.6, 0.5]} labelKey="dc.scene.boot.status" scene={0} variant="status" color={colors.secondaryBlue} />
+          <HudLabel position={[-4.6, 3.6, 0.5]} labelKey="dc.scene.boot.status" scene={0} variant="status" color={colors.primaryCold} />
           <HudLabel position={[-4.6, 3.15, 0.5]} labelKey="dc.scene.boot.network" scene={0} variant="status" color={colors.dataCyan} />
           <HudLabel position={[-4.6, 2.7, 0.5]} labelKey="dc.scene.boot.ai" scene={0} variant="status" color={colors.gold} />
 
-          <HudLabel position={[0, 5.4, -1.5]} labelKey="dc.scene.architecture.title" scene={1} variant="scene" color={colors.secondaryBlue} />
+          <HudLabel position={[0, 5.4, -1.5]} labelKey="dc.scene.architecture.title" scene={1} variant="scene" color={colors.primaryCold} />
           <HudLabel position={[3.4, 3.2, 0.5]} labelKey="dc.scene.data.title" scene={2} variant="scene" color={colors.dataCyan} />
           <HudLabel position={[0, 1.2, -1]} labelKey="dc.scene.resilience.title" scene={3} variant="scene" color={colors.securityAmber} />
           <HudLabel position={[0, 4.8, -4]} labelKey="dc.scene.connection.title" scene={4} variant="scene" color={colors.gold} />

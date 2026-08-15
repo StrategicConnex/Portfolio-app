@@ -29,7 +29,7 @@ export interface SiemUiLayout {
 
 /** Geometría pura del dashboard (testeable sin canvas). Coordenadas absolutas. */
 export function siemUiLayout(w = SIEM_UI_W, h = SIEM_UI_H): SiemUiLayout {
-  const { dataCyan, secondaryBlue, securityAmber, warningRed } = DATACENTER_TOKENS.colors
+  const { dataCyan, primaryCold, securityAmber, warningRed } = DATACENTER_TOKENS.colors
   const gridV: number[] = []
   for (let x = 64; x < w; x += 64) gridV.push(x)
   const gridH: number[] = []
@@ -41,7 +41,7 @@ export function siemUiLayout(w = SIEM_UI_W, h = SIEM_UI_H): SiemUiLayout {
     y: 24,
     w: 72,
     h: 16,
-    color: i % 2 === 0 ? secondaryBlue : dataCyan,
+    color: i % 2 === 0 ? primaryCold : dataCyan,
   }))
 
   // Panel central: 3 columnas de barras de actividad

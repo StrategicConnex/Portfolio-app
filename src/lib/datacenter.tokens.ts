@@ -6,14 +6,16 @@
  */
 export const DATACENTER_TOKENS = {
   colors: {
-    // P0 audit de diseño: fondo unificado DOM↔3D y azul instrumental (#4DA3FF,
-    // mismo hue, menos chroma que el dodger #1E90FF plantilla). Champagne para
-    // el clímax de conexión (S5/hero). El resto de la semántica no cambia.
+    // P0 DESIGN OVERHAUL: paleta reducida a 5 semánticas + surface.
+    // bg = fondo profundo · surface = cards/superficies · primaryCold = infraestructura
+    // dataCyan = flujos de datos (distinto del azul: es más verde,活力) ·
+    // securityAmber = resiliencia (rojizo/infrared, NO amarillo Bootstrap) ·
+    // gold = conexión/clímax (champagne) · warningRed = incidente (solo semántico).
     bg: '#04080f',
+    surface: '#0d1520',
     primaryCold: '#4DA3FF',
-    secondaryBlue: '#38bdf8',
     dataCyan: '#22d3ee',
-    securityAmber: '#f59e0b',
+    securityAmber: '#c27a3a',
     warningRed: '#ef4444',
     gold: '#E8D5AC',
     white: '#ffffff',
@@ -43,8 +45,8 @@ export const PHASE_TINTS: ReadonlyArray<{
   edgeAlpha: number
 }> = [
   { sceneId: 'boot', color: '#4DA3FF', edgeAlpha: 0.16 },
-  { sceneId: 'architecture', color: '#38bdf8', edgeAlpha: 0.17 },
+  { sceneId: 'architecture', color: '#4DA3FF', edgeAlpha: 0.17 },
   { sceneId: 'data-in-motion', color: '#22d3ee', edgeAlpha: 0.19 },
-  { sceneId: 'resilience', color: '#f59e0b', edgeAlpha: 0.17 },
+  { sceneId: 'resilience', color: '#c27a3a', edgeAlpha: 0.17 },
   { sceneId: 'connection', color: '#E8D5AC', edgeAlpha: 0.26 },
 ]

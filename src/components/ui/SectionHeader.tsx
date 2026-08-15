@@ -20,9 +20,9 @@ export default function SectionHeader({
       <h2
         className="font-bold tracking-tight mb-3"
         style={{
-          fontSize: 'clamp(1.9rem, 3.8vw, 3rem)',
-          lineHeight: 1.08,
-          letterSpacing: '-0.03em',
+          fontSize: 'clamp(2rem, 5vw, 3.5rem)',
+          lineHeight: 1.05,
+          letterSpacing: '-0.035em',
           color: 'var(--text)',
         }}
       >

@@ -22,16 +22,16 @@ export type FocusNodeConfig = {
   anchorNote: string
 }
 
-const { secondaryBlue, dataCyan, securityAmber, gold } = DATACENTER_TOKENS.colors
+const { primaryCold, dataCyan, securityAmber, gold } = DATACENTER_TOKENS.colors
 
 export const FOCUS_NODES: FocusNodeConfig[] = [
   // S1 · Boot — rack hero (HERO_RACK, top y=2.4)
-  { sectionId: 'home', sceneIndex: 0, position: [0, 3.1, 0], color: secondaryBlue, labelKey: 'dc.focus.home', anchorNote: 'sobre el rack hero (HERO_RACK top 2.4)' },
+  { sectionId: 'home', sceneIndex: 0, position: [0, 3.1, 0], color: primaryCold, labelKey: 'dc.focus.home', anchorNote: 'sobre el rack hero (HERO_RACK top 2.4)' },
   // S2 · Core — holograma Purdue ([0,3.4,-2.2]) y corredor simétrico
-  { sectionId: 'perfil', sceneIndex: 1, position: [0, 4.6, -2.2], color: secondaryBlue, labelKey: 'dc.focus.perfil', anchorNote: 'sobre PurdueHologram ([0,3.4,-2.2])' },
-  { sectionId: 'arquitectura', sceneIndex: 1, position: [0, 6.2, -1.5], color: secondaryBlue, labelKey: 'dc.focus.arquitectura', anchorNote: 'eje del corredor bajo el título HUD ([0,5.4,-1.5])' },
-  { sectionId: 'stack', sceneIndex: 1, position: [2.6, 3.2, -2.5], color: secondaryBlue, labelKey: 'dc.focus.stack', anchorNote: 'rack del corredor derecho (CORRIDOR_RACKS[0])' },
-  { sectionId: 'confianza', sceneIndex: 1, position: [-2.6, 3.2, -2.5], color: secondaryBlue, labelKey: 'dc.focus.confianza', anchorNote: 'rack del corredor izquierdo (CORRIDOR_RACKS[1])' },
+  { sectionId: 'perfil', sceneIndex: 1, position: [0, 4.6, -2.2], color: primaryCold, labelKey: 'dc.focus.perfil', anchorNote: 'sobre PurdueHologram ([0,3.4,-2.2])' },
+  { sectionId: 'arquitectura', sceneIndex: 1, position: [0, 6.2, -1.5], color: primaryCold, labelKey: 'dc.focus.arquitectura', anchorNote: 'eje del corredor bajo el título HUD ([0,5.4,-1.5])' },
+  { sectionId: 'stack', sceneIndex: 1, position: [2.6, 3.2, -2.5], color: primaryCold, labelKey: 'dc.focus.stack', anchorNote: 'rack del corredor derecho (CORRIDOR_RACKS[0])' },
+  { sectionId: 'confianza', sceneIndex: 1, position: [-2.6, 3.2, -2.5], color: primaryCold, labelKey: 'dc.focus.confianza', anchorNote: 'rack del corredor izquierdo (CORRIDOR_RACKS[1])' },
   // S3 · Data in Motion — origen de streams y nodos de red
   { sectionId: 'experiencia', sceneIndex: 2, position: [-2.6, 3.1, -2.5], color: dataCyan, labelKey: 'dc.focus.experiencia', anchorNote: 'origen de streams (STREAM_PATHS[0] en [-2.6,1.7,-2.5])' },
   { sectionId: 'proyecto', sceneIndex: 2, position: [2.6, 3.1, -6.9], color: dataCyan, labelKey: 'dc.focus.proyecto', anchorNote: 'rack profundo derecho (CORRIDOR_RACKS z=-6.9)' },

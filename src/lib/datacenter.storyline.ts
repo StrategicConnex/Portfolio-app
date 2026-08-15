@@ -184,7 +184,7 @@ export const PHOTON_COLOR_BY_SCENE: string[] = [
   '#8fb7ff', // S1 boot — azul instrumental
   '#7fd4e8', // S2 core — transición
   '#22d3ee', // S3 data — cian de los streams
-  '#f59e0b', // S4 resilience — ámbar del nivel protegido
+  '#c27a3a', // S4 resilience — infrared del nivel protegido (P0 design)
   '#E8D5AC', // S5 connection — champagne de la llegada
 ]
 

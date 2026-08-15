@@ -78,7 +78,7 @@ export default function Hero() {
 
           <motion.h1
             custom={1} variants={TEXT_VARIANTS} initial="hidden" animate="visible"
-            className="text-[clamp(1.5rem,7vw,3rem)] lg:text-[clamp(2.6rem,5vw,4.4rem)] font-extrabold leading-[1.05] tracking-tighter text-white"
+            className="text-[clamp(2.2rem,8vw,4.5rem)] lg:text-[clamp(3.5rem,7vw,7rem)] font-extrabold leading-[0.95] tracking-[-0.04em] text-white"
           >
             {t('hero.title.first')}{' '}
             <span className="text-[var(--blue)]">

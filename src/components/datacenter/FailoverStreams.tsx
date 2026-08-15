@@ -14,7 +14,7 @@ const PER_PATH = 40
 const LERP_RATE = 6 // suavizado del evento (SPEC §16 — nunca cortes bruscos)
 
 const CYAN = new THREE.Color('#22d3ee')
-const AMBER = new THREE.Color('#f59e0b')
+const AMBER = new THREE.Color('#c27a3a')
 const FAULT_DARK = new THREE.Color('#7f1d1d')
 
 /**

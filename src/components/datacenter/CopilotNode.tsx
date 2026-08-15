@@ -18,7 +18,7 @@ import { DATACENTER_TOKENS } from '@/lib/datacenter.tokens'
  */
 const COLORS: Record<CopilotVisualStatus, string> = {
   idle: DATACENTER_TOKENS.colors.dataCyan,
-  thinking: DATACENTER_TOKENS.colors.secondaryBlue,
+  thinking: DATACENTER_TOKENS.colors.primaryCold,
   streaming: DATACENTER_TOKENS.colors.dataCyan,
   error: DATACENTER_TOKENS.colors.warningRed,
   complete: DATACENTER_TOKENS.colors.gold,
