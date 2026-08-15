@@ -4,7 +4,11 @@ import Hero from './Hero'
 
 vi.mock('framer-motion', async () => {
   const { createMotionMock } = await import('@/test-utils/framer-motion')
-  return { motion: createMotionMock(['div', 'h1', 'p', 'span', 'a']) }
+  return {
+    motion: createMotionMock(['div', 'h1', 'p', 'span', 'a']),
+    useScroll: () => ({ scrollYProgress: { get: () => 0 } }),
+    useTransform: () => ({ get: () => 0 }),
+  }
 })
 
 vi.mock('next/image', async () => {

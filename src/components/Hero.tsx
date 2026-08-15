@@ -7,6 +7,7 @@ import type { Variants } from 'framer-motion'
 import { useLanguage } from '@/context/LanguageContext'
 import dynamic from 'next/dynamic'
 import HeroVisual from './ui/HeroVisual'
+import ParallaxText from './ui/ParallaxText'
 
 const RadarSweep = dynamic(() => import('./RadarSweep'), { ssr: false })
 
@@ -94,14 +95,14 @@ export default function Hero() {
             <span className="text-[var(--blue)]">
               {t('hero.title.last')}
             </span>
-            <span className="block text-[0.32em] sm:text-[0.38em] mt-3 sm:mt-4 text-[var(--gold)] font-medium tracking-[0.1em] sm:tracking-[0.14em] uppercase opacity-90 leading-relaxed max-w-[280px] sm:max-w-xl mx-auto lg:mx-0">
+            <ParallaxText speed={0.15} className="block text-[0.32em] sm:text-[0.38em] mt-3 sm:mt-4 text-[var(--gold)] font-medium tracking-[0.1em] sm:tracking-[0.14em] uppercase opacity-90 leading-relaxed max-w-[280px] sm:max-w-xl mx-auto lg:mx-0">
               {t('hero.subtitle').split(' | ').map((s, i) => (
                 <React.Fragment key={i}>
                   {s} {i < t('hero.subtitle').split(' | ').length - 1 && <span className="mx-2 opacity-50">|</span>}
                   {i === 0 && <br className="hidden sm:block" />}
                 </React.Fragment>
               ))}
-            </span>
+            </ParallaxText>
           </motion.h1>
 
           <motion.div

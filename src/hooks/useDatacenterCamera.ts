@@ -7,12 +7,13 @@ import {
   computeSceneProgress,
   interpolateWaypoints,
   resolveSceneForSection,
+  SCENES,
   type SceneConfig,
 } from '@/lib/scenes'
 import { DATACENTER_TOKENS } from '@/lib/datacenter.tokens'
 import type { SectionProgress } from './useSectionProgress'
 
-const { lambda, maxDelta } = DATACENTER_TOKENS.camera
+const { lambda, maxDelta, breathing, rotationByScene } = DATACENTER_TOKENS.camera
 
 /**
  * Dolly de cámara con easing exponencial (SPEC §6): interpola waypoints
@@ -26,6 +27,7 @@ export function useDatacenterCamera(scenes: SceneConfig[], progress: SectionProg
     fov: scenes[0].camera.entry.fov,
     fogNear: scenes[0].fog.near,
     fogFar: scenes[0].fog.far,
+    roll: 0,
   })
   const targetPos = useRef(new THREE.Vector3())
   const targetLook = useRef(new THREE.Vector3())
@@ -51,10 +53,24 @@ export function useDatacenterCamera(scenes: SceneConfig[], progress: SectionProg
       c.fogNear += (scene.fog.near - c.fogNear) * k
       c.fogFar += (scene.fog.far - c.fogFar) * k
 
+      // P1 — CINEMATIC: breathing (sutil oscilación vertical)
+      const time = state.clock.getElapsedTime()
+      const breathe = Math.sin(time * breathing.frequency * Math.PI * 2) * breathing.amplitude
+      c.position.y += breathe
+
+      // P1 — CINEMATIC: rotation (roll) por escena
+      const sceneIndex = SCENES.indexOf(scene)
+      const rotConfig = rotationByScene[sceneIndex] ?? rotationByScene[0]
+      const targetRoll = sp < 0.5
+        ? rotConfig.entry + (rotConfig.mid - rotConfig.entry) * (sp * 2)
+        : rotConfig.mid + (rotConfig.exit - rotConfig.mid) * ((sp - 0.5) * 2)
+      c.roll += (targetRoll - c.roll) * k
+
       state.camera.position.copy(c.position)
       state.camera.lookAt(c.lookAt)
       if (state.camera instanceof THREE.PerspectiveCamera) {
         state.camera.fov = c.fov
+        state.camera.rotation.z = c.roll
         state.camera.updateProjectionMatrix()
       }
       if (fogRef.current) {

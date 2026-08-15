@@ -28,6 +28,19 @@ export const DATACENTER_TOKENS = {
     lambda: 3.2,
     maxDelta: 0.1,
     settleMs: 650,
+    /** P1 — CINEMATIC: breathing (sutil oscilación) + rotation por escena */
+    breathing: {
+      amplitude: 0.008, // amplitud de la oscilación vertical
+      frequency: 0.4,   // ciclos por segundo
+    },
+    /** Rotación de cámara por escena (radians): entry→mid→exit */
+    rotationByScene: [
+      { entry: 0, mid: -0.02, exit: -0.04 },       // S1: giro sutil a la izquierda
+      { entry: -0.04, mid: -0.06, exit: -0.08 },    // S2: asimetría creciente
+      { entry: -0.08, mid: -0.12, exit: -0.18 },    // S3: push-in con roll dramático
+      { entry: -0.18, mid: -0.1, exit: 0.02 },      // S4: recuperación + pull-back
+      { entry: 0.02, mid: -0.05, exit: -0.12 },     // S5: reveal diagonal con roll
+    ] as readonly { entry: number; mid: number; exit: number }[],
   },
 } as const
 
