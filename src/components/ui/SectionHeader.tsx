@@ -1,5 +1,5 @@
 import FadeIn from './FadeIn'
-import TextReveal from './TextReveal'
+import KineticText from './KineticText'
 
 interface SectionHeaderProps {
   label: string
@@ -27,11 +27,13 @@ export default function SectionHeader({
           color: 'var(--text)',
         }}
       >
-        <TextReveal
+        <KineticText
           as="span"
-          lines={[title]}
+          text={title}
           className="block"
-          lineClassName="block"
+          stagger={0.03}
+          duration={0.45}
+          slideFrom={35}
         />
         {highlight && (
           <span style={{ color: 'var(--gold)' }}>{highlight}</span>
