@@ -11,14 +11,17 @@ const es = {
   'blog.post1.excerpt': 'Desafíos y estrategias para la segmentación de redes industriales en yacimientos no convencionales.',
   'blog.post1.readTime': '5 min',
   'blog.post1.tag': 'Vaca Muerta',
+  'blog.post1.date': '15 Abr 2024',
   'blog.post2.title': 'SIEM para Convergencia IT/OT: Más allá del Firewall',
   'blog.post2.excerpt': 'Cómo Security Onion y reglas personalizadas pueden detectar anomalías en protocolos Modbus y DNP3.',
   'blog.post2.readTime': '7 min',
   'blog.post2.tag': 'Security Onion',
+  'blog.post2.date': '02 Mar 2024',
   'blog.post3.title': 'NIST CSF en Infraestructuras Críticas',
   'blog.post3.excerpt': 'Guía práctica para la autoevaluación de madurez en ciberseguridad para empresas de servicios petroleros.',
   'blog.post3.readTime': '6 min',
   'blog.post3.tag': 'Compliance',
+  'blog.post3.date': '20 Feb 2024',
 } satisfies TranslationModule['es']
 
 const en: TranslationModule['en'] = {
@@ -32,14 +35,17 @@ const en: TranslationModule['en'] = {
   'blog.post1.excerpt': 'Challenges and strategies for industrial network segmentation in unconventional reservoirs.',
   'blog.post1.readTime': '5 min',
   'blog.post1.tag': 'Vaca Muerta',
+  'blog.post1.date': '15 Apr 2024',
   'blog.post2.title': 'SIEM for IT/OT Convergence: Beyond the Firewall',
   'blog.post2.excerpt': 'How Security Onion and custom rules can detect anomalies in Modbus and DNP3 protocols.',
   'blog.post2.readTime': '7 min',
   'blog.post2.tag': 'Security Onion',
+  'blog.post2.date': '02 Mar 2024',
   'blog.post3.title': 'NIST CSF in Critical Infrastructures',
   'blog.post3.excerpt': 'Practical guide for cybersecurity maturity self-assessment for oil service companies.',
   'blog.post3.readTime': '6 min',
   'blog.post3.tag': 'Compliance',
+  'blog.post3.date': '20 Feb 2024',
 }
 
 export const blog = { es, en }

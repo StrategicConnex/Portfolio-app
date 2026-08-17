@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion'
 import SectionHeader from './ui/SectionHeader'
 import FadeIn from './ui/FadeIn'
+import ContactForm from './ContactForm'
 import { useLanguage } from '@/context/LanguageContext'
 
 const actions = [
@@ -21,7 +22,7 @@ const actions = [
     hoverBorder: 'rgba(10,102,194,0.6)',
   },
   {
-    label: 'Descargar CV',
+    labelKey: 'contact.download_cv',
     sub: 'CV-JuanFelipePalacios.pdf',
     href: '/CV-JuanFelipePalacios.pdf',
     download: true,
@@ -135,7 +136,7 @@ export default function Contacto() {
                 {/* Text */}
                 <div style={{ minWidth: 0 }}>
                   <div style={{ fontSize: '0.95rem', fontWeight: 700, color: 'var(--text)', marginBottom: 2 }}>
-                    {a.label}
+                    {a.labelKey ? t(a.labelKey) : a.label}
                   </div>
                   <div
                     style={{
@@ -204,6 +205,13 @@ export default function Contacto() {
               />
               {t('contact.availability')}
             </motion.div>
+          </div>
+        </FadeIn>
+
+        {/* Contact form — validated client-side, posts to /api/contact */}
+        <FadeIn delay={0.6}>
+          <div style={{ marginTop: '2rem' }}>
+            <ContactForm />
           </div>
         </FadeIn>
       </div>

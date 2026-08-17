@@ -107,7 +107,7 @@ const TimelineItem = memo(({ job, index }: { job: Job; index: number }) => {
             }}
             className="border rounded-full px-2.5 py-0.5 text-[10px] font-semibold"
           >
-            {tag}
+            {t(tag)}
           </span>
         ))}
       </div>

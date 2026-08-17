@@ -1,6 +1,6 @@
 'use client';
 
-import { MessageSquare, X, Minimize2, Maximize2, Loader2, Trash2 } from 'lucide-react';
+import { MessageSquare, X, Minimize2, Maximize2, Loader2, Trash2, Shuffle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 
@@ -13,6 +13,10 @@ interface AskAIHeaderProps {
   messageCount: number;
   language: 'es' | 'en';
   mode: string;
+  /** Short free-model label of the last completed response, or null. */
+  modelLabel?: string | null;
+  /** True when the first pool model failed and a later one answered. */
+  fellBack?: boolean;
 }
 
 export function AskAIHeader({
@@ -24,6 +28,8 @@ export function AskAIHeader({
   messageCount,
   language,
   mode,
+  modelLabel,
+  fellBack = false,
 }: AskAIHeaderProps) {
   return (
     <div className="flex items-center justify-between px-4 py-3 border-b border-slate-800 bg-slate-900/50 flex-shrink-0">
@@ -45,7 +51,34 @@ export function AskAIHeader({
             {isLoading
               ? language === 'en' ? 'Generating response...' : 'Generando respuesta...'
               : messageCount > 0
-              ? `${messageCount} ${language === 'en' ? (messageCount === 1 ? 'question' : 'questions') : (messageCount === 1 ? 'consulta' : 'consultas')} · ${language === 'en' ? 'EN' : 'ES'} · ${mode === 'ask' ? (language === 'en' ? 'IT/OT Copilot' : 'Copiloto IT/OT') : `${language === 'en' ? 'Mode' : 'Modo'}: ${mode}`}`
+              ? (
+                <>
+                  {`${messageCount} ${language === 'en' ? (messageCount === 1 ? 'question' : 'questions') : (messageCount === 1 ? 'consulta' : 'consultas')} · ${language === 'en' ? 'EN' : 'ES'} · ${mode === 'ask' ? (language === 'en' ? 'IT/OT Copilot' : 'Copiloto IT/OT') : `${language === 'en' ? 'Mode' : 'Modo'}: ${mode}`}`}
+                  {modelLabel ? (
+                    <>
+                      {' · '}
+                      {fellBack && (
+                        <Shuffle
+                          className="inline w-2.5 h-2.5 text-amber-400 -mt-0.5"
+                          aria-hidden
+                        />
+                      )}
+                      <span
+                        className={fellBack ? 'text-amber-400' : undefined}
+                        title={
+                          fellBack
+                            ? language === 'en'
+                              ? 'The first pool model failed; this model answered'
+                              : 'El primer modelo del pool falló; respondió este modelo'
+                            : undefined
+                        }
+                      >
+                        {modelLabel}
+                      </span>
+                    </>
+                  ) : null}
+                </>
+              )
               : language === 'en' ? 'Cybersecurity Copilot · EN' : 'Copiloto de Ciberseguridad · ES'}
           </span>
         </div>
@@ -67,7 +100,11 @@ export function AskAIHeader({
           size="icon"
           className="h-8 w-8 text-slate-400 hover:text-white"
           onClick={onToggleExpand}
-          aria-label={expanded ? 'Minimizar panel' : 'Expandir panel'}
+          aria-label={
+            language === 'en'
+              ? expanded ? 'Minimize panel' : 'Expand panel'
+              : expanded ? 'Minimizar panel' : 'Expandir panel'
+          }
         >
           {expanded ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
         </Button>
@@ -76,7 +113,7 @@ export function AskAIHeader({
           size="icon"
           className="h-8 w-8 text-slate-400 hover:text-white"
           onClick={onClose}
-          aria-label="Cerrar panel"
+          aria-label={language === 'en' ? 'Close panel' : 'Cerrar panel'}
         >
           <X className="h-4 w-4" />
         </Button>

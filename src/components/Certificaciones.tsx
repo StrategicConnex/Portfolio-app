@@ -22,7 +22,7 @@ export type CategoryKey = 'all' | 'cybersecurity' | 'data_ai' | 'cloud_dev' | 's
 
 export interface CourseFile {
   filename: string
-  name: string
+  nameKey: string
   category: CategoryKey
 }
 
@@ -36,52 +36,52 @@ const categories: { key: CategoryKey; icon: string }[] = [
 ]
 
 const courseFiles: CourseFile[] = [
-  { filename: "CertificadoDeFinalizacion_Arquitectura de seguridad CompTIA Security SY0701.pdf", name: "Arquitectura de Seguridad CompTIA Security SY0701", category: "cybersecurity" },
-  { filename: "CertificadoDeFinalizacion_Automatizacion y programacion de redes Cisco CCNA 2020.pdf", name: "Automatización y Programación de Redes Cisco CCNA", category: "cybersecurity" },
-  { filename: "CertificadoDeFinalizacion_Bash Automatizaciones para ciberseguridad.pdf", name: "Bash Automatizaciones para Ciberseguridad", category: "cybersecurity" },
-  { filename: "CertificadoDeFinalizacion_IA para el analisis y reversing de malware.pdf", name: "IA para el Análisis y Reversing de Malware", category: "cybersecurity" },
-  { filename: "Cisco Cibersecurity Analyst Career Path.pdf", name: "Cisco Cybersecurity Analyst Career Path", category: "cybersecurity" },
-  { filename: "Cisco Networking Academy_ Defensa de la red.pdf", name: "Cisco Networking Academy: Defensa de la Red", category: "cybersecurity" },
-  { filename: "Cisco_Juan Palacios_1 001.pdf", name: "Cisco Networking Academy (Nivel 1)", category: "cybersecurity" },
-  { filename: "Cisco_Juan Palacios_2 001.pdf", name: "Cisco Networking Academy (Nivel 2)", category: "cybersecurity" },
-  { filename: "Cisco_Juan Palacios_3 002.pdf", name: "Cisco Networking Academy (Nivel 3)", category: "cybersecurity" },
-  { filename: "Fortinet 7.X.pdf", name: "Fortinet 7.X Security Specialist", category: "cybersecurity" },
-  { filename: "NetworkDefenseUpdate20260115-31-31nq15.pdf", name: "Network Defense Certificate Update", category: "cybersecurity" },
-  { filename: "Network_Defense_certificate_palacios_juan-hotmail-com_698c5580-3283-4714-9254-e12fe9da6f29.pdf", name: "Network Defense Specialist Certificate", category: "cybersecurity" },
-  { filename: "Bootcamp 2026 IA Generativa, LLm Apps, Aagentes IA, Cursor IA.pdf", name: "Bootcamp IA Generativa, LLM Apps, Agentes IA & Cursor IA", category: "data_ai" },
-  { filename: "CertificadoDeFinalizacion_Analisis estrategico de implementacion IA.pdf", name: "Análisis Estratégico de Implementación IA", category: "data_ai" },
-  { filename: "CertificadoDeFinalizacion_Aprovechar la IA generativa para la gestion de proyectos.pdf", name: "Aprovechar la IA Generativa para Gestión de Proyectos", category: "data_ai" },
-  { filename: "CertificadoDeFinalizacion_Automatizacion de procesos con Power Automate esencial.pdf", name: "Automatización de Procesos con Power Automate Esencial", category: "data_ai" },
-  { filename: "CertificadoDeFinalizacion_Azure Machine learning e inteligencia artificial esencial.pdf", name: "Azure Machine Learning e Inteligencia Artificial Esencial", category: "data_ai" },
-  { filename: "CertificadoDeFinalizacion_Creacion de documentacion tecnica con herramientas de IA.pdf", name: "Creación de Documentación Técnica con Herramientas IA", category: "data_ai" },
-  { filename: "CertificadoDeFinalizacion_Excel y Copilot Analisis de datos asistido por IA.pdf", name: "Excel y Copilot: Análisis de Datos Asistido por IA", category: "data_ai" },
-  { filename: "CertificadoDeFinalizacion_Explora una carrera como especialista en Power BI.pdf", name: "Especialista en Power BI Career Path", category: "data_ai" },
-  { filename: "CertificadoDeFinalizacion_Graficos y funcionalidades de analitica avanzada en Power BI.pdf", name: "Gráficos y Analítica Avanzada en Power BI", category: "data_ai" },
-  { filename: "CertificadoDeFinalizacion_Power BI avanzado (1).pdf", name: "Power BI Avanzado (Nivel 2)", category: "data_ai" },
-  { filename: "CertificadoDeFinalizacion_Power BI avanzado.pdf", name: "Power BI Avanzado (Nivel 1)", category: "data_ai" },
-  { filename: "CertificadoDeFinalizacion_Python Microservicios.pdf", name: "Python Microservicios", category: "data_ai" },
-  { filename: "Python - Power BI - SQl Server Machine Learning.pdf", name: "Python, Power BI & SQL Server Machine Learning", category: "data_ai" },
-  { filename: "Udemy - Python_SQLServer_PowerBI_Machine_Learning.jpg", name: "Master Python, SQL Server, Power BI & Machine Learning", category: "data_ai" },
-  { filename: "CertificadoDeFinalizacion_Aprende Power Automate Desktop.pdf", name: "Aprende Power Automate Desktop", category: "cloud_dev" },
-  { filename: "CertificadoDeFinalizacion_Docker esencial.pdf", name: "Docker Esencial", category: "cloud_dev" },
-  { filename: "CertificadoDeFinalizacion_React esencial.pdf", name: "React Esencial", category: "cloud_dev" },
-  { filename: "Udemy - Master SQL Server.pdf", name: "Master SQL Server", category: "cloud_dev" },
-  { filename: "Udemy - SQL Server Programacion Avanzada 2025.pdf", name: "SQL Server Programación Avanzada 2025", category: "cloud_dev" },
-  { filename: "Udemy AZ800 Administracion de Infraestructura Hibrida 2026- .jpg", name: "Udemy AZ-800 Administración de Infraestructura Híbrida", category: "cloud_dev" },
-  { filename: "Titulo PMP.jpeg", name: "Título Project Management Professional (PMP)", category: "soft_skills" },
-  { filename: "certificado_comescrita.pdf", name: "Comunicación Escrita", category: "soft_skills" },
-  { filename: "certificado_comoral.pdf", name: "Comunicación Oral", category: "soft_skills" },
-  { filename: "certificado_epp.pdf", name: "Equipos de Protección Personal (EPP)", category: "soft_skills" },
-  { filename: "certificado_equipo.pdf", name: "Trabajo en Equipo", category: "soft_skills" },
-  { filename: "certificado_feedback.pdf", name: "Feedback y Retroalimentación", category: "soft_skills" },
-  { filename: "certificado_incendios.pdf", name: "Prevención de Incendios", category: "soft_skills" },
-  { filename: "certificado_nego.pdf", name: "Negociación", category: "soft_skills" },
-  { filename: "UC-096eca38-57c6-4247-bd30-c04ecfc38651.jpg", name: "Certificación Especializada Udemy (1)", category: "other" },
-  { filename: "UC-80e60bec-8955-488a-8c59-13a977cac370.jpg", name: "Certificación Especializada Udemy (2)", category: "other" },
-  { filename: "UC-846a9eac-34fa-4d81-bb85-da06786bb807.jpg", name: "Certificación Especializada Udemy (3)", category: "other" },
-  { filename: "UC-a31cd8c3-da0c-4789-8e06-22e7acd40d17.jpg", name: "Certificación Especializada Udemy (4)", category: "other" },
-  { filename: "UC-a31cd8c3-da0c-4789-8e06-22e7acd40d17.pdf", name: "Certificación Especializada Udemy (PDF)", category: "other" },
-  { filename: "UC-a8acf70b-7d83-47e4-9a8d-74dc6945094f.pdf", name: "Certificación Especializada Udemy (5)", category: "other" }
+  { filename: "CertificadoDeFinalizacion_Arquitectura de seguridad CompTIA Security SY0701.pdf", nameKey: "certs.course.comptia_security", category: "cybersecurity" },
+  { filename: "CertificadoDeFinalizacion_Automatizacion y programacion de redes Cisco CCNA 2020.pdf", nameKey: "certs.course.ccna_automation", category: "cybersecurity" },
+  { filename: "CertificadoDeFinalizacion_Bash Automatizaciones para ciberseguridad.pdf", nameKey: "certs.course.bash_cyber", category: "cybersecurity" },
+  { filename: "CertificadoDeFinalizacion_IA para el analisis y reversing de malware.pdf", nameKey: "certs.course.ai_malware", category: "cybersecurity" },
+  { filename: "Cisco Cibersecurity Analyst Career Path.pdf", nameKey: "certs.course.cisco_analyst", category: "cybersecurity" },
+  { filename: "Cisco Networking Academy_ Defensa de la red.pdf", nameKey: "certs.course.cisco_netdef", category: "cybersecurity" },
+  { filename: "Cisco_Juan Palacios_1 001.pdf", nameKey: "certs.course.cisco_l1", category: "cybersecurity" },
+  { filename: "Cisco_Juan Palacios_2 001.pdf", nameKey: "certs.course.cisco_l2", category: "cybersecurity" },
+  { filename: "Cisco_Juan Palacios_3 002.pdf", nameKey: "certs.course.cisco_l3", category: "cybersecurity" },
+  { filename: "Fortinet 7.X.pdf", nameKey: "certs.course.fortinet", category: "cybersecurity" },
+  { filename: "NetworkDefenseUpdate20260115-31-31nq15.pdf", nameKey: "certs.course.netdef_update", category: "cybersecurity" },
+  { filename: "Network_Defense_certificate_palacios_juan-hotmail-com_698c5580-3283-4714-9254-e12fe9da6f29.pdf", nameKey: "certs.course.netdef_specialist", category: "cybersecurity" },
+  { filename: "Bootcamp 2026 IA Generativa, LLm Apps, Aagentes IA, Cursor IA.pdf", nameKey: "certs.course.genai_bootcamp", category: "data_ai" },
+  { filename: "CertificadoDeFinalizacion_Analisis estrategico de implementacion IA.pdf", nameKey: "certs.course.ai_strategy", category: "data_ai" },
+  { filename: "CertificadoDeFinalizacion_Aprovechar la IA generativa para la gestion de proyectos.pdf", nameKey: "certs.course.genai_pm", category: "data_ai" },
+  { filename: "CertificadoDeFinalizacion_Automatizacion de procesos con Power Automate esencial.pdf", nameKey: "certs.course.power_automate", category: "data_ai" },
+  { filename: "CertificadoDeFinalizacion_Azure Machine learning e inteligencia artificial esencial.pdf", nameKey: "certs.course.azure_ml", category: "data_ai" },
+  { filename: "CertificadoDeFinalizacion_Creacion de documentacion tecnica con herramientas de IA.pdf", nameKey: "certs.course.ai_docs", category: "data_ai" },
+  { filename: "CertificadoDeFinalizacion_Excel y Copilot Analisis de datos asistido por IA.pdf", nameKey: "certs.course.excel_copilot", category: "data_ai" },
+  { filename: "CertificadoDeFinalizacion_Explora una carrera como especialista en Power BI.pdf", nameKey: "certs.course.powerbi_career", category: "data_ai" },
+  { filename: "CertificadoDeFinalizacion_Graficos y funcionalidades de analitica avanzada en Power BI.pdf", nameKey: "certs.course.powerbi_analytics", category: "data_ai" },
+  { filename: "CertificadoDeFinalizacion_Power BI avanzado (1).pdf", nameKey: "certs.course.powerbi_l2", category: "data_ai" },
+  { filename: "CertificadoDeFinalizacion_Power BI avanzado.pdf", nameKey: "certs.course.powerbi_l1", category: "data_ai" },
+  { filename: "CertificadoDeFinalizacion_Python Microservicios.pdf", nameKey: "certs.course.python_micro", category: "data_ai" },
+  { filename: "Python - Power BI - SQl Server Machine Learning.pdf", nameKey: "certs.course.python_ml", category: "data_ai" },
+  { filename: "Udemy - Python_SQLServer_PowerBI_Machine_Learning.jpg", nameKey: "certs.course.master_python", category: "data_ai" },
+  { filename: "CertificadoDeFinalizacion_Aprende Power Automate Desktop.pdf", nameKey: "certs.course.pa_desktop", category: "cloud_dev" },
+  { filename: "CertificadoDeFinalizacion_Docker esencial.pdf", nameKey: "certs.course.docker", category: "cloud_dev" },
+  { filename: "CertificadoDeFinalizacion_React esencial.pdf", nameKey: "certs.course.react", category: "cloud_dev" },
+  { filename: "Udemy - Master SQL Server.pdf", nameKey: "certs.course.sql_master", category: "cloud_dev" },
+  { filename: "Udemy - SQL Server Programacion Avanzada 2025.pdf", nameKey: "certs.course.sql_advanced", category: "cloud_dev" },
+  { filename: "Udemy AZ800 Administracion de Infraestructura Hibrida 2026- .jpg", nameKey: "certs.course.az800", category: "cloud_dev" },
+  { filename: "Titulo PMP.jpeg", nameKey: "certs.course.pmp", category: "soft_skills" },
+  { filename: "certificado_comescrita.pdf", nameKey: "certs.course.written_comm", category: "soft_skills" },
+  { filename: "certificado_comoral.pdf", nameKey: "certs.course.oral_comm", category: "soft_skills" },
+  { filename: "certificado_epp.pdf", nameKey: "certs.course.ppe", category: "soft_skills" },
+  { filename: "certificado_equipo.pdf", nameKey: "certs.course.teamwork", category: "soft_skills" },
+  { filename: "certificado_feedback.pdf", nameKey: "certs.course.feedback", category: "soft_skills" },
+  { filename: "certificado_incendios.pdf", nameKey: "certs.course.fire_prevention", category: "soft_skills" },
+  { filename: "certificado_nego.pdf", nameKey: "certs.course.negotiation", category: "soft_skills" },
+  { filename: "UC-096eca38-57c6-4247-bd30-c04ecfc38651.jpg", nameKey: "certs.course.udemy1", category: "other" },
+  { filename: "UC-80e60bec-8955-488a-8c59-13a977cac370.jpg", nameKey: "certs.course.udemy2", category: "other" },
+  { filename: "UC-846a9eac-34fa-4d81-bb85-da06786bb807.jpg", nameKey: "certs.course.udemy3", category: "other" },
+  { filename: "UC-a31cd8c3-da0c-4789-8e06-22e7acd40d17.jpg", nameKey: "certs.course.udemy4", category: "other" },
+  { filename: "UC-a31cd8c3-da0c-4789-8e06-22e7acd40d17.pdf", nameKey: "certs.course.udemy_pdf", category: "other" },
+  { filename: "UC-a8acf70b-7d83-47e4-9a8d-74dc6945094f.pdf", nameKey: "certs.course.udemy5", category: "other" }
 ]
 
 // ─── Modal Viewer ───────────────────────────────────────────────────────────
@@ -92,6 +92,7 @@ interface ModalViewerProps {
 }
 
 function ModalViewer({ file, onClose }: ModalViewerProps) {
+  const { t } = useLanguage()
   const isPdf = file?.filename.toLowerCase().endsWith('.pdf') ?? false
   const src = file ? `/cursos/${encodeURIComponent(file.filename)}` : ''
 
@@ -136,7 +137,7 @@ function ModalViewer({ file, onClose }: ModalViewerProps) {
           }}
           role="dialog"
           aria-modal="true"
-          aria-label={file?.name || 'Visor de certificado'}
+          aria-label={file ? t(file.nameKey) : t('certs.viewer_label')}
         >
           {/* Modal panel */}
           <motion.div
@@ -165,15 +166,15 @@ function ModalViewer({ file, onClose }: ModalViewerProps) {
                     background: 'rgba(197,164,109,0.12)',
                   }}
                 >
-                  {isPdf ? 'PDF' : 'Imagen'}
+                  {isPdf ? 'PDF' : t('certs.image_label')}
                 </span>
                 <span className="text-sm font-medium truncate" style={{ color: '#e2e8f0' }}>
-                  {file?.name}
+                  {file && t(file.nameKey)}
                 </span>
               </div>
               <button
                 onClick={onClose}
-                aria-label="Cerrar visor"
+                aria-label={t('certs.close_viewer')}
                 className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 text-base cursor-pointer transition-colors"
                 style={{
                   background: 'rgba(148,163,184,0.1)',
@@ -198,7 +199,7 @@ function ModalViewer({ file, onClose }: ModalViewerProps) {
               {isPdf ? (
                 <iframe
                   src={`${src}#toolbar=0&navpanes=0&scrollbar=1&view=FitH`}
-                  title={file?.name}
+                  title={file ? t(file.nameKey) : ''}
                   onDragStart={(e) => e.preventDefault()}
                   onContextMenu={(e) => e.preventDefault()}
                   className="w-full h-full block min-h-[65vh] border-none"
@@ -213,7 +214,7 @@ function ModalViewer({ file, onClose }: ModalViewerProps) {
                   <div className="relative inline-flex select-none" draggable={false}>
                     <Image
                       src={src}
-                      alt={file?.name || 'Certificado'}
+                      alt={file ? t(file.nameKey) : t('certs.image_label')}
                       width={800}
                       height={600}
                       style={{
@@ -247,7 +248,7 @@ function ModalViewer({ file, onClose }: ModalViewerProps) {
               }}
             >
               <span>
-                Modo lectura protegido · Presiona{' '}
+                {t('certs.reading_mode')}{' '}
                 <kbd className="px-1 py-0.5 rounded font-mono text-[11px]"
                   style={{
                     background: 'rgba(148,163,184,0.1)',
@@ -257,7 +258,7 @@ function ModalViewer({ file, onClose }: ModalViewerProps) {
                 >
                   Esc
                 </kbd>
-                {' '}o clic fuera para cerrar
+                {' '}{t('certs.close_hint')}
               </span>
             </div>
           </motion.div>
@@ -335,8 +336,8 @@ export default function Certificaciones() {
                 transition={{ duration: 0.5, delay: 0.4 }}
                 className="text-lg font-semibold text-white flex items-center gap-2"
               >
-                <Icon name="document" label="Cursos y Certificados" size={20} />
-                Cursos y Certificados
+                <Icon name="document" label={t('certs.gallery_title')} size={20} />
+                {t('certs.gallery_title')}
                 <span className="text-xs font-normal text-slate-400 ml-1 bg-slate-800/80 px-2 py-0.5 rounded-full border border-slate-700/50">
                   {filteredFiles.length}
                 </span>
@@ -348,7 +349,7 @@ export default function Certificaciones() {
                 transition={{ duration: 0.5, delay: 0.45 }}
                 className="flex flex-wrap items-center gap-1.5 p-1 rounded-xl bg-slate-900/60 border border-slate-800/80"
                 role="tablist"
-                aria-label="Filtrar por categoría"
+                aria-label={t('certs.filter_label')}
               >
                 {categories.map((cat) => {
                   const isActive = activeCategory === cat.key
@@ -383,7 +384,7 @@ export default function Certificaciones() {
               className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"
               role="tabpanel"
               id={`certs-panel-${activeCategory}`}
-              aria-label={`Cursos de categoría ${t(`certs.cat.${activeCategory}`)}`}
+              aria-label={`${t('certs.panel_label')} ${t(`certs.cat.${activeCategory}`)}`}
             >
               <AnimatePresence mode="popLayout">
                 {filteredFiles.map((c) => {
@@ -400,7 +401,7 @@ export default function Certificaciones() {
                       transition={{ duration: 0.3 }}
                       whileHover={{ y: -4, borderColor: 'rgba(197,164,109,0.5)', boxShadow: '0 12px 24px -6px rgba(0,0,0,0.6)' }}
                       className="group flex flex-col p-4 rounded-xl cursor-pointer text-left relative overflow-hidden"
-                      aria-label={`Ver ${c.name}`}
+                      aria-label={`${t('certs.view')} ${t(c.nameKey)}`}
                       style={{
                         background: '#111827',
                         border: '1px solid rgba(255, 255, 255, 0.08)',
@@ -413,7 +414,7 @@ export default function Certificaciones() {
                             ? 'bg-amber-500/10 border-amber-500/25 text-amber-400 group-hover:bg-amber-500/20'
                             : 'bg-blue-500/10 border-blue-500/25 text-blue-400 group-hover:bg-blue-500/20'
                         }`}>
-                          <Icon name={isPdf ? 'document' : 'image'} label={c.name} size={20} />
+                          <Icon name={isPdf ? 'document' : 'image'} label={t(c.nameKey)} size={20} />
                         </div>
                         <span className={`text-[10px] uppercase tracking-wider font-semibold px-2 py-0.5 rounded border ${
                           isPdf
@@ -424,7 +425,7 @@ export default function Certificaciones() {
                         </span>
                       </div>
                       <h4 className="text-[13px] text-slate-100 font-medium leading-relaxed line-clamp-3 group-hover:text-amber-300 transition-colors">
-                        {c.name}
+                        {t(c.nameKey)}
                       </h4>
                     </motion.button>
                   )

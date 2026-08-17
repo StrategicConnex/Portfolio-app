@@ -50,8 +50,8 @@ export const THREAT_LEVELS = [
 ]
 
 export const OPERATIONAL_KPIS = [
-  { labelKey: 'siem.ui.mttr',   val: '< 15 min', icon: 'timer' },
-  { labelKey: 'siem.kpi.uptime', val: '99.9%',    icon: 'results' },
-  { labelKey: 'siem.kpi.blocked', val: '−30%',     icon: 'analytics' },
-  { labelKey: 'siem.kpi.alerts', val: '−10h/sem', icon: 'automation' },
+  { labelKey: 'siem.ui.mttr',   valKey: 'siem.kpi.mttr_val',   icon: 'timer' },
+  { labelKey: 'siem.kpi.uptime', valKey: 'siem.kpi.uptime_val', icon: 'results' },
+  { labelKey: 'siem.kpi.blocked', valKey: 'siem.kpi.blocked_val', icon: 'analytics' },
+  { labelKey: 'siem.kpi.alerts', valKey: 'siem.kpi.alerts_val', icon: 'automation' },
 ]

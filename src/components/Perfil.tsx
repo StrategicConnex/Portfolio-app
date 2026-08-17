@@ -9,54 +9,56 @@ import Icon from './ui/Icon'
 import { useLanguage } from '@/context/LanguageContext'
 
 const metrics = [
-  { num: '99.9%', label: 'Disponibilidad de red comprometida', color: 'var(--blue)', icon: 'shield', img: '/perfil_infraestructura.webp' },
-  { num: '−30%',  label: 'Reducción de incidentes de seguridad', color: '#10B981', icon: 'analytics', img: '/perfil_seguridad.webp' },
-  { num: '−10h',  label: 'Ahorro semanal con automatización Python', color: 'var(--gold)', icon: 'automation', img: '/perfil_automatizacion.webp' },
-  { num: '+25%',  label: 'Eficiencia operativa en virtualización', color: '#8B5CF6', icon: 'rocket', img: '/perfil_nube.webp' },
+  { num: '99.9%', labelKey: 'profile.metric.availability', color: 'var(--blue)', icon: 'shield', img: '/perfil_infraestructura.webp' },
+  { num: '−30%',  labelKey: 'profile.metric.incidents', color: '#10B981', icon: 'analytics', img: '/perfil_seguridad.webp' },
+  { num: '−10h',  labelKey: 'profile.metric.automation', color: 'var(--gold)', icon: 'automation', img: '/perfil_automatizacion.webp' },
+  { num: '+25%',  labelKey: 'profile.metric.virtualization', color: '#8B5CF6', icon: 'rocket', img: '/perfil_nube.webp' },
 ]
 
 const competencias = [
   {
-    grupo: 'Ciberseguridad Industrial',
+    grupoKey: 'profile.comp.cyber',
     color: '#1E90FF',
-    items: ['Modelo Purdue', 'IEC 62443', 'NIST CSF', 'ISO 27001', 'SOX', 'SIEM – Security Onion', 'IAM', 'Firewalls Industriales'],
+    items: ['Modelo Purdue', 'IEC 62443', 'NIST CSF', 'ISO 27001', 'SOX', 'SIEM – Security Onion', 'IAM', 'profile.item.industrial_firewalls'],
     img: '/comp_cyber.webp'
   },
   {
-    grupo: 'Redes & Infraestructura',
+    grupoKey: 'profile.comp.network',
     color: '#3B82F6',
-    items: ['Cisco CCNA', 'MPLS', 'MikroTik', 'VSAT', 'Riverbed WAN', 'VPN', 'Fibra Óptica', 'DNS / DHCP'],
+    items: ['Cisco CCNA', 'MPLS', 'MikroTik', 'VSAT', 'Riverbed WAN', 'VPN', 'profile.item.fiber_optics', 'DNS / DHCP'],
     img: '/comp_redes.webp'
   },
   {
-    grupo: 'Cloud & Virtualización',
+    grupoKey: 'profile.comp.cloud',
     color: '#06B6D4',
     items: ['Microsoft Azure', 'AWS', 'VMware vSphere', 'ESXi', 'vCenter', 'Nexus 1000v', 'Windows Server 2003–2022', 'Active Directory', 'Exchange', 'SQL Server', 'Linux'],
     img: '/comp_cloud.webp'
   },
   {
-    grupo: 'OT / Control Industrial',
+    grupoKey: 'profile.comp.ot',
     color: '#C5A46D',
-    items: ['SCADA', 'Modbus', 'OPC UA', 'DNP3', 'Edge Computing', 'Veeam Backup', 'Backup Exec', 'Control Industrial'],
+    items: ['SCADA', 'Modbus', 'OPC UA', 'DNP3', 'Edge Computing', 'Veeam Backup', 'Backup Exec', 'profile.item.industrial_control'],
     img: '/comp_ot.webp'
   },
   {
-    grupo: 'Desarrollo & Automatización',
+    grupoKey: 'profile.comp.dev',
     color: '#8B5CF6',
     items: ['Next.js 14', 'React.js', 'Tailwind CSS', 'JavaScript ES6+', 'TypeScript', 'Python', 'Power BI', 'CI/CD', 'Vercel'],
     img: '/comp_web.webp'
   },
   {
-    grupo: 'Gestión & GRC',
+    grupoKey: 'profile.comp.grc',
     color: '#10B981',
     items: ['PMI / Project Management', 'GRC', 'Risk Analysis', 'Incident Response', 'Stakeholder Management', 'SDLC'],
     img: '/comp_grc.webp'
   },
 ]
 
-function MetricCard({ num, label, color, icon, img, delay }: { num: string; label: string; color: string; icon: string; img: string; delay: number }) {
+function MetricCard({ num, labelKey, color, icon, img, delay }: { num: string; labelKey: string; color: string; icon: string; img: string; delay: number }) {
+  const { t } = useLanguage()
   const ref    = useRef(null)
   const inView = useInView(ref, { once: true })
+  const label = t(labelKey)
 
   return (
     <motion.div
@@ -119,7 +121,7 @@ export default function Perfil() {
               <div className="relative w-full h-full rounded-2xl overflow-hidden border border-blue-500/20 shadow-[0_0_60px_rgba(30,144,255,0.08)] bg-slate-900 group">
                 <Image
                   src="/JuanPalacios.jpg"
-                  alt="Foto de perfil de Juan Palacios"
+                  alt={t('profile.photo_alt')}
                   fill
                   className="object-cover grayscale group-hover:grayscale-0 transition-all duration-1000 scale-105 group-hover:scale-100"
                   sizes="(max-width: 640px) 160px, (max-width: 768px) 200px, 240px"
@@ -152,19 +154,19 @@ export default function Perfil() {
 
         {/* Metrics */}
         <div className="grid grid-cols-[repeat(auto-fit,minmax(180px,1fr))] gap-3 md:gap-5 mb-10 md:mb-14">
-          {metrics.map((m, i) => <MetricCard key={m.label} {...m} delay={i * 0.1 + 0.2} />)}
+          {metrics.map((m, i) => <MetricCard key={m.labelKey} {...m} delay={i * 0.1 + 0.2} />)}
         </div>
 
         {/* Competencias grouped */}
         <FadeIn delay={0.3}>
           <div className="mt-12 mb-4">
             <p className="text-[0.65rem] md:text-[0.72rem] text-[var(--blue)] tracking-[3px] uppercase mb-3 md:mb-5">
-              Dominio técnico completo
+              {t('profile.skills_header')}
             </p>
             <div className="grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] gap-3 md:gap-5">
               {competencias.map((c, i) => (
                 <motion.div
-                  key={c.grupo}
+                  key={c.grupoKey}
                   whileHover={{ y: -4, borderColor: c.color + '88' }}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
@@ -181,7 +183,7 @@ export default function Perfil() {
                   <div className="absolute inset-0 z-0">
                     <Image 
                       src={c.img} 
-                      alt={c.grupo} 
+                      alt={t(c.grupoKey)} 
                       fill 
                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                       className="object-cover opacity-12 grayscale-[60%] brightness-[0.5]"
@@ -191,12 +193,12 @@ export default function Perfil() {
 
                   <div className="relative z-1">
                     <div className="text-sm font-bold tracking-wide uppercase mb-3" style={{ color: c.color }}>
-                      {c.grupo}
+                      {t(c.grupoKey)}
                     </div>
                     <div className="flex flex-wrap gap-1.5">
                       {c.items.map(item => (
                         <span key={item} className="text-xs font-medium px-2 py-1 rounded-full bg-white/5 text-white/90 border border-white/10">
-                          {item}
+                          {t(item)}
                         </span>
                       ))}
                     </div>

@@ -51,7 +51,7 @@ export default function Hero() {
           <div className="relative w-[150px] h-[150px] sm:w-[200px] sm:h-[200px] md:w-[240px] md:h-[240px] lg:w-[360px] lg:h-[360px] rounded-3xl overflow-hidden border border-blue-500/20 shadow-[0_0_80px_rgba(30,144,255,0.1)] bg-slate-900 group">
             <Image
               src="/JuanPalacios.jpg"
-              alt="Foto de perfil de Juan Palacios"
+              alt={t('profile.photo_alt')}
               fill
               className="object-cover grayscale group-hover:grayscale-0 transition-all duration-1000 scale-105 group-hover:scale-100"
               sizes="(max-width: 640px) 150px, (max-width: 768px) 200px, (max-width: 1024px) 240px, 360px"

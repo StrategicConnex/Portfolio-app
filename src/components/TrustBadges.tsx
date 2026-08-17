@@ -5,6 +5,7 @@ import { useRef } from 'react'
 import FadeIn from './ui/FadeIn'
 import SectionHeader from './ui/SectionHeader'
 import Icon from './ui/Icon'
+import { useLanguage } from '@/context/LanguageContext'
 
 /* ── Standards & Certifications (text-based, grayscale style) ── */
 const standards = [
@@ -23,7 +24,7 @@ const companies = [
   {
     name: 'YPY',
     full: 'YPY Oilfield Services',
-    years: '2025 – Actual',
+    yearsKey: 'trust.years.present',
     sector: 'Oil & Gas',
     color: '#F97316',
     icon: 'energy',
@@ -31,7 +32,7 @@ const companies = [
   {
     name: 'OPS',
     full: 'Oilfield Production Services SRL',
-    years: '2013 – 2024',
+    yearsKey: 'trust.years.ops',
     sector: 'Oil & Gas',
     color: '#C5A46D',
     icon: 'oil',
@@ -39,7 +40,7 @@ const companies = [
   {
     name: 'EXT',
     full: 'Exterran Argentina SRL',
-    years: '2003 – 2013',
+    yearsKey: 'trust.years.ext',
     sector: 'Natural Gas Processing',
     color: '#6366F1',
     icon: 'industry',
@@ -48,10 +49,10 @@ const companies = [
 
 /* ── Operators / clients referenced ── */
 const operators = [
-  { name: 'YPF',      color: '#94A3B8', desc: 'Homologación técnica' },
-  { name: 'PAE',      color: '#94A3B8', desc: 'Gestión de legajos'  },
-  { name: 'Vista Oil',color: '#94A3B8', desc: 'Servicios B2B'       },
-  { name: 'Vaca Muerta', color: '#94A3B8', desc: 'Ecosistema regional' },
+  { name: 'YPF',      color: '#94A3B8', descKey: 'trust.operators.homologacion' },
+  { name: 'PAE',      color: '#94A3B8', descKey: 'trust.operators.gestion'  },
+  { name: 'Vista Oil',color: '#94A3B8', descKey: 'trust.operators.b2b'       },
+  { name: 'Vaca Muerta', color: '#94A3B8', descKey: 'trust.operators.regional' },
 ]
 
 function BadgePill({ delay, children }: { delay: number; children: React.ReactNode }) {
@@ -71,15 +72,17 @@ function BadgePill({ delay, children }: { delay: number; children: React.ReactNo
 }
 
 export default function TrustBadges() {
+  const { t } = useLanguage()
+
   return (
     <section id="confianza" style={{ padding: 'clamp(2rem, 5vw, 4rem) clamp(1rem, 5vw, 2rem)', background: 'var(--bg2)', borderTop: '1px solid var(--border)' }}>
       <div style={{ maxWidth: 1100, margin: 'auto' }}>
-        <SectionHeader label="Validación profesional" title="Empresas &" highlight="Estándares" />
+        <SectionHeader label={t('trust.label')} title={t('trust.title')} highlight={t('trust.highlight')} />
 
         {/* Companies */}
         <FadeIn delay={0.05}>
           <p style={{ fontSize: 'clamp(0.63rem, 1.2vw, 0.68rem)', color: 'var(--muted)', letterSpacing: '2px', textTransform: 'uppercase', marginBottom: 'clamp(0.75rem, 1.5vw, 1rem)', fontWeight: 600 }}>
-            Historial corporativo
+            {t('trust.history')}
           </p>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(clamp(240px, 100%, 260px), 1fr))', gap: 'clamp(0.6rem, 1.5vw, 0.9rem)', marginBottom: 'clamp(2rem, 4vw, 3rem)' }}>
             {companies.map((c, i) => (
@@ -104,7 +107,7 @@ export default function TrustBadges() {
                   </div>
                   <div style={{ position: 'relative', zIndex: 3 }}>
                     <div style={{ fontSize: 'clamp(0.8rem, 1.6vw, 0.88rem)', fontWeight: 700, color: 'var(--text)' }}>{c.full}</div>
-                    <div style={{ fontSize: 'clamp(0.65rem, 1.3vw, 0.72rem)', color: c.color, fontWeight: 600 }}>{c.years}</div>
+                    <div style={{ fontSize: 'clamp(0.65rem, 1.3vw, 0.72rem)', color: c.color, fontWeight: 600 }}>{t(c.yearsKey)}</div>
                     <div style={{ fontSize: 'clamp(0.63rem, 1.2vw, 0.7rem)', color: 'var(--muted)' }}>{c.sector}</div>
                   </div>
                 </div>
@@ -116,7 +119,7 @@ export default function TrustBadges() {
         {/* Standards grid */}
         <FadeIn delay={0.15}>
           <p style={{ fontSize: 'clamp(0.63rem, 1.2vw, 0.68rem)', color: 'var(--muted)', letterSpacing: '2px', textTransform: 'uppercase', marginBottom: 'clamp(0.75rem, 1.5vw, 1rem)', fontWeight: 600 }}>
-            Certificaciones y estándares
+            {t('trust.standards')}
           </p>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.6rem', marginBottom: '3rem' }}>
             {standards.map((s, i) => (
@@ -141,7 +144,7 @@ export default function TrustBadges() {
         {/* Operators */}
         <FadeIn delay={0.2}>
           <p style={{ fontSize: '0.68rem', color: 'var(--muted)', letterSpacing: '2px', textTransform: 'uppercase', marginBottom: '1rem', fontWeight: 600 }}>
-            Ecosistema de operadoras — Vaca Muerta
+            {t('trust.ecosystem')}
           </p>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
             {operators.map((o, i) => (
@@ -155,7 +158,7 @@ export default function TrustBadges() {
                 }}>
                   <span style={{ fontSize: '0.82rem', fontWeight: 700, color: 'rgba(226,232,240,0.75)' }}>{o.name}</span>
                   <span style={{ fontSize: '0.65rem', color: 'var(--muted)' }}>·</span>
-                  <span style={{ fontSize: '0.65rem', color: 'var(--muted)' }}>{o.desc}</span>
+                  <span style={{ fontSize: '0.65rem', color: 'var(--muted)' }}>{t(o.descKey)}</span>
                 </div>
               </BadgePill>
             ))}

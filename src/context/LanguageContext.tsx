@@ -1,9 +1,17 @@
 'use client'
 
-import React, { createContext, useContext, useReducer, ReactNode, useEffect, useCallback } from 'react'
+import React, { createContext, useContext, useReducer, ReactNode, useEffect, useCallback, useRef } from 'react'
 import { translations } from './translations'
+import {
+  DEFAULT_LANGUAGE,
+  persistLanguage,
+  readLanguageCookie,
+  readStoredPreference,
+  resolveHydrationLanguage,
+  type Language,
+} from '@/lib/language'
 
-type Language = 'es' | 'en'
+export type { Language }
 
 interface LanguageContextType {
   language: Language
@@ -13,62 +21,19 @@ interface LanguageContextType {
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined)
 
-/** Cookie name used to persist language preference for SSR. */
-const LANG_COOKIE = 'portfolio_lang'
-const COOKIE_MAX_AGE = 31536000 // 1 year
-
 // ── Reducer (avoids cascading-render lint when multiple state values change) ──
 
 interface State {
   language: Language
-  hydrated: boolean
 }
 
-type Action =
-  | { type: 'HYDRATE'; language: Language }
-  | { type: 'SET_LANGUAGE'; language: Language }
+type Action = { type: 'HYDRATE' | 'SET_LANGUAGE'; language: Language }
 
 function reducer(state: State, action: Action): State {
-  switch (action.type) {
-    case 'HYDRATE':
-      return { language: action.language, hydrated: true }
-    case 'SET_LANGUAGE':
-      return { ...state, language: action.language }
-  }
+  return { language: action.language }
 }
 
-const INITIAL_STATE: State = { language: 'es', hydrated: false }
-
-// ── Helpers ──
-
-/**
- * Detects language from the browser, preferring localStorage then navigator.language.
- * Only intended to run on the client **after hydration**.
- */
-function detectClientLanguage(): Language {
-  try {
-    const saved = localStorage.getItem(LANG_COOKIE)
-    if (saved === 'en') return 'en'
-    if (saved === 'es') return 'es'
-    if (saved === null) {
-      const navLang = navigator.language?.toLowerCase() || ''
-      if (navLang.startsWith('en')) return 'en'
-    }
-  } catch {
-    // Silently ignore localStorage/navigator errors
-  }
-  return 'es'
-}
-
-/** Set both localStorage and a short-lived cookie so future SSR can agree. */
-function persistLanguage(lang: Language): void {
-  try {
-    localStorage.setItem(LANG_COOKIE, lang)
-    document.cookie = `${LANG_COOKIE}=${lang};path=/;max-age=${COOKIE_MAX_AGE};SameSite=Lax`
-  } catch {
-    // Silently ignore storage errors
-  }
-}
+const INITIAL_STATE: State = { language: DEFAULT_LANGUAGE }
 
 // ── Provider ──
 
@@ -79,28 +44,36 @@ interface LanguageProviderProps {
 }
 
 export const LanguageProvider = ({ children, initialLanguage }: LanguageProviderProps) => {
-  // Use server-provided initialLanguage when available, otherwise default to 'es'.
-  // This makes SSR render in the correct language when a cookie exists.
-  // After hydration the effect dispatches HYDRATE to sync with localStorage / browser.
+  // First render uses the server-provided language (what SSR painted), so the
+  // hydrated DOM matches the served HTML — no first-paint flip.
   const initialState: State = initialLanguage
-    ? { language: initialLanguage, hydrated: false }
+    ? { language: initialLanguage }
     : INITIAL_STATE
-  const [{ language, hydrated }, dispatch] = useReducer(reducer, initialState)
+  const [{ language }, dispatch] = useReducer(reducer, initialState)
 
-  // After hydration: detect the real language from localStorage → browser
+  // Resolve the post-hydration language once, flash-free, via the seam. The
+  // SSR language (guaranteed by the proxy cookie) is the agreement anchor —
+  // using it instead of the live cookie keeps the resolution stable even
+  // though the effect's own persist() rewrites the cookie. The ref guard
+  // additionally absorbs Next dev's StrictMode double-invocation. A
+  // diverging localStorage preference is re-established for the NEXT
+  // request, never rendered over the SSR first paint.
+  const didHydrate = useRef(false)
   useEffect(() => {
-    const detected = detectClientLanguage()
-    dispatch({ type: 'HYDRATE', language: detected })
-  }, [])
+    if (didHydrate.current) return
+    didHydrate.current = true
+    const { language: resolved, persist } = resolveHydrationLanguage(
+      initialLanguage ?? readLanguageCookie(),
+      readStoredPreference(),
+    )
+    if (persist !== null) persistLanguage(persist)
+    dispatch({ type: 'HYDRATE', language: resolved })
+  }, [initialLanguage])
 
-  // Persist language preference on every change (only after hydration)
-  useEffect(() => {
-    if (!hydrated) return
-    persistLanguage(language)
-  }, [language, hydrated])
-
+  // Only an explicit user action changes the language and persists it.
   const setLanguage = useCallback((lang: Language) => {
     dispatch({ type: 'SET_LANGUAGE', language: lang })
+    persistLanguage(lang)
   }, [])
 
   const t = useCallback((key: string): string => {

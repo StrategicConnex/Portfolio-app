@@ -23,7 +23,7 @@ const BlogCard = ({ post, index }: { post: BlogPost; index: number }) => {
             {post.category}
           </span>
           <div className="flex-1 h-[1px] bg-white/5" />
-          <span className="text-[10px] text-slate-500 font-mono">{post.date}</span>
+          <span className="text-[10px] text-slate-500 font-mono">{t(post.dateKey)}</span>
         </div>
 
         <h3 className="text-lg font-bold text-white mb-3 group-hover:text-blue-400 transition-colors leading-tight">

@@ -3,6 +3,7 @@ import { cookies, headers } from 'next/headers'
 import './globals.css'
 import { LanguageProvider } from '@/context/LanguageContext'
 import { SITE } from '@/lib/constants'
+import { LANGUAGE_COOKIE, detectLanguageServer } from '@/lib/language'
 import React from 'react'
 import Script from 'next/script'
 import { ObservabilityProvider } from '@/components/observability/ObservabilityProvider'
@@ -160,19 +161,25 @@ export default async function RootLayout({
 }) {
   const cookieStore = await cookies()
   const headersStore = await headers()
-  const langCookie = cookieStore.get('portfolio_lang')
+  const langCookie = cookieStore.get(LANGUAGE_COOKIE)
 
-  // Determine initial language: cookie → Accept-Language header → default 'es'
-  // This must match detectClientLanguage() in LanguageContext.tsx
-  let initialLang: 'es' | 'en' = 'es'
-  if (langCookie?.value === 'en') {
-    initialLang = 'en'
-  } else if (!langCookie) {
-    const acceptLanguage = headersStore.get('accept-language') || ''
-    if (acceptLanguage.startsWith('en')) {
-      initialLang = 'en'
-    }
-  }
+  // Initial language via the shared seam: cookie → Accept-Language header → default.
+  // Same rule as detectLanguageClient() — both live in src/lib/language.ts.
+  const initialLang = detectLanguageServer(
+    langCookie?.value,
+    headersStore.get('accept-language'),
+  )
+
+  // The RUM telemetry API only accepts deployed origins, so it must never
+  // fire from localhost — including `next start` runs of the production
+  // build (e.g. the CI e2e job), where the CORS rejection would surface
+  // as console errors.
+  const host = headersStore.get('host') ?? ''
+  const isLocalHost =
+    host.startsWith('localhost') ||
+    host.startsWith('127.0.0.1') ||
+    host.startsWith('[::1]') ||
+    host.startsWith('0.0.0.0')
 
   return (
     <html lang={initialLang} suppressHydrationWarning style={{ colorScheme: 'dark' }}>
@@ -183,16 +190,21 @@ export default async function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
-        <Script
-          src={SITE.scaudit.scriptUrl}
-          strategy="afterInteractive"
-          data-project-id={SITE.scaudit.projectId}
-          data-api-url={SITE.scaudit.apiUrl}
-          data-sampling="1.0"
-          data-spa-tracking="true"
-          data-batch-size="10"
-          data-flush-interval="15000"
-        />
+        {/* SCAudit RUM only on deployed (non-localhost) production builds:
+            the telemetry API only allows deployed origins, so loading it on
+            localhost produces CORS errors in the console. */}
+        {process.env.NODE_ENV === 'production' && !isLocalHost && (
+          <Script
+            src={SITE.scaudit.scriptUrl}
+            strategy="afterInteractive"
+            data-project-id={SITE.scaudit.projectId}
+            data-api-url={SITE.scaudit.apiUrl}
+            data-sampling="1.0"
+            data-spa-tracking="true"
+            data-batch-size="10"
+            data-flush-interval="15000"
+          />
+        )}
       </head>
       <body className="font-sans antialiased bg-[#0f172a] text-slate-300">
         <LanguageProvider initialLanguage={initialLang}>

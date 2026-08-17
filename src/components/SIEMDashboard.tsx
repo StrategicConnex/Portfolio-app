@@ -329,7 +329,7 @@ export default function SIEMDashboard() {
                       <span className="text-slate-400 flex items-center gap-2">
                         <Icon name={k.icon} label={t(k.labelKey)} size={14} />{t(k.labelKey)}
                       </span>
-                      <span className="text-amber-500 font-bold font-mono">{k.val}</span>
+                      <span className="text-amber-500 font-bold font-mono">{t(k.valKey)}</span>
                     </div>
                   ))}
                 </div>

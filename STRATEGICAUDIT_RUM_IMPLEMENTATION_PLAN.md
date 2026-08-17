@@ -1,5 +1,26 @@
 # Plan de Implementacion StrategicAudit Pro RUM v2.0
 
+> ## ⚠️ ESTADO: EJECUTADO
+>
+> Este plan se implementó por completo. La integración RUM está en `src/app/layout.tsx`:
+>
+> ```tsx
+> <Script
+>   src={SITE.scaudit.scriptUrl}            // https://scaudit.vercel.app/scripts/vitals.js
+>   strategy="afterInteractive"
+>   data-project-id="7c9945ad-c235-484d-98fa-1d8fe7e9ee40"
+>   data-api-url={SITE.scaudit.apiUrl}      // https://scaudit.vercel.app/api/telemetry/vitals
+>   data-sampling="1.0"
+>   data-spa-tracking="true"
+>   data-batch-size="10"
+>   data-flush-interval="15000"
+> />
+> ```
+>
+> Con guard de entorno: solo se carga con `NODE_ENV === 'production'` **y** host no-localhost (la API de telemetría rechaza orígenes no desplegados con CORS). `unpkg.com` **no** se agregó a la CSP (ADR-001 lo eliminó). Checklist RUM-01..RUM-10 → **Hecho**. Se conserva como registro histórico; el estado vigente está en `README.md`.
+
+---
+
 > Archivo preparado para implementar la auditoria RUM desde `https://scaudit.vercel.app` en `juanpalacios.vercel.app`, optimizado para ejecutarse con Gemini 3.1 Flash en Google Antigravity.
 
 ---
@@ -446,16 +467,16 @@ Subir a `1.0` solo si:
 
 | ID | Criterio | Estado |
 |---|---|---|
-| RUM-01 | No hay script duplicado. | Pendiente |
-| RUM-02 | `layout.tsx` usa `strategy="afterInteractive"`. | Pendiente |
-| RUM-03 | `data-api-url` apunta a `https://scaudit.vercel.app/api/telemetry/vitals`. | Pendiente |
-| RUM-04 | CSP permite `scaudit.vercel.app`. | Pendiente |
-| RUM-05 | No se agrega `unpkg.com` salvo necesidad real. | Pendiente |
-| RUM-06 | `npm run lint` pasa. | Pendiente |
-| RUM-07 | `npm run build` pasa. | Pendiente |
-| RUM-08 | El dashboard recibe pageviews. | Pendiente |
-| RUM-09 | Navegacion SPA genera pageviews nuevos. | Pendiente |
-| RUM-10 | `sendBeacon` funciona en cierre/ocultamiento. | Pendiente |
+| RUM-01 | No hay script duplicado. | Hecho |
+| RUM-02 | `layout.tsx` usa `strategy="afterInteractive"`. | Hecho |
+| RUM-03 | `data-api-url` apunta a `https://scaudit.vercel.app/api/telemetry/vitals`. | Hecho |
+| RUM-04 | CSP permite `scaudit.vercel.app`. | Hecho |
+| RUM-05 | No se agrega `unpkg.com` salvo necesidad real. | Hecho (ADR-001) |
+| RUM-06 | `npm run lint` pasa. | Hecho |
+| RUM-07 | `npm run build` pasa. | Hecho |
+| RUM-08 | El dashboard recibe pageviews. | Hecho (producción) |
+| RUM-09 | Navegacion SPA genera pageviews nuevos. | Hecho |
+| RUM-10 | `sendBeacon` funciona en cierre/ocultamiento. | Hecho |
 
 ---
 

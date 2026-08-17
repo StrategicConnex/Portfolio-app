@@ -1,14 +1,17 @@
 /**
- * Conversation Memory System
+ * Conversation Memory System (client-side)
  * 
- * Manages short-term and long-term memory for the AI copilot.
- * - Short-term: Active conversation context
- * - Long-term: Summaries persisted to localStorage (client-side)
+ * Manages long-term memory for the AI copilot in localStorage:
+ * - Summaries persisted to localStorage (client-side)
  * - Session: Preferences and context for the current browser session
+ * 
+ * The server-side summarization call (`generateConversationSummary` /
+ * `shouldSummarize`) was removed in candidate C5 — it ran in the ask-ai
+ * route and its result was discarded with a console.log. These client
+ * helpers are the intended API for the panel's memory integration.
  */
 
 const MEMORY_STORAGE_KEY = 'ask-ai-memory';
-const SUMMARY_THRESHOLD = 8; // Summarize every N messages
 
 export interface ConversationSummary {
   id: string;
@@ -105,65 +108,9 @@ export function addSummary(summary: Omit<ConversationSummary, 'id' | 'lastUpdate
 }
 
 /**
- * Generate a simple text summary from conversation messages.
- * This runs on the server side when the conversation is complete.
- */
-export function generateConversationSummary(
-  messages: { role: string; content: string }[],
-  language: 'es' | 'en' = 'es',
-): { title: string; summary: string; topics: string[] } {
-  if (messages.length === 0) {
-    return { title: language === 'en' ? 'Empty conversation' : 'Conversación vacía', summary: '', topics: [] };
-  }
-
-  // Extract first user message as title
-  const firstUserMsg = messages.find(m => m.role === 'user');
-  const title = firstUserMsg
-    ? firstUserMsg.content.substring(0, 80) + (firstUserMsg.content.length > 80 ? '...' : '')
-    : language === 'en' ? 'Conversation' : 'Conversación';
-
-  // Detect topics from user messages
-  const topicKeywords = [
-    'iec 62443', 'nist', 'iso 27001', 'purdue', 'siem', 'security onion',
-    'oil & gas', 'vaca muerta', 'scada', 'modbus', 'dns', 'ssl', 'tls',
-    'http', 'firewall', 'seguridad', 'industrial', 'cloud', 'azure', 'aws',
-    'certification', 'certificación', 'pmp', 'ccna', 'docker', 'kubernetes',
-  ];
-
-  const topics = new Set<string>();
-  for (const msg of messages) {
-    const lower = msg.content.toLowerCase();
-    for (const kw of topicKeywords) {
-      if (lower.includes(kw)) {
-        topics.add(kw);
-      }
-    }
-  }
-
-  // Build summary from message patterns
-  const userMessages = messages.filter(m => m.role === 'user');
-  const botMessages = messages.filter(m => m.role === 'assistant');
-
-  const summary = language === 'en'
-    ? `Conversation about ${topics.size > 0 ? [...topics].slice(0, 3).join(', ') : 'general topics'}. ${userMessages.length} user messages, ${botMessages.length} assistant responses.`
-    : `Conversación sobre ${topics.size > 0 ? [...topics].slice(0, 3).join(', ') : 'temas generales'}. ${userMessages.length} mensajes de usuario, ${botMessages.length} respuestas del asistente.`;
-
-  return {
-    title,
-    summary,
-    topics: [...topics].slice(0, 5),
-  };
-}
-
-/**
- * Check if the conversation should be summarized (based on message count threshold).
- */
-export function shouldSummarize(messages: { role: string }[]): boolean {
-  return messages.filter(m => m.role === 'user').length >= SUMMARY_THRESHOLD;
-}
-
-/**
  * Build a context string from past conversation summaries for the system prompt.
+ * The returned block is pre-localized and self-labeled, ready to embed in the
+ * system prompt (the prompt-builder seam injects it verbatim).
  */
 export function buildMemoryContext(memory?: MemoryState, language: 'es' | 'en' = 'es'): string {
   if (!memory || memory.summaries.length === 0) {
@@ -176,4 +123,102 @@ export function buildMemoryContext(memory?: MemoryState, language: 'es' | 'en' =
   return language === 'en'
     ? `\nPast conversations:\n${context}\n`
     : `\nConversaciones anteriores:\n${context}\n`;
+}
+
+/**
+ * A minimal structural view of a chat message — the seam only needs the role
+ * and the text parts, so it accepts any message shape that provides them
+ * (e.g. the `UIMessage` objects `useChat` produces).
+ */
+export interface SummarizableMessage {
+  role: string;
+  parts: readonly { type: string; text?: string }[];
+}
+
+export interface SummarizeConversationOptions {
+  /** Max title length in chars (default 64). */
+  maxTitleLength?: number;
+  /** Max length of each quoted excerpt in the summary (default 280). */
+  maxSummaryLength?: number;
+}
+
+/**
+ * Derive a real summary from a completed conversation: title from the first
+ * user message, a question/answer excerpt as the summary body, the user
+ * message count, and technical topics extracted from the user's prompts.
+ * Returns `null` when there is nothing to summarize (no user messages or no
+ * text at all).
+ */
+export function summarizeConversation(
+  messages: readonly SummarizableMessage[],
+  language: 'es' | 'en' = 'es',
+  options: SummarizeConversationOptions = {},
+): Omit<ConversationSummary, 'id' | 'lastUpdated'> | null {
+  const { maxTitleLength = 64, maxSummaryLength = 280 } = options;
+
+  const textOf = (m: SummarizableMessage) =>
+    m.parts
+      .filter((p) => p.type === 'text' && typeof p.text === 'string')
+      .map((p) => (p.text as string).trim())
+      .filter(Boolean)
+      .join(' ')
+      .trim();
+
+  const userMessages = messages.filter((m) => m.role === 'user');
+  const firstUserText = userMessages.length > 0 ? textOf(userMessages[0]) : '';
+  const lastAssistant = [...messages].reverse().find((m) => m.role === 'assistant');
+  const lastAssistantText = lastAssistant ? textOf(lastAssistant) : '';
+
+  // Nothing to summarize: no user messages (the conversation never started) or
+  // no text at all anywhere in the thread.
+  if (userMessages.length === 0 || (!firstUserText && !lastAssistantText)) {
+    return null;
+  }
+
+  const truncate = (text: string, max: number) =>
+    text.length > max ? `${text.slice(0, max - 1).trimEnd()}…` : text;
+
+  const title = truncate(firstUserText || lastAssistantText, maxTitleLength);
+  const question = truncate(firstUserText, maxSummaryLength);
+  const answer = truncate(lastAssistantText, maxSummaryLength);
+
+  const summary =
+    language === 'en'
+      ? `User asked: "${question}".${answer ? ` Assistant answered: "${answer}".` : ' No assistant response yet.'}`
+      : `El usuario preguntó: "${question}".${answer ? ` El asistente respondió: "${answer}".` : ' Aún no hay respuesta del asistente.'}`;
+
+  return {
+    title,
+    summary,
+    messageCount: userMessages.length,
+    topics: extractTopics(messages),
+  };
+}
+
+/**
+ * Extract technical topics from the user's prompts: all-caps terms (IEC,
+ * NIST, SIEM…) and tokens containing digits (62443, ISO27001…). Deduplicated,
+ * max 5.
+ */
+function extractTopics(messages: readonly SummarizableMessage[]): string[] {
+  const text = messages
+    .filter((m) => m.role === 'user')
+    .flatMap((m) =>
+      m.parts
+        .filter((p) => p.type === 'text' && typeof p.text === 'string')
+        .map((p) => p.text as string),
+    )
+    .join(' ');
+
+  const matches = text.match(/[A-ZÁÉÍÓÚÑÜ]{2,}|\b\w*\d\w*\b/g) || [];
+  const seen = new Set<string>();
+  const topics: string[] = [];
+  for (const raw of matches) {
+    const topic = raw.trim();
+    if (!topic || seen.has(topic)) continue;
+    seen.add(topic);
+    topics.push(topic);
+    if (topics.length >= 5) break;
+  }
+  return topics;
 }

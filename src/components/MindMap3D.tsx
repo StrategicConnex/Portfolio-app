@@ -5,6 +5,7 @@ import { OrbitControls, Text, Stars, Html } from '@react-three/drei'
 import { useRef, useState, useMemo, useEffect } from 'react'
 import * as THREE from 'three'
 import { nodes, edges, type NodeDefinition } from '@/data/mindmap'
+import { useLanguage } from '@/context/LanguageContext'
 
 function ParticleNode({
   node,
@@ -17,6 +18,7 @@ function ParticleNode({
   isRelated: boolean
   onSelect: (label: string) => void
 }) {
+  const { t } = useLanguage()
   const pointsRef = useRef<THREE.Points>(null)
   const [hovered, setHovered] = useState(false)
   const glowRef = useRef<THREE.Mesh>(null)
@@ -83,7 +85,7 @@ function ParticleNode({
         outlineWidth={0.02}
         outlineColor="#000000"
       >
-        {node.label}
+        {t(node.labelKey)}
       </Text>
 
       {(hovered || isSelected) && node.subs.length > 0 && (
@@ -101,10 +103,10 @@ function ParticleNode({
             pointerEvents: 'none',
             backdropFilter: 'blur(5px)',
           }}>
-            <strong style={{ display: 'block', marginBottom: '0.25rem', color: '#BAE6FD' }}>Dependencias clave</strong>
+            <strong style={{ display: 'block', marginBottom: '0.25rem', color: '#BAE6FD' }}>{t('arch.mindmap.deps')}</strong>
             <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-              {node.subs.map((sub, idx) => (
-                <li key={idx} style={{ margin: '2px 0', fontSize: '10px' }}>▸ {sub}</li>
+              {node.subKeys.map((subKey, idx) => (
+                <li key={idx} style={{ margin: '2px 0', fontSize: '10px' }}>▸ {t(subKey)}</li>
               ))}
             </ul>
           </div>

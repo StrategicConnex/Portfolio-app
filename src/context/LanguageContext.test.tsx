@@ -22,6 +22,11 @@ beforeEach(() => {
   vi.stubGlobal('localStorage', mock)
   // Stub navigator.language to 'es-AR' so auto-detection defaults to Spanish
   Object.defineProperty(navigator, 'language', { value: 'es-AR', configurable: true })
+  // Start each test with a clean document.cookie
+  document.cookie.split(';').forEach((part) => {
+    const name = part.split('=')[0].trim()
+    if (name) document.cookie = `${name}=;max-age=0`
+  })
 })
 
 afterEach(() => {
@@ -52,8 +57,29 @@ describe('LanguageProvider', () => {
     expect(lang).toBe('es')
   })
 
-  it('should load English when localStorage has en', () => {
+  it('keeps the default render when a stored preference diverges (no flash)', () => {
+    // Cookie absent + localStorage "en" + browser es: the SSR agreement channel
+    // wins for the first paint ("es"), the stored choice is only re-established
+    // for the next request — never rendered over the first paint.
     localStorage.setItem(STORAGE_KEY, 'en')
+    let lang: string | undefined
+    function Consumer() {
+      const { language } = useLanguage()
+      lang = language
+      return null
+    }
+    renderWithProvider(<Consumer />)
+    expect(lang).toBe('es')
+    // The stored preference is preserved, not overwritten…
+    expect(localStorage.getItem(STORAGE_KEY)).toBe('en')
+    // …but the cookie is re-established from it so the next SSR honors "en".
+    expect(document.cookie).toContain(`${STORAGE_KEY}=en`)
+  })
+
+  it('renders the cookie language on hydration (SSR agreement)', () => {
+    // The proxy guarantees the cookie on every response, so the client sees
+    // the same value SSR used and hydrates without flipping.
+    document.cookie = `${STORAGE_KEY}=en;path=/`
     let lang: string | undefined
     function Consumer() {
       const { language } = useLanguage()

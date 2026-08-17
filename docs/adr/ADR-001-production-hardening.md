@@ -32,10 +32,21 @@ Next.js 16.2.9, y el CSP incluía `unpkg.com` contradiciendo el plan interno RUM
   5 vulns high de la cadena Next.
 - **CSP**: eliminar `https://unpkg.com` de `script-src` y `connect-src`
   (el script RUM debe auto-contenerse, ver plan RUM-05).
-- **`/api/chat`**: dejar de reenviar headers de IP de cliente al endpoint primario
-  (elimina spoofing del rate limit).
+- **`/api/chat`**: propagar al endpoint primario el `x-forwarded-for`/`x-real-ip`
+  **exactamente como los entregó el edge** (nunca construidos a partir de input del
+  cliente), para que el rate limit del fallback no colapse en el bucket global
+  `internal` (remediación H2 de la auditoría de seguridad).
 - **`getClientId`**: usar la **última** IP de `x-forwarded-for` (la añadida por la
   plataforma), no la primera (spoofeable por el cliente).
+
+> **Supersession (Agosto 2026):** la cláusula original "dejar de reenviar headers
+> de IP" fue motivada por `getClientId` leyendo la PRIMERA IP (spoofeable). Con
+> la decisión de esta misma sección (última IP), reenviar verbatim el header del
+> edge no reintroduce el vector: la última entrada sigue siendo la del edge, y en
+> un despliegue sin edge el fallback expone la misma superficie que llamar a
+> `/api/ask-ai` directamente (el vector no es nuevo). Se reabre la cláusula por
+> fricción real: sin propagación, todos los requests del fallback comparten el
+> bucket `internal` y un solo cliente puede agotar la cuota de todos.
 
 ### Dependencias (P0)
 Overrides npm para resolver el audit completo a **0 vulnerabilidades**:
@@ -119,6 +130,15 @@ npm run build        → OK, 7 routes
 npx playwright test  → 17 passed
 ```
 
+> **Estado actualizado (Agosto 2026):** la suite creció con los seams de
+> arquitectura cerrados posteriormente (RAG unificado, corpus proyectado,
+> rate-limit, prompt builder, model pool, memoria client-side, idioma). Hoy:
+> `npm test` → **381 passed (36 files)**, `npx playwright test` → **33 passed
+> (7 specs)** contra el build de producción (`E2E_PROD_SERVER=1`).
+> Los overrides de npm, la CSP y el contrato `getClientId` (última IP de XFF)
+> siguen vigentes según lo decidido en este ADR. La cláusula de `/api/chat`
+> evolucionó con la remediación H2 (ver supersession arriba).
+
 ---
 
 ## Traceability
@@ -127,7 +147,7 @@ npx playwright test  → 17 passed
 | --- | --- | --- |
 | Eliminar vulns Next | Upgrade 16.3.0 | `package.json` |
 | CSP sin unpkg | Editar CSP | `next.config.ts` |
-| Anti-spoofing rate limit | Última IP + no reenviar IP | `rate-limit.ts`, `chat/route.ts` |
+| Anti-spoofing rate limit | Última IP + reenvío verbatim del header del edge | `rate-limit.ts`, `chat/route.ts` |
 | Tests sin warnings | Helper compartido | `src/test-utils/framer-motion.tsx`, 8 tests |
 | LCP más ligero | quality 75 | `Hero.tsx`, `Perfil.tsx` |
 | Documentar | Este ADR | `docs/adr/ADR-001-production-hardening.md` |

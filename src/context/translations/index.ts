@@ -14,6 +14,8 @@ import { contact } from './contact'
 import { scaudit } from './scaudit'
 import { footer } from './footer'
 import { tools } from './tools'
+import { trust } from './trust'
+import { shell } from './shell'
 
 export interface TranslationModule {
   es: Record<string, string>
@@ -22,8 +24,8 @@ export interface TranslationModule {
 
 const modules: TranslationModule[] = [
   nav, hero, profile, experience, projects, siem,
-  architecture, audit, stack, certs, blog,
-  ai, contact, scaudit, footer, tools,
+  architecture, audit, stack, certs, blog, trust,
+  ai, contact, scaudit, footer, tools, shell,
 ]
 
 function mergeModules(modules: TranslationModule[], lang: 'es' | 'en'): Record<string, string> {

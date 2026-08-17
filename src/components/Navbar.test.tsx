@@ -114,7 +114,7 @@ describe('Navbar', () => {
 
   it('should render the mobile menu toggle button', () => {
     renderNavbar()
-    expect(screen.getByLabelText('Toggle menu')).toBeDefined()
+    expect(screen.getByLabelText('Abrir menú')).toBeDefined()
   })
 
   it('should call IntersectionObserver for section highlighting', () => {
@@ -130,7 +130,7 @@ describe('Navbar', () => {
 
   it('should render language selection inside mobile drawer on toggle', () => {
     renderNavbar()
-    const menuBtn = screen.getByLabelText('Toggle menu')
+    const menuBtn = screen.getByLabelText('Abrir menú')
     // Open the mobile menu
     act(() => {
       fireEvent.click(menuBtn)

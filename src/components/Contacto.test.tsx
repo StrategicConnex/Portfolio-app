@@ -14,6 +14,7 @@ const mockT = vi.fn((key: string) => {
     'contact.highlight': 'Directo',
     'contact.description': 'Especializado en proyectos de alta criticidad en entornos industriales Oil & Gas.',
     'contact.availability': 'Disponible para proyectos de alta criticidad',
+    'contact.download_cv': 'Descargar CV',
   }
   return translations[key] || key
 })

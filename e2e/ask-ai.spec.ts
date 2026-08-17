@@ -1,46 +1,59 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Page } from '@playwright/test';
+
+// Exact aria-label — the fuzzy `[aria-label*="AI" i]` also matches the course
+// buttons in the Certifications section ("View AI for Malware Analysis…"),
+// which come earlier in the DOM, so `.first()` clicked a course modal instead
+// of the launcher (that was the historical cold-start flake).
+const launcherSel = '[aria-label="Ask AI"]';
+const panelInputSel = 'input[placeholder*="Ask" i], input[placeholder*="Pregunta" i]';
+const closeBtnSel = '[aria-label="Cerrar panel"], [aria-label="Close panel"]';
+
+/**
+ * Click the launcher and wait for the panel. The launcher is visible in SSR
+ * HTML before React hydrates, so a click can be lost under load — wait for
+ * the client bundle, then retry until the panel actually opens.
+ */
+async function openPanel(page: Page) {
+  const launcher = page.locator(launcherSel);
+  const panel = page.locator(panelInputSel);
+
+  // Let the client bundle finish loading before interacting (hydration gate)
+  await page.waitForLoadState('networkidle');
+  await expect(launcher).toBeVisible();
+
+  for (let attempt = 0; attempt < 3; attempt++) {
+    await launcher.click();
+    try {
+      await expect(panel).toBeVisible({ timeout: 5_000 });
+      return;
+    } catch {
+      // Click may have landed pre-hydration — retry
+    }
+  }
+  await expect(panel).toBeVisible();
+}
 
 test.describe('Ask AI Panel', () => {
   test('should have Ask AI launcher button', async ({ page }) => {
     await page.goto('/');
-    const launcher = page.locator('[aria-label*="Ask" i], [aria-label*="AI" i], button:has-text("Ask")').first();
-    await expect(launcher).toBeAttached();
+    await expect(page.locator(launcherSel)).toBeVisible();
   });
 
   test('should open the AI panel when clicking launcher', async ({ page }) => {
     await page.goto('/');
-    const launcher = page.locator('[aria-label*="Ask" i], [aria-label*="AI" i], button:has-text("Ask")').first();
-    
-    // Click the launcher button
-    if (await launcher.isVisible()) {
-      await launcher.click();
-      // Wait for panel animation
-      await page.waitForTimeout(500);
-      
-      // Check the panel opened
-      const panel = page.locator('input[placeholder*="Ask" i], input[placeholder*="Pregunta" i]');
-      await expect(panel).toBeVisible({ timeout: 3000 });
-    }
+    await openPanel(page);
   });
 
   test('should close the AI panel', async ({ page }) => {
     await page.goto('/');
-    // Open the panel
-    const launcher = page.locator('[aria-label*="Ask" i], [aria-label*="AI" i], button:has-text("Ask")').first();
-    
-    if (await launcher.isVisible()) {
-      await launcher.click();
-      await page.waitForTimeout(500);
-      
-      // Find and click close button
-      const closeBtn = page.locator('[aria-label="Cerrar panel"], [aria-label="Close chat"]').first();
-      if (await closeBtn.isVisible()) {
-        await closeBtn.click();
-        await page.waitForTimeout(500);
-        
-        // Launcher should be visible again
-        await expect(launcher).toBeVisible();
-      }
-    }
+    await openPanel(page);
+
+    // Find and click close button
+    const closeBtn = page.locator(closeBtnSel).first();
+    await expect(closeBtn).toBeVisible();
+    await closeBtn.click();
+
+    // Launcher should be visible again
+    await expect(page.locator(launcherSel)).toBeVisible();
   });
 });

@@ -25,6 +25,17 @@ const mockT = vi.fn((key: string) => {
     'certs.cat.cloud_dev': 'Cloud & Dev',
     'certs.cat.soft_skills': 'Soft Skills',
     'certs.cat.other': 'Otros',
+    'certs.gallery_title': 'Cursos y Certificados',
+    'certs.filter_label': 'Filtrar por categoría',
+    'certs.panel_label': 'Cursos de categoría',
+    'certs.view': 'Ver',
+    'certs.viewer_label': 'Visor de certificado',
+    'certs.close_viewer': 'Cerrar visor',
+    'certs.image_label': 'Imagen',
+    'certs.reading_mode': 'Modo lectura protegido · Presiona',
+    'certs.close_hint': 'o clic fuera para cerrar',
+    'certs.course.comptia_security': 'Arquitectura de Seguridad CompTIA Security SY0701',
+    'certs.course.pmp': 'Título Project Management Professional (PMP)',
   }
   return m[key] || key
 })

@@ -338,7 +338,7 @@ const AuditHub = () => {
               {/* Console Footer */}
               <div className="px-8 py-4 bg-white/5 border-t border-white/10 flex flex-col sm:flex-row justify-between items-center gap-4">
                 <div className="text-[0.65rem] text-slate-500 font-mono">
-                  {t('audit.ui.last_review')}: <span className="text-slate-300">FEBRERO 2024</span> | {t('audit.ui.analyst')}: <span className="text-slate-300 uppercase">System Architect</span>
+                  {t('audit.ui.last_review')}: <span className="text-slate-300">{t('audit.ui.last_review_date')}</span> | {t('audit.ui.analyst')}: <span className="text-slate-300 uppercase">System Architect</span>
                 </div>
                 <div className="flex gap-4">
                   <div className="flex items-center gap-1.5">

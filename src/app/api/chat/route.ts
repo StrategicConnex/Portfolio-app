@@ -1,26 +1,32 @@
-import { NextRequest } from 'next/server'
-
 /**
  * Fallback chat endpoint.
  * This route exists as a compatibility layer during migration from the old AIConsultant
  * to the new Ask AI Copilot. The primary endpoint is /api/ask-ai.
  */
-export async function POST(request: NextRequest) {
+export async function POST(request: Request) {
   try {
     const body = await request.json()
     
     // Forward to the primary ask-ai endpoint
-    const { hostname, protocol } = new URL(request.url)
-    const origin = `${protocol}//${hostname}`
+    // `.origin` (not protocol+hostname) preserves the port, so the internal
+    // fetch works in local dev as well as in production.
+    const origin = new URL(request.url).origin
     
-    // NOTE: Do NOT forward client-supplied X-Forwarded-For / X-Real-Ip headers.
-    // These are trust boundaries set by the hosting platform (Vercel). Forwarding
-    // raw client values would let an attacker spoof their IP and bypass the
-    // rate limiter in /api/ask-ai (which keys on the client identifier).
+    // H2: propagate the platform-set client identity so the rate limiter in
+    // /api/ask-ai keys on the real client instead of collapsing every fallback
+    // request into the global "internal" bucket. We relay x-forwarded-for /
+    // x-real-ip EXACTLY as the trusted edge delivered them — we never build
+    // these headers from client input — and getClientId() still reads the LAST
+    // x-forwarded-for entry (the edge-appended one), so this fallback offers no
+    // new IP-spoofing vector over calling /api/ask-ai directly.
+    const clientForwardedFor = request.headers.get('x-forwarded-for')
+    const clientRealIp = request.headers.get('x-real-ip')
     const response = await fetch(`${origin}/api/ask-ai`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        ...(clientForwardedFor ? { 'x-forwarded-for': clientForwardedFor } : {}),
+        ...(clientRealIp ? { 'x-real-ip': clientRealIp } : {}),
       },
       body: JSON.stringify(body),
     })

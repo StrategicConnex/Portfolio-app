@@ -33,6 +33,7 @@ const mockT = vi.fn((key: string) => {
     'hero.cta.history': 'TRAYECTORIA',
     'hero.cta.architecture': 'ARQUITECTURA',
     'hero.scroll': 'SCROLL',
+    'profile.photo_alt': 'Foto de perfil de Juan Palacios',
   }
   return m[key] || key
 })

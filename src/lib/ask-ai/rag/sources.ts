@@ -1,3 +1,27 @@
+/**
+ * Knowledge corpus — derived, not duplicated (candidate C2).
+ *
+ * The copilot's retrieval corpus used to be a hand-written mirror of the
+ * site's content, which drifted silently (the copilot said "15+ years" while
+ * the page says "20+", SIEM vectors and compliance progress diverged). Now
+ * the corpus is a *projection*: entries for profile, experience, SIEM,
+ * compliance, blog and case studies are built from the live content modules
+ * (`src/data/*`) and the translation dictionaries, so editing the page
+ * updates the copilot by construction.
+ *
+ * Entries that have no live page source stay in the explicit MANUAL registry
+ * below (contact, stack, certifications, services) — with both locales.
+ *
+ * Per-locale (N3): every section emits an `es` entry and an `en` entry with
+ * content resolved through `translations[lang]`; the old `'both'` entries
+ * that carried Spanish content for English users are gone.
+ */
+import { translations } from '@/context/translations'
+import { JOBS } from '@/data/experiencia'
+import { ATTACK_VECTORS, OPERATIONAL_KPIS, PURDUE_ZONES, TOP_ATTACKERS } from '@/data/siem'
+import { AUDIT_SUMMARY, COMPLIANCE_MARCOS } from '@/data/audit'
+import { BLOG_POSTS } from '@/data/blog'
+
 export interface KnowledgeSource {
   id: string;
   title: string;
@@ -8,31 +32,22 @@ export interface KnowledgeSource {
   url?: string;
 }
 
-// ─── Perfil / Profesional ───────────────────────────────────────────────────
+type Locale = 'es' | 'en'
 
-const PROFILE_SOURCES: KnowledgeSource[] = [
-  {
-    id: 'profile-summary',
-    title: 'Perfil Profesional',
-    content: `Juan Felipe Palacios es Arquitecto IT/OT especializado en Ciberseguridad Industrial con sede en Neuquén, Argentina. 
-    Más de 15 años de experiencia en Oil & Gas, infraestructura crítica y Vaca Muerta. 
-    Experto en IEC 62443, NIST CSF, ISO 27001, SOX, SIEM (Security Onion), Modelo Purdue, SCADA, redes industriales y cloud (Azure/AWS). 
-    Certificado PMP, CCNA, MCSE, VMware VCA-DCV.`,
-    tags: ['perfil', 'juan', 'palacios', 'neuquén', 'argentina', 'arquitecto', 'it/ot', 'ciberseguridad', 'industrial'],
-    locale: 'es',
-    type: 'profile',
-  },
-  {
-    id: 'profile-summary-en',
-    title: 'Professional Profile',
-    content: `Juan Felipe Palacios is an IT/OT Architect specialized in Industrial Cybersecurity based in Neuquén, Argentina. 
-    Over 15 years of experience in Oil & Gas, critical infrastructure and Vaca Muerta. 
-    Expert in IEC 62443, NIST CSF, ISO 27001, SOX, SIEM (Security Onion), Purdue Model, SCADA, industrial networks and cloud (Azure/AWS). 
-    Certified PMP, CCNA, MCSE, VMware VCA-DCV.`,
-    tags: ['profile', 'juan', 'palacios', 'neuquen', 'argentina', 'architect', 'it/ot', 'cybersecurity', 'industrial'],
-    locale: 'en',
-    type: 'profile',
-  },
+/** Resolve a translation key for a locale; unknown keys fall back to the key itself. */
+const tr = (lang: Locale, key: string): string => translations[lang][key] ?? key
+
+/** Resolve a tag: translation keys (e.g. 'exp.tag.fiber') resolve per locale, raw stays. */
+const resolveTag = (lang: Locale, tag: string): string => translations[lang][tag] ?? tag
+
+const projectId = (lang: Locale, id: string): string => (lang === 'en' ? `${id}-en` : id)
+
+// ─── Manual registry (knowledge with no live page source) ───────────────────
+// Author both locales once; the projection below cannot cover these because
+// their data lives only in the corpus (services), in component-local arrays
+// (stack, certifications) or as stable reference info (contact).
+
+const MANUAL_CONTACT: KnowledgeSource[] = [
   {
     id: 'contact-info',
     title: 'Información de Contacto',
@@ -49,46 +64,23 @@ const PROFILE_SOURCES: KnowledgeSource[] = [
     locale: 'en',
     type: 'profile',
   },
-];
+]
 
-// ─── Experiencia / Experience ──────────────────────────────────────────────
-
-const EXPERIENCE_SOURCES: KnowledgeSource[] = [
-  {
-    id: 'exp-ypy',
-    title: 'YPY Oilfield Services - IT/OT Security Lead',
-    content: `Líder en seguridad IT/OT en YPY Oilfield Services. ISO 27001, NIST CSF, Security Onion SIEM, SCADA, PMI, Azure, AWS, VMware, IAM. Implementación y gestión de arquitecturas de seguridad para entornos industriales Oil & Gas.`,
-    tags: ['ypy', 'oilfield', 'oil & gas', 'iso 27001', 'nist', 'security onion', 'siem', 'scada', 'azure', 'aws', 'vmware', 'iam'],
-    locale: 'both',
-    type: 'experience',
-  },
-  {
-    id: 'exp-ops',
-    title: 'Oilfield Production Services SRL - IT/OT Manager',
-    content: `Gerente IT/OT en Oilfield Production Services SRL. Cisco, VSAT, MPLS, MikroTik, Riverbed, Python, VMware, Security Onion, Fibra Óptica, SQL Server. Gestión integral de infraestructura TI y OT para operaciones Oil & Gas.`,
-    tags: ['ops', 'oilfield production', 'cisco', 'vsat', 'mpls', 'mikrotik', 'riverbed', 'python', 'fibra óptica'],
-    locale: 'both',
-    type: 'experience',
-  },
-  {
-    id: 'exp-ext',
-    title: 'Exterran Argentina SRL - IT/OT Supervisor',
-    content: `Supervisor IT/OT en Exterran Argentina SRL. MPLS, VSAT, SOX, Virtualización, Riverbed, Veeam, IP Telephony, HUB Latinoamérica. Supervisión de operaciones TI/OT para la región latinoamericana.`,
-    tags: ['exterran', 'sox', 'virtualización', 'veeam', 'ip telephony', 'latinoamérica'],
-    locale: 'both',
-    type: 'experience',
-  },
-];
-
-// ─── Stack / Tecnologías ────────────────────────────────────────────────────
-
-const STACK_SOURCES: KnowledgeSource[] = [
+const MANUAL_STACK: KnowledgeSource[] = [
   {
     id: 'stack-seguridad',
     title: 'Stack - Seguridad',
     content: 'Security Onion, Firewalls Industriales, SIEM, SOAR, IDS/IPS, Fortinet, Cisco ASA, WAF, DDoS Mitigation (Radware), Endpoint Protection, MFA. Seguridad perimetral y de redes industriales.',
     tags: ['seguridad', 'security onion', 'firewall', 'siem', 'soar', 'ids', 'ips', 'fortinet', 'cisco', 'waf', 'ddos', 'radware'],
-    locale: 'both',
+    locale: 'es',
+    type: 'stack',
+  },
+  {
+    id: 'stack-seguridad-en',
+    title: 'Stack - Security',
+    content: 'Security Onion, Industrial Firewalls, SIEM, SOAR, IDS/IPS, Fortinet, Cisco ASA, WAF, DDoS Mitigation (Radware), Endpoint Protection, MFA. Perimeter security and industrial networks.',
+    tags: ['security', 'security onion', 'firewall', 'siem', 'soar', 'ids', 'ips', 'fortinet', 'cisco', 'waf', 'ddos', 'radware'],
+    locale: 'en',
     type: 'stack',
   },
   {
@@ -96,7 +88,15 @@ const STACK_SOURCES: KnowledgeSource[] = [
     title: 'Stack - Redes y Comunicaciones',
     content: 'Cisco (CCNA), MikroTik, VSAT, MPLS, SD-WAN, Fibra Óptica, Riverbed, Modbus, DNP3, Protocolos Industriales, TCP/IP, VLAN, VPN. Redes OT e infraestructura de comunicaciones crítica.',
     tags: ['redes', 'cisco', 'ccna', 'mikrotik', 'vsat', 'mpls', 'sd-wan', 'fibra', 'riverbed', 'modbus', 'dnp3'],
-    locale: 'both',
+    locale: 'es',
+    type: 'stack',
+  },
+  {
+    id: 'stack-redes-en',
+    title: 'Stack - Networks & Communications',
+    content: 'Cisco (CCNA), MikroTik, VSAT, MPLS, SD-WAN, Fiber Optics, Riverbed, Modbus, DNP3, Industrial Protocols, TCP/IP, VLAN, VPN. OT networks and critical communications infrastructure.',
+    tags: ['networks', 'cisco', 'ccna', 'mikrotik', 'vsat', 'mpls', 'sd-wan', 'fiber', 'riverbed', 'modbus', 'dnp3'],
+    locale: 'en',
     type: 'stack',
   },
   {
@@ -104,20 +104,34 @@ const STACK_SOURCES: KnowledgeSource[] = [
     title: 'Stack - Cloud e Infraestructura',
     content: 'Azure, AWS, VMware VCA-DCV, Virtualización, Docker, SQL Server, Power BI, Python, PowerShell, Bash. Infraestructura híbrida y automatización.',
     tags: ['cloud', 'azure', 'aws', 'vmware', 'virtualización', 'docker', 'sql server', 'power bi', 'python', 'powershell'],
-    locale: 'both',
+    locale: 'es',
     type: 'stack',
   },
-];
+  {
+    id: 'stack-cloud-en',
+    title: 'Stack - Cloud & Infrastructure',
+    content: 'Azure, AWS, VMware VCA-DCV, Virtualization, Docker, SQL Server, Power BI, Python, PowerShell, Bash. Hybrid infrastructure and automation.',
+    tags: ['cloud', 'azure', 'aws', 'vmware', 'virtualization', 'docker', 'sql server', 'power bi', 'python', 'powershell'],
+    locale: 'en',
+    type: 'stack',
+  },
+]
 
-// ─── Certificaciones ────────────────────────────────────────────────────────
-
-const CERT_SOURCES: KnowledgeSource[] = [
+const MANUAL_CERTS: KnowledgeSource[] = [
   {
     id: 'certs-main',
     title: 'Certificaciones Principales',
     content: 'PMP (Project Management Professional), CCNA Routing & Switching, Microsoft MCSE, VMware VCA-DCV, Cisco Cybersecurity Analyst. Certificaciones en ciberseguridad, cloud y gestión de proyectos.',
     tags: ['certificaciones', 'pmp', 'ccna', 'mcse', 'vmware', 'cisco', 'microsoft'],
-    locale: 'both',
+    locale: 'es',
+    type: 'certification',
+  },
+  {
+    id: 'certs-main-en',
+    title: 'Main Certifications',
+    content: 'PMP (Project Management Professional), CCNA Routing & Switching, Microsoft MCSE, VMware VCA-DCV, Cisco Cybersecurity Analyst. Certifications in cybersecurity, cloud and project management.',
+    tags: ['certifications', 'pmp', 'ccna', 'mcse', 'vmware', 'cisco', 'microsoft'],
+    locale: 'en',
     type: 'certification',
   },
   {
@@ -129,6 +143,14 @@ const CERT_SOURCES: KnowledgeSource[] = [
     type: 'certification',
   },
   {
+    id: 'certs-cybersecurity-en',
+    title: 'Cybersecurity Courses',
+    content: 'CompTIA Security+ Security Architecture, Cisco Network Automation & Programming, Bash for Cybersecurity, AI for Malware Reversing, Network Defense (Cisco), Fortinet 7.X Security Specialist, Network Defense.',
+    tags: ['cybersecurity', 'comptia', 'security+', 'bash', 'malware', 'fortinet', 'network defense'],
+    locale: 'en',
+    type: 'certification',
+  },
+  {
     id: 'certs-data-ai',
     title: 'Cursos de Datos e IA',
     content: 'IA Generativa y LLM Apps, Análisis Estratégico de IA, Power BI Avanzado, Azure Machine Learning, Python Microservicios, SQL Server Machine Learning, Power Automate, Excel Copilot.',
@@ -136,68 +158,31 @@ const CERT_SOURCES: KnowledgeSource[] = [
     locale: 'es',
     type: 'certification',
   },
-];
-
-// ─── Casos de Estudio / Projects ────────────────────────────────────────────
-
-const CASE_SOURCES: KnowledgeSource[] = [
   {
-    id: 'case-resiliencia',
-    title: 'Caso de Estudio: Resiliencia Operacional',
-    content: `Caso de éxito en manufactura de procesos continuos. Reducción de MTTR de 4.2 horas a 15 minutos. 
-    Implementación de SIEM unificado, dashboards Grafana, SOAR, DMZ industrial con Jump Server MFA y Edge Firewall. 
-    Arquitectura Purdue Level 2-5. Detección de manipulación de setpoints en SCADA en tiempo récord. Ahorro anual de $420,000 USD. 
-    Stack: Suricata + ML, SOC Unificado, Shuffle SOAR, Firewall OT.`,
-    tags: ['caso', 'resiliencia', 'mttr', 'siem', 'grafana', 'soar', 'dmz', 'purdue', 'scada', 'suricata', 'shuffle', 'ahorro'],
-    locale: 'es',
-    type: 'case-study',
+    id: 'certs-data-ai-en',
+    title: 'Data & AI Courses',
+    content: 'Generative AI and LLM Apps, Strategic AI Analysis, Advanced Power BI, Azure Machine Learning, Python Microservices, SQL Server Machine Learning, Power Automate, Excel Copilot.',
+    tags: ['ai', 'data', 'power bi', 'azure ml', 'python', 'sql server', 'machine learning', 'power automate', 'copilot'],
+    locale: 'en',
+    type: 'certification',
   },
-  {
-    id: 'case-ot-segmentation',
-    title: 'Caso de Estudio: Segmentación OT en Oil & Gas',
-    content: `Segmentación de red OT en operaciones Oil & Gas. Implementación de firewalls industriales, DMZ, y control de acceso basado en Purdue Model. 
-    Reducción de superficie de ataque y mejora en detección de amenazas. 85% mejora en cobertura OT.`,
-    tags: ['caso', 'segmentación', 'ot', 'oil & gas', 'purdue', 'dmz', 'firewall'],
-    locale: 'es',
-    type: 'case-study',
-  },
-  {
-    id: 'case-siem',
-    title: 'Caso de Estudio: Implementación SIEM',
-    content: `Implementación completa de SIEM corporativo con Security Onion. Correlación de eventos IT y OT. 
-    Reducción de 60% en tiempo de respuesta a incidentes. 99% de cobertura de detectción. Integración con SOAR para automatización de respuesta.`,
-    tags: ['caso', 'siem', 'security onion', 'soar', 'correlación', 'detección'],
-    locale: 'es',
-    type: 'case-study',
-  },
-];
+]
 
-// ─── SIEM Dashboard ─────────────────────────────────────────────────────────
-
-const SIEM_SOURCES: KnowledgeSource[] = [
-  {
-    id: 'siem-dashboard',
-    title: 'Simulación SIEM - Dashboard',
-    content: `Dashboard interactivo de simulación SIEM. Monitoreo de amenazas en tiempo real con niveles ALERT, WARN, INFO. 
-    Vectores de ataque: TCP Flood (66%), UDP Flood (28%), DNS Flood (4%), IP Flood, Low and Slow. 
-    Top atacantes: Estados Unidos (82%), China (8%), Singapur (5%), Alemania (3%), India (2%). 
-    Zonas Purdue protegidas con 98-99.9% efectividad. KPIs: MTTR < 15 min, Uptime 99.9%, Alertas reducidas -30%. 
-    Mitigación DDoS con Radware DefensePro.`,
-    tags: ['siem', 'dashboard', 'threat', 'alerts', 'ddos', 'radware', 'tcp flood', 'purdue', 'mttr'],
-    locale: 'both',
-    type: 'siem',
-  },
-];
-
-// ─── Servicios ──────────────────────────────────────────────────────────────
-
-const SERVICE_SOURCES: KnowledgeSource[] = [
+const MANUAL_SERVICES: KnowledgeSource[] = [
   {
     id: 'service-audit',
     title: 'Servicio: Auditoría de Seguridad OT/IT',
     content: 'Auditoría completa de seguridad OT/IT. Evaluación de cumplimiento contra IEC 62443, NIST CSF, ISO 27001. Identificación de brechas y plan de remediación. Análisis de segmentación de red y control de accesos.',
     tags: ['servicio', 'auditoría', 'ot', 'it', 'iec 62443', 'nist', 'iso 27001', 'cumplimiento'],
     locale: 'es',
+    type: 'service',
+  },
+  {
+    id: 'service-audit-en',
+    title: 'Service: OT/IT Security Audit',
+    content: 'Complete OT/IT security audit. Compliance assessment against IEC 62443, NIST CSF, ISO 27001. Gap identification and remediation plan. Network segmentation and access control analysis.',
+    tags: ['service', 'audit', 'ot', 'it', 'iec 62443', 'nist', 'iso 27001', 'compliance'],
+    locale: 'en',
     type: 'service',
   },
   {
@@ -209,11 +194,27 @@ const SERVICE_SOURCES: KnowledgeSource[] = [
     type: 'service',
   },
   {
+    id: 'service-siem-en',
+    title: 'Service: SIEM Implementation',
+    content: 'SIEM design and implementation with Security Onion. IT/OT correlation, custom dashboards, detection rules, SOAR integration, incident response playbooks.',
+    tags: ['service', 'siem', 'security onion', 'soar', 'detection', 'incidents'],
+    locale: 'en',
+    type: 'service',
+  },
+  {
     id: 'service-purdue',
     title: 'Servicio: Arquitectura Purdue IT/OT',
     content: 'Diseño e implementación de arquitectura de redes industriales basada en el Modelo Purdue. Segmentación de niveles 0-4, DMZ industrial, control de accesos, monitoreo de tráfico OT.',
     tags: ['servicio', 'purdue', 'arquitectura', 'segmentación', 'dmz', 'industrial'],
     locale: 'es',
+    type: 'service',
+  },
+  {
+    id: 'service-purdue-en',
+    title: 'Service: Purdue IT/OT Architecture',
+    content: 'Design and implementation of industrial network architecture based on the Purdue Model. Level 0-4 segmentation, industrial DMZ, access control, OT traffic monitoring.',
+    tags: ['service', 'purdue', 'architecture', 'segmentation', 'dmz', 'industrial'],
+    locale: 'en',
     type: 'service',
   },
   {
@@ -224,78 +225,251 @@ const SERVICE_SOURCES: KnowledgeSource[] = [
     locale: 'es',
     type: 'service',
   },
-];
+  {
+    id: 'service-compliance-en',
+    title: 'Service: Compliance Consulting',
+    content: 'Compliance framework consulting: IEC 62443 (Industrial Security), NIST CSF (Cybersecurity), ISO 27001 (ISMS), SOX (Financial Control). Audit and certification preparation.',
+    tags: ['service', 'compliance', 'consulting', 'iec 62443', 'nist', 'iso 27001', 'sox'],
+    locale: 'en',
+    type: 'service',
+  },
+]
 
-// ─── Compliance Frameworks ──────────────────────────────────────────────────
+// ─── Projected: profile (from profile.ts translations) ──────────────────────
 
-const COMPLIANCE_SOURCES: KnowledgeSource[] = [
-  {
-    id: 'compliance-iso27001',
-    title: 'ISO 27001:2022',
-    content: 'Sistema de Gestión de Seguridad de la Información (SGSI). Progreso en implementación: 94%. Controles: 142 totales, 131 pasados, 4 fallados, 7 en advertencia. Auditoría última: 2024-Q1. Auditoría próxima: 2024-Q3.',
-    tags: ['iso 27001', 'sgsi', 'cumplimiento', 'auditoría'],
-    locale: 'es',
-    type: 'audit',
-  },
-  {
-    id: 'compliance-iec62443',
-    title: 'IEC 62443-4-2',
-    content: 'Estándar de Ciberseguridad para Sistemas de Automatización Industrial. Progreso: 88%. Aplicación en Oil & Gas, Vaca Muerta. Cubre requisitos técnicos para componentes del sistema de automatización.',
-    tags: ['iec 62443', 'industrial', 'automation', 'oil & gas', 'vaca muerta'],
-    locale: 'both',
-    type: 'audit',
-  },
-  {
-    id: 'compliance-nist',
-    title: 'NIST CSF v2.0',
-    content: 'Cybersecurity Framework del National Institute of Standards and Technology. Progreso: 91%. Framework de ciberseguridad con funciones: Identificar, Proteger, Detectar, Responder, Recuperar. Gobernanza y gestión de riesgos.',
-    tags: ['nist', 'csf', 'framework', 'gobernanza', 'riesgo'],
-    locale: 'both',
-    type: 'audit',
-  },
-];
+function projectProfile(lang: Locale): KnowledgeSource {
+  return {
+    id: projectId(lang, 'profile-summary'),
+    title: lang === 'en' ? 'Professional Profile' : 'Perfil Profesional',
+    content: `${tr(lang, 'profile.description1')} ${tr(lang, 'profile.description2')}`,
+    tags: lang === 'en'
+      ? ['profile', 'juan', 'palacios', 'neuquen', 'argentina', 'architect', 'it/ot', 'cybersecurity', 'industrial']
+      : ['perfil', 'juan', 'palacios', 'neuquén', 'argentina', 'arquitecto', 'it/ot', 'ciberseguridad', 'industrial'],
+    locale: lang,
+    type: 'profile',
+  }
+}
 
-// ─── Blog ───────────────────────────────────────────────────────────────────
+// ─── Projected: experience (from experiencia.ts + experience.ts) ────────────
 
-const BLOG_SOURCES: KnowledgeSource[] = [
-  {
-    id: 'blog-iec-62443',
-    title: 'IEC 62443 en Vaca Muerta',
-    content: 'Artículo sobre aplicación del estándar IEC 62443 en operaciones Oil & Gas de Vaca Muerta, Neuquén. Desafíos de seguridad en infraestructura crítica y estrategias de implementación.',
-    tags: ['blog', 'iec 62443', 'vaca muerta', 'oil & gas', 'neuquén'],
-    locale: 'es',
-    type: 'blog',
+const EXP_IDS = ['exp-ypy', 'exp-ops', 'exp-ext'] as const
+
+const EXP_ANCHORS: Record<string, { es: string[]; en: string[] }> = {
+  'exp-ypy': { es: ['ypy', 'oilfield', 'oil & gas', 'siem'], en: ['ypy', 'oilfield', 'oil & gas', 'siem'] },
+  'exp-ops': { es: ['ops', 'oilfield production'], en: ['ops', 'oilfield production'] },
+  'exp-ext': { es: ['exterran', 'latinoamérica'], en: ['exterran', 'latin america'] },
+}
+
+function projectExperience(lang: Locale): KnowledgeSource[] {
+  return JOBS.map((job, i) => {
+    const baseId = EXP_IDS[i]
+    const role = tr(lang, job.roleKey)
+    const anchors = EXP_ANCHORS[baseId][lang]
+    const tags = [...anchors, ...job.tags.map((tag) => resolveTag(lang, tag))]
+    return {
+      id: projectId(lang, baseId),
+      title: `${job.company} - ${role}`,
+      content: [
+        role,
+        tr(lang, job.periodKey),
+        ...job.achievements.map((a) => tr(lang, a.textKey)),
+        ...job.bullets.map((b) => tr(lang, b)),
+      ].join('. '),
+      tags,
+      locale: lang,
+      type: 'experience',
+    }
+  })
+}
+
+// ─── Projected: SIEM dashboard (from siem.ts + siem.ts translations) ────────
+
+function projectSiem(lang: Locale): KnowledgeSource {
+  const vectors = ATTACK_VECTORS.map((v) => `${v.label} (${v.pct}%)`).join(', ')
+  const attackers = TOP_ATTACKERS.map((a) => `${a.label} (${a.pct}%)`).join(', ')
+  const zones = PURDUE_ZONES.map(
+    (z) => `${tr(lang, z.labelKey)} (${z.pct}% ${lang === 'en' ? 'effectiveness' : 'efectividad'})`,
+  ).join(', ')
+  const kpis = OPERATIONAL_KPIS.map(
+    (k) => `${tr(lang, k.labelKey)} ${tr(lang, k.valKey)}`,
+  ).join(', ')
+  const labels = lang === 'en'
+    ? {
+        intro: 'Interactive SIEM simulation dashboard. Real-time threat monitoring with ALERT, WARN, INFO levels.',
+        vectors: 'Vectors:',
+        attackers: 'Top attackers:',
+        zones: 'Protected Purdue zones:',
+        kpis: 'KPIs:',
+        outro: 'DDoS mitigation with Radware DefensePro.',
+      }
+    : {
+        intro: 'Dashboard interactivo de simulación SIEM. Monitoreo de amenazas en tiempo real con niveles ALERT, WARN, INFO.',
+        vectors: 'Vectores de ataque:',
+        attackers: 'Top atacantes:',
+        zones: 'Zonas Purdue protegidas:',
+        kpis: 'KPIs:',
+        outro: 'Mitigación DDoS con Radware DefensePro.',
+      }
+  return {
+    id: projectId(lang, 'siem-dashboard'),
+    title: lang === 'en' ? 'SIEM Simulation - Dashboard' : 'Simulación SIEM - Dashboard',
+    content: `${labels.intro} ${labels.vectors} ${vectors}. ${labels.attackers} ${attackers}. ${labels.zones} ${zones}. ${labels.kpis} ${kpis}. ${labels.outro}`,
+    tags: ['siem', 'dashboard', 'threat', 'alerts', 'ddos', 'radware', 'tcp flood', 'purdue', 'mttr'],
+    locale: lang,
+    type: 'siem',
+  }
+}
+
+// ─── Projected: compliance (from audit.ts + audit.ts translations) ──────────
+
+const COMPLIANCE_IDS = ['compliance-iso27001', 'compliance-iec62443', 'compliance-nist', 'compliance-gdpr'] as const
+
+const COMPLIANCE_TAGS: Record<string, { es: string[]; en: string[] }> = {
+  'compliance-iso27001': {
+    es: ['iso 27001', 'sgsi', 'cumplimiento', 'auditoría'],
+    en: ['iso 27001', 'isms', 'compliance', 'audit'],
   },
-  {
-    id: 'blog-siem-convergencia',
-    title: 'SIEM y Convergencia IT/OT',
-    content: 'Artículo sobre la convergencia de SIEM para entornos IT y OT. Estrategias de correlación de eventos, detección de amenazas y respuesta a incidentes en infraestructura crítica.',
-    tags: ['blog', 'siem', 'convergencia', 'it/ot', 'detección', 'incidentes'],
-    locale: 'es',
-    type: 'blog',
+  'compliance-iec62443': {
+    es: ['iec 62443', 'industrial', 'automation', 'oil & gas', 'vaca muerta'],
+    en: ['iec 62443', 'industrial', 'automation', 'oil & gas', 'vaca muerta'],
   },
-  {
-    id: 'blog-nist-csf',
-    title: 'NIST CSF en Infraestructura Crítica',
-    content: 'Artículo sobre implementación de NIST Cybersecurity Framework en infraestructura crítica argentina. Adaptación del framework para Oil & Gas y cumplimiento regulatorio.',
-    tags: ['blog', 'nist', 'csf', 'infraestructura crítica', 'argentina', 'oil & gas'],
-    locale: 'es',
-    type: 'blog',
+  'compliance-nist': {
+    es: ['nist', 'csf', 'framework', 'gobernanza', 'riesgo'],
+    en: ['nist', 'csf', 'framework', 'governance', 'risk'],
   },
-];
+  'compliance-gdpr': {
+    es: ['gdpr', 'lgpd', 'privacidad', 'datos'],
+    en: ['gdpr', 'lgpd', 'privacy', 'data'],
+  },
+}
+
+function projectCompliance(lang: Locale): KnowledgeSource[] {
+  return COMPLIANCE_MARCOS.map((marco, i) => {
+    const baseId = COMPLIANCE_IDS[i]
+    let content = `${marco.name}. ${tr(lang, marco.descriptionKey)} Progreso: ${marco.progress}%.`
+    // The ISO 27001 SGSI entry also carries the controls summary.
+    if (i === 0) {
+      content += lang === 'en'
+        ? ` Controls: ${AUDIT_SUMMARY.totalControls} total, ${AUDIT_SUMMARY.passed} passed, ${AUDIT_SUMMARY.failed} failed, ${AUDIT_SUMMARY.inWarnings} in warning. Last audit: ${AUDIT_SUMMARY.lastAuditDate}. Next audit: ${AUDIT_SUMMARY.nextAuditDate}.`
+        : ` Controles: ${AUDIT_SUMMARY.totalControls} totales, ${AUDIT_SUMMARY.passed} pasados, ${AUDIT_SUMMARY.failed} fallados, ${AUDIT_SUMMARY.inWarnings} en advertencia. Auditoría última: ${AUDIT_SUMMARY.lastAuditDate}. Auditoría próxima: ${AUDIT_SUMMARY.nextAuditDate}.`
+    }
+    return {
+      id: projectId(lang, baseId),
+      title: marco.name,
+      content,
+      tags: COMPLIANCE_TAGS[baseId][lang],
+      locale: lang,
+      type: 'audit',
+    }
+  })
+}
+
+// ─── Projected: blog (from blog.ts + blog.ts translations) ──────────────────
+
+const BLOG_ID_MAP: Record<string, string> = {
+  'iec-62443-vaca-muerta': 'blog-iec-62443',
+  'siem-it-ot-convergencia': 'blog-siem-convergencia',
+  'nist-csf-critical-infrastructure': 'blog-nist-csf',
+}
+
+function projectBlog(lang: Locale): KnowledgeSource[] {
+  return BLOG_POSTS.map((post) => {
+    const title = tr(lang, post.titleKey)
+    const baseId = BLOG_ID_MAP[post.id]
+    return {
+      id: projectId(lang, baseId),
+      title,
+      content: `${title}. ${tr(lang, post.excerptKey)} (Categoría: ${post.category}).`,
+      tags: lang === 'en'
+        ? ['blog', post.category.toLowerCase(), 'oil & gas']
+        : ['blog', post.category.toLowerCase(), 'oil & gas'],
+      locale: lang,
+      type: 'blog',
+    }
+  })
+}
+
+// ─── Projected: case studies (projects.ts base + manual intro) ──────────────
+
+const CASE_META: Record<string, { caseKey: 1 | 2 | 3; intro: { es: string; en: string } }> = {
+  'case-ot-segmentation': {
+    caseKey: 1,
+    intro: {
+      es: 'Segmentación de red OT en operaciones Oil & Gas. Implementación de firewalls industriales, DMZ y control de acceso basado en el Modelo Purdue. Reducción de superficie de ataque y mejora en detección de amenazas.',
+      en: 'OT network segmentation in Oil & Gas operations. Industrial firewalls, DMZ and access control based on the Purdue Model. Reduced attack surface and improved threat detection.',
+    },
+  },
+  'case-siem': {
+    caseKey: 2,
+    intro: {
+      es: 'Implementación completa de SIEM corporativo con Security Onion. Correlación de eventos IT y OT, reducción del tiempo de respuesta a incidentes y automatización de la respuesta con SOAR.',
+      en: 'Full corporate SIEM implementation with Security Onion. IT and OT event correlation, reduced incident response time and SOAR-automated response.',
+    },
+  },
+  'case-resiliencia': {
+    caseKey: 3,
+    intro: {
+      es: 'Caso de éxito en manufactura de procesos continuos. Reducción de MTTR de 4.2 horas a 15 minutos y ahorro anual de $420,000 USD, con detección de manipulación de setpoints en SCADA en tiempo récord.',
+      en: 'Success case in continuous process manufacturing. MTTR reduced from 4.2 hours to 15 minutes and $420,000 USD in annual savings, detecting SCADA setpoint manipulation in record time.',
+    },
+  },
+}
+
+/** Collect translation keys with a numeric suffix that exist in the dictionary. */
+function collectKeys(lang: Locale, prefix: string, max: number): string[] {
+  const out: string[] = []
+  for (let i = 1; i <= max; i++) {
+    const key = `${prefix}.${i}`
+    const value = translations[lang][key]
+    if (value !== undefined) out.push(value)
+  }
+  return out
+}
+
+function projectCases(lang: Locale): KnowledgeSource[] {
+  return Object.entries(CASE_META).map(([baseId, meta]) => {
+    const casePrefix = `projects.case${meta.caseKey}`
+    const title = tr(lang, `${casePrefix}.title`)
+    const company = tr(lang, `${casePrefix}.company`)
+    const desc = tr(lang, `${casePrefix}.desc`)
+    const before = collectKeys(lang, `${casePrefix}.before`, 5).join(', ')
+    const after = collectKeys(lang, `${casePrefix}.after`, 5).join(', ')
+    const metrics = collectKeys(lang, `${casePrefix}.metric`, 2).join(', ')
+    const labels = lang === 'en'
+      ? { before: 'Before', after: 'After', metrics: 'Metrics' }
+      : { before: 'Antes', after: 'Después', metrics: 'Métricas' }
+    return {
+      id: projectId(lang, baseId),
+      title: lang === 'en' ? `Case Study: ${title}` : `Caso de Estudio: ${title}`,
+      content: `${meta.intro[lang]} ${title} - ${company}. ${desc} ${labels.before}: ${before}. ${labels.after}: ${after}. ${labels.metrics}: ${metrics}.`,
+      tags: lang === 'en'
+        ? ['case', 'resilience', 'mttr', 'siem', 'soar', 'dmz', 'purdue', 'scada', 'oil & gas']
+        : ['caso', 'resiliencia', 'mttr', 'siem', 'soar', 'dmz', 'purdue', 'scada', 'oil & gas'],
+      locale: lang,
+      type: 'case-study',
+    }
+  })
+}
 
 // ─── Export consolidated ────────────────────────────────────────────────────
 
 export const ALL_SOURCES: KnowledgeSource[] = [
-  ...PROFILE_SOURCES,
-  ...EXPERIENCE_SOURCES,
-  ...STACK_SOURCES,
-  ...CERT_SOURCES,
-  ...CASE_SOURCES,
-  ...SIEM_SOURCES,
-  ...SERVICE_SOURCES,
-  ...COMPLIANCE_SOURCES,
-  ...BLOG_SOURCES,
-];
+  projectProfile('es'),
+  projectProfile('en'),
+  ...MANUAL_CONTACT,
+  ...projectExperience('es'),
+  ...projectExperience('en'),
+  ...MANUAL_STACK,
+  ...MANUAL_CERTS,
+  ...projectCases('es'),
+  ...projectCases('en'),
+  projectSiem('es'),
+  projectSiem('en'),
+  ...MANUAL_SERVICES,
+  ...projectCompliance('es'),
+  ...projectCompliance('en'),
+  ...projectBlog('es'),
+  ...projectBlog('en'),
+]
 
-export const SOURCE_COUNT = ALL_SOURCES.length;
+export const SOURCE_COUNT = ALL_SOURCES.length

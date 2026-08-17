@@ -30,12 +30,9 @@ export default function Arquitectura() {
           
           {/* SEO Optimized Hidden Text Content */}
           <div className="sr-only">
-            <h3>Modelo Purdue para Ciberseguridad Industrial (IT/OT)</h3>
+            <h3>{t('arch.seo.title')}</h3>
             <p>
-              La Arquitectura Purdue (ISA-95) es el estándar fundamental para la segmentación de redes en infraestructuras críticas. 
-              Este portfolio presenta una implementación avanzada enfocada en Oil & Gas, cubriendo desde el Nivel 0 (sensores y actuadores Modbus/HART) 
-              hasta el Nivel 4/5 (Red Corporativa), pasando por la DMZ Industrial y la protección de sistemas SCADA mediante normativas IEC 62443.
-              Expertise en Firewalls industriales, SIEM (Security Onion) y resiliencia operativa en la Cuenca Neuquina (Vaca Muerta).
+              {t('arch.seo.description')}
             </p>
           </div>
         </FadeIn>

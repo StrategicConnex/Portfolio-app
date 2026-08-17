@@ -123,7 +123,7 @@ export default function Navbar() {
             <button
               onClick={() => setMenuOpen(o => !o)}
               className="lg:hidden p-2 text-slate-200 hover:text-white transition-colors"
-              aria-label="Toggle menu"
+              aria-label={language === 'en' ? 'Toggle menu' : 'Abrir menú'}
             >
               {menuOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
@@ -151,7 +151,7 @@ export default function Navbar() {
             >
               <div className="flex justify-between items-center mb-4">
                 <span className="text-[var(--gold)] font-bold text-xl tracking-wider">MENU</span>
-                <button onClick={() => setMenuOpen(false)} className="text-slate-400 hover:text-white" aria-label="Cerrar menú">
+                <button onClick={() => setMenuOpen(false)} className="text-slate-400 hover:text-white" aria-label={language === 'en' ? 'Close menu' : 'Cerrar menú'}>
                   <X size={24} />
                 </button>
               </div>

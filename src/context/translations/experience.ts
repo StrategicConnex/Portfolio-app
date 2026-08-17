@@ -60,6 +60,10 @@ const es = {
   'exp.ext.bullet.6': 'Implementación del cumplimiento SOX para el área de IT',
   'exp.ext.bullet.7': 'Diseño e implementación de telefonía IP (Cisco Unified Manager 8.5)',
   'exp.ext.bullet.8': 'Implementación de solución de backup corporativo y plan de contingencia',
+
+  'exp.tag.virtualizacion': 'Virtualización',
+  'exp.tag.hub': 'HUB Latinoamérica',
+  'exp.tag.fiber': 'Fibra Óptica',
 } satisfies TranslationModule['es']
 
 const en: TranslationModule['en'] = {
@@ -122,6 +126,10 @@ const en: TranslationModule['en'] = {
   'exp.ext.bullet.6': 'Implementation of SOX compliance for the IT area',
   'exp.ext.bullet.7': 'Design and implementation of IP telephony (Cisco Unified Manager 8.5)',
   'exp.ext.bullet.8': 'Implementation of corporate backup solution and contingency plan',
+
+  'exp.tag.virtualizacion': 'Virtualization',
+  'exp.tag.hub': 'Latin America HUB',
+  'exp.tag.fiber': 'Fiber Optics',
 }
 
 export const experience = { es, en }

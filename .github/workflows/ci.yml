@@ -6,6 +6,10 @@ on:
   pull_request:
     branches: [main]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   validate:
     name: Validate (Lint, TypeCheck, Test, Build)
@@ -41,3 +45,51 @@ jobs:
           RESEND_API_KEY: ${{ secrets.RESEND_API_KEY || '' }}
           CONTACT_TO_EMAIL: ${{ secrets.CONTACT_TO_EMAIL || '' }}
           CONTACT_FROM_EMAIL: ${{ secrets.CONTACT_FROM_EMAIL || 'portfolio@juanpalacios.vercel.app' }}
+
+  e2e:
+    name: E2E (Playwright · production build)
+    runs-on: ubuntu-latest
+    needs: validate
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build application (production)
+        # NEXT_PUBLIC_E2E_ERROR_ROUTE arms the dev-only /test-error route so
+        # the e2e error-boundary test can run against the production build.
+        # Real production deployments omit it and keep serving a 404 there.
+        run: npm run build
+        env:
+          NEXT_PUBLIC_VERCEL_URL: ${{ vars.VERCEL_URL || 'juanpalacios.vercel.app' }}
+          NEXT_PUBLIC_E2E_ERROR_ROUTE: '1'
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY || '' }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY || '' }}
+          CONTACT_TO_EMAIL: ${{ secrets.CONTACT_TO_EMAIL || '' }}
+          CONTACT_FROM_EMAIL: ${{ secrets.CONTACT_FROM_EMAIL || 'portfolio@juanpalacios.vercel.app' }}
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Run e2e tests against production server
+        run: npx playwright test
+        env:
+          E2E_PROD_SERVER: '1'
+
+      - name: Upload Playwright report on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7

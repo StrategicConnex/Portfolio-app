@@ -4,11 +4,11 @@ import { MessageSquare } from 'lucide-react';
 import { useLanguage } from '@/context/LanguageContext';
 import { AskAISuggestionBar } from './AskAISuggestionBar';
 
-const SUGGESTED_PROMPTS = [
-  'Resume mi perfil profesional',
-  'Explica el modelo Purdue en OT',
-  'Servicios de ciberseguridad industrial',
-  'IEC 62443 vs NIST CSF',
+const SUGGESTED_PROMPT_KEYS = [
+  'ai.suggest.resume',
+  'ai.suggest.purdue',
+  'ai.suggest.services',
+  'ai.suggest.iec_nist',
 ];
 
 interface AskAIEmptyStateProps {
@@ -16,7 +16,7 @@ interface AskAIEmptyStateProps {
 }
 
 export function AskAIEmptyState({ onSelectPrompt }: AskAIEmptyStateProps) {
-  const { language } = useLanguage();
+  const { language, t } = useLanguage();
 
   return (
     <div className="flex flex-col items-center justify-center flex-1 px-6 pt-12 pb-8 text-center">
@@ -31,7 +31,7 @@ export function AskAIEmptyState({ onSelectPrompt }: AskAIEmptyStateProps) {
           ? 'Ask about professional experience, industrial network architecture, SIEM, OSINT or compliance frameworks.'
           : 'Pregúntame sobre experiencia profesional, arquitectura de redes industriales, SIEM, OSINT o marcos de cumplimiento.'}
       </p>
-      <AskAISuggestionBar prompts={SUGGESTED_PROMPTS} onSelect={onSelectPrompt} variant="default" />
+      <AskAISuggestionBar prompts={SUGGESTED_PROMPT_KEYS.map(k => t(k))} onSelect={onSelectPrompt} variant="default" />
     </div>
   );
 }

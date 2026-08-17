@@ -1,5 +1,25 @@
 # Plan de Implementacion Enterprise Ask AI para juanpalacios.vercel.app
 
+> ## ⚠️ ESTADO: EJECUTADO Y SUPERSEDIDO
+>
+> Este documento es el **plan operativo original** (prompt de trabajo) con el que se construyó el copilot. Se conserva como registro histórico de intención y criterios de diseño.
+>
+> **El estado real del sistema está documentado en `README.md` (arquitectura, flujos y seams) y en `CONTEXT.md` (glosario de dominio).** Los candidatos de arquitectura C1–C5 del reporte de revisión están cerrados e implementados:
+>
+> | Plan original | Estado real hoy |
+> |---|---|
+> | `src/components/AIConsultant.tsx` (widget monolítico) | **Eliminado** — reemplazado por `src/components/ask-ai/AskAICopilotShell.tsx` (modular) |
+> | `/api/chat` como API principal (SSE manual a OpenRouter) | **Fallback legacy** que reenvía a `/api/ask-ai`; la API principal es `/api/ask-ai` con Vercel AI SDK v7 |
+> | Rate limiting en memoria con `Map` en la ruta | **Seam unificado** `src/lib/rate-limit.ts` (Upstash + fallback in-memory, `getClientId` anti-spoofing) |
+> | Sin RAG (conocimiento en el system prompt) | **RAG unificado** `src/lib/ask-ai/rag/retriever.ts` (keyword + TF-IDF) con corpus **derivado** `sources.ts` |
+> | Sin memoria | **Memoria client-side** conectada (`src/lib/ask-ai/memory/`, resúmenes reales por conversación) |
+> | Prompt inline en la ruta | **Prompt builder** `src/lib/ask-ai/prompt/system-prompt.ts` |
+> | Fallback de modelo ilusorio (try/catch sobre `streamText`) | **Model pool real** `src/lib/ask-ai/model-pool.ts` (fallback sobre el primer chunk del stream) |
+>
+> Las secciones siguientes describen el plan y los criterios de diseño que se siguieron; **no describen el estado actual del código**. Para la arquitectura vigente ver `README.md`.
+
+---
+
 > Documento operativo para Google Antigravity con Gemini 3.x Flash / Gemini 3.1 Flash.  
 > Objetivo: reemplazar `Nacho Assistant` por un AI Cybersecurity Copilot Enterprise inspirado en la experiencia Ask AI de Cloudflare, optimizado para Next.js, Vercel, streaming, RAG, tools y futura arquitectura agent-first.
 

@@ -199,7 +199,7 @@ describe('Accesibilidad - Navbar', () => {
     const { container } = render(<Navbar />)
 
     // Open mobile menu via hamburger button
-    const menuBtn = screen.getByLabelText('Toggle menu')
+    const menuBtn = screen.getByLabelText('Abrir menú')
     act(() => { fireEvent.click(menuBtn) })
 
     const violations = await checkAccessibility(container)
@@ -220,6 +220,8 @@ describe('Accesibilidad - Certificaciones', () => {
         'certs.cat.all': 'Todos', 'certs.cat.cybersecurity': 'Ciberseguridad',
         'certs.cat.data_ai': 'Datos & IA', 'certs.cat.cloud_dev': 'Cloud & Dev',
         'certs.cat.soft_skills': 'Soft Skills', 'certs.cat.other': 'Otros',
+        'certs.view': 'Ver',
+        'certs.course.pmp': 'Título Project Management Professional (PMP)',
       }
       return m[k] || k
     }

@@ -49,7 +49,7 @@ export const JOBS = [
       'exp.ops.bullet.10',
       'exp.ops.bullet.11',
     ],
-    tags: ['Cisco', 'VSAT', 'MPLS', 'MikroTik', 'Riverbed', 'Python', 'VMware', 'Security Onion', 'Fibra Óptica', 'SQL Server'],
+    tags: ['Cisco', 'VSAT', 'MPLS', 'MikroTik', 'Riverbed', 'Python', 'VMware', 'Security Onion', 'exp.tag.fiber', 'SQL Server'],
   },
   {
     periodKey:  'exp.ext.period',
@@ -74,6 +74,6 @@ export const JOBS = [
       'exp.ext.bullet.7',
       'exp.ext.bullet.8',
     ],
-    tags: ['MPLS', 'VSAT', 'SOX', 'Virtualización', 'Riverbed', 'Veeam', 'IP Telephony', 'HUB Latinoamérica'],
+    tags: ['MPLS', 'VSAT', 'SOX', 'exp.tag.virtualizacion', 'Riverbed', 'Veeam', 'IP Telephony', 'exp.tag.hub'],
   },
 ]
