@@ -121,6 +121,20 @@ that are already recorded here.
   the pre-formatted block verbatim in the system prompt (`buildSystemPrompt`
   `memoryContext` option). Do not resurrect the server-side summarization
   call; memory is a client-seam feature.
+- **Telemetry seam** (`src/lib/ask-ai/telemetry.ts`): the single home for the
+  copilot telemetry event vocabulary (`ask_ai_*`, Fase 5 enterprise). One
+  entry point `emitAskAiEvent()` with an injectable transport (tests) and a
+  default serverless transport: structured JSON line to stdout + Sentry
+  capture for `ask_ai_error` events. Events are emitted at the orchestration
+  boundary — the route emits `ask_ai_rag_retrieved`, `ask_ai_stream_started`,
+  `ask_ai_stream_completed`, `ask_ai_tool_called` (via the `withToolTelemetry`
+  wrapper) and `ask_ai_error`; the pure seams (retriever, model pool, tools)
+  stay side-effect-free — the pool only forwards an `onFinish` hook with the
+  data only it can observe (winning model, usage, finishReason). Client events
+  (`ask_ai_opened`, `ask_ai_message_sent`) go through `trackAiEvent` in
+  `src/lib/observability/posthog.ts` from `AskAIPanel`. Do not re-suggest
+  emitting telemetry from inside the seams or replacing the stdout transport
+  with a vendor-specific one.
 - **CI/CD pipeline** (`.github/workflows/ci.yml`): `validate` + `e2e` corren
   en push a main/develop y PRs a main; un job `deploy` gateado por ambos
   despliega a **producción en Vercel en cada push a main** usando el CLI

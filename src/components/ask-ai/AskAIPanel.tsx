@@ -20,6 +20,7 @@ import { AskAISuggestionBar } from '@/components/ask-ai/AskAISuggestionBar';
 import { AskAIEmptyState } from '@/components/ask-ai/AskAIEmptyState';
 import { useConversationMemory } from '@/lib/ask-ai/memory/use-conversation-memory';
 import { loadFailedModels, persistFailedModels } from '@/lib/ask-ai/pool-health';
+import { trackAiEvent } from '@/lib/observability/posthog';
 
 const FOLLOW_UP_PROMPT_KEYS = [
   'ai.followup.iec_nist',
@@ -164,6 +165,17 @@ export function AskAIPanel() {
     // Intentionally run only on mount
   }, []);
 
+  // The panel mounts when it opens — this effect is the `ask_ai_opened`
+  // telemetry event (no-op without a PostHog key).
+  useEffect(() => {
+    trackAiEvent('opened', {
+      language,
+      mode,
+      viewport: `${window.innerWidth}x${window.innerHeight}`,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- open event, once per mount
+  }, []);
+
   // Save messages to localStorage (skip during active streaming)
   useEffect(() => {
     if (isLoading) return;
@@ -185,6 +197,7 @@ export function AskAIPanel() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!input.trim() || status === 'streaming' || status === 'submitted') return;
+    trackAiEvent('message_sent', { language, mode, chars: input.length, source: 'input' });
     // eslint-disable-next-line react-hooks/purity -- event-time timestamp for latency, not render
     requestStartRef.current = Date.now();
     sendMessage(
@@ -195,6 +208,7 @@ export function AskAIPanel() {
   };
 
   const handleSuggestion = (suggestion: string) => {
+    trackAiEvent('message_sent', { language, mode, chars: suggestion.length, source: 'suggestion' });
     // eslint-disable-next-line react-hooks/purity -- event-time timestamp for latency, not render
     requestStartRef.current = Date.now();
     sendMessage(

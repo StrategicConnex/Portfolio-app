@@ -7,6 +7,7 @@ import { buildRagContext } from '@/lib/ask-ai/rag/retriever';
 import { askAiTools } from '@/lib/ask-ai/tools/registry';
 import { buildSystemPrompt } from '@/lib/ask-ai/prompt/system-prompt';
 import { streamWithFallback, ModelPoolError, buildFreeModelPool } from '@/lib/ask-ai/model-pool';
+import { emitAskAiEvent, withToolTelemetry, hashQuery, messageOf } from '@/lib/ask-ai/telemetry';
 
 export const maxDuration = 30;
 
@@ -91,7 +92,18 @@ export async function POST(req: Request) {
     // Retrieve relevant portfolio context via the unified RAG seam
     // (keywords + TF-IDF semantic fused in one pass). Context and the
     // source list come from the same retrieval, so they never diverge.
-    const { context: ragContext, sources } = buildRagContext(queryText, language as 'es' | 'en', 5);
+    const ragTopK = 5;
+    const retrievalStartedAt = Date.now();
+    const { context: ragContext, sources, sourceTypes } = buildRagContext(queryText, language as 'es' | 'en', ragTopK);
+    emitAskAiEvent('ask_ai_rag_retrieved', {
+      queryHash: hashQuery(queryText),
+      topK: ragTopK,
+      matched: sources.length,
+      sourceTypes,
+      latencyMs: Date.now() - retrievalStartedAt,
+      locale: language,
+      mode,
+    });
 
     const modelMessages = await convertToModelMessages(messages);
 
@@ -116,14 +128,16 @@ export async function POST(req: Request) {
     const provider = createProvider();
 
     try {
-      const { response } = await streamWithFallback(
+      const { response, modelId, attemptIndex } = await streamWithFallback(
         buildFreeModelPool(process.env.OPENROUTER_MODEL_POOL, {
           skip: parsedBody.skipModels,
         }),
         {
           model: (modelId) => provider(modelId),
           messages: modelMessages,
-          tools: askAiTools,
+          // Tools wrapped for telemetry: every execution emits
+          // `ask_ai_tool_called` with latency and status.
+          tools: withToolTelemetry(askAiTools),
           maxOutputTokens: 4096,
           system: systemPrompt,
           messageMetadata: (modelId, attemptIndex) => ({
@@ -132,22 +146,67 @@ export async function POST(req: Request) {
             // model failed and a later one answered.
             fellBack: attemptIndex > 1,
           }),
+          // `stream_completed` fires when the committed stream ends, with
+          // the token usage/finish data only the pool can observe.
+          onFinish: (info) => {
+            emitAskAiEvent('ask_ai_stream_completed', {
+              modelId: info.modelId,
+              attemptIndex: info.attemptIndex,
+              totalMs: info.totalMs,
+              tokensIn: info.usage?.promptTokens,
+              tokensOut: info.usage?.completionTokens,
+              totalTokens: info.usage?.totalTokens,
+              finishReason: info.finishReason,
+              locale: language,
+              mode,
+            });
+          },
         },
       );
+      emitAskAiEvent('ask_ai_stream_started', {
+        modelId,
+        attemptIndex,
+        retrievalMs: Date.now() - retrievalStartedAt,
+        locale: language,
+        mode,
+      });
       return response;
     } catch (error) {
       if (error instanceof ModelPoolError) {
         // All models failed to start their stream
         console.error('[AskAI] All models in pool failed:', error.cause);
+        emitAskAiEvent('ask_ai_error', {
+          stage: 'model-pool',
+          status: 503,
+          providerError: messageOf(error.cause),
+          locale: language,
+          mode,
+        });
         return NextResponse.json(
           { error: language === 'en' ? 'AI service unavailable. Try again later.' : 'Servicio de IA no disponible. Intenta de nuevo más tarde.' },
           { status: 503 },
         );
       }
+      emitAskAiEvent('ask_ai_error', {
+        stage: 'route',
+        status: 500,
+        providerError: messageOf(error),
+        locale: language,
+        mode,
+      });
       throw error;
     }
   } catch (error) {
     console.error('Ask AI error:', error);
+    // `language`/`mode` are scoped to the try block — re-derive from the URL.
+    const fallbackUrl = new URL(req.url);
+    emitAskAiEvent('ask_ai_error', {
+      stage: 'route',
+      status: 500,
+      providerError: messageOf(error),
+      locale: fallbackUrl.searchParams.get('lang') || 'es',
+      mode: fallbackUrl.searchParams.get('mode') || 'ask',
+    });
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 },

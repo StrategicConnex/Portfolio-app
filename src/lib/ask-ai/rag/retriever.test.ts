@@ -117,6 +117,6 @@ describe('buildRagContext', () => {
   });
 
   it('returns empty context and sources for an empty query', () => {
-    expect(buildRagContext('', 'es')).toEqual({ context: '', sources: [] });
+    expect(buildRagContext('', 'es')).toEqual({ context: '', sources: [], sourceTypes: [] });
   });
 });

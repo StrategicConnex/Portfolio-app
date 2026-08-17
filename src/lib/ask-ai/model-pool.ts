@@ -117,6 +117,24 @@ export interface StreamWithFallbackOptions {
     modelId: string,
     attemptIndex: number,
   ) => Record<string, unknown> | undefined;
+  /**
+   * Called when the committed stream finishes (all steps complete), with the
+   * usage/finish data only the stream can observe. Forwards the ai SDK's
+   * `onFinish` event — the pool itself stays side-effect free (telemetry is
+   * emitted by the caller).
+   */
+  onFinish?: (info: PoolStreamFinishInfo) => void;
+}
+
+/** Data handed to the `onFinish` hook once the committed stream ends. */
+export interface PoolStreamFinishInfo {
+  modelId: string;
+  /** 1-based position of the winning model in the pool. */
+  attemptIndex: number;
+  usage: { promptTokens?: number; completionTokens?: number; totalTokens?: number } | undefined;
+  finishReason: string | undefined;
+  /** Milliseconds from the `streamText` call to the stream end. */
+  totalMs: number;
 }
 
 export interface StreamWithFallbackResult {
@@ -288,12 +306,22 @@ export async function streamWithFallback(
     while (attempts <= RATE_LIMIT_RETRY.maxRetries) {
       attempts += 1;
       try {
+        const startedAt = Date.now();
         const result = streamText({
           model: options.model(modelId),
           messages: options.messages,
           tools: options.tools,
           maxOutputTokens: options.maxOutputTokens,
           system: options.system,
+          onFinish: (event) => {
+            options.onFinish?.({
+              modelId,
+              attemptIndex: currentAttempt,
+              usage: event.usage,
+              finishReason: event.finishReason,
+              totalMs: Date.now() - startedAt,
+            });
+          },
         });
         const response = await ensureStreamStarts(
           result.toUIMessageStreamResponse({

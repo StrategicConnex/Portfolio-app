@@ -24,6 +24,7 @@ vi.mock('ai', async (importOriginal) => {
 import { POST } from './route'
 import { resetRateLimit } from '@/lib/rate-limit'
 import { askAiTools } from '@/lib/ask-ai/tools/registry'
+import { setTelemetryTransport, type AskAiTelemetryTransport } from '@/lib/ask-ai/telemetry'
 
 const ORIGINAL_KEY = process.env.OPENROUTER_API_KEY
 
@@ -54,6 +55,10 @@ function lastCall(): { system?: string; tools?: unknown; maxOutputTokens?: numbe
   return calls[calls.length - 1][0] as { system?: string; tools?: unknown; maxOutputTokens?: number }
 }
 
+// Keep the route's telemetry events silent by default (each suite that cares
+// installs its own collecting transport).
+const silentTransport: AskAiTelemetryTransport = { emit: () => {} }
+
 beforeEach(() => {
   process.env.OPENROUTER_API_KEY = 'test-key'
   resetRateLimit()
@@ -61,11 +66,13 @@ beforeEach(() => {
   mocks.streamText.mockImplementation(() => ({
     toUIMessageStreamResponse: () => new Response(MOCK_STREAM, { status: 200 }),
   }))
+  setTelemetryTransport(silentTransport)
 })
 
 afterEach(() => {
   if (ORIGINAL_KEY === undefined) delete process.env.OPENROUTER_API_KEY
   else process.env.OPENROUTER_API_KEY = ORIGINAL_KEY
+  setTelemetryTransport(null)
 })
 
 describe('POST /api/ask-ai — RAG context in the system prompt', () => {
@@ -122,7 +129,15 @@ describe('POST /api/ask-ai — RAG context in the system prompt', () => {
     for (const name of ['dnsAnalyzer', 'sslChecker', 'httpHeadersAnalyzer', 'whoisLookup', 'techStackDetector', 'portAnalyzer']) {
       expect(tools![name]).toBeDefined()
     }
-    expect(tools).toEqual(askAiTools)
+    // The tools are wrapped for telemetry (`withToolTelemetry`), so identity
+    // differs — the surface (names, descriptions, schemas) must match.
+    expect(Object.keys(tools!)).toEqual(Object.keys(askAiTools))
+    for (const [name, tool] of Object.entries(askAiTools)) {
+      expect(tools![name]).toMatchObject({
+        description: tool.description,
+        inputSchema: tool.inputSchema,
+      })
+    }
   })
 
   it('enforces the free-only pool: drops paid entries from the configured pool', async () => {
@@ -259,5 +274,83 @@ describe('POST /api/ask-ai — memory context', () => {
 
     const { system } = lastCall()
     expect(system).toContain(atCap)
+  })
+})
+
+describe('POST /api/ask-ai — telemetry events', () => {
+  let events: Array<[string, Record<string, unknown>]>
+
+  beforeEach(() => {
+    events = []
+    setTelemetryTransport({
+      emit: (name, props) => events.push([name, props]),
+    })
+  })
+
+  it('emits ask_ai_rag_retrieved and ask_ai_stream_started on success', async () => {
+    const res = await POST(makeRequest(userMessage('¿Qué es IEC 62443?'), 'es', 'ask'))
+    expect(res.status).toBe(200)
+
+    const rag = events.find(([n]) => n === 'ask_ai_rag_retrieved')
+    expect(rag).toBeDefined()
+    expect(rag![1]).toMatchObject({
+      topK: 5,
+      locale: 'es',
+      mode: 'ask',
+    })
+    expect(rag![1].matched).toBeGreaterThan(0)
+    expect(Array.isArray(rag![1].sourceTypes)).toBe(true)
+    expect(typeof rag![1].queryHash).toBe('string')
+    expect(typeof rag![1].latencyMs).toBe('number')
+
+    const started = events.find(([n]) => n === 'ask_ai_stream_started')
+    expect(started).toBeDefined()
+    // First model of the curated default pool — no fallback happened.
+    expect(started![1]).toMatchObject({ modelId: 'nvidia/nemotron-3-super-120b-a12b:free', attemptIndex: 1, locale: 'es' })
+  })
+
+  it('emits ask_ai_stream_completed with token usage when the stream finishes', async () => {
+    mocks.streamText.mockImplementation((opts: { onFinish?: (event: unknown) => void }) => {
+      queueMicrotask(() =>
+        opts.onFinish?.({
+          usage: { promptTokens: 12, completionTokens: 8, totalTokens: 20 },
+          finishReason: 'stop',
+        }),
+      )
+      return { toUIMessageStreamResponse: () => new Response(MOCK_STREAM, { status: 200 }) }
+    })
+
+    const res = await POST(makeRequest(userMessage('hola')))
+    expect(res.status).toBe(200)
+
+    await vi.waitFor(() =>
+      expect(events.some(([n]) => n === 'ask_ai_stream_completed')).toBe(true),
+    )
+    const completed = events.find(([n]) => n === 'ask_ai_stream_completed')
+    expect(completed![1]).toMatchObject({
+      modelId: 'nvidia/nemotron-3-super-120b-a12b:free',
+      attemptIndex: 1,
+      tokensIn: 12,
+      tokensOut: 8,
+      totalTokens: 20,
+      finishReason: 'stop',
+    })
+  })
+
+  it('emits ask_ai_error when the whole pool fails (503)', async () => {
+    const original = process.env.OPENROUTER_MODEL_POOL
+    process.env.OPENROUTER_MODEL_POOL = 'google/gemini-3.6-flash,anthropic/claude-sonnet-5'
+    try {
+      const res = await POST(makeRequest(userMessage('hola')))
+      expect(res.status).toBe(503)
+    } finally {
+      if (original === undefined) delete process.env.OPENROUTER_MODEL_POOL
+      else process.env.OPENROUTER_MODEL_POOL = original
+    }
+
+    const error = events.find(([n]) => n === 'ask_ai_error')
+    expect(error).toBeDefined()
+    expect(error![1]).toMatchObject({ stage: 'model-pool', status: 503, locale: 'es', mode: 'ask' })
+    expect(typeof error![1].providerError).toBe('string')
   })
 })

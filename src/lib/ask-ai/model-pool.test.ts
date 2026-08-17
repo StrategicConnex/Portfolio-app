@@ -399,4 +399,33 @@ describe('streamWithFallback', () => {
     await expect(streamWithFallback([], baseOptions)).rejects.toBeInstanceOf(ModelPoolError)
     expect(streamTextMock).not.toHaveBeenCalled()
   })
+
+  it('forwards the onFinish hook with the winning model and its usage', async () => {
+    streamTextMock.mockImplementation((opts: { onFinish?: (event: unknown) => void }) => {
+      queueMicrotask(() =>
+        opts.onFinish?.({
+          usage: { promptTokens: 10, completionTokens: 5, totalTokens: 15 },
+          finishReason: 'stop',
+        }),
+      )
+      return { toUIMessageStreamResponse: () => textDeltaEvent('ok') }
+    })
+
+    const onFinish = vi.fn()
+    const result = await streamWithFallback(['a', 'b'], {
+      ...baseOptions,
+      model: (modelId) => ({ id: modelId }) as never,
+      onFinish,
+    })
+
+    expect(result.modelId).toBe('a')
+    expect(result.attemptIndex).toBe(1)
+    await vi.waitFor(() => expect(onFinish).toHaveBeenCalledTimes(1))
+    expect(onFinish.mock.calls[0][0]).toMatchObject({
+      modelId: 'a',
+      attemptIndex: 1,
+      usage: { promptTokens: 10, completionTokens: 5, totalTokens: 15 },
+      finishReason: 'stop',
+    })
+  })
 })

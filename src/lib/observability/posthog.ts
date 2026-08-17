@@ -52,6 +52,10 @@ export function trackAiEvent(
     latencyMs?: number;
     tokenCount?: number;
     finishReason?: string;
+    /** Telemetry-only fields (opened/message_sent). */
+    viewport?: string;
+    chars?: number;
+    source?: string;
   },
 ): void {
   captureEvent(`ask_ai_${eventType}`, data as Record<string, unknown>);

@@ -18,7 +18,7 @@ Portfolio de consultoría en **ciberseguridad industrial, IT/OT y redes para Oil
 | State | Zustand (UI), Context API (i18n), localStorage (persistencia) |
 | Datos | Zod (validación), Resend (email) |
 | Rate limiting | Upstash Redis + fallback in-memory |
-| Observabilidad | PostHog (analytics), Sentry (errores), StrategicAudit RUM |
+| Observabilidad | PostHog (analytics), Sentry (errores), StrategicAudit RUM, telemetría del copilot (`ask_ai_*`: JSON a stdout + Sentry) |
 | Testing | Vitest + Testing Library + axe-core (unit), Playwright (e2e) |
 | CI/CD | GitHub Actions (validate + e2e), Husky + lint-staged |
 

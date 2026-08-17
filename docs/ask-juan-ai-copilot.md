@@ -284,7 +284,50 @@ Todas las tools son **pasivas** (solo lectura de datos públicos): no escanean a
 
 ---
 
-## 7. Referencias
+## 7. Telemetría (Fase 5 — enterprise hardening)
+
+**Seam:** `src/lib/ask-ai/telemetry.ts` — el único lugar que define el vocabulario de eventos del copilot (`ask_ai_*`). Un solo punto de entrada `emitAskAiEvent(name, props)` con **transporte inyectable** (tests) y un transporte default serverless: **línea JSON estructurada a stdout** (el host la drena a su pipeline de logs) + **captura a Sentry** de los eventos `ask_ai_error` cuando hay DSN.
+
+Los eventos se emiten en la **orquesta** (la ruta `/api/ask-ai`), nunca dentro de los seams puros: retriever, pool y tools siguen libres de side effects. El pool solo *reenvía* el hook `onFinish` (datos que solo él observa: modelo ganador, usage, finishReason).
+
+### Eventos server (emitidos por la ruta)
+
+| Evento | Campos | Cuándo |
+|---|---|---|
+| `ask_ai_rag_retrieved` | queryHash, topK, matched, sourceTypes, latencyMs, locale, mode | Tras `buildRagContext` |
+| `ask_ai_stream_started` | modelId, attemptIndex, retrievalMs, locale, mode | Cuando el pool se compromete con un modelo |
+| `ask_ai_stream_completed` | modelId, attemptIndex, tokensIn, tokensOut, totalTokens, finishReason, totalMs, locale, mode | Cuando el stream termina (vía `onFinish` del pool) |
+| `ask_ai_tool_called` | toolName, status (`ok`/`error`), latencyMs, errorCode | Cada ejecución de tool (wrapper `withToolTelemetry`; un resultado `{ error }` cuenta como fallo) |
+| `ask_ai_error` | stage (`model-pool`/`route`), status, providerError, locale, mode | 503 de pool agotado o 500 interno |
+
+`queryHash` es un hash FNV-1a de la query normalizada — correlación sin loguear texto del usuario.
+
+### Eventos client (vía PostHog, `posthog-js`)
+
+| Evento | Campos | Cuándo |
+|---|---|---|
+| `ask_ai_opened` | language, mode, viewport | El panel se monta (se abre) |
+| `ask_ai_message_sent` | language, mode, chars, source (`input`/`suggestion`) | Cada envío |
+
+Se emiten con `trackAiEvent` (`src/lib/observability/posthog.ts`) desde `AskAIPanel` — no-op si no hay `NEXT_PUBLIC_POSTHOG_KEY`.
+
+### Trace waterfall por request
+
+```
+request
+  validate.input
+  rate_limit.check
+  rag.retrieve      → ask_ai_rag_retrieved
+  pool.commit       → ask_ai_stream_started
+  agent.stream
+    model.call      → ask_ai_stream_completed (usage + finishReason)
+    tool.call.*     → ask_ai_tool_called (por tool)
+  error path        → ask_ai_error (503 pool / 500 route)
+```
+
+---
+
+## 8. Referencias
 
 | Tema | Ubicación |
 |---|---|
@@ -293,6 +336,7 @@ Todas las tools son **pasivas** (solo lectura de datos públicos): no escanean a
 | RAG (retriever/tokenizer/sources) + tests golden | `src/lib/ask-ai/rag/` |
 | Model pool | `src/lib/ask-ai/model-pool.ts` · `model-pool.test.ts` — **free-only por invariante** (sin fallback pago; pool vacío → 503) · health-check persistido en `pool-health.ts` (localStorage, TTL 24h) |
 | Memoria | `src/lib/ask-ai/memory/` |
+| Telemetría | `src/lib/ask-ai/telemetry.ts` · `telemetry.test.ts` |
 | Ruta | `src/app/api/ask-ai/route.ts` · `route.test.ts` |
 | Glosario de seams | `CONTEXT.md` |
 | Visión general + diagramas | `README.md` |

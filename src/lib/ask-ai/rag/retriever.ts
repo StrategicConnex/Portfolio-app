@@ -305,15 +305,21 @@ export function buildRagContext(
   query: string,
   locale: 'es' | 'en' = 'es',
   topK: number = 5,
-): { context: string; sources: { title: string; id: string }[] } {
+): {
+  context: string;
+  sources: { title: string; id: string }[];
+  /** Distinct source types among the retrieved entries (for telemetry). */
+  sourceTypes: string[];
+} {
   const results = retrieve(query, locale, topK);
 
   if (results.length === 0) {
-    return { context: '', sources: [] };
+    return { context: '', sources: [], sourceTypes: [] };
   }
 
   const contextParts: string[] = [];
   const sources: { title: string; id: string }[] = [];
+  const sourceTypes = [...new Set(results.map((r) => r.source.type))];
 
   for (const result of results) {
     contextParts.push(
@@ -325,5 +331,6 @@ export function buildRagContext(
   return {
     context: contextParts.join('\n'),
     sources,
+    sourceTypes,
   };
 }
