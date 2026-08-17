@@ -5,6 +5,7 @@ on:
     branches: [main, develop]
   pull_request:
     branches: [main]
+  workflow_dispatch:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -93,3 +94,63 @@ jobs:
           name: playwright-report
           path: playwright-report/
           retention-days: 7
+
+  deploy:
+    name: Deploy (Vercel · producción)
+    runs-on: ubuntu-latest
+    needs: [validate, e2e]
+    # Solo push a main (o disparo manual desde Actions sobre main): el deploy
+    # de producción queda gateado por validate + e2e verdes.
+    if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Vercel CLI
+        run: npm install --global vercel@latest
+
+      - name: Link Vercel project
+        # Fija el proyecto por team + nombre (strategicconnex/juanpalacios) y
+        # escribe .vercel/project.json; el paso siguiente exige el project ID exacto.
+        run: vercel link --yes --project juanpalacios --scope strategicconnex --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Verify Vercel project ID
+        # Hard-fail si el proyecto vinculado no es el de producción esperado
+        # (prj_KmY2dJJgbui7LhuQyxZPKTU08T1h) — nunca desplegar a otro proyecto.
+        run: |
+          PROJECT_ID=$(node -p "require('./.vercel/project.json').projectId")
+          if [ "$PROJECT_ID" != "prj_KmY2dJJgbui7LhuQyxZPKTU08T1h" ]; then
+            echo "::error::Unexpected Vercel project ID: $PROJECT_ID (expected prj_KmY2dJJgbui7LhuQyxZPKTU08T1h)"
+            exit 1
+          fi
+          echo "Vercel project linked: strategicconnex/juanpalacios ($PROJECT_ID)"
+
+      - name: Pull Vercel Environment Information
+        # Trae las env vars de producción del proyecto Vercel (OPENROUTER_API_KEY,
+        # RESEND_API_KEY, etc. se configuran una sola vez en el dashboard).
+        run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Build Project Artifacts
+        # --prebuilt: el build corre en el runner de Actions y solo se sube
+        # .vercel/output a Vercel (sin doble build, gateado por los checks).
+        run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
+        env:
+          NEXT_PUBLIC_VERCEL_URL: ${{ vars.VERCEL_URL || 'juanpalacios.vercel.app' }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY || '' }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY || '' }}
+          CONTACT_TO_EMAIL: ${{ secrets.CONTACT_TO_EMAIL || '' }}
+          CONTACT_FROM_EMAIL: ${{ secrets.CONTACT_FROM_EMAIL || 'portfolio@juanpalacios.vercel.app' }}
+
+      - name: Deploy Project Artifacts to Vercel
+        run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}

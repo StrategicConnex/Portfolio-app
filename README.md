@@ -373,6 +373,16 @@ Plantilla en `.env.example`. Las principales:
 | `NEXT_PUBLIC_VERCEL_URL` | ❌ | Dominio desplegado (default `juanpalacios.vercel.app`) |
 | `NEXT_PUBLIC_E2E_ERROR_ROUTE` | ❌ | Arma `/test-error` solo para el e2e del error boundary (CI) |
 
+**Secret de GitHub necesario para el deploy automático** (Settings → Secrets and variables → Actions):
+
+| Secret | Descripción |
+|---|---|
+| `VERCEL_TOKEN` | Token de API de Vercel (cuenta → Settings → Tokens, o `vercel tokens add`) |
+
+> El proyecto destino está **fijado en el workflow**: team `strategicconnex`, project `juanpalacios` (ID `prj_KmY2dJJgbui7LhuQyxZPKTU08T1h`). El job `deploy` vincula por nombre/team y **falla el build si el project ID vinculado no es el esperado** (nunca despliega a otro proyecto).
+>
+> Las env vars de runtime (`OPENROUTER_API_KEY`, `RESEND_API_KEY`, `CONTACT_TO_EMAIL`, `CONTACT_FROM_EMAIL`) se configuran **una sola vez en el dashboard de Vercel** (Settings → Environment Variables → Production); `vercel pull` las baja al build. Los secrets de GitHub solo se usan como fallback del build local de CI.
+
 ---
 
 ## Testing
@@ -405,7 +415,7 @@ npm run build && PORT=3100 E2E_PROD_SERVER=1 npm run test:e2e   # contra build p
 
 7 specs · 33 tests: `landing`, `nav`, `hero`, `app-shell` (loading/error/not-found), `ask-ai` (panel), `contact` + `contact-form` (formulario contra la ruta real).
 
-### CI (GitHub Actions — `.github/workflows/ci.yml`)
+### CI/CD (GitHub Actions — `.github/workflows/ci.yml`)
 
 ```text
 validate  (push main/develop, PR main)
@@ -420,7 +430,17 @@ e2e  (needs: validate)
   ├─ npm run build   (con NEXT_PUBLIC_E2E_ERROR_ROUTE=1)
   ├─ npx playwright install --with-deps chromium
   └─ npx playwright test  (E2E_PROD_SERVER=1)
+
+deploy  (needs: validate + e2e — solo push a main)
+  ├─ npm ci
+  ├─ vercel link --yes --project juanpalacios --scope strategicconnex
+  ├─ verificar project ID == prj_KmY2dJJgbui7LhuQyxZPKTU08T1h  (hard-fail)
+  ├─ vercel pull --yes --environment=production
+  ├─ vercel build --prod         (--prebuilt: build en el runner)
+  └─ vercel deploy --prebuilt --prod
 ```
+
+Cada push a `main` que pase `validate` + `e2e` despliega automáticamente a producción en Vercel (sin doble build gracias a `--prebuilt`). El job `deploy` también se puede disparar manualmente desde Actions (`workflow_dispatch`) sobre `main`.
 
 **Versión Mermaid** (renderiza en GitHub):
 
@@ -429,6 +449,7 @@ flowchart TD
     Trigger["push main/develop · PR main"]
     Validate["validate"]
     E2E["e2e (needs: validate)"]
+    Deploy["deploy (needs: validate + e2e)<br/>solo push a main<br/>strategicconnex/juanpalacios"]
     Lint["npm run lint"]
     TC["npx tsc --noEmit"]
     Test["npm run test"]
@@ -436,6 +457,11 @@ flowchart TD
     EBuild["npm run build<br/>(NEXT_PUBLIC_E2E_ERROR_ROUTE=1)"]
     Install["npx playwright install --with-deps chromium"]
     PW["npx playwright test<br/>(E2E_PROD_SERVER=1)"]
+    VLink["vercel link --project juanpalacios<br/>--scope strategicconnex"]
+    VCheck["verificar project ID<br/>prj_KmY2dJJgbui7LhuQyxZPKTU08T1h"]
+    VPull["vercel pull --environment=production"]
+    VBuild["vercel build --prod --prebuilt"]
+    VDeploy["vercel deploy --prebuilt --prod"]
 
     Trigger --> Validate
     Validate --> Lint
@@ -446,6 +472,12 @@ flowchart TD
     E2E --> EBuild
     E2E --> Install
     Install --> PW
+    E2E --> Deploy
+    Deploy --> VLink
+    VLink --> VCheck
+    VCheck --> VPull
+    VPull --> VBuild
+    VBuild --> VDeploy
 ```
 
 ---

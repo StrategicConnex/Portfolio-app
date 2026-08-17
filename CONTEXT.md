@@ -121,4 +121,19 @@ that are already recorded here.
   the pre-formatted block verbatim in the system prompt (`buildSystemPrompt`
   `memoryContext` option). Do not resurrect the server-side summarization
   call; memory is a client-seam feature.
+- **CI/CD pipeline** (`.github/workflows/ci.yml`): `validate` + `e2e` corren
+  en push a main/develop y PRs a main; un job `deploy` gateado por ambos
+  despliega a **producción en Vercel en cada push a main** usando el CLI
+  (`vercel pull --environment=production` → `vercel build --prod` →
+  `vercel deploy --prebuilt --prod`), con `--prebuilt` para no duplicar el
+  build (compila en el runner, sube solo `.vercel/output`). El proyecto
+  destino está **fijado**: `vercel link --project juanpalacios --scope
+  strategicconnex` y un paso de verificación que **hard-fail si el project
+  ID no es `prj_KmY2dJJgbui7LhuQyxZPKTU08T1h`** (nunca desplegar a otro
+  proyecto). El único secret requerido es `VERCEL_TOKEN`; las env vars de
+  runtime se configuran en el dashboard de Vercel (Production) y `vercel
+  pull` las baja al build. También disparable manualmente
+  (`workflow_dispatch` sobre main). Do not re-suggest GitHub Pages: la app
+  necesita un runtime Node (API routes del copilot, chat y contacto); el
+  deploy pasa por un host con runtime (Vercel).
 
