@@ -103,7 +103,7 @@ describe('Hero', () => {
     render(<Hero />)
     const img = screen.getByAltText('Foto de perfil de Juan Palacios')
     expect(img).toBeDefined()
-    expect(img.getAttribute('src')).toBe('/JuanPalacios.jpg')
+    expect(img.getAttribute('src')).toBe('/JuanPalacios.webp')
   })
 
   it('should render system active badge', () => {

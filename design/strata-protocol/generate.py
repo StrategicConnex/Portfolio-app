@@ -16,7 +16,7 @@ from PIL import Image, ImageDraw, ImageFont, ImageFilter
 W, H = 2400, 3200
 S = int(os.environ.get("SP_SCALE", "2"))   # supersample factor (2x display, 3x print)
 FW, FH = W * S, H * S
-OUT = os.environ.get("SP_OUT", "design/strata-protocol/strata-protocol.png")
+OUT = os.environ.get("SP_OUT", "design/strata-protocol/strata-protocol.webp")
 M = 150                    # margin (final px)
 
 SEED = 20260816

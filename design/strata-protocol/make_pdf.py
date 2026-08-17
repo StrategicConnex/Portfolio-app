@@ -26,10 +26,10 @@ def make_pdf(png, pdf):
     print("pdf:", pdf, f"{im.size[0]}x{im.size[1]}px", f"{im.size[0]/300:.2f}x{im.size[1]/300:.2f}in", f"{os.path.getsize(path)/1e6:.1f}MB")
 
 
-run_gen("generate.py", "strata-protocol-hi.png")
-make_pdf("strata-protocol-hi.png", "strata-protocol.pdf")
+run_gen("generate.py", "strata-protocol-hi.webp")
+make_pdf("strata-protocol-hi.webp", "strata-protocol.pdf")
 
-run_gen("generate-plate2.py", "strata-protocol-plate2-hi.png")
-make_pdf("strata-protocol-plate2-hi.png", "strata-protocol-plate2.pdf")
+run_gen("generate-plate2.py", "strata-protocol-plate2-hi.webp")
+make_pdf("strata-protocol-plate2-hi.webp", "strata-protocol-plate2.pdf")
 
 print("done")

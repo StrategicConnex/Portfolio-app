@@ -134,7 +134,7 @@ const SCAudit = () => {
                 </span>
               </div>
               <Image
-                src="/scaudit-dashboard.png"
+                src="/scaudit-dashboard.webp"
                 alt={t('scaudit.img.alt')}
                 width={960}
                 height={600}

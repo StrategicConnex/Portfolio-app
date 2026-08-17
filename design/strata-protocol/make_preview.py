@@ -2,10 +2,10 @@ from PIL import Image
 import base64, io, os
 
 BASE = os.path.dirname(os.path.abspath(__file__))
-im = Image.open(os.path.join(BASE, "strata-protocol.png"))
+im = Image.open(os.path.join(BASE, "strata-protocol.webp"))
 pv = im.resize((1100, int(im.height * 1100 / im.width)), Image.LANCZOS)
 buf = io.BytesIO()
-pv.save(buf, "PNG", optimize=True)
+pv.save(buf, "WEBP", quality=85)
 b64 = base64.b64encode(buf.getvalue()).decode()
 
 html = """<!DOCTYPE html>
@@ -20,7 +20,7 @@ html = """<!DOCTYPE html>
 </style>
 </head>
 <body>
-  <img src="data:image/png;base64,__B64__" alt="Strata Protocol canvas">
+  <img src="data:image/webp;base64,__B64__" alt="Strata Protocol canvas">
 </body>
 </html>""".replace("__B64__", b64)
 

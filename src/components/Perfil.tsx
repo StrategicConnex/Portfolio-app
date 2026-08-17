@@ -120,7 +120,7 @@ export default function Perfil() {
             >
               <div className="relative w-full h-full rounded-2xl overflow-hidden border border-blue-500/20 shadow-[0_0_60px_rgba(30,144,255,0.08)] bg-slate-900 group">
                 <Image
-                  src="/JuanPalacios.jpg"
+                  src="/JuanPalacios.webp"
                   alt={t('profile.photo_alt')}
                   fill
                   className="object-cover grayscale group-hover:grayscale-0 transition-all duration-1000 scale-105 group-hover:scale-100"

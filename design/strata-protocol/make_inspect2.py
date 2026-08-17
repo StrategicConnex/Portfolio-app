@@ -2,7 +2,7 @@ from PIL import Image
 import base64, io, os
 
 BASE = os.path.dirname(os.path.abspath(__file__))
-im = Image.open(os.path.join(BASE, "strata-protocol-plate2.png"))
+im = Image.open(os.path.join(BASE, "strata-protocol-plate2.webp"))
 W, H = im.size
 
 regions = {
@@ -19,9 +19,9 @@ for name, (x0, y0, x1, y1) in regions.items():
     scale = 900 / crop.width
     crop = crop.resize((900, int(crop.height * scale)), Image.LANCZOS)
     buf = io.BytesIO()
-    crop.save(buf, "PNG", optimize=True)
+    crop.save(buf, "WEBP", quality=85)
     b64 = base64.b64encode(buf.getvalue()).decode()
-    cells.append(f'<div class="cell"><div class="cap">{name}</div><img src="data:image/png;base64,{b64}"></div>')
+    cells.append(f'<div class="cell"><div class="cap">{name}</div><img src="data:image/webp;base64,{b64}"></div>')
 
 html = """<!DOCTYPE html>
 <html lang="en">

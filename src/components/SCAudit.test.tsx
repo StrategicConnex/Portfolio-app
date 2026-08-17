@@ -104,7 +104,7 @@ describe('SCAudit', () => {
     render(<SCAudit />)
     const img = screen.getByAltText('SCAudit Dashboard')
     expect(img).toBeDefined()
-    expect(img.getAttribute('src')).toBe('/scaudit-dashboard.png')
+    expect(img.getAttribute('src')).toBe('/scaudit-dashboard.webp')
   })
 
   it('should render the LIVE status indicator', () => {
