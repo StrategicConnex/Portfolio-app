@@ -33,8 +33,8 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 const inputStyle: React.CSSProperties = {
   width: '100%',
-  background: 'rgba(255,255,255,0.04)',
-  border: '1px solid rgba(255,255,255,0.1)',
+  background: 'var(--surface-fill)',
+  border: '1px solid var(--border-interactive)',
   borderRadius: 8,
   padding: 'clamp(0.6rem, 1.5vw, 0.75rem) clamp(0.7rem, 1.5vw, 1rem)',
   color: 'var(--text)',
@@ -47,13 +47,13 @@ const inputStyle: React.CSSProperties = {
 
 const labelStyle: React.CSSProperties = {
   fontSize: '0.72rem',
-  color: 'var(--muted)',
+  color: 'var(--text-muted)',
   display: 'block',
   marginBottom: '0.3rem',
 }
 
 const errorStyle: React.CSSProperties = {
-  color: '#f87171',
+  color: 'var(--danger)',
   fontSize: '0.72rem',
   margin: '0.3rem 0 0',
 }
@@ -136,7 +136,7 @@ export default function ContactForm() {
             height="40"
             viewBox="0 0 24 24"
             fill="none"
-            stroke="#4ade80"
+            stroke="var(--ok)"
             strokeWidth="2"
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -146,10 +146,10 @@ export default function ContactForm() {
             <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
             <polyline points="22 4 12 14.01 9 11.01" />
           </svg>
-          <h3 style={{ color: '#4ade80', margin: '0 0 0.5rem', fontSize: '1rem' }}>
+          <h3 style={{ color: 'var(--ok)', margin: '0 0 0.5rem', fontSize: '1rem' }}>
             {t('contact.form.success')}
           </h3>
-          <p style={{ color: 'var(--muted)', fontSize: '0.88rem', margin: 0 }}>
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.88rem', margin: 0 }}>
             {t('contact.form.success_msg')}
           </p>
         </div>
@@ -160,7 +160,7 @@ export default function ContactForm() {
             height="40"
             viewBox="0 0 24 24"
             fill="none"
-            stroke="#ef4444"
+            stroke="var(--danger)"
             strokeWidth="2"
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -171,10 +171,10 @@ export default function ContactForm() {
             <line x1="12" y1="8" x2="12" y2="12" />
             <line x1="12" y1="16" x2="12.01" y2="16" />
           </svg>
-          <h3 style={{ color: '#ef4444', margin: '0 0 0.5rem', fontSize: '1rem' }}>
+          <h3 style={{ color: 'var(--danger)', margin: '0 0 0.5rem', fontSize: '1rem' }}>
             {t('contact.form.error.title')}
           </h3>
-          <p style={{ color: 'var(--muted)', fontSize: '0.88rem', margin: '0 0 1.25rem' }}>
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.88rem', margin: '0 0 1.25rem' }}>
             {t('contact.form.error.msg')}
           </p>
           <button
@@ -183,7 +183,7 @@ export default function ContactForm() {
             style={{
               padding: '0.6rem 1.2rem',
               background: 'transparent',
-              border: '1px solid rgba(255,255,255,0.2)',
+              border: '1px solid var(--border-interactive)',
               color: 'var(--text)',
               borderRadius: 8,
               cursor: 'pointer',
@@ -198,7 +198,7 @@ export default function ContactForm() {
           <h3 style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text)', margin: '0 0 0.3rem' }}>
             {t('contact.form.title')}
           </h3>
-          <p style={{ fontSize: '0.75rem', color: 'var(--muted)', margin: '0 0 1.5rem' }}>
+          <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', margin: '0 0 1.5rem' }}>
             {t('contact.form.subtitle')}
           </p>
 
@@ -332,7 +332,7 @@ export default function ContactForm() {
           >
             {status === 'sending' ? t('contact.form.sending') : t('contact.form.send')}
           </button>
-          <p style={{ fontSize: '0.68rem', color: 'var(--muted)', textAlign: 'center', margin: '0.6rem 0 0' }}>
+          <p style={{ fontSize: '0.68rem', color: 'var(--text-muted)', textAlign: 'center', margin: '0.6rem 0 0' }}>
             {t('contact.form.footer')}
           </p>
         </form>

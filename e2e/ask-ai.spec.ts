@@ -4,7 +4,7 @@ import { test, expect, type Page } from '@playwright/test';
 // buttons in the Certifications section ("View AI for Malware Analysis…"),
 // which come earlier in the DOM, so `.first()` clicked a course modal instead
 // of the launcher (that was the historical cold-start flake).
-const launcherSel = '[aria-label="Ask AI"]';
+const launcherSel = '[aria-label="Tanos AI"]';
 const panelInputSel = 'input[placeholder*="Ask" i], input[placeholder*="Pregunta" i]';
 const closeBtnSel = '[aria-label="Cerrar panel"], [aria-label="Close panel"]';
 

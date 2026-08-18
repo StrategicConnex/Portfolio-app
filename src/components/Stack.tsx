@@ -66,9 +66,9 @@ function StackCard({ item, index }: { item: typeof categories[0]; index: number 
   return (
     <motion.div
       ref={ref}
-      initial={{ opacity: 0, scale: 0.98 }}
-      animate={inView ? { opacity: 1, scale: 1 } : {}}
-      transition={{ duration: 0.6, delay: index * 0.05, ease: [0.22, 1, 0.36, 1] }}
+      initial={{ opacity: 0, scale: 0.95, filter: 'blur(4px)' }}
+      animate={inView ? { opacity: 1, scale: 1, filter: 'blur(0px)' } : {}}
+      transition={{ duration: 0.65, delay: index * 0.06, ease: [0.22, 1, 0.36, 1] }}
       whileHover={{ y: -5, borderColor: item.color + '88' }}
       className="relative overflow-hidden cursor-default flex flex-col justify-end p-7 rounded-2xl min-h-[220px]"
       style={{
@@ -105,7 +105,7 @@ function StackCard({ item, index }: { item: typeof categories[0]; index: number 
 
         <div className="flex flex-wrap gap-1.5">
           {item.tags.map(tagKey => (
-            <span key={tagKey} className="text-xs font-medium px-2 py-0.5 rounded-full bg-white/5 text-white/70 border border-white/10">
+            <span key={tagKey} className="text-xs font-medium px-2 py-0.5 rounded-full bg-[var(--surface-fill)] text-white/70 border border-[var(--surface-border)]">
               {t(tagKey)}
             </span>
           ))}

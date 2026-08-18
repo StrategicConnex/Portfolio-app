@@ -33,18 +33,33 @@ export default function Home() {
   return (
     <>
       <Navbar />
-      <main>
+      <main id="main-content">
+        {/* ── 1. Anchor — Hero + identity ── */}
         <Hero />
         <Perfil />
+
+        {/* ── 2. Experience + credentials ── */}
+        <Suspense fallback={<SectionFallbackBg2 />}>
+          <Experiencia />
+        </Suspense>
+        <Suspense fallback={<SectionFallbackBg2 />}>
+          <Certificaciones />
+        </Suspense>
+
+        {/* ── 3. Methodology — "how I work" ── */}
         <Suspense fallback={<SectionFallbackBg2 />}>
           <Arquitectura />
         </Suspense>
-        <Suspense fallback={<SectionFallback />}>
-          <Experiencia />
-        </Suspense>
-        <Suspense fallback={<SectionFallback />}>
+
+        {/* ── 4. Trust proof — badges, stack ── */}
+        <Suspense fallback={<SectionFallbackBg2 />}>
           <TrustBadges />
         </Suspense>
+        <Suspense fallback={<SectionFallback />}>
+          <Stack />
+        </Suspense>
+
+        {/* ── 5. Live proof — dashboards + tools ── */}
         <Suspense fallback={<SectionFallback />}>
           <SIEMDashboard />
         </Suspense>
@@ -54,19 +69,17 @@ export default function Home() {
         <Suspense fallback={<SectionFallback />}>
           <SCAudit />
         </Suspense>
-        <Suspense fallback={<SectionFallback />}>
-          <Blog />
-        </Suspense>
-        <Suspense fallback={<SectionFallback />}>
-          <Stack />
-        </Suspense>
-        <Suspense fallback={<SectionFallbackBg2 />}>
-          <Certificaciones />
-        </Suspense>
+
+        {/* ── 6. Project + editorial ── */}
         <Suspense fallback={<SectionFallback />}>
           <Proyecto />
         </Suspense>
-        <Suspense fallback={<SectionFallback />}>
+        <Suspense fallback={<SectionFallbackBg2 />}>
+          <Blog />
+        </Suspense>
+
+        {/* ── 7. CTA ── */}
+        <Suspense fallback={<SectionFallbackBg2 />}>
           <Contacto />
         </Suspense>
       </main>

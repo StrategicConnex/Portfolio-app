@@ -69,6 +69,10 @@ vi.mock('@/context/LanguageContext', () => ({
   useLanguage: () => ({ language: 'es', setLanguage: vi.fn(), t: (k: string) => mockLanguageT(k) }),
 }))
 
+vi.mock('@/context/ThemeContext', () => ({
+  useTheme: () => ({ preference: 'system', resolved: 'dark', setPreference: vi.fn() }),
+}))
+
 // Default mock implementations for other commonly-mocked components
 let MockSectionHeader: React.ComponentType<{ label?: string; title?: string; highlight?: string; center?: boolean }>
 let MockFadeIn: React.ComponentType<{ children?: React.ReactNode; delay?: number }>

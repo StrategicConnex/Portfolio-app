@@ -5,6 +5,12 @@ import {
   detectLanguageServer,
   isLanguage,
 } from '@/lib/language'
+import {
+  THEME_COOKIE,
+  THEME_COOKIE_MAX_AGE,
+  detectThemeServer,
+  isThemePreference,
+} from '@/lib/theme'
 
 /**
  * Proxy (Next 16 — formerly middleware): guarantees the language cookie exists
@@ -34,6 +40,18 @@ export function proxy(request: NextRequest) {
     response.cookies.set(LANGUAGE_COOKIE, lang, {
       path: '/',
       maxAge: LANGUAGE_COOKIE_MAX_AGE,
+      sameSite: 'lax',
+    })
+  }
+
+  // Theme cookie — same contract as the language cookie: establish it when
+  // missing so the inline no-flash script in the layout always has a value.
+  // Valid persisted choices are left untouched.
+  const existingTheme = request.cookies.get(THEME_COOKIE)?.value
+  if (!isThemePreference(existingTheme)) {
+    response.cookies.set(THEME_COOKIE, detectThemeServer(existingTheme), {
+      path: '/',
+      maxAge: THEME_COOKIE_MAX_AGE,
       sameSite: 'lax',
     })
   }

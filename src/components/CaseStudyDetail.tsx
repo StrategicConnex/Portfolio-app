@@ -46,20 +46,20 @@ export default function CaseStudyDetail({ onClose }: { onClose: () => void }) {
       initial={{ opacity: 0, y: 50 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: 50 }}
-      className="fixed inset-0 z-50 bg-[#0a0a0f] overflow-y-auto custom-scrollbar"
+      className="console fixed inset-0 z-50 bg-[#0a0a0f] overflow-y-auto custom-scrollbar"
     >
       {/* Navbar flotante para cerrar */}
       <div className="sticky top-0 z-50 p-6 flex justify-between items-center pointer-events-none">
         <button 
           onClick={onClose}
-          className="pointer-events-auto flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 backdrop-blur-md rounded-full border border-white/10 text-slate-400 hover:text-white transition-all shadow-2xl group"
+          className="pointer-events-auto flex items-center gap-2 px-4 py-2 bg-[var(--surface-fill)] hover:bg-[var(--surface-fill-strong)] backdrop-blur-md rounded-full border border-[var(--border-interactive)] text-[var(--text-muted)] hover:text-white transition-all shadow-2xl group"
         >
           <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
           <span className="text-xs font-bold uppercase tracking-widest">Volver</span>
         </button>
         <button 
           onClick={onClose}
-          className="pointer-events-auto p-3 bg-white/5 hover:bg-white/10 backdrop-blur-md rounded-full border border-white/10 text-slate-400 hover:text-white transition-all shadow-2xl"
+          className="pointer-events-auto p-3 bg-[var(--surface-fill)] hover:bg-[var(--surface-fill-strong)] backdrop-blur-md rounded-full border border-[var(--border-interactive)] text-[var(--text-muted)] hover:text-white transition-all shadow-2xl"
         >
           <X size={24} />
         </button>
@@ -68,7 +68,7 @@ export default function CaseStudyDetail({ onClose }: { onClose: () => void }) {
       <div className="max-w-6xl mx-auto px-6 pb-32 -mt-20">
         
         {/* SECCIÓN 1: HERO */}
-        <section className="relative min-h-[70vh] flex flex-col items-center justify-center pt-20 border-b border-white/5">
+        <section className="relative min-h-[70vh] flex flex-col items-center justify-center pt-20 border-b border-[var(--surface-border)]">
           <div className="absolute inset-0 z-0 opacity-50">
             <Canvas camera={{ position: [0, 0, 5] }}>
               <NetworkGraph />
@@ -86,14 +86,14 @@ export default function CaseStudyDetail({ onClose }: { onClose: () => void }) {
             <h1 className="text-4xl sm:text-6xl font-black text-white mb-4 tracking-tight drop-shadow-2xl">
               {caseData.meta.title}
             </h1>
-            <p className="text-xl sm:text-2xl text-slate-400 font-medium max-w-2xl">
+            <p className="text-xl sm:text-2xl text-[var(--text-muted)] font-medium max-w-2xl">
               De {caseData.before.mttr.value} horas a {caseData.after.mttr.value} minutos de MTTR
             </p>
           </div>
         </section>
 
         {/* SECCIÓN 2: EL PROBLEMA */}
-        <section className="py-24 border-b border-white/5 relative">
+        <section className="py-24 border-b border-[var(--surface-border)] relative">
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-red-900/10 via-[#0a0a0f] to-[#0a0a0f] -z-10" />
           <h2 className="text-3xl font-black text-white mb-12 flex items-center gap-3">
             <ShieldAlert className="text-red-500" size={32} /> El Problema Inicial
@@ -115,7 +115,7 @@ export default function CaseStudyDetail({ onClose }: { onClose: () => void }) {
                 <div className="relative z-10">
                   <p className="text-xs font-black text-red-400 uppercase tracking-widest mb-2">{data.label}</p>
                   <p className="text-4xl font-mono text-white mb-1">{data.value}</p>
-                  <p className="text-sm text-slate-400">{data.unit}</p>
+                  <p className="text-sm text-[var(--text-muted)]">{data.unit}</p>
                   {(data as CaseStudyMetric).sub && <p className="text-xs text-red-400/80 mt-2 font-medium">{(data as CaseStudyMetric).sub}</p>}
                 </div>
               </motion.div>
@@ -124,7 +124,7 @@ export default function CaseStudyDetail({ onClose }: { onClose: () => void }) {
         </section>
 
         {/* SECCIÓN 3: LA SOLUCIÓN (ARQUITECTURA) */}
-        <section className="py-24 border-b border-white/5 relative overflow-hidden">
+        <section className="py-24 border-b border-[var(--surface-border)] relative overflow-hidden">
           <div className="absolute inset-0 bg-[#00d4ff]/5 opacity-20" style={{ backgroundImage: 'radial-gradient(#00d4ff 1px, transparent 1px)', backgroundSize: '30px 30px' }} />
           <h2 className="text-3xl font-black text-white mb-12 flex items-center gap-3 relative z-10">
             <Server className="text-[#00d4ff]" size={32} /> Arquitectura Purdue Model
@@ -140,7 +140,7 @@ export default function CaseStudyDetail({ onClose }: { onClose: () => void }) {
                 className="group relative cursor-pointer"
               >
                 <div className="absolute inset-0 bg-gradient-to-r from-[#00d4ff]/0 via-[#00d4ff]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                <div className="bg-[#111116] border border-white/10 hover:border-[#00d4ff]/50 transition-colors rounded-xl p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+                <div className="bg-[#111116] border border-[var(--surface-border)] hover:border-[#00d4ff]/50 transition-colors rounded-xl p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
                   <div className="flex items-center gap-6">
                     <div className="w-16 h-16 rounded-full bg-[#00d4ff]/10 border border-[#00d4ff]/30 flex items-center justify-center text-xl font-black text-[#00d4ff]">
                       L{level.id}
@@ -149,7 +149,7 @@ export default function CaseStudyDetail({ onClose }: { onClose: () => void }) {
                   </div>
                   <div className="flex flex-wrap gap-2">
                     {level.components.map(comp => (
-                      <span key={comp} className="px-4 py-2 bg-white/5 rounded-lg text-sm font-medium text-slate-300 border border-white/5">
+                      <span key={comp} className="px-4 py-2 bg-[var(--surface-fill)] rounded-lg text-sm font-medium text-[var(--text-secondary)] border border-[var(--surface-border)]">
                         {comp}
                       </span>
                     ))}
@@ -161,50 +161,50 @@ export default function CaseStudyDetail({ onClose }: { onClose: () => void }) {
         </section>
 
         {/* SECCIÓN 4: RESULTADOS DASHBOARD */}
-        <section className="py-24 border-b border-white/5">
+        <section className="py-24 border-b border-[var(--surface-border)]">
           <h2 className="text-3xl font-black text-white mb-12 flex items-center gap-3">
             <ShieldCheck className="text-[#00ff88]" size={32} /> Resultados del Proyecto
           </h2>
           
-          <div className="bg-[#0f1015] border border-white/10 rounded-2xl overflow-hidden shadow-2xl">
+          <div className="bg-[#0f1015] border border-[var(--surface-border)] rounded-2xl overflow-hidden shadow-2xl">
             {/* Mockup Topbar */}
-            <div className="flex items-center justify-between p-4 bg-[#16181d] border-b border-white/5">
+            <div className="flex items-center justify-between p-4 bg-[#16181d] border-b border-[var(--surface-border)]">
               <div className="flex gap-2">
                 {['Ejecutivo', 'Operaciones', 'Ciberseguridad'].map(tab => (
                   <button 
                     key={tab} 
                     onClick={() => setActiveTab(tab)}
-                    className={`px-4 py-1.5 rounded-md text-xs font-bold transition-colors ${activeTab === tab ? 'bg-[#00d4ff]/20 text-[#00d4ff]' : 'text-slate-400 hover:text-slate-300'}`}
+                    className={`px-4 py-1.5 rounded-md text-xs font-bold transition-colors ${activeTab === tab ? 'bg-[#00d4ff]/20 text-[#00d4ff]' : 'text-[var(--text-muted)] hover:text-[var(--text-secondary)]'}`}
                   >
                     {tab}
                   </button>
                 ))}
               </div>
-              <button className="flex items-center gap-2 text-xs font-bold text-slate-400 hover:text-white">
+              <button className="flex items-center gap-2 text-xs font-bold text-[var(--text-muted)] hover:text-white">
                 <Download size={14} /> Exportar
               </button>
             </div>
             
             {/* Dashboard Content */}
             <div className="p-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              <div className="lg:col-span-2 bg-[#16181d] rounded-xl p-6 border border-white/5">
-                <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-6">Ahorro Generado</p>
+              <div className="lg:col-span-2 bg-[#16181d] rounded-xl p-6 border border-[var(--surface-border)]">
+                <p className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-widest mb-6">Ahorro Generado</p>
                 <div className="flex items-end gap-4">
                   <h4 className="text-5xl font-black text-[#00ff88]">${(caseData.after.savings.value / 1000)}k</h4>
-                  <p className="text-sm text-slate-500 mb-2">USD / año en downtime evitado</p>
+                  <p className="text-sm text-[var(--text-subtle)] mb-2">USD / año en downtime evitado</p>
                 </div>
               </div>
               
-              <div className="bg-[#16181d] rounded-xl p-6 border border-white/5">
-                <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">MTTR</p>
-                <div className="text-4xl font-black text-white mb-2">{caseData.after.mttr.value} <span className="text-lg text-slate-500">min</span></div>
+              <div className="bg-[#16181d] rounded-xl p-6 border border-[var(--surface-border)]">
+                <p className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-widest mb-4">MTTR</p>
+                <div className="text-4xl font-black text-white mb-2">{caseData.after.mttr.value} <span className="text-lg text-[var(--text-subtle)]">min</span></div>
                 <div className="flex items-center gap-2 text-xs font-bold text-[#00ff88] bg-[#00ff88]/10 w-fit px-2 py-1 rounded">
                   ↓ 94% vs Inicial
                 </div>
               </div>
 
-              <div className="bg-[#16181d] rounded-xl p-6 border border-white/5">
-                <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Cobertura</p>
+              <div className="bg-[#16181d] rounded-xl p-6 border border-[var(--surface-border)]">
+                <p className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-widest mb-4">Cobertura</p>
                 <div className="text-4xl font-black text-white mb-2">{caseData.after.coverage.value}%</div>
                 <div className="flex items-center gap-2 text-xs font-bold text-[#00ff88] bg-[#00ff88]/10 w-fit px-2 py-1 rounded">
                   ↑ 63% vs Inicial
@@ -215,14 +215,14 @@ export default function CaseStudyDetail({ onClose }: { onClose: () => void }) {
         </section>
 
         {/* SECCIÓN 5: STORYTELLING INCIDENTE */}
-        <section className="py-24 border-b border-white/5">
+        <section className="py-24 border-b border-[var(--surface-border)]">
           <h2 className="text-3xl font-black text-white mb-12 flex items-center gap-3">
             <Clock className="text-[#ff6b00]" size={32} /> Incidente Real: {caseData.incident.date}
           </h2>
           
           <div className="relative pl-6 md:pl-0">
             {/* Línea vertical */}
-            <div className="absolute left-[11px] md:left-1/2 top-0 bottom-0 w-0.5 bg-white/10 -translate-x-1/2" />
+            <div className="absolute left-[11px] md:left-1/2 top-0 bottom-0 w-0.5 bg-[var(--surface-fill-strong)] -translate-x-1/2" />
             
             <div className="space-y-12">
               {caseData.incident.timeline.map((step, i) => (
@@ -240,9 +240,9 @@ export default function CaseStudyDetail({ onClose }: { onClose: () => void }) {
                   </div>
                   
                   <div className={`md:w-1/2 ${i % 2 === 0 ? 'md:pr-12 md:text-right' : 'md:pl-12'}`}>
-                    <div className="bg-white/5 border border-white/10 rounded-xl p-5 hover:bg-white/10 transition-colors">
+                    <div className="bg-[var(--surface-fill)] border border-[var(--surface-border)] rounded-xl p-5 hover:bg-[var(--surface-fill-strong)] transition-colors">
                       <h4 className="text-lg font-bold text-white mb-1">{step.action}</h4>
-                      <p className="text-sm text-slate-400">Vía {step.tool}</p>
+                      <p className="text-sm text-[var(--text-muted)]">Vía {step.tool}</p>
                     </div>
                   </div>
                 </motion.div>
@@ -270,12 +270,12 @@ export default function CaseStudyDetail({ onClose }: { onClose: () => void }) {
             </button>
             <button 
               onClick={onClose}
-              className="flex items-center justify-center gap-3 bg-white/5 hover:bg-white/10 text-white font-black uppercase tracking-widest px-8 py-4 rounded-xl border border-white/10 transition-transform hover:scale-105"
+              className="flex items-center justify-center gap-3 bg-[var(--surface-fill)] hover:bg-[var(--surface-fill-strong)] text-white font-black uppercase tracking-widest px-8 py-4 rounded-xl border border-[var(--border-interactive)] transition-transform hover:scale-105"
             >
               <ArrowLeft size={20} /> Volver al Perfil
             </button>
           </div>
-          <div className="mt-16 text-slate-500 text-sm">
+          <div className="mt-16 text-[var(--text-subtle)] text-sm">
             Stack: React 18, Three.js, GSAP, Tailwind CSS • 2026
           </div>
         </section>

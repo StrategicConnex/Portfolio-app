@@ -34,20 +34,20 @@ export function TechStackResultCard({ result }: Props) {
 
   return (
     <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25 }}
-      className="rounded-xl border border-slate-700/50 bg-slate-900/70 overflow-hidden">
-      <div className="flex items-center justify-between px-4 py-3 border-b border-slate-700/30 bg-slate-800/40">
+      className="console rounded-xl border border-[var(--surface-border)] bg-slate-900/70 overflow-hidden">
+      <div className="flex items-center justify-between px-4 py-3 border-b border-[var(--surface-border)]/30 bg-[var(--surface-fill-strong)]/40">
         <div className="flex items-center gap-2.5 min-w-0">
           <div className="w-7 h-7 rounded-lg bg-violet-500/15 border border-violet-500/25 flex items-center justify-center">
             <Monitor className="w-3.5 h-3.5 text-violet-400" />
           </div>
           <div className="min-w-0">
-            <span className="text-sm font-semibold text-slate-100 truncate block">{result.url}</span>
-            <span className="text-[10px] text-slate-500">{t('tool.techstack.label')}</span>
+            <span className="text-sm font-semibold text-[var(--text-primary)] truncate block">{result.url}</span>
+            <span className="text-[10px] text-[var(--text-subtle)]">{t('tool.techstack.label')}</span>
           </div>
         </div>
         <div className="flex items-center gap-2">
-          {result.server && <Badge variant="outline" className="h-5 text-[10px] border-slate-600 text-slate-400 bg-slate-800">{result.server}</Badge>}
-          {!result.error && <button onClick={handleCopy} className="h-7 w-7 rounded-md hover:bg-slate-700/50 flex items-center justify-center text-slate-500 hover:text-slate-300 transition-colors" aria-label={t('tool.copy')}>{copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}</button>}
+          {result.server && <Badge variant="outline" className="h-5 text-[10px] border-[var(--surface-border-strong)] text-[var(--text-muted)] bg-[var(--surface-fill-strong)]">{result.server}</Badge>}
+          {!result.error && <button onClick={handleCopy} className="h-7 w-7 rounded-md hover:bg-[var(--surface-fill-strong)] flex items-center justify-center text-[var(--text-subtle)] hover:text-[var(--text-secondary)] transition-colors" aria-label={t('tool.copy')}>{copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}</button>}
         </div>
       </div>
       {result.error ? (
@@ -63,13 +63,13 @@ export function TechStackResultCard({ result }: Props) {
             {result.analytics?.map(a => <Badge key={a} className="h-6 text-xs bg-amber-500/15 text-amber-400 border-amber-500/25"><BarChart3 className="w-3 h-3 mr-1" />{a}</Badge>)}
           </div>
           {result.headers.length > 0 && (
-            <div className="pt-2 border-t border-slate-700/30">
-              <span className="text-[10px] text-slate-500 font-medium uppercase tracking-wider block mb-2">{t('tool.techstack.detected')} ({result.headers.length})</span>
+            <div className="pt-2 border-t border-[var(--surface-border)]/30">
+              <span className="text-[10px] text-[var(--text-subtle)] font-medium uppercase tracking-wider block mb-2">{t('tool.techstack.detected')} ({result.headers.length})</span>
               <div className="space-y-1">
                 {result.headers.map((h, i) => (
                   <div key={i} className="flex items-center gap-2 text-xs">
-                    <span className="text-slate-300 font-medium min-w-[120px]">{h.name}</span>
-                    <span className="text-slate-500 text-[10px]">{h.hint}</span>
+                    <span className="text-[var(--text-secondary)] font-medium min-w-[120px]">{h.name}</span>
+                    <span className="text-[var(--text-subtle)] text-[10px]">{h.hint}</span>
                   </div>
                 ))}
               </div>

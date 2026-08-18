@@ -96,10 +96,10 @@ export function SslResultCard({ result }: Props) {
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.25 }}
-      className="rounded-xl border border-slate-700/50 bg-slate-900/70 overflow-hidden"
+      className="console rounded-xl border border-[var(--surface-border)] bg-slate-900/70 overflow-hidden"
     >
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-slate-700/30 bg-slate-800/40">
+      <div className="flex items-center justify-between px-4 py-3 border-b border-[var(--surface-border)]/30 bg-[var(--surface-fill-strong)]/40">
         <div className="flex items-center gap-2.5">
           <div
             className={`w-7 h-7 rounded-lg flex items-center justify-center ${
@@ -121,8 +121,8 @@ export function SslResultCard({ result }: Props) {
             />
           </div>
           <div>
-            <span className="text-sm font-semibold text-slate-100">{result.hostname}</span>
-            <span className="text-[10px] text-slate-500 ml-2">SSL/TLS Certificate</span>
+            <span className="text-sm font-semibold text-[var(--text-primary)]">{result.hostname}</span>
+            <span className="text-[10px] text-[var(--text-subtle)] ml-2">SSL/TLS Certificate</span>
           </div>
         </div>
         <div className="flex items-center gap-2">
@@ -130,7 +130,7 @@ export function SslResultCard({ result }: Props) {
           {!result.error && (
             <button
               onClick={handleCopy}
-              className="h-7 w-7 rounded-md hover:bg-slate-700/50 flex items-center justify-center text-slate-500 hover:text-slate-300 transition-colors"
+              className="h-7 w-7 rounded-md hover:bg-[var(--surface-fill-strong)] flex items-center justify-center text-[var(--text-subtle)] hover:text-[var(--text-secondary)] transition-colors"
               aria-label="Copy SSL certificate info"
             >
               {copied ? (
@@ -182,14 +182,14 @@ export function SslResultCard({ result }: Props) {
                 </span>
               </div>
               <div>
-                <p className="text-xs font-medium text-slate-300">
+                <p className="text-xs font-medium text-[var(--text-secondary)]">
                   {isExpired
                     ? 'Certificate expired'
                     : isExpiringSoon
                     ? 'Expires in'
                     : 'Valid for'}
                 </p>
-                <p className="text-[10px] text-slate-500">
+                <p className="text-[10px] text-[var(--text-subtle)]">
                   {result.daysRemaining === 1 ? '1 day' : `${Math.abs(result.daysRemaining)} days`}
                 </p>
               </div>
@@ -199,27 +199,27 @@ export function SslResultCard({ result }: Props) {
           {/* Details grid */}
           <div className="grid grid-cols-2 gap-x-4 gap-y-2.5 text-xs">
             <div>
-              <span className="text-slate-500 block text-[10px]">Issuer</span>
-              <span className="text-slate-300 font-medium">{result.issuer || 'N/A'}</span>
+              <span className="text-[var(--text-subtle)] block text-[10px]">Issuer</span>
+              <span className="text-[var(--text-secondary)] font-medium">{result.issuer || 'N/A'}</span>
             </div>
             <div>
-              <span className="text-slate-500 block text-[10px]">Subject (CN)</span>
-              <span className="text-slate-300 font-medium">{result.subject || 'N/A'}</span>
+              <span className="text-[var(--text-subtle)] block text-[10px]">Subject (CN)</span>
+              <span className="text-[var(--text-secondary)] font-medium">{result.subject || 'N/A'}</span>
             </div>
             <div>
-              <span className="text-slate-500 block text-[10px]">Valid From</span>
-              <span className="text-slate-300">{formatDate(result.validFrom)}</span>
+              <span className="text-[var(--text-subtle)] block text-[10px]">Valid From</span>
+              <span className="text-[var(--text-secondary)]">{formatDate(result.validFrom)}</span>
             </div>
             <div>
-              <span className="text-slate-500 block text-[10px]">Valid Until</span>
-              <span className="text-slate-300">{formatDate(result.validTo)}</span>
+              <span className="text-[var(--text-subtle)] block text-[10px]">Valid Until</span>
+              <span className="text-[var(--text-secondary)]">{formatDate(result.validTo)}</span>
             </div>
             {result.protocol && (
               <div>
-                <span className="text-slate-500 block text-[10px]">Protocol</span>
+                <span className="text-[var(--text-subtle)] block text-[10px]">Protocol</span>
                 <Badge
                   variant="outline"
-                  className="h-5 text-[10px] border-slate-600 text-slate-400 bg-slate-800 font-mono"
+                  className="h-5 text-[10px] border-[var(--surface-border-strong)] text-[var(--text-muted)] bg-[var(--surface-fill-strong)] font-mono"
                 >
                   {result.protocol}
                 </Badge>
@@ -229,10 +229,10 @@ export function SslResultCard({ result }: Props) {
 
           {/* SAN */}
           {result.san && result.san.length > 0 && (
-            <div className="pt-2 border-t border-slate-700/30">
+            <div className="pt-2 border-t border-[var(--surface-border)]/30">
               <div className="flex items-center gap-1.5 mb-2">
-                <Info className="w-3 h-3 text-slate-500" />
-                <span className="text-[10px] text-slate-500 font-medium uppercase tracking-wider">
+                <Info className="w-3 h-3 text-[var(--text-subtle)]" />
+                <span className="text-[10px] text-[var(--text-subtle)] font-medium uppercase tracking-wider">
                   Subject Alternative Names ({result.san.length})
                 </span>
               </div>
@@ -241,7 +241,7 @@ export function SslResultCard({ result }: Props) {
                   <Badge
                     key={name}
                     variant="outline"
-                    className="h-5 text-[10px] border-slate-700/50 text-slate-400 bg-slate-800/50 font-mono"
+                    className="h-5 text-[10px] border-[var(--surface-border)] text-[var(--text-muted)] bg-[var(--surface-fill-strong)] font-mono"
                   >
                     {name}
                   </Badge>
@@ -249,7 +249,7 @@ export function SslResultCard({ result }: Props) {
                 {result.san.length > 6 && (
                   <Badge
                     variant="outline"
-                    className="h-5 text-[10px] border-slate-700/50 text-slate-500 bg-slate-800/30"
+                    className="h-5 text-[10px] border-[var(--surface-border)] text-[var(--text-subtle)] bg-[var(--surface-fill-strong)]/30"
                   >
                     +{result.san.length - 6} more
                   </Badge>

@@ -60,8 +60,8 @@ export default function Contacto() {
   return (
     <section
       id="contacto"
+      className="py-20 sm:py-32 px-4 sm:px-6 md:px-8"
       style={{
-        padding: 'clamp(2rem, 5vw, 5rem) clamp(1rem, 5vw, 2rem)',
         background: 'var(--bg2)',
       }}
     >
@@ -76,7 +76,7 @@ export default function Contacto() {
         <FadeIn delay={0.05}>
           <p
             style={{
-              color: 'var(--muted)',
+              color: 'var(--text-secondary)',
               fontSize: 'clamp(0.82rem, 1.8vw, 0.92rem)',
               lineHeight: 1.8,
               textAlign: 'center',
@@ -141,7 +141,7 @@ export default function Contacto() {
                   <div
                     style={{
                       fontSize: '0.72rem',
-                      color: 'var(--muted)',
+                      color: 'var(--text-muted)',
                       whiteSpace: 'nowrap',
                       overflow: 'hidden',
                       textOverflow: 'ellipsis',
@@ -184,9 +184,9 @@ export default function Contacto() {
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '0.5rem',
-                background: 'rgba(34,197,94,0.07)',
-                color: '#4ade80',
-                border: '1px solid rgba(34,197,94,0.22)',
+                background: 'color-mix(in srgb, var(--ok) 7%, transparent)',
+                color: 'var(--ok)',
+                border: '1px solid color-mix(in srgb, var(--ok) 22%, transparent)',
                 padding: '0.5rem 1.2rem',
                 borderRadius: 20,
                 fontSize: '0.82rem',
@@ -200,7 +200,7 @@ export default function Contacto() {
                   width: 8,
                   height: 8,
                   borderRadius: '50%',
-                  background: '#4ade80',
+                  background: 'var(--ok)',
                 }}
               />
               {t('contact.availability')}

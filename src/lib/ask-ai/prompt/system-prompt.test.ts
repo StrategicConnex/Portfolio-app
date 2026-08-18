@@ -41,7 +41,7 @@ describe('buildSystemPrompt', () => {
 
   it('sets the language and mode headers', () => {
     const es = buildSystemPrompt({ ...base, language: 'es' })
-    expect(es).toContain('You are Ask Juan AI')
+    expect(es).toContain('You are Tanos AI')
     expect(es).toContain('EL USUARIO ESTÁ NAVEGANDO EN: ES')
     expect(es).toContain('MODO ACTIVO: ASK')
 

@@ -9,7 +9,9 @@ export default function Footer() {
     <footer
       className="text-center px-4 sm:px-8 md:px-12 py-4 md:py-6 text-xs md:text-sm border-t leading-relaxed"
       style={{
-        color: 'var(--muted)',
+        // --muted is a surface tint in the shadcn convention; the text color
+        // belongs to --muted-foreground.
+        color: 'var(--muted-foreground)',
         borderColor: 'var(--border)',
         background: 'var(--bg)',
       }}

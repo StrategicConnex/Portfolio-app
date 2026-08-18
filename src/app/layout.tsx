@@ -2,12 +2,15 @@ import type { Metadata, Viewport } from 'next'
 import { cookies, headers } from 'next/headers'
 import './globals.css'
 import { LanguageProvider } from '@/context/LanguageContext'
+import { ThemeProvider } from '@/context/ThemeContext'
 import { SITE } from '@/lib/constants'
 import { LANGUAGE_COOKIE, detectLanguageServer } from '@/lib/language'
+import { THEME_COOKIE, THEME_INIT_SCRIPT, detectThemeServer } from '@/lib/theme'
 import React from 'react'
 import Script from 'next/script'
 import { ObservabilityProvider } from '@/components/observability/ObservabilityProvider'
 import { HtmlLangUpdater } from '@/components/HtmlLangUpdater'
+import { SkipToContent } from '@/components/ui/SkipToContent'
 
 export const viewport: Viewport = {
   themeColor: [
@@ -162,6 +165,7 @@ export default async function RootLayout({
   const cookieStore = await cookies()
   const headersStore = await headers()
   const langCookie = cookieStore.get(LANGUAGE_COOKIE)
+  const themeCookie = cookieStore.get(THEME_COOKIE)
 
   // Initial language via the shared seam: cookie → Accept-Language header → default.
   // Same rule as detectLanguageClient() — both live in src/lib/language.ts.
@@ -169,6 +173,11 @@ export default async function RootLayout({
     langCookie?.value,
     headersStore.get('accept-language'),
   )
+
+  // Initial theme preference via the theme seam (cookie → 'system' default).
+  // The concrete theme is resolved client-side by the inline no-flash script
+  // before first paint; the provider hydrates to the same value.
+  const initialTheme = detectThemeServer(themeCookie?.value)
 
   // The RUM telemetry API only accepts deployed origins, so it must never
   // fire from localhost — including `next start` runs of the production
@@ -182,9 +191,14 @@ export default async function RootLayout({
     host.startsWith('0.0.0.0')
 
   return (
-    <html lang={initialLang} suppressHydrationWarning style={{ colorScheme: 'dark' }}>
+    <html lang={initialLang} suppressHydrationWarning>
       <head>
-        <meta name="color-scheme" content="dark" />
+        {/* The no-flash script sets the class + color-scheme before first
+            paint (cookie → prefers-color-scheme → light/dark). The meta is
+            rendered without a value and updated by the script — the
+            suppressHydrationWarning keeps React from diffing it. */}
+        <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
+        <meta name="color-scheme" suppressHydrationWarning />
         <link rel="canonical" href={SITE.url} />
         <script
           type="application/ld+json"
@@ -206,12 +220,15 @@ export default async function RootLayout({
           />
         )}
       </head>
-      <body className="font-sans antialiased bg-[#0f172a] text-slate-300">
+      <body className="font-sans antialiased bg-background text-foreground">
+        <SkipToContent />
         <LanguageProvider initialLanguage={initialLang}>
-          <HtmlLangUpdater />
-          <ObservabilityProvider>
-            {children}
-          </ObservabilityProvider>
+          <ThemeProvider initialPreference={initialTheme}>
+            <HtmlLangUpdater />
+            <ObservabilityProvider>
+              {children}
+            </ObservabilityProvider>
+          </ThemeProvider>
         </LanguageProvider>
       </body>
     </html>

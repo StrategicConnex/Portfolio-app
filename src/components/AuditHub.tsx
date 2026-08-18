@@ -15,8 +15,8 @@ import {
 /* ─── Sub-components ─── */
 
 const StatCard = ({ label, value, color }: { label: string, value: string | number, color: string }) => (
-  <div className="glass rounded-xl p-4 sm:p-5 flex flex-col items-center justify-center text-center transition-all duration-300 hover:border-white/20 hover:bg-white/[0.06] group">
-    <div className="text-[0.6rem] sm:text-[0.65rem] text-slate-500 uppercase tracking-[0.2em] mb-1.5 group-hover:text-slate-400 transition-colors font-bold">{label}</div>
+  <div className="glass rounded-xl p-4 sm:p-5 flex flex-col items-center justify-center text-center transition-all duration-300 hover:border-[var(--surface-border-strong)] hover:bg-[var(--surface-fill-strong)] group">
+    <div className="text-[0.6rem] sm:text-[0.65rem] text-[var(--text-subtle)] uppercase tracking-[0.2em] mb-1.5 group-hover:text-[var(--text-muted)] transition-colors font-bold">{label}</div>
     <div className="text-2xl sm:text-3xl font-bold font-mono transition-all duration-300" style={{ color, textShadow: `0 0 20px ${color}40` }}>{value}</div>
   </div>
 )
@@ -27,12 +27,12 @@ const ComplianceBar = ({ name, progress, color, descriptionKey }: { name: string
     <div className="mb-6 last:mb-0 group">
       <div className="flex justify-between items-end mb-1.5 px-0.5">
         <div className="flex flex-col">
-          <span className="text-[0.8rem] sm:text-[0.85rem] font-bold text-slate-200 group-hover:text-white transition-colors">{name}</span>
-          <span className="text-[0.6rem] text-slate-500 uppercase tracking-tighter">{t(descriptionKey)}</span>
+          <span className="text-[0.8rem] sm:text-[0.85rem] font-bold text-[var(--text-secondary)] group-hover:text-[var(--text-primary)] transition-colors">{name}</span>
+          <span className="text-[0.6rem] text-[var(--text-subtle)] uppercase tracking-tighter">{t(descriptionKey)}</span>
         </div>
         <span className="text-[0.75rem] font-mono font-bold" style={{ color }}>{progress}%</span>
       </div>
-      <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden border border-white/5">
+      <div className="h-1.5 w-full bg-[var(--surface-fill)] rounded-full overflow-hidden border border-[var(--surface-border)]">
         <motion.div
           initial={{ width: 0 }}
           whileInView={{ width: `${progress}%` }}
@@ -50,13 +50,13 @@ const HealthBar = ({ domainKey, score }: { domainKey: string, score: number }) =
   const { t } = useLanguage()
   return (
     <div className="flex items-center gap-3 mb-3">
-      <span className="text-[0.65rem] text-slate-400 w-20 flex-shrink-0 font-mono tracking-tighter uppercase">{t(domainKey)}</span>
+      <span className="text-[0.65rem] text-[var(--text-muted)] w-20 flex-shrink-0 font-mono tracking-tighter uppercase">{t(domainKey)}</span>
       <div className="flex-1 flex gap-0.5 h-2">
         {Array.from({ length: 10 }).map((_, i) => (
           <div 
             key={i} 
             className={`h-full flex-1 rounded-sm transition-all duration-500 ${
-              i < Math.round(score / 10) ? 'bg-[#3B82F6]' : 'bg-white/5'
+              i < Math.round(score / 10) ? 'bg-[#3B82F6]' : 'bg-[var(--surface-fill)]'
             }`}
             style={{ 
               opacity: i < Math.round(score / 10) ? 0.3 + (i * 0.07) : 0.2,
@@ -65,7 +65,7 @@ const HealthBar = ({ domainKey, score }: { domainKey: string, score: number }) =
           />
         ))}
       </div>
-      <span className="text-[0.7rem] font-mono text-slate-500 w-8 text-right underline underline-offset-4 decoration-slate-700">{score}</span>
+      <span className="text-[0.7rem] font-mono text-[var(--text-subtle)] w-8 text-right underline underline-offset-4 decoration-slate-700">{score}</span>
     </div>
   )
 }
@@ -73,9 +73,9 @@ const HealthBar = ({ domainKey, score }: { domainKey: string, score: number }) =
 const SeverityBadge = ({ severity }: { severity: string }) => {
   const { t } = useLanguage()
   const colors = {
-    High: 'text-red-500 bg-red-500/10 border-red-500/20',
-    Medium: 'text-amber-500 bg-amber-500/10 border-amber-500/20',
-    Low: 'text-blue-500 bg-blue-500/10 border-blue-500/20'
+    High: 'text-[var(--danger)] bg-red-500/10 border-red-500/20',
+    Medium: 'text-[var(--warn)] bg-amber-500/10 border-amber-500/20',
+    Low: 'text-[var(--blue)] bg-blue-500/10 border-blue-500/20'
   }
   
   const label = severity === 'High' ? t('audit.severity.high') : 
@@ -98,7 +98,7 @@ const StatusBadge = ({ status }: { status: string }) => {
 
   return (
     <span className={`text-[8px] sm:text-[9px] px-1.5 py-0.5 rounded-full border flex items-center gap-1 font-mono ${
-      isDone ? 'text-emerald-500 bg-emerald-500/10 border-emerald-500/20' : 'text-slate-400 bg-white/5 border-white/10 italic'
+      isDone ? 'text-[var(--ok)] bg-emerald-500/10 border-emerald-500/20' : 'text-[var(--text-muted)] bg-[var(--surface-fill)] border-[var(--surface-border)] italic'
     }`}>
       {isDone && <span className="w-1 h-1 rounded-full bg-emerald-500 animate-pulse" />}
       {label}
@@ -147,11 +147,11 @@ const AuditHub = () => {
             <div className="glass scanline-container rounded-2xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)] backdrop-blur-2xl">
               
               {/* Console Header / Tabs */}
-              <div className="flex border-b border-white/10 bg-white/5">
+              <div className="flex border-b border-[var(--surface-border)] bg-[var(--surface-fill)]">
                 <button 
                   onClick={() => setActiveTab('compliance')}
                   className={`flex-1 sm:flex-none px-6 py-4 text-[0.7rem] sm:text-[0.75rem] font-bold tracking-[2px] uppercase transition-all relative ${
-                    activeTab === 'compliance' ? 'text-white' : 'text-slate-500 hover:text-slate-300'
+                    activeTab === 'compliance' ? 'text-[var(--text-primary)]' : 'text-[var(--text-subtle)] hover:text-[var(--text-secondary)]'
                   }`}
                 >
                   {t('audit.tab.compliance')}
@@ -162,7 +162,7 @@ const AuditHub = () => {
                 <button 
                   onClick={() => setActiveTab('findings')}
                   className={`flex-1 sm:flex-none px-6 py-4 text-[0.7rem] sm:text-[0.75rem] font-bold tracking-[2px] uppercase transition-all relative ${
-                    activeTab === 'findings' ? 'text-white' : 'text-slate-500 hover:text-slate-300'
+                    activeTab === 'findings' ? 'text-[var(--text-primary)]' : 'text-[var(--text-subtle)] hover:text-[var(--text-secondary)]'
                   }`}
                 >
                   {t('audit.tab.findings')}
@@ -187,8 +187,8 @@ const AuditHub = () => {
                     </div>
 
                     {/* Domain Health */}
-                    <div className="lg:col-span-5 bg-white/[0.02] border border-white/5 rounded-xl p-5 sm:p-6">
-                      <div className="text-[0.65rem] text-slate-400 font-bold uppercase tracking-[2px] mb-8 border-b border-white/10 pb-3 flex justify-between">
+                    <div className="lg:col-span-5 bg-[var(--surface-fill)] border border-[var(--surface-border)] rounded-xl p-5 sm:p-6">
+                      <div className="text-[0.65rem] text-[var(--text-muted)] font-bold uppercase tracking-[2px] mb-8 border-b border-[var(--surface-border)] pb-3 flex justify-between">
                         {t('audit.ui.health_by_domain')}
                         <span className="text-blue-500 opacity-60">{t('audit.ui.score')}</span>
                       </div>
@@ -205,8 +205,8 @@ const AuditHub = () => {
                 ) : (
                   <div className="space-y-6">
                     {/* Filter Controls */}
-                    <div className="flex flex-wrap gap-3 items-center pb-4 border-b border-white/5">
-                      <span className="text-[0.65rem] text-slate-500 uppercase tracking-widest font-bold mr-2">{t('audit.ui.filter_severity')}</span>
+                    <div className="flex flex-wrap gap-3 items-center pb-4 border-b border-[var(--surface-border)]">
+                      <span className="text-[0.65rem] text-[var(--text-subtle)] uppercase tracking-widest font-bold mr-2">{t('audit.ui.filter_severity')}</span>
                       {['All', 'High', 'Medium', 'Low'].map((s) => (
                         <button
                           key={s}
@@ -214,7 +214,7 @@ const AuditHub = () => {
                           className={`px-3 py-1 rounded-full text-[0.65rem] font-bold uppercase tracking-tighter transition-all border ${
                             severityFilter === s 
                               ? 'bg-blue-600 border-blue-500 text-white shadow-[0_0_10px_rgba(37,99,235,0.4)]' 
-                              : 'bg-white/5 border-white/10 text-slate-400 hover:bg-white/10'
+                              : 'bg-[var(--surface-fill)] border-[var(--border-interactive)] text-[var(--text-muted)] hover:bg-[var(--surface-fill-strong)]'
                           }`}
                         >
                           {s === 'All' ? t('audit.severity.all') : s === 'High' ? t('audit.severity.high') : s === 'Medium' ? t('audit.severity.medium') : t('audit.severity.low')}
@@ -225,7 +225,7 @@ const AuditHub = () => {
                     <div className="overflow-x-auto">
                       <table className="w-full min-w-[750px] text-left border-separate border-spacing-y-2">
                         <thead>
-                          <tr className="text-[0.65rem] text-slate-500 uppercase tracking-widest font-bold">
+                          <tr className="text-[0.65rem] text-[var(--text-subtle)] uppercase tracking-widest font-bold">
                             <th className="px-4 pb-2">{t('audit.ui.report')}</th>
                             <th className="px-4 pb-2">{t('audit.ui.severity')}</th>
                             <th className="px-4 pb-2">{t('audit.ui.status')}</th>
@@ -252,22 +252,22 @@ const AuditHub = () => {
                                     role="button"
                                     tabIndex={0}
                                     aria-expanded={expandedId === finding.id}
-                                    className={`group cursor-pointer transition-colors outline-none focus-visible:bg-blue-500/10 ${expandedId === finding.id ? 'bg-blue-500/5' : 'hover:bg-white/5'}`}
+                                    className={`group cursor-pointer transition-colors outline-none focus-visible:bg-blue-500/10 ${expandedId === finding.id ? 'bg-blue-500/5' : 'hover:bg-[var(--surface-fill)]'}`}
                                   >
-                                  <td className="px-4 py-4 bg-white/5 rounded-l-lg border-y border-l border-white/10">
-                                    <div className="text-[0.7rem] font-mono text-slate-400">{finding.id}</div>
+                                  <td className="px-4 py-4 bg-[var(--surface-fill)] rounded-l-lg border-y border-l border-[var(--surface-border)]">
+                                    <div className="text-[0.7rem] font-mono text-[var(--text-muted)]">{finding.id}</div>
                                   </td>
-                                  <td className="px-4 py-4 bg-white/5 border-y border-white/10">
+                                  <td className="px-4 py-4 bg-[var(--surface-fill)] border-y border-[var(--surface-border)]">
                                     <SeverityBadge severity={finding.severity} />
                                   </td>
-                                  <td className="px-4 py-4 bg-white/5 border-y border-white/10">
+                                  <td className="px-4 py-4 bg-[var(--surface-fill)] border-y border-[var(--surface-border)]">
                                     <StatusBadge status={finding.status} />
                                   </td>
-                                  <td className="px-4 py-4 bg-white/5 border-y border-white/10">
-                                    <div className="text-[0.75rem] font-bold text-slate-200">{finding.control}</div>
-                                    <div className="text-[0.65rem] text-slate-500 line-clamp-1 italic">{t(finding.descriptionKey)}</div>
+                                  <td className="px-4 py-4 bg-[var(--surface-fill)] border-y border-[var(--surface-border)]">
+                                    <div className="text-[0.75rem] font-bold text-[var(--text-secondary)]">{finding.control}</div>
+                                    <div className="text-[0.65rem] text-[var(--text-subtle)] line-clamp-1 italic">{t(finding.descriptionKey)}</div>
                                   </td>
-                                  <td className="px-4 py-4 bg-white/5 rounded-r-lg border-y border-r border-white/10 text-right">
+                                  <td className="px-4 py-4 bg-[var(--surface-fill)] rounded-r-lg border-y border-r border-[var(--surface-border)] text-right">
                                     <button className="text-[0.65rem] text-blue-400 font-bold uppercase tracking-tighter hover:text-blue-300 transition-colors">
                                       {expandedId === finding.id ? t('audit.ui.close') : t('audit.ui.details')}
                                     </button>
@@ -288,20 +288,20 @@ const AuditHub = () => {
                                           <div className="space-y-4">
                                             <div>
                                               <h4 className="text-[0.65rem] text-blue-400 uppercase tracking-widest font-bold mb-2">{t('audit.ui.impact')}</h4>
-                                              <p className="text-[0.8rem] text-slate-300 leading-relaxed font-medium">
+                                              <p className="text-[0.8rem] text-[var(--text-secondary)] leading-relaxed font-medium">
                                                 {t(finding.impactKey)}
                                               </p>
                                             </div>
                                             <div>
-                                              <h4 className="text-[0.65rem] text-emerald-400 uppercase tracking-widest font-bold mb-2">{t('audit.ui.remediation_plan')}</h4>
-                                              <p className="text-[0.8rem] text-slate-300 leading-relaxed">
+                                              <h4 className="text-[0.65rem] text-[var(--ok)] uppercase tracking-widest font-bold mb-2">{t('audit.ui.remediation_plan')}</h4>
+                                              <p className="text-[0.8rem] text-[var(--text-secondary)] leading-relaxed">
                                                 {t(finding.remediationKey)}
                                               </p>
                                             </div>
                                           </div>
                                           <div className="space-y-4">
-                                            <div className="bg-black/40 rounded-lg p-4 border border-white/5">
-                                              <h4 className="text-[0.6rem] text-slate-500 uppercase tracking-widest font-bold mb-3 flex justify-between">
+                                            <div className="bg-black/40 rounded-lg p-4 border border-[var(--surface-border)]">
+                                              <h4 className="text-[0.6rem] text-[var(--text-subtle)] uppercase tracking-widest font-bold mb-3 flex justify-between">
                                                 {t('audit.ui.technical_evidence')}
                                                 <span className="text-blue-500 font-mono tracking-normal">{finding.timestamp}</span>
                                               </h4>
@@ -311,12 +311,12 @@ const AuditHub = () => {
                                             </div>
                                             <div className="flex gap-4 pt-2">
                                               <div className="flex flex-col">
-                                                <span className="text-[0.6rem] text-slate-500 uppercase">{t('audit.ui.owner')}</span>
-                                                <span className="text-[0.7rem] text-slate-300 font-bold">IT/OT Security Architect</span>
+                                                <span className="text-[0.6rem] text-[var(--text-subtle)] uppercase">{t('audit.ui.owner')}</span>
+                                                <span className="text-[0.7rem] text-[var(--text-secondary)] font-bold">IT/OT Security Architect</span>
                                               </div>
                                               <div className="flex flex-col">
-                                                <span className="text-[0.6rem] text-slate-500 uppercase">{t('audit.ui.reference')}</span>
-                                                <span className="text-[0.7rem] text-slate-300 font-bold">NIST-PR.AC-1</span>
+                                                <span className="text-[0.6rem] text-[var(--text-subtle)] uppercase">{t('audit.ui.reference')}</span>
+                                                <span className="text-[0.7rem] text-[var(--text-secondary)] font-bold">NIST-PR.AC-1</span>
                                               </div>
                                             </div>
                                           </div>
@@ -336,18 +336,18 @@ const AuditHub = () => {
               </div>
 
               {/* Console Footer */}
-              <div className="px-8 py-4 bg-white/5 border-t border-white/10 flex flex-col sm:flex-row justify-between items-center gap-4">
-                <div className="text-[0.65rem] text-slate-500 font-mono">
-                  {t('audit.ui.last_review')}: <span className="text-slate-300">{t('audit.ui.last_review_date')}</span> | {t('audit.ui.analyst')}: <span className="text-slate-300 uppercase">System Architect</span>
+              <div className="px-8 py-4 bg-[var(--surface-fill)] border-t border-[var(--surface-border)] flex flex-col sm:flex-row justify-between items-center gap-4">
+                <div className="text-[0.65rem] text-[var(--text-subtle)] font-mono">
+                  {t('audit.ui.last_review')}: <span className="text-[var(--text-secondary)]">{t('audit.ui.last_review_date')}</span> | {t('audit.ui.analyst')}: <span className="text-[var(--text-secondary)] uppercase">System Architect</span>
                 </div>
                 <div className="flex gap-4">
                   <div className="flex items-center gap-1.5">
                     <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                    <span className="text-[0.65rem] text-slate-400 font-bold uppercase tracking-tighter">{t('audit.ui.operational_compliance')}</span>
+                    <span className="text-[0.65rem] text-[var(--text-muted)] font-bold uppercase tracking-tighter">{t('audit.ui.operational_compliance')}</span>
                   </div>
                   <div className="flex items-center gap-1.5">
                     <div className="w-1.5 h-1.5 rounded-full bg-[#3B82F6]" />
-                    <span className="text-[0.65rem] text-slate-400 font-bold uppercase tracking-tighter">{t('audit.ui.integrated_strategy')}</span>
+                    <span className="text-[0.65rem] text-[var(--text-muted)] font-bold uppercase tracking-tighter">{t('audit.ui.integrated_strategy')}</span>
                   </div>
                 </div>
               </div>

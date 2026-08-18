@@ -289,7 +289,7 @@ export default function Certificaciones() {
     <>
       <ModalViewer file={activeFile} onClose={closeFile} />
 
-      <section className="py-10 sm:py-16 px-4 sm:px-8" style={{ background: 'var(--bg2)' }}>
+      <section className="py-16 sm:py-24 px-4 sm:px-6 md:px-8" style={{ background: 'var(--bg2)' }}>
         <div ref={ref} className="max-w-[1100px] mx-auto">
           <SectionHeader label={t('certs.label')} title={t('certs.title')} highlight={t('certs.highlight')} />
 
@@ -298,9 +298,9 @@ export default function Certificaciones() {
             {certs.map((c, i) => (
               <motion.div
                 key={i}
-                initial={{ opacity: 0, y: 15 }}
-                animate={inView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.5, delay: i * 0.05 + 0.1 }}
+                initial={{ opacity: 0, scale: 0.92, y: 15 }}
+                animate={inView ? { opacity: 1, scale: 1, y: 0 } : {}}
+                transition={{ duration: 0.5, delay: i * 0.06 + 0.1, ease: [0.25, 0.1, 0.25, 1] }}
                 whileHover={{ scale: 1.02, borderColor: c.tier === 'gold' ? 'rgba(197,164,109,0.5)' : 'rgba(30,144,255,0.5)' }}
                 className="flex items-center gap-3.5 p-4 rounded-xl transition-colors"
                 style={{
@@ -320,7 +320,7 @@ export default function Certificaciones() {
                 >
                   <Icon name={c.icon} label={t(c.text)} size={20} />
                 </div>
-                <span className={`text-xs sm:text-sm leading-snug ${c.tier === 'gold' ? 'text-white font-medium' : 'text-slate-400'}`}>
+                <span className={`text-xs sm:text-sm leading-snug ${c.tier === 'gold' ? 'font-medium' : ''}`} style={{ color: c.tier === 'gold' ? 'var(--text-primary)' : 'var(--text-secondary)' }}>
                   {t(c.text)}
                 </span>
               </motion.div>
@@ -331,14 +331,14 @@ export default function Certificaciones() {
           <div>
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
               <motion.h3
-                initial={{ opacity: 0, y: 10 }}
-                animate={inView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.5, delay: 0.4 }}
-                className="text-lg font-semibold text-white flex items-center gap-2"
+                initial={{ opacity: 0, y: 10, filter: 'blur(4px)' }}
+                animate={inView ? { opacity: 1, y: 0, filter: 'blur(0px)' } : {}}
+                transition={{ duration: 0.6, delay: 0.4, ease: 'easeOut' }}
+                className="text-lg font-semibold flex items-center gap-2" style={{ color: 'var(--text-primary)' }}
               >
                 <Icon name="document" label={t('certs.gallery_title')} size={20} />
                 {t('certs.gallery_title')}
-                <span className="text-xs font-normal text-slate-400 ml-1 bg-slate-800/80 px-2 py-0.5 rounded-full border border-slate-700/50">
+                <span className="text-xs font-normal ml-1 px-2 py-0.5 rounded-full border" style={{ color: 'var(--text-muted)', background: 'var(--surface-fill)', borderColor: 'var(--surface-border)' }}>
                   {filteredFiles.length}
                 </span>
               </motion.h3>
@@ -347,7 +347,7 @@ export default function Certificaciones() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={inView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.5, delay: 0.45 }}
-                className="flex flex-wrap items-center gap-1.5 p-1 rounded-xl bg-slate-900/60 border border-slate-800/80"
+                className="flex flex-wrap items-center gap-1.5 p-1 rounded-xl border" style={{ background: 'var(--surface-fill)', borderColor: 'var(--surface-border)' }}
                 role="tablist"
                 aria-label={t('certs.filter_label')}
               >
@@ -361,7 +361,7 @@ export default function Certificaciones() {
                       aria-selected={isActive}
                       aria-controls={`certs-panel-${cat.key}`}
                       className={`relative text-xs px-3 py-1.5 rounded-lg font-medium transition-colors cursor-pointer select-none flex items-center gap-1.5 ${
-                        isActive ? 'text-white' : 'text-slate-400 hover:text-slate-200'
+                        isActive ? '' : 'hover:opacity-80'
                       }`}
                     >
                       {isActive && (
@@ -424,7 +424,7 @@ export default function Certificaciones() {
                           {isPdf ? 'PDF' : 'IMG'}
                         </span>
                       </div>
-                      <h4 className="text-[13px] text-slate-100 font-medium leading-relaxed line-clamp-3 group-hover:text-amber-300 transition-colors">
+                      <h4 className="text-[13px] font-medium leading-relaxed line-clamp-3 group-hover:text-amber-300 transition-colors" style={{ color: 'var(--text-primary)' }}>
                         {t(c.nameKey)}
                       </h4>
                     </motion.button>

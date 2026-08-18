@@ -27,6 +27,7 @@ const companies = [
     yearsKey: 'trust.years.present',
     sector: 'Oil & Gas',
     color: '#F97316',
+    text: 'var(--c-orange)',
     icon: 'energy',
   },
   {
@@ -35,6 +36,7 @@ const companies = [
     yearsKey: 'trust.years.ops',
     sector: 'Oil & Gas',
     color: '#C5A46D',
+    text: 'var(--gold)',
     icon: 'oil',
   },
   {
@@ -43,6 +45,7 @@ const companies = [
     yearsKey: 'trust.years.ext',
     sector: 'Natural Gas Processing',
     color: '#6366F1',
+    text: 'var(--c-indigo)',
     icon: 'industry',
   },
 ]
@@ -61,9 +64,9 @@ function BadgePill({ delay, children }: { delay: number; children: React.ReactNo
   return (
     <motion.div
       ref={ref}
-      initial={{ opacity: 0, y: 10 }}
-      animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ delay, duration: 0.4 }}
+      initial={{ opacity: 0, scale: 0.92, y: 12 }}
+      animate={inView ? { opacity: 1, scale: 1, y: 0 } : {}}
+      transition={{ delay, duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
       whileHover={{ scale: 1.04, borderColor: 'rgba(148,163,184,0.35)' }}
     >
       {children}
@@ -75,13 +78,13 @@ export default function TrustBadges() {
   const { t } = useLanguage()
 
   return (
-    <section id="confianza" style={{ padding: 'clamp(2rem, 5vw, 4rem) clamp(1rem, 5vw, 2rem)', background: 'var(--bg2)', borderTop: '1px solid var(--border)' }}>
+    <section id="confianza" className="py-16 sm:py-24 px-4 sm:px-6 md:px-8" style={{ background: 'var(--bg2)', borderTop: '1px solid var(--border)' }}>
       <div style={{ maxWidth: 1100, margin: 'auto' }}>
         <SectionHeader label={t('trust.label')} title={t('trust.title')} highlight={t('trust.highlight')} />
 
         {/* Companies */}
-        <FadeIn delay={0.05}>
-          <p style={{ fontSize: 'clamp(0.63rem, 1.2vw, 0.68rem)', color: 'var(--muted)', letterSpacing: '2px', textTransform: 'uppercase', marginBottom: 'clamp(0.75rem, 1.5vw, 1rem)', fontWeight: 600 }}>
+        <FadeIn delay={0.05} variant="blur">
+          <p style={{ fontSize: 'clamp(0.63rem, 1.2vw, 0.68rem)', color: 'var(--text-subtle)', letterSpacing: '2px', textTransform: 'uppercase', marginBottom: 'clamp(0.75rem, 1.5vw, 1rem)', fontWeight: 600 }}>
             {t('trust.history')}
           </p>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(clamp(240px, 100%, 260px), 1fr))', gap: 'clamp(0.6rem, 1.5vw, 0.9rem)', marginBottom: 'clamp(2rem, 4vw, 3rem)' }}>
@@ -90,8 +93,8 @@ export default function TrustBadges() {
                 <div 
                   className="night-vision-card"
                   style={{
-                    background: 'rgba(255,255,255,0.03)',
-                    border: '1px solid rgba(255,255,255,0.08)',
+                    background: 'var(--surface)',
+                    border: '1px solid var(--surface-border)',
                     borderRadius: 12, padding: 'clamp(0.8rem, 2vw, 1.1rem) clamp(0.9rem, 2vw, 1.3rem)',
                     display: 'flex', gap: 'clamp(0.6rem, 1.5vw, 1rem)', alignItems: 'center',
                     overflow: 'hidden'
@@ -107,8 +110,8 @@ export default function TrustBadges() {
                   </div>
                   <div style={{ position: 'relative', zIndex: 3 }}>
                     <div style={{ fontSize: 'clamp(0.8rem, 1.6vw, 0.88rem)', fontWeight: 700, color: 'var(--text)' }}>{c.full}</div>
-                    <div style={{ fontSize: 'clamp(0.65rem, 1.3vw, 0.72rem)', color: c.color, fontWeight: 600 }}>{t(c.yearsKey)}</div>
-                    <div style={{ fontSize: 'clamp(0.63rem, 1.2vw, 0.7rem)', color: 'var(--muted)' }}>{c.sector}</div>
+                    <div style={{ fontSize: 'clamp(0.65rem, 1.3vw, 0.72rem)', color: c.text, fontWeight: 600 }}>{t(c.yearsKey)}</div>
+                    <div style={{ fontSize: 'clamp(0.63rem, 1.2vw, 0.7rem)', color: 'var(--text-muted)' }}>{c.sector}</div>
                   </div>
                 </div>
               </BadgePill>
@@ -117,24 +120,24 @@ export default function TrustBadges() {
         </FadeIn>
 
         {/* Standards grid */}
-        <FadeIn delay={0.15}>
-          <p style={{ fontSize: 'clamp(0.63rem, 1.2vw, 0.68rem)', color: 'var(--muted)', letterSpacing: '2px', textTransform: 'uppercase', marginBottom: 'clamp(0.75rem, 1.5vw, 1rem)', fontWeight: 600 }}>
+        <FadeIn delay={0.15} variant="blur">
+          <p style={{ fontSize: 'clamp(0.63rem, 1.2vw, 0.68rem)', color: 'var(--text-subtle)', letterSpacing: '2px', textTransform: 'uppercase', marginBottom: 'clamp(0.75rem, 1.5vw, 1rem)', fontWeight: 600 }}>
             {t('trust.standards')}
           </p>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.6rem', marginBottom: '3rem' }}>
             {standards.map((s, i) => (
               <BadgePill key={s.label} delay={i * 0.05 + 0.1}>
                 <div style={{
-                  background: 'rgba(255,255,255,0.02)',
-                  border: '1px solid rgba(148,163,184,0.15)',
+                  background: 'var(--surface-fill)',
+                  border: '1px solid var(--surface-border)',
                   borderRadius: 8, padding: '0.55rem 1rem',
                   display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.1rem',
                   minWidth: 90,
                   cursor: 'default',
                   transition: 'border-color 0.2s',
                 }}>
-                  <span style={{ fontSize: '0.82rem', fontWeight: 800, color: 'rgba(226,232,240,0.9)', letterSpacing: '0.5px' }}>{s.label}</span>
-                  <span style={{ fontSize: '0.62rem', color: 'var(--muted)', textAlign: 'center', lineHeight: 1.2 }}>{s.sub}</span>
+                  <span style={{ fontSize: '0.82rem', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '0.5px' }}>{s.label}</span>
+                  <span style={{ fontSize: '0.62rem', color: 'var(--text-muted)', textAlign: 'center', lineHeight: 1.2 }}>{s.sub}</span>
                 </div>
               </BadgePill>
             ))}
@@ -142,23 +145,23 @@ export default function TrustBadges() {
         </FadeIn>
 
         {/* Operators */}
-        <FadeIn delay={0.2}>
-          <p style={{ fontSize: '0.68rem', color: 'var(--muted)', letterSpacing: '2px', textTransform: 'uppercase', marginBottom: '1rem', fontWeight: 600 }}>
+        <FadeIn delay={0.2} variant="blur">
+          <p style={{ fontSize: '0.68rem', color: 'var(--text-subtle)', letterSpacing: '2px', textTransform: 'uppercase', marginBottom: '1rem', fontWeight: 600 }}>
             {t('trust.ecosystem')}
           </p>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
             {operators.map((o, i) => (
               <BadgePill key={o.name} delay={i * 0.06}>
                 <div style={{
-                  background: 'rgba(255,255,255,0.025)',
-                  border: '1px solid rgba(148,163,184,0.12)',
+                  background: 'var(--surface-fill)',
+                  border: '1px solid var(--surface-border)',
                   borderRadius: 6, padding: '0.45rem 1rem',
                   display: 'flex', alignItems: 'center', gap: '0.5rem',
                   transition: 'border-color 0.2s',
                 }}>
-                  <span style={{ fontSize: '0.82rem', fontWeight: 700, color: 'rgba(226,232,240,0.75)' }}>{o.name}</span>
-                  <span style={{ fontSize: '0.65rem', color: 'var(--muted)' }}>·</span>
-                  <span style={{ fontSize: '0.65rem', color: 'var(--muted)' }}>{t(o.descKey)}</span>
+                  <span style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--text-primary)' }}>{o.name}</span>
+                  <span style={{ fontSize: '0.65rem', color: 'var(--text-muted)' }}>·</span>
+                  <span style={{ fontSize: '0.65rem', color: 'var(--text-muted)' }}>{t(o.descKey)}</span>
                 </div>
               </BadgePill>
             ))}

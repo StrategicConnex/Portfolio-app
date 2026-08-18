@@ -252,7 +252,7 @@ export function AskAIPanel() {
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: 20, scale: 0.95 }}
           transition={{ duration: 0.2 }}
-          className={`fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 flex flex-col bg-slate-950/95 backdrop-blur-xl border border-slate-800 shadow-2xl overflow-hidden ${
+          className={`console console-corners fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 flex flex-col bg-slate-950/95 backdrop-blur-xl border border-slate-800 shadow-2xl overflow-hidden ${
             expanded
               ? 'w-[calc(100vw-2rem)] sm:w-[calc(100vw-3rem)] h-[calc(100vh-2rem)] sm:h-[calc(100vh-3rem)] max-w-5xl'
               : 'w-[calc(100vw-2rem)] sm:w-[420px] h-[calc(100vh-6rem)] sm:h-[640px] max-h-[80vh] sm:max-h-[85vh]'
@@ -389,8 +389,8 @@ export function AskAIPanel() {
 
                   {isLoading && lastMessage?.role === 'user' && (
                     <div className="flex items-start mb-4">
-                      <div className="flex items-center gap-2 px-4 py-3 rounded-xl bg-slate-900/50 border border-slate-800">
-                        <Loader2 className="h-3.5 w-3.5 animate-spin text-orange-500" />              <span className="text-xs text-slate-400">
+                      <div className="flex items-center gap-2 px-4 py-3 rounded-xl bg-[var(--surface-fill)] border border-slate-800">
+                        <Loader2 className="h-3.5 w-3.5 animate-spin text-orange-500" />              <span className="text-xs text-[var(--text-muted)]">
                   {retrying
                     ? t('ai.retrying')
                     : messages.length === 1
@@ -400,7 +400,7 @@ export function AskAIPanel() {
                         <Button
                           variant="ghost"
                           size="icon"
-                          className="h-6 w-6 ml-1 text-slate-500 hover:text-red-400 hover:bg-red-500/10 rounded-md"
+                          className="h-6 w-6 ml-1 text-[var(--text-subtle)] hover:text-red-400 hover:bg-red-500/10 rounded-md"
                           onClick={() => stop()}
                           aria-label={language === 'en' ? 'Stop generation' : 'Detener generación'}
                         >
@@ -433,7 +433,7 @@ export function AskAIPanel() {
             {expanded && (
               <div className="hidden sm:flex flex-col w-60 border-l border-slate-800 bg-slate-900/30 flex-shrink-0">
                 <div className="px-4 py-3 border-b border-slate-800">
-                  <h4 className="text-xs font-semibold text-slate-400 uppercase tracking-wider flex items-center gap-2">
+                  <h4 className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider flex items-center gap-2">
                     <BookOpen className="w-3.5 h-3.5" />
                     {language === 'en' ? 'Sources' : 'Fuentes'}
                   </h4>
@@ -448,31 +448,31 @@ export function AskAIPanel() {
                             key={item.href}
                             href={item.href}
                             title={t(item.titleKey)}
-                            className="text-xs text-slate-400 hover:text-orange-400 transition-colors"
+                            className="text-xs text-[var(--text-muted)] hover:text-orange-400 transition-colors"
                           />
                         ))}
                       </SourcesContent>
                     </Sources>
 
                     <div className="pt-3 border-t border-slate-800/50">
-                      <h5 className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-2">
+                      <h5 className="text-[10px] font-semibold text-[var(--text-subtle)] uppercase tracking-wider mb-2">
                         Stats
                       </h5>
                       <div className="space-y-2">
                         <div className="flex justify-between items-center">
-                          <span className="text-xs text-slate-500">{language === 'en' ? 'Queries' : 'Consultas'}</span>
+                          <span className="text-xs text-[var(--text-subtle)]">{language === 'en' ? 'Queries' : 'Consultas'}</span>
                           <Badge variant="secondary" className="text-[10px] h-5">
                             {messageCount}
                           </Badge>
                         </div>
                         <div className="flex justify-between items-center">
-                          <span className="text-xs text-slate-500">{language === 'en' ? 'Mode' : 'Modo'}</span>
-                          <Badge variant="outline" className="text-[10px] h-5 border-slate-700 text-slate-400">
+                          <span className="text-xs text-[var(--text-subtle)]">{language === 'en' ? 'Mode' : 'Modo'}</span>
+                          <Badge variant="outline" className="text-[10px] h-5 border-[var(--surface-border)] text-[var(--text-muted)]">
                             {mode}
                           </Badge>
                         </div>
                         <div className="flex justify-between items-center">
-                          <span className="text-xs text-slate-500">{language === 'en' ? 'Status' : 'Estado'}</span>
+                          <span className="text-xs text-[var(--text-subtle)]">{language === 'en' ? 'Status' : 'Estado'}</span>
                           <Badge
                             variant="outline"
                             className={`text-[10px] h-5 ${

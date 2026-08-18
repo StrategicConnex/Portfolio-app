@@ -65,22 +65,22 @@ export function WhoisResultCard({ result }: Props) {
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.25 }}
-      className="rounded-xl border border-slate-700/50 bg-slate-900/70 overflow-hidden"
+      className="console rounded-xl border border-[var(--surface-border)] bg-slate-900/70 overflow-hidden"
     >
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-slate-700/30 bg-slate-800/40">
+      <div className="flex items-center justify-between px-4 py-3 border-b border-[var(--surface-border)]/30 bg-[var(--surface-fill-strong)]/40">
         <div className="flex items-center gap-2.5">
           <div className="w-7 h-7 rounded-lg bg-purple-500/15 border border-purple-500/25 flex items-center justify-center">
             <Globe className="w-3.5 h-3.5 text-purple-400" />
           </div>
           <div>
-            <span className="text-sm font-semibold text-slate-100">{result.domain}</span>
-            <span className="text-[10px] text-slate-500 ml-2">Domain Registration</span>
+            <span className="text-sm font-semibold text-[var(--text-primary)]">{result.domain}</span>
+            <span className="text-[10px] text-[var(--text-subtle)] ml-2">Domain Registration</span>
           </div>
         </div>
         <div className="flex items-center gap-2">
           {result.registrar && (
-            <Badge variant="outline" className="h-5 text-[10px] border-slate-600 text-slate-400 bg-slate-800">
+            <Badge variant="outline" className="h-5 text-[10px] border-[var(--surface-border-strong)] text-[var(--text-muted)] bg-[var(--surface-fill-strong)]">
               {result.registrar}
             </Badge>
           )}
@@ -92,7 +92,7 @@ export function WhoisResultCard({ result }: Props) {
           {!result.error && (
             <button
               onClick={handleCopy}
-              className="h-7 w-7 rounded-md hover:bg-slate-700/50 flex items-center justify-center text-slate-500 hover:text-slate-300 transition-colors"
+              className="h-7 w-7 rounded-md hover:bg-[var(--surface-fill-strong)] flex items-center justify-center text-[var(--text-subtle)] hover:text-[var(--text-secondary)] transition-colors"
               aria-label="Copy domain registration info"
             >
               {copied ? (
@@ -122,8 +122,8 @@ export function WhoisResultCard({ result }: Props) {
           {timeline.length > 0 && (
             <div className="space-y-2.5">
               <div className="flex items-center gap-1.5">
-                <Calendar className="w-3 h-3 text-slate-500" />
-                <span className="text-[10px] text-slate-500 font-medium uppercase tracking-wider">
+                <Calendar className="w-3 h-3 text-[var(--text-subtle)]" />
+                <span className="text-[10px] text-[var(--text-subtle)] font-medium uppercase tracking-wider">
                   Domain Timeline
                 </span>
               </div>
@@ -134,10 +134,10 @@ export function WhoisResultCard({ result }: Props) {
                     <div key={event.label} className="relative">
                       <span className="absolute -left-[22px] top-[2px] text-[10px]">{event.icon}</span>
                       <div className="flex items-center justify-between">
-                        <span className="text-xs text-slate-400">{event.label}</span>
+                        <span className="text-xs text-[var(--text-muted)]">{event.label}</span>
                         {formatted && (
                           <div className="text-right">
-                            <span className="text-xs text-slate-300">{formatted}</span>
+                            <span className="text-xs text-[var(--text-secondary)]">{formatted}</span>
                           </div>
                         )}
                       </div>
@@ -150,16 +150,16 @@ export function WhoisResultCard({ result }: Props) {
 
           {/* Name Servers */}
           {result.nameServers && result.nameServers.length > 0 && (
-            <div className="pt-2 border-t border-slate-700/30">
+            <div className="pt-2 border-t border-[var(--surface-border)]/30">
               <div className="flex items-center gap-1.5 mb-2">
-                <Server className="w-3 h-3 text-slate-500" />
-                <span className="text-[10px] text-slate-500 font-medium uppercase tracking-wider">
+                <Server className="w-3 h-3 text-[var(--text-subtle)]" />
+                <span className="text-[10px] text-[var(--text-subtle)] font-medium uppercase tracking-wider">
                   Name Servers ({result.nameServers.length})
                 </span>
               </div>
               <div className="space-y-1">
                 {result.nameServers.map((ns) => (
-                  <div key={ns} className="text-xs font-mono text-slate-400 pl-2 border-l-2 border-slate-700/50 py-0.5">
+                  <div key={ns} className="text-xs font-mono text-[var(--text-muted)] pl-2 border-l-2 border-[var(--surface-border)] py-0.5">
                     {ns}
                   </div>
                 ))}
@@ -169,16 +169,16 @@ export function WhoisResultCard({ result }: Props) {
 
           {/* Domain Status */}
           {result.status && result.status.length > 0 && (
-            <div className="pt-2 border-t border-slate-700/30">
+            <div className="pt-2 border-t border-[var(--surface-border)]/30">
               <div className="flex items-center gap-1.5 mb-2">
-                <span className="text-[10px] text-slate-500 font-medium uppercase tracking-wider">Status</span>
+                <span className="text-[10px] text-[var(--text-subtle)] font-medium uppercase tracking-wider">Status</span>
               </div>
               <div className="flex flex-wrap gap-1">
                 {result.status.map((s) => (
                   <Badge
                     key={s}
                     variant="outline"
-                    className="h-5 text-[10px] border-slate-700/50 text-slate-400 bg-slate-800/50"
+                    className="h-5 text-[10px] border-[var(--surface-border)] text-[var(--text-muted)] bg-[var(--surface-fill-strong)]"
                   >
                     {s}
                   </Badge>
@@ -189,9 +189,9 @@ export function WhoisResultCard({ result }: Props) {
 
           {/* Handle */}
           {result.handle && (
-            <div className="pt-2 border-t border-slate-700/30">
-              <span className="text-[10px] text-slate-500 block">Registry Handle</span>
-              <span className="text-xs font-mono text-slate-400">{result.handle}</span>
+            <div className="pt-2 border-t border-[var(--surface-border)]/30">
+              <span className="text-[10px] text-[var(--text-subtle)] block">Registry Handle</span>
+              <span className="text-xs font-mono text-[var(--text-muted)]">{result.handle}</span>
             </div>
           )}
         </div>

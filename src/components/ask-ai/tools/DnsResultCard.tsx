@@ -37,17 +37,17 @@ export function DnsResultCard({ result }: Props) {
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.25 }}
-      className="rounded-xl border border-slate-700/50 bg-slate-900/70 overflow-hidden"
+      className="console rounded-xl border border-[var(--surface-border)] bg-slate-900/70 overflow-hidden"
     >
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-slate-700/30 bg-slate-800/40">
+      <div className="flex items-center justify-between px-4 py-3 border-b border-[var(--surface-border)]/30 bg-[var(--surface-fill-strong)]/40">
         <div className="flex items-center gap-2.5">
           <div className="w-7 h-7 rounded-lg bg-blue-500/15 border border-blue-500/25 flex items-center justify-center">
             <Globe className="w-3.5 h-3.5 text-blue-400" />
           </div>
           <div>
-            <span className="text-sm font-semibold text-slate-100">{result.domain}</span>
-            <span className="text-[10px] text-slate-500 ml-2">DNS Records</span>
+            <span className="text-sm font-semibold text-[var(--text-primary)]">{result.domain}</span>
+            <span className="text-[10px] text-[var(--text-subtle)] ml-2">DNS Records</span>
           </div>
         </div>
         <div className="flex items-center gap-2">
@@ -57,9 +57,9 @@ export function DnsResultCard({ result }: Props) {
                 key={r.type}
                 variant="outline"
                 className={`h-5 text-[10px] font-mono font-semibold px-1.5 border ${
-                  RECORD_COLORS[r.type]?.border || 'border-slate-600'
-                } ${RECORD_COLORS[r.type]?.text || 'text-slate-400'} ${
-                  RECORD_COLORS[r.type]?.bg || 'bg-slate-800'
+                  RECORD_COLORS[r.type]?.border || 'border-[var(--surface-border-strong)]'
+                } ${RECORD_COLORS[r.type]?.text || 'text-[var(--text-muted)]'} ${
+                  RECORD_COLORS[r.type]?.bg || 'bg-[var(--surface-fill-strong)]'
                 }`}
               >
                 {r.type}
@@ -69,7 +69,7 @@ export function DnsResultCard({ result }: Props) {
           {hasRecords && (
             <button
               onClick={handleCopy}
-              className="h-7 w-7 rounded-md hover:bg-slate-700/50 flex items-center justify-center text-slate-500 hover:text-slate-300 transition-colors"
+              className="h-7 w-7 rounded-md hover:bg-[var(--surface-fill-strong)] flex items-center justify-center text-[var(--text-subtle)] hover:text-[var(--text-secondary)] transition-colors"
               aria-label="Copy DNS records"
             >
               {copied ? (
@@ -99,19 +99,19 @@ export function DnsResultCard({ result }: Props) {
           {result.records.map((record) => {
             const colors = RECORD_COLORS[record.type];
             return (
-              <div key={record.type} className="px-4 py-2.5 hover:bg-slate-800/30 transition-colors">
+              <div key={record.type} className="px-4 py-2.5 hover:bg-[var(--surface-fill-strong)]/30 transition-colors">
                 <div className="flex items-center gap-2 mb-1.5">
                   <Badge
                     variant="outline"
                     className={`h-5 text-[10px] font-mono font-semibold px-1.5 border ${
-                      colors?.border || 'border-slate-600'
-                    } ${colors?.text || 'text-slate-400'} ${
-                      colors?.bg || 'bg-slate-800'
+                      colors?.border || 'border-[var(--surface-border-strong)]'
+                    } ${colors?.text || 'text-[var(--text-muted)]'} ${
+                      colors?.bg || 'bg-[var(--surface-fill-strong)]'
                     }`}
                   >
                     {record.type}
                   </Badge>
-                  <span className="text-[10px] text-slate-600">
+                  <span className="text-[10px] text-[var(--text-faint)]">
                     {record.values.length} value{record.values.length !== 1 ? 's' : ''}
                   </span>
                 </div>
@@ -119,7 +119,7 @@ export function DnsResultCard({ result }: Props) {
                   {record.values.map((val, i) => (
                     <div
                       key={i}
-                      className="text-xs font-mono text-slate-400 pl-2.5 border-l-2 border-slate-700/50 py-0.5 truncate hover:text-slate-300 transition-colors"
+                      className="text-xs font-mono text-[var(--text-muted)] pl-2.5 border-l-2 border-[var(--surface-border)] py-0.5 truncate hover:text-[var(--text-secondary)] transition-colors"
                       title={val}
                     >
                       {val}
@@ -132,8 +132,8 @@ export function DnsResultCard({ result }: Props) {
         </div>
       ) : !result.error && (
         <div className="px-4 py-6 text-center">
-          <Server className="w-5 h-5 text-slate-600 mx-auto mb-2" />
-          <p className="text-xs text-slate-500">No DNS records found for this domain</p>
+          <Server className="w-5 h-5 text-[var(--text-faint)] mx-auto mb-2" />
+          <p className="text-xs text-[var(--text-subtle)]">No DNS records found for this domain</p>
         </div>
       )}
     </motion.div>

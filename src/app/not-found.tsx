@@ -26,7 +26,7 @@ export default function NotFound() {
         </p>
 
         <div className="mb-6 flex items-center justify-center gap-3">
-          <span className="font-mono text-7xl font-bold text-white tracking-tight">
+          <span className="font-mono text-7xl font-bold tracking-tight" style={{ color: 'var(--text-primary)' }}>
             4
           </span>
           <span
@@ -39,15 +39,15 @@ export default function NotFound() {
           >
             0
           </span>
-          <span className="font-mono text-7xl font-bold text-white tracking-tight">
+          <span className="font-mono text-7xl font-bold tracking-tight" style={{ color: 'var(--text-primary)' }}>
             4
           </span>
         </div>
 
-        <h1 className="text-xl font-bold mb-3 text-white">
+        <h1 className="text-xl font-bold mb-3" style={{ color: 'var(--text-primary)' }}>
           {t('shell.notfound.title')}
         </h1>
-        <p className="text-sm leading-relaxed mb-8" style={{ color: 'var(--muted)' }}>
+        <p className="text-sm leading-relaxed mb-8" style={{ color: 'var(--text-muted)' }}>
           {t('shell.notfound.description')}
         </p>
 

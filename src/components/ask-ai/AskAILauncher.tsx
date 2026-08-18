@@ -1,8 +1,8 @@
 'use client';
 import { useAskAIStore } from '@/stores/ask-ai-store';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MessageSquare } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { CloudIcon } from './CloudIcons';
 
 export function AskAILauncher() {
   const { isOpen, setIsOpen } = useAskAIStore();
@@ -20,11 +20,11 @@ export function AskAILauncher() {
           >
             <Button
               size="icon"
-              aria-label="Ask AI"
-              className="w-14 h-14 rounded-full shadow-2xl bg-slate-950 border border-orange-500/30 hover:bg-slate-900"
+              aria-label="Tanos AI"
+              className="w-14 h-14 rounded-full shadow-2xl bg-orange-500 hover:bg-orange-600 border-0 relative overflow-hidden"
               onClick={() => setIsOpen(true)}
             >
-              <MessageSquare className="w-6 h-6 text-orange-500" />
+              <CloudIcon className="w-7 h-7" />
             </Button>
           </motion.div>
         )}

@@ -58,7 +58,7 @@ const TimelineItem = memo(({ job, index }: { job: Job; index: number }) => {
           <div style={{ color: job.color }} className="text-[11px] font-bold tracking-[1px] uppercase">
             {t(job.periodKey)}
           </div>
-          <h3 className="text-lg md:text-xl font-extrabold text-slate-100">{job.company}</h3>
+          <h3 className="text-lg md:text-xl font-extrabold text-[var(--text-primary)]">{job.company}</h3>
           <div style={{ color: job.color }} className="text-sm font-medium">
             {t(job.roleKey)}
           </div>
@@ -79,9 +79,9 @@ const TimelineItem = memo(({ job, index }: { job: Job; index: number }) => {
       {/* Highlights Grid */}
       <div className="flex flex-wrap gap-2 mb-4">
         {job.achievements.map((a: Achievement) => (
-          <div key={a.textKey} className="flex items-center gap-2.5 bg-white/5 border border-white/10 rounded-lg p-2 px-3">
+          <div key={a.textKey} className="flex items-center gap-2.5 bg-[var(--surface-fill)] border border-[var(--surface-border)] rounded-lg p-2 px-3">
             <Icon name={a.icon} label={t(a.textKey)} size={20} />
-            <span className="text-xs text-slate-200">{t(a.textKey)}</span>
+            <span className="text-xs text-[var(--text-secondary)]">{t(a.textKey)}</span>
           </div>
         ))}
       </div>
@@ -89,7 +89,7 @@ const TimelineItem = memo(({ job, index }: { job: Job; index: number }) => {
       {/* Detail Bullets */}
       <ul className="space-y-1.5 mb-5">
         {job.bullets.map((bKey: string, i: number) => (
-          <li key={i} className="text-sm text-slate-400 pl-4 relative leading-relaxed">
+          <li key={i} className="text-sm text-[var(--text-muted)] pl-4 relative leading-relaxed">
             <span style={{ color: job.color }} className="absolute left-0">▸</span>
             {t(bKey)}
           </li>
@@ -121,11 +121,11 @@ TimelineItem.displayName = 'TimelineItem'
 export default function Experiencia() {
   const { t } = useLanguage()
   return (
-    <section id="experiencia" className="py-20 px-6 bg-slate-900">
+    <section id="experiencia" className="py-20 sm:py-32 px-4 sm:px-6 md:px-8" style={{ background: 'var(--bg)' }}>
       <div className="max-w-6xl mx-auto">
         <SectionHeader label={t('experience.label')} title={t('experience.title')} highlight={t('experience.highlight')} />
 
-        <FadeIn delay={0.05}>
+        <FadeIn delay={0.05} variant="blur">
           <div className="flex flex-wrap gap-3 mb-10 md:mb-14">
             {[
               { label: t('experience.badge.years'), color: '#C5A46D' },

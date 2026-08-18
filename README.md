@@ -320,6 +320,77 @@ El seam vive en `src/lib/language.ts`; el layout (SSR), el proxy (cookie) y el `
 
 ---
 
+## Temas y Design Tokens (WCAG AA)
+
+Un solo sistema de tokens vive en `src/app/globals.css` (configuración CSS-first de Tailwind v4 — no hay `tailwind.config.ts`). El script no-flash del layout aplica siempre `light` o `dark` antes del primer paint, así que cada página se pinta con un tema determinístico y sin flash. Los tokens semánticos se mapean a utilidades Tailwind vía `@theme inline` (p. ej. `--color-border-interactive` → `border-border-interactive`).
+
+### Jerarquía (3 niveles)
+
+| Nivel | Tokens | Ejemplos |
+|---|---|---|
+| L1 — Primitivas de marca | Intensidad ajustada por tema | `--blue`, `--gold` |
+| L2 — Semánticos | Propósito, no color | `--bg`, `--text`, `--border`, `--ok`, `--danger`, ladder de texto |
+| L3 — Superficies de componente | Vidrios, navbar, fills | `--surface`, `--glass-bg`, `--navbar-bg`, `--surface-fill` |
+
+### Tres scopes
+
+| Scope | Selector | Dónde se aplica |
+|---|---|---|
+| **Light** | `:root` | Secciones del portfolio en tema claro |
+| **Dark** | `.dark` | Identidad console de todo el sitio en tema oscuro |
+| **Console** | `.console` (clase) | Componentes deliberadamente oscuros **en ambos temas**: panel Ask AI, SIEM, tool cards, CaseStudyDetail. Re-fija los tokens de texto y shadcn a sus valores dark dentro del scope |
+
+**Versión Mermaid** (renderiza en GitHub):
+
+```mermaid
+flowchart LR
+    CSS["globals.css<br/>:root (light) · .dark · .console"]
+    Theme["@theme inline<br/>--color-* → utilidades Tailwind"]
+    Ladder["Text ladder AA<br/>primary…faint (≥ 4.5:1)"]
+    Boundary["Boundaries 1.4.11<br/>--border-interactive · --input · --ring (≥ 3:1)"]
+    Audit["design-tokens.contrast.test.ts<br/>parsea el CSS en vivo · 17 tests"]
+
+    CSS --> Theme
+    CSS --> Ladder
+    CSS --> Boundary
+    Ladder --> Audit
+    Boundary --> Audit
+```
+
+### Ladder de texto — WCAG AA (≥ 4.5:1)
+
+La escala reemplaza los `text-slate-*` hardcodeados (eran invisibles en light). Cada tier está calibrado contra las superficies reales donde se renderiza — blanco, `--bg`, `--bg2`, cards, fills translúcidos y glass — en los tres scopes. Contraste mínimo verificado (peor superficie):
+
+| Token | Light | Dark / Console | Mín. verif. light | Mín. verif. dark | Uso |
+|---|---|---|---|---|---|
+| `--text-primary` | `#0F172A` | `#E2E8F0` | 15.9:1 | 12.6:1 | Títulos y cuerpo principal |
+| `--text-secondary` | `#334155` | `#CBD5E1` | 9.2:1 | 10.5:1 | Descripciones |
+| `--text-muted` | `#52617A` | `#94A3B8` | 5.6:1 | 6.1:1 | Metadatos, fechas, sub-labels |
+| `--text-subtle` | `#5C6C85` | `#7C8CA3` | 4.8:1 | 4.6:1 | Eyebrows y captions |
+| `--text-faint` | `#62728B` | `#7E8DA4` | 4.9:1 (cards/glass) | 4.6:1 | Labels ultra-faint (solo cards/glass) |
+
+### Colores de estado y acento
+
+Intensidad por tema: light usa la escala 700 (oscura, AA sobre superficies claras); dark/console re-pinan la 400 brillante (idéntica a la identidad slate original). Tokens: `--ok`, `--warn`, `--danger`, `--info`, `--violet`, `--teal`, `--rose`, `--indigo`, `--c-orange`, `--c-indigo`, `--gold` — todos verificados ≥ 4.5:1 en sus superficies (light: 5.0–7.9:1 sobre cards).
+
+### Bordes interactivos — WCAG 1.4.11 (≥ 3:1)
+
+`--border` se mantiene sutil y **decorativo** (cards y divisores, ~1.3:1 — intencional). Los límites clickeables usan tokens dedicados:
+
+| Token | Light | Dark | Console | Contraste mín. |
+|---|---|---|---|---|
+| `--border-interactive` | `rgba(15,23,42,.5)` | `rgba(255,255,255,.35)` | `rgba(255,255,255,.4)` | 3.3:1 · 3.2:1 · 3.7:1 |
+| `--input` | ídem border-interactive | ídem | ídem | ídem |
+| `--ring` (foco) | `#0B5FBB` | `#1E90FF` | `#1E90FF` | 5.8:1 · 5.4:1 · 5.4:1 |
+
+Migrados a `--border-interactive` (13 componentes): button outline, badge outline, ThemeToggle, pill de idioma del Navbar, CTA del Hero, pills de sugerencias Ask AI, retry del error-boundary, input del panel, close/CTA de CaseStudyDetail, CTA de SCAudit, tabs de AuditHub, CTA de Blog y tabs de Proyecto. Las tarjetas decorativas conservan el borde sutil.
+
+### Auditoría permanente
+
+`src/lib/design-tokens.contrast.test.ts` (17 tests) parsea `globals.css` en vivo (no puede desincronizarse del CSS), compone las superficies translúcidas reales (fill → glass → bg2) y falla si un tier de texto baja de 4.5:1 o un borde interactivo baja de 3:1, en light, dark y console. Ya atrapó casos marginales durante la implementación (p. ej. `--text-subtle` sobre el stack glass en light).
+
+---
+
 ## API Routes
 
 | Ruta | Método | Descripción | Protección |

@@ -21,7 +21,7 @@ export default function Arquitectura() {
         <SectionHeader label={t('arch.label')} title={t('arch.title')} highlight={t('arch.highlight')} />
 
         <FadeIn delay={0.05}>
-          <p className="text-sm md:text-[0.92rem] text-white mb-2 max-w-[620px]">
+          <p className="text-sm md:text-[0.92rem] mb-2 max-w-[620px]" style={{ color: 'var(--text-secondary)' }}>
             {t('arch.interactive_desc')}
           </p>
           <p className="text-[0.65rem] md:text-[0.72rem] text-[var(--blue)] tracking-[1.5px] uppercase font-semibold mb-10">

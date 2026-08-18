@@ -60,10 +60,10 @@ export default function Error({
         >
           {t('shell.error.eyebrow')}
         </p>
-        <h1 className="text-2xl font-bold mb-3 text-white">
+        <h1 className="text-2xl font-bold mb-3" style={{ color: 'var(--text-primary)' }}>
           {t('shell.error.title')}
         </h1>
-        <p className="text-sm leading-relaxed mb-6" style={{ color: 'var(--muted)' }}>
+        <p className="text-sm leading-relaxed mb-6" style={{ color: 'var(--text-muted)' }}>
           {t('shell.error.description')}
         </p>
 
@@ -93,7 +93,7 @@ export default function Error({
         {error?.digest ? (
           <p
             className="mt-8 font-mono text-[10px] tracking-wider"
-            style={{ color: 'var(--muted)' }}
+            style={{ color: 'var(--text-muted)' }}
           >
             DIGEST {error.digest}
           </p>

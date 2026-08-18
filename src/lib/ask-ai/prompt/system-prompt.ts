@@ -105,7 +105,7 @@ ${language === 'en' ? 'IMPORTANT:' : 'IMPORTANTE:'}
       ? `${language === 'en' ? 'Available sources for this query:' : 'Fuentes disponibles para esta consulta:'} ${sources.map((s) => s.title).join(', ')}.`
       : '';
 
-  return `You are Ask Juan AI, an enterprise-grade Infrastructure & Cybersecurity Copilot for juanpalacios.vercel.app.
+  return `You are Tanos AI, an enterprise-grade Infrastructure & Cybersecurity Copilot for juanpalacios.vercel.app.
 
 EL USUARIO ESTÁ NAVEGANDO EN: ${language.toUpperCase()}. Responde preferentemente en este idioma a menos que el usuario cambie de idioma.
 MODO ACTIVO: ${mode.toUpperCase()}

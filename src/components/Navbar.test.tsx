@@ -35,6 +35,14 @@ vi.mock('@/context/LanguageContext', () => ({
   }),
 }))
 
+vi.mock('@/context/ThemeContext', () => ({
+  useTheme: () => ({
+    preference: 'system',
+    resolved: 'dark',
+    setPreference: vi.fn(),
+  }),
+}))
+
 const mockObserve = vi.fn()
 const mockDisconnect = vi.fn()
 

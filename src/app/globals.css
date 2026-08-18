@@ -4,23 +4,97 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* ────────────────────────────────────────────────────────────────────────
+   DESIGN TOKENS — ONE SYSTEM, TWO THEMES
+   Level 1 (primitives: brand blue/gold), Level 2 (semantic), Level 3
+   (component surfaces). `:root` = LIGHT, `.dark` = the console identity.
+   The no-flash script in the layout always applies one of the two classes,
+   so every page paints a theme deterministically.
+   ──────────────────────────────────────────────────────────────────────── */
+
 :root {
-  --bg: #0A192F;
-  --bg2: #111827;
-  --blue: #1E90FF;
-  --gold: #C5A46D;
-  --text: #E5E7EB;
-  --muted: rgba(255, 255, 255, 0.05);
-  --card: #111827;
-  --border: rgba(255, 255, 255, 0.1);
-  --background: #0A192F;
-  --foreground: #E5E7EB;
-  --card-foreground: #E5E7EB;
-  --secondary: #1e293b;
-  --secondary-foreground: #E5E7EB;
-  --muted-foreground: #94a3b8;
-  --accent: rgba(197, 164, 109, 0.15);
-  --accent-foreground: #C5A46D;
+  /* Brand primitives — intensity adjusted per theme for contrast */
+  --blue: #0F6BC8;
+  --gold: #82652C;
+
+  /* Level 2 — semantic */
+  --bg: #F4F6FA;
+  --bg2: #EEF2F9; /* lightened so the faint text tiers still hit 4.5:1 */
+  --text: #0F172A;
+  --muted: rgba(15, 23, 42, 0.05);
+  --card: #FFFFFF;
+  --border: rgba(15, 23, 42, 0.12);
+
+  --background: #F4F6FA;
+  --foreground: #0F172A;
+  --card-foreground: #0F172A;
+  --popover: #FFFFFF;
+  --popover-foreground: #0F172A;
+  --primary: #0B5FBB;
+  --primary-foreground: #FFFFFF;
+  --secondary: #E9EEF5;
+  --secondary-foreground: #0F172A;
+  --muted-foreground: #414F66;
+  --accent: rgba(30, 144, 255, 0.1);
+  --accent-foreground: #0F6BC8;
+  --destructive: #C62828;
+  --destructive-foreground: #FFFFFF;
+  /* Interactive boundaries — WCAG 1.4.11 (>= 3:1) against the surfaces
+     where inputs/buttons render. `--border` stays subtle for decorative
+     cards; `--border-interactive` marks clickable boundaries. */
+  --border-interactive: rgba(15, 23, 42, 0.5);
+  --input: rgba(15, 23, 42, 0.5);
+  --ring: #0B5FBB;
+  --chart-1: #0F6BC8;
+  --chart-2: #8A6B2F;
+  --chart-3: #2E7D32;
+  --chart-4: #6A1B9A;
+  --chart-5: #00838F;
+  --sidebar: #FFFFFF;
+  --sidebar-foreground: #0F172A;
+  --sidebar-primary: #0B5FBB;
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: #E9EEF5;
+  --sidebar-accent-foreground: #0F172A;
+  --sidebar-border: rgba(15, 23, 42, 0.1);
+  --sidebar-ring: #0B5FBB;
+
+  /* Level 3 — component surfaces */
+  --surface: #FFFFFF;
+  --surface-elevated: #FFFFFF;
+  --surface-overlay: rgba(244, 246, 250, 0.92);
+  --glass-bg: rgba(255, 255, 255, 0.65);
+  --glass-border: rgba(15, 23, 42, 0.08);
+  --navbar-bg: rgba(244, 246, 250, 0.88);
+  --navbar-border: rgba(15, 23, 42, 0.08);
+  --glow-blue: 0 0 20px rgba(15, 107, 200, 0.12), 0 0 40px rgba(15, 107, 200, 0.06);
+  --glow-gold: 0 0 20px rgba(138, 107, 47, 0.12), 0 0 40px rgba(138, 107, 47, 0.06);
+
+  /* Text hierarchy — replace hardcoded text-slate-*. Every tier passes
+     WCAG AA (>= 4.5:1) on white, --bg and --bg2; verified by
+     src/lib/design-tokens.contrast.test.ts */
+  --text-primary: #0F172A;
+  --text-secondary: #334155;
+  --text-muted: #52617A;
+  --text-subtle: #5C6C85;
+  --text-faint: #62728B;
+  --surface-border: rgba(15, 23, 42, 0.08);
+
+  /* Status / accent text — dark enough to pass AA on light surfaces.
+     Dark theme re-pins these to the brighter 400-scale below. */
+  --ok: #15803D;
+  --warn: #B45309;
+  --danger: #B91C1C;
+  --info: #0369A1;
+  --violet: #6D28D9;
+  --teal: #0F766E;
+  --rose: #BE123C;
+  --indigo: #4338CA;
+  --c-orange: #C2410C;
+  --c-indigo: #4F46E5;
+  --surface-border-strong: rgba(15, 23, 42, 0.15);
+  --surface-fill: rgba(15, 23, 42, 0.04);
+  --surface-fill-strong: rgba(15, 23, 42, 0.08);
 }
 
 /* ── Hero Purdue radar — desktop only ── */
@@ -68,11 +142,140 @@ body {
 ::-webkit-scrollbar-thumb { background: rgba(30,144,255,0.4); border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--blue); }
 
-/* Glassmorphism utility */
+/* Console surfaces (Ask AI panel, SIEM, tool cards) keep the dark identity in
+   BOTH themes: re-pin the text tokens to their dark values inside the scope,
+   so tokenized children stay light-on-dark even in light theme. */
+.console {
+  color: var(--text-primary); /* dark text inherits inside the scope */
+  --text: #E5E7EB;
+  --text-primary: #E2E8F0;
+  --text-secondary: #CBD5E1;
+  --text-muted: #94A3B8;
+  --text-subtle: #7C8CA3;
+  --text-faint: #7E8DA4;
+  --surface-fill: rgba(255, 255, 255, 0.04);
+  --surface-fill-strong: rgba(255, 255, 255, 0.08);
+  --surface-border: rgba(255, 255, 255, 0.08);
+  --surface-border-strong: rgba(255, 255, 255, 0.15);
+  /* Re-pin the shadcn semantic tokens to their dark values so children
+     (badges, buttons, ai-elements) stay light-on-dark in BOTH themes. */
+  --background: #0A192F;
+  --foreground: #E5E7EB;
+  --card: #111827;
+  --card-foreground: #E5E7EB;
+  --popover: #0E1B30;
+  --popover-foreground: #E5E7EB;
+  --muted: rgba(255, 255, 255, 0.05);
+  --muted-foreground: #94A3B8;
+  --secondary: #1E293B;
+  --secondary-foreground: #E5E7EB;
+  --accent: rgba(197, 164, 109, 0.15);
+  --accent-foreground: #C5A46D;
+  --primary: #3B9DFF;
+  --primary-foreground: #0B1526;
+  --destructive: #EF4444;
+  --destructive-foreground: #FFFFFF;
+  --border: rgba(255, 255, 255, 0.1);
+  --border-interactive: rgba(255, 255, 255, 0.4);
+  --input: rgba(255, 255, 255, 0.4);
+  --ring: #1E90FF;
+}
+
+/* ── Operator console chrome (Ask AI panel) ──────────────────────────────
+   Instrument-grade details for the copilot panel: gold = chassis/system,
+   orange = transmitting, cyan = link up, emerald = ready, red = fault.
+   These live on fixed 400-scale colors (like the rest of the console
+   components) so the dark identity holds in BOTH themes. */
+.console-gold-tile {
+  background: rgba(197, 164, 109, 0.12);
+  border: 1px solid rgba(197, 164, 109, 0.35);
+}
+.console-gold-tile svg {
+  color: #C5A46D;
+}
+
+.console-led {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+  background: currentColor;
+  box-shadow: 0 0 6px currentColor;
+  flex-shrink: 0;
+}
+
+/* Transmission equalizer — the copilot is streaming (TX). */
+.console-eq {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 10px;
+}
+.console-eq span {
+  width: 2px;
+  border-radius: 1px;
+  background: currentColor;
+  animation: console-eq 0.9s ease-in-out infinite;
+}
+.console-eq span:nth-child(2) {
+  animation-delay: 0.15s;
+}
+.console-eq span:nth-child(3) {
+  animation-delay: 0.3s;
+}
+@keyframes console-eq {
+  0%,
+  100% {
+    height: 3px;
+  }
+  50% {
+    height: 10px;
+  }
+}
+
+/* Thin chassis edge under the header — gold fading out. */
+.console-accent-line {
+  height: 2px;
+  background: linear-gradient(90deg, rgba(197, 164, 109, 0.7), transparent);
+}
+
+/* Corner ticks — instrument frame around the floating panel. */
+.console-corners::before,
+.console-corners::after {
+  content: "";
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  pointer-events: none;
+  z-index: 30;
+}
+.console-corners::before {
+  top: 4px;
+  left: 4px;
+  border-top: 1px solid rgba(197, 164, 109, 0.55);
+  border-left: 1px solid rgba(197, 164, 109, 0.55);
+  border-top-left-radius: 10px;
+}
+.console-corners::after {
+  bottom: 4px;
+  right: 4px;
+  border-bottom: 1px solid rgba(197, 164, 109, 0.55);
+  border-right: 1px solid rgba(197, 164, 109, 0.55);
+  border-bottom-right-radius: 10px;
+}
+
+/* Glassmorphism utility — token-driven per theme, with a solid fallback for
+   browsers without backdrop-filter (the background stays readable). */
 .glass {
-  background: rgba(255,255,255,0.04);
+  background: var(--glass-bg);
   backdrop-filter: blur(12px);
-  border: 1px solid rgba(255,255,255,0.08);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .glass {
+    background: var(--surface);
+  }
 }
 
 /* Animated gradient text */
@@ -83,12 +286,12 @@ body {
   background-clip: text;
 }
 
-/* Glow effects */
+/* Glow effects — intensity parametrized per theme (subtle in light). */
 .glow-blue {
-  box-shadow: 0 0 20px rgba(30,144,255,0.2), 0 0 40px rgba(30,144,255,0.1);
+  box-shadow: var(--glow-blue);
 }
 .glow-gold {
-  box-shadow: 0 0 20px rgba(197,164,109,0.2), 0 0 40px rgba(197,164,109,0.1);
+  box-shadow: var(--glow-gold);
 }
 
 /* Data flow animation */
@@ -98,11 +301,12 @@ body {
   100% { background-position: 0% 50%; }
 }
 
-/* Tag utility */
+/* Tag utility — alpha derived from the brand blue via color-mix, so it keeps
+   contrast in both themes without extra tokens. */
 .tech-tag {
-  background: rgba(30,144,255,0.08);
+  background: color-mix(in srgb, var(--blue) 10%, transparent);
   color: var(--blue);
-  border: 1px solid rgba(30,144,255,0.2);
+  border: 1px solid color-mix(in srgb, var(--blue) 25%, transparent);
   padding: 0.2rem 0.65rem;
   border-radius: 20px;
   font-size: 0.72rem;
@@ -112,7 +316,7 @@ body {
   white-space: nowrap;
 }
 .tech-tag:hover {
-  background: rgba(30,144,255,0.18);
+  background: color-mix(in srgb, var(--blue) 18%, transparent);
   border-color: var(--blue);
   transform: translateY(-1px);
 }
@@ -165,9 +369,18 @@ body {
 }
 
 .night-vision-card {
-  filter: grayscale(1) brightness(0.7) contrast(1.4) sepia(0.2) hue-rotate(80deg);
   position: relative;
   transition: all 0.5s ease;
+}
+
+/* The night-vision filter is a dark-theme effect: on light surfaces it paints
+   cards green. Gate it to the `.dark` scope so light mode keeps surfaces clean. */
+.dark .night-vision-card {
+  filter: grayscale(1) brightness(0.7) contrast(1.4) sepia(0.2) hue-rotate(80deg);
+}
+
+.dark .night-vision-card:hover {
+  filter: grayscale(0) brightness(1) contrast(1) sepia(0) hue-rotate(0deg);
 }
 
 .night-vision-card::before {
@@ -185,10 +398,6 @@ body {
   z-index: 2;
   opacity: 0.5;
   animation: nv-flicker 4s infinite;
-}
-
-.night-vision-card:hover {
-  filter: grayscale(0) brightness(1) contrast(1) sepia(0) hue-rotate(0deg);
 }
 
 /* SIEM responsive layout */
@@ -242,9 +451,86 @@ body {
   }
 }
 
-@theme inline { --font-heading: var(--font-sans); --font-sans: var(--font-sans); --color-sidebar-ring: var(--sidebar-ring); --color-sidebar-border: var(--sidebar-border); --color-sidebar-accent-foreground: var(--sidebar-accent-foreground); --color-sidebar-accent: var(--sidebar-accent); --color-sidebar-primary-foreground: var(--sidebar-primary-foreground); --color-sidebar-primary: var(--sidebar-primary); --color-sidebar-foreground: var(--sidebar-foreground); --color-sidebar: var(--sidebar); --color-chart-5: var(--chart-5); --color-chart-4: var(--chart-4); --color-chart-3: var(--chart-3); --color-chart-2: var(--chart-2); --color-chart-1: var(--chart-1); --color-ring: var(--ring); --color-input: var(--input); --color-border: var(--border); --color-destructive: var(--destructive); --color-accent-foreground: var(--accent-foreground); --color-accent: var(--accent); --color-muted-foreground: var(--muted-foreground); --color-muted: var(--muted); --color-secondary-foreground: var(--secondary-foreground); --color-secondary: var(--secondary); --color-primary-foreground: var(--primary-foreground); --color-primary: var(--primary); --color-popover-foreground: var(--popover-foreground); --color-popover: var(--popover); --color-card-foreground: var(--card-foreground); --color-card: var(--card); --color-foreground: var(--foreground); --color-background: var(--background); --radius-sm: calc(var(--radius) * 0.6); --radius-md: calc(var(--radius) * 0.8); --radius-lg: var(--radius); --radius-xl: calc(var(--radius) * 1.4); --radius-2xl: calc(var(--radius) * 1.8); --radius-3xl: calc(var(--radius) * 2.2); --radius-4xl: calc(var(--radius) * 2.6); }
+@theme inline { --font-heading: var(--font-sans); --font-sans: var(--font-sans); --color-sidebar-ring: var(--sidebar-ring); --color-sidebar-border: var(--sidebar-border); --color-sidebar-accent-foreground: var(--sidebar-accent-foreground); --color-sidebar-accent: var(--sidebar-accent); --color-sidebar-primary-foreground: var(--sidebar-primary-foreground); --color-sidebar-primary: var(--sidebar-primary); --color-sidebar-foreground: var(--sidebar-foreground); --color-sidebar: var(--sidebar); --color-chart-5: var(--chart-5); --color-chart-4: var(--chart-4); --color-chart-3: var(--chart-3); --color-chart-2: var(--chart-2); --color-chart-1: var(--chart-1); --color-ring: var(--ring); --color-input: var(--input); --color-border: var(--border); --color-border-interactive: var(--border-interactive); --color-destructive: var(--destructive); --color-accent-foreground: var(--accent-foreground); --color-accent: var(--accent); --color-muted-foreground: var(--muted-foreground); --color-muted: var(--muted); --color-secondary-foreground: var(--secondary-foreground); --color-secondary: var(--secondary); --color-primary-foreground: var(--primary-foreground); --color-primary: var(--primary); --color-popover-foreground: var(--popover-foreground); --color-popover: var(--popover); --color-card-foreground: var(--card-foreground); --color-card: var(--card); --color-foreground: var(--foreground); --color-background: var(--background); --radius-sm: calc(var(--radius) * 0.6); --radius-md: calc(var(--radius) * 0.8); --radius-lg: var(--radius); --radius-xl: calc(var(--radius) * 1.4); --radius-2xl: calc(var(--radius) * 1.8); --radius-3xl: calc(var(--radius) * 2.2); --radius-4xl: calc(var(--radius) * 2.6); }
 
-.dark { --background: oklch(0.145 0 0); --foreground: oklch(0.985 0 0); --card: oklch(0.205 0 0); --card-foreground: oklch(0.985 0 0); --popover: oklch(0.205 0 0); --popover-foreground: oklch(0.985 0 0); --primary: oklch(0.922 0 0); --primary-foreground: oklch(0.205 0 0); --secondary: oklch(0.269 0 0); --secondary-foreground: oklch(0.985 0 0); --muted: oklch(0.269 0 0); --muted-foreground: oklch(0.708 0 0); --accent: oklch(0.269 0 0); --accent-foreground: oklch(0.985 0 0); --destructive: oklch(0.704 0.191 22.216); --border: oklch(1 0 0 / 10%); --input: oklch(1 0 0 / 15%); --ring: oklch(0.556 0 0); --chart-1: oklch(0.87 0 0); --chart-2: oklch(0.556 0 0); --chart-3: oklch(0.439 0 0); --chart-4: oklch(0.371 0 0); --chart-5: oklch(0.269 0 0); --sidebar: oklch(0.205 0 0); --sidebar-foreground: oklch(0.985 0 0); --sidebar-primary: oklch(0.488 0.243 264.376); --sidebar-primary-foreground: oklch(0.985 0 0); --sidebar-accent: oklch(0.269 0 0); --sidebar-accent-foreground: oklch(0.985 0 0); --sidebar-border: oklch(1 0 0 / 10%); --sidebar-ring: oklch(0.556 0 0); }
+.dark {
+  /* Brand primitives — the console identity */
+  --blue: #1E90FF;
+  --gold: #C5A46D;
+
+  /* Level 2 — semantic */
+  --bg: #0A192F;
+  --bg2: #111827;
+  --text: #E5E7EB;
+  --muted: rgba(255, 255, 255, 0.05);
+  --card: #111827;
+  --border: rgba(255, 255, 255, 0.1);
+
+  --background: #0A192F;
+  --foreground: #E5E7EB;
+  --card-foreground: #E5E7EB;
+  --popover: #0E1B30;
+  --popover-foreground: #E5E7EB;
+  --primary: #3B9DFF;
+  --primary-foreground: #0B1526;
+  --secondary: #1E293B;
+  --secondary-foreground: #E5E7EB;
+  --muted-foreground: #94A3B8;
+  --accent: rgba(197, 164, 109, 0.15);
+  --accent-foreground: #C5A46D;
+  --destructive: #EF4444;
+  --destructive-foreground: #FFFFFF;
+  --border-interactive: rgba(255, 255, 255, 0.35);
+  --input: rgba(255, 255, 255, 0.35);
+  --ring: #1E90FF;
+  --chart-1: #60A5FA;
+  --chart-2: #C5A46D;
+  --chart-3: #34D399;
+  --chart-4: #C084FC;
+  --chart-5: #22D3EE;
+  --sidebar: #0E1B30;
+  --sidebar-foreground: #E5E7EB;
+  --sidebar-primary: #3B9DFF;
+  --sidebar-primary-foreground: #0B1526;
+  --sidebar-accent: rgba(197, 164, 109, 0.15);
+  --sidebar-accent-foreground: #C5A46D;
+  --sidebar-border: rgba(255, 255, 255, 0.1);
+  --sidebar-ring: #1E90FF;
+
+  /* Level 3 — component surfaces */
+  --surface: #0E1B30;
+  --surface-elevated: #13243D;
+  --surface-overlay: rgba(7, 17, 31, 0.92);
+  --glass-bg: rgba(255, 255, 255, 0.04);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --navbar-bg: rgba(2, 6, 23, 0.88);
+  --navbar-border: rgba(255, 255, 255, 0.1);
+  --glow-blue: 0 0 20px rgba(30, 144, 255, 0.2), 0 0 40px rgba(30, 144, 255, 0.1);
+  --glow-gold: 0 0 20px rgba(197, 164, 109, 0.2), 0 0 40px rgba(197, 164, 109, 0.1);
+
+  /* Text hierarchy — dark theme equivalents (original slate scale) */
+  --text-primary: #E2E8F0;
+  --text-secondary: #CBD5E1;
+  --text-muted: #94A3B8;
+  --text-subtle: #7C8CA3;
+  --text-faint: #7E8DA4;
+  --surface-border: rgba(255, 255, 255, 0.08);
+
+  /* Status / accent text — bright 400-scale, AA on the dark surfaces */
+  --ok: #34D399;
+  --warn: #FBBF24;
+  --danger: #F87171;
+  --info: #22D3EE;
+  --violet: #A78BFA;
+  --teal: #2DD4BF;
+  --rose: #FB7185;
+  --indigo: #818CF8;
+  --c-orange: #FB923C;
+  --c-indigo: #818CF8;
+  --surface-border-strong: rgba(255, 255, 255, 0.15);
+  --surface-fill: rgba(255, 255, 255, 0.04);
+  --surface-fill-strong: rgba(255, 255, 255, 0.08);
+}
 
 @layer base {
   * {

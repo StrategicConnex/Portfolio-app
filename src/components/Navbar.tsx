@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useLanguage } from '@/context/LanguageContext'
+import { ThemeToggle } from '@/components/ui/theme-toggle'
 import { Languages, Menu, X } from 'lucide-react'
 
 const linkKeys = [
@@ -59,8 +60,8 @@ export default function Navbar() {
         transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
         className={`fixed top-0 left-0 right-0 z-[100] backdrop-blur-xl border-b transition-all duration-300 ${
           scrolled 
-            ? 'bg-slate-950/95 border-white/10' 
-            : 'bg-slate-950/70 border-white/0'
+            ? 'bg-[var(--navbar-bg)] border-[var(--navbar-border)]' 
+            : 'bg-[color-mix(in_srgb,var(--navbar-bg)_75%,transparent)] border-transparent'
         }`}
       >
         {/* Scroll Progress Bar */}
@@ -90,14 +91,14 @@ export default function Navbar() {
                   <a
                     href={link.href}
                     className={`nav-link text-[10px] uppercase tracking-wider transition-colors duration-300 font-medium relative py-1 ${
-                      isActive ? 'text-blue-400' : 'text-slate-400 hover:text-blue-400'
+                      isActive ? 'text-[var(--blue)]' : 'text-muted-foreground hover:text-[var(--blue)]'
                     }`}
                   >
                     {label}
                     {isActive && (
                       <motion.span
                         layoutId="nav-dot"
-                        className="absolute bottom-[-6px] left-0 right-0 h-[2.5px] bg-blue-500 rounded-full"
+                        className="absolute bottom-[-6px] left-0 right-0 h-[2.5px] bg-[var(--blue)] rounded-full"
                         transition={{ type: 'spring', stiffness: 350, damping: 30 }}
                       />
                     )}
@@ -107,22 +108,25 @@ export default function Navbar() {
             })}
           </ul>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
+            {/* Theme switcher (System / Light / Dark) */}
+            <ThemeToggle />
+
             {/* Language Switcher */}
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => setLanguage(language === 'es' ? 'en' : 'es')}
-              className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-xs font-bold text-slate-300 hover:bg-white/10 hover:text-white transition-all group"
+              className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-muted border border-border-interactive text-xs font-bold text-muted-foreground hover:bg-accent hover:text-foreground transition-all group"
             >
-              <Languages size={14} className="text-blue-500 group-hover:rotate-12 transition-transform" />
+              <Languages size={14} className="text-[var(--blue)] group-hover:rotate-12 transition-transform" />
               <span className="uppercase tracking-widest">{language}</span>
             </motion.button>
 
             {/* Mobile hamburger toggle */}
             <button
               onClick={() => setMenuOpen(o => !o)}
-              className="lg:hidden p-2 text-slate-200 hover:text-white transition-colors"
+              className="lg:hidden p-2 text-foreground hover:text-[var(--blue)] transition-colors"
               aria-label={language === 'en' ? 'Toggle menu' : 'Abrir menú'}
             >
               {menuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -142,16 +146,17 @@ export default function Navbar() {
               onClick={() => setMenuOpen(false)}
               className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[98] lg:hidden"
             />
+            {/* Scrim stays dark in both themes — it must dim whatever sits behind. */}
             <motion.div
               initial={{ x: '100%' }}
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'spring', stiffness: 300, damping: 35 }}
-              className="fixed top-0 right-0 bottom-0 w-[280px] bg-slate-900 z-[99] p-8 flex flex-col gap-8 shadow-2xl lg:hidden"
+              className="fixed top-0 right-0 bottom-0 w-[280px] bg-[var(--surface-elevated)] z-[99] p-8 flex flex-col gap-8 shadow-2xl lg:hidden"
             >
               <div className="flex justify-between items-center mb-4">
                 <span className="text-[var(--gold)] font-bold text-xl tracking-wider">MENU</span>
-                <button onClick={() => setMenuOpen(false)} className="text-slate-400 hover:text-white" aria-label={language === 'en' ? 'Close menu' : 'Cerrar menú'}>
+                <button onClick={() => setMenuOpen(false)} className="text-muted-foreground hover:text-foreground" aria-label={language === 'en' ? 'Close menu' : 'Cerrar menú'}>
                   <X size={24} />
                 </button>
               </div>
@@ -165,7 +170,7 @@ export default function Navbar() {
                     transition={{ delay: i * 0.05 }}
                     onClick={() => setMenuOpen(false)}
                     className={`text-lg font-medium transition-colors ${
-                      active === link.href.slice(1) ? 'text-blue-400' : 'text-slate-400'
+                      active === link.href.slice(1) ? 'text-[var(--blue)]' : 'text-muted-foreground'
                     }`}
                   >
                     {t(link.key) || link.label}
@@ -173,18 +178,18 @@ export default function Navbar() {
                 ))}
               </div>
               
-              <div className="mt-auto pt-8 border-t border-white/10">
-                <p className="text-slate-500 text-xs uppercase tracking-widest mb-4">Language / Idioma</p>
+              <div className="mt-auto pt-8 border-t border-border">
+                <p className="text-muted-foreground text-xs uppercase tracking-widest mb-4">Language / Idioma</p>
                 <div className="flex gap-4">
                   <button 
                     onClick={() => setLanguage('es')}
-                    className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${language === 'es' ? 'bg-blue-500 text-white' : 'bg-white/5 text-slate-400 hover:bg-white/10'}`}
+                    className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${language === 'es' ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground hover:bg-accent'}`}
                   >
                     ESPAÑOL
                   </button>
                   <button 
                     onClick={() => setLanguage('en')}
-                    className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${language === 'en' ? 'bg-blue-500 text-white' : 'bg-white/5 text-slate-400 hover:bg-white/10'}`}
+                    className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${language === 'en' ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground hover:bg-accent'}`}
                   >
                     ENGLISH
                   </button>

@@ -30,20 +30,24 @@ export function AskAIPromptInput({
       : 'Pregunta sobre IT/OT, ciberseguridad...';
 
   return (
-    <div className="p-3 border-t border-slate-800 bg-slate-900/50 flex-shrink-0">
+    <div className="p-3 border-t border-slate-800 bg-[var(--surface-fill)] flex-shrink-0">
       <form onSubmit={onSubmit} className="relative flex items-center gap-2">
+        {/* Command-line prompt marker — decorative, skipped by SR */}
+        <span aria-hidden className="mono text-sm font-bold text-[var(--text-subtle)] select-none flex-shrink-0">
+          &gt;
+        </span>
         <input
           value={input}
           onChange={(e) => onInputChange(e.target.value)}
           placeholder={placeholder || defaultPlaceholder}
-          className="flex-1 bg-slate-900 border border-slate-700 text-slate-200 placeholder-slate-500 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-1 focus:ring-orange-500 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="flex-1 mono bg-slate-900 border border-[var(--border-interactive)] text-[var(--text-secondary)] placeholder-slate-500 rounded-lg px-3.5 py-3 text-sm focus:outline-none focus:ring-1 focus:ring-orange-500 disabled:opacity-50 disabled:cursor-not-allowed"
           disabled={isLoading}
         />
         {isLoading ? (
           <Button
             type="button"
             size="icon"
-            className="h-10 w-10 bg-red-500/80 hover:bg-red-500 text-white rounded-xl flex-shrink-0"
+            className="h-10 w-10 bg-red-500/80 hover:bg-red-500 text-white rounded-lg flex-shrink-0"
             onClick={onStop}
             aria-label={language === 'en' ? 'Stop generation' : 'Detener generación'}
           >
@@ -53,7 +57,7 @@ export function AskAIPromptInput({
           <Button
             type="submit"
             size="icon"
-            className="h-10 w-10 bg-orange-500 hover:bg-orange-600 text-white rounded-xl flex-shrink-0 disabled:opacity-50"
+            className="h-10 w-10 bg-orange-500 hover:bg-orange-600 text-white rounded-lg flex-shrink-0 disabled:opacity-50"
             disabled={!input.trim()}
             aria-label={language === 'en' ? 'Send message' : 'Enviar mensaje'}
           >

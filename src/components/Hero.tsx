@@ -48,7 +48,7 @@ export default function Hero() {
           className="hero-avatar relative z-10"
           custom={0} variants={TEXT_VARIANTS} initial="hidden" animate="visible"
         >
-          <div className="relative w-[150px] h-[150px] sm:w-[200px] sm:h-[200px] md:w-[240px] md:h-[240px] lg:w-[360px] lg:h-[360px] rounded-3xl overflow-hidden border border-blue-500/20 shadow-[0_0_80px_rgba(30,144,255,0.1)] bg-slate-900 group">
+          <div className="relative w-[150px] h-[150px] sm:w-[200px] sm:h-[200px] md:w-[240px] md:h-[240px] lg:w-[360px] lg:h-[360px] rounded-3xl overflow-hidden border border-blue-500/20 shadow-[0_0_80px_rgba(30,144,255,0.1)] bg-[var(--surface)] group">
             <Image
               src="/JuanPalacios.webp"
               alt={t('profile.photo_alt')}
@@ -62,7 +62,7 @@ export default function Hero() {
             <div className="absolute top-3 right-3 w-6 h-6 border-t border-r border-blue-500/40 rounded-tr-md sm:top-4 sm:right-4 sm:w-8 sm:h-8 sm:border-t-2 sm:border-r-2" />
             <div className="absolute bottom-3 left-3 w-6 h-6 border-b border-l border-blue-500/40 rounded-bl-md sm:bottom-4 sm:left-4 sm:w-8 sm:h-8 sm:border-b-2 sm:border-l-2" />
             
-            <div className="absolute bottom-3 right-3 flex items-center gap-1.5 px-2.5 py-0.5 bg-black/60 backdrop-blur-md rounded-full border border-white/10 sm:bottom-4 sm:right-4 sm:gap-2 sm:px-3 sm:py-1">
+            <div className="absolute bottom-3 right-3 flex items-center gap-1.5 px-2.5 py-0.5 bg-black/60 backdrop-blur-md rounded-full border border-[var(--surface-border)] sm:bottom-4 sm:right-4 sm:gap-2 sm:px-3 sm:py-1">
               <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse shadow-[0_0_8px_#22c55e]" />
               <span className="text-[8px] text-white/70 uppercase tracking-tighter sm:text-[9px]">{t('hero.system_active')}</span>
             </div>
@@ -81,10 +81,10 @@ export default function Hero() {
 
           <motion.h1
             custom={1} variants={TEXT_VARIANTS} initial="hidden" animate="visible"
-            className="text-[clamp(1.3rem,7vw,2.5rem)] lg:text-[clamp(2.2rem,5vw,3.8rem)] font-extrabold leading-[1.1] tracking-tighter text-white"
+            className="text-[clamp(1.3rem,7vw,2.5rem)] lg:text-[clamp(2.2rem,5vw,3.8rem)] font-extrabold leading-[1.1] tracking-tighter text-foreground"
           >
             {t('hero.title.first')}{' '}
-            <span className="text-blue-500">
+            <span className="text-[var(--blue)]">
               {t('hero.title.last')}
             </span>
             <span className="block text-[0.32em] sm:text-[0.38em] mt-3 sm:mt-4 text-[var(--gold)] font-medium tracking-[0.1em] sm:tracking-[0.14em] uppercase opacity-90 leading-relaxed max-w-[280px] sm:max-w-xl mx-auto lg:mx-0">
@@ -101,19 +101,19 @@ export default function Hero() {
             custom={3} variants={TEXT_VARIANTS} initial="hidden" animate="visible"
             className="flex flex-col gap-2 sm:gap-3"
           >
-            <p className="text-[14px] sm:text-[clamp(0.9rem,1.8vw,1.05rem)] text-slate-200 font-bold tracking-widest uppercase italic">
+            <p className="text-[14px] sm:text-[clamp(0.9rem,1.8vw,1.05rem)] text-foreground font-bold tracking-widest uppercase italic">
               {t('hero.role')}
             </p>
             <div className="flex justify-center lg:justify-start">
-              <p className="text-[9px] sm:text-[11px] text-slate-500 font-medium max-w-2xl opacity-80 border-l-2 border-blue-600/40 pl-3 sm:pl-4 py-0.5 sm:py-1 text-left">
-                {t('hero.role_details')} | <span className="text-blue-500/70">#CulturaSegura</span>
+              <p className="text-[9px] sm:text-[11px] text-muted-foreground font-medium max-w-2xl opacity-80 border-l-2 border-blue-600/40 pl-3 sm:pl-4 py-0.5 sm:py-1 text-left">
+                {t('hero.role_details')} | <span className="text-[var(--blue)]">#CulturaSegura</span>
               </p>
             </div>
           </motion.div>
 
           <motion.p
             custom={4} variants={TEXT_VARIANTS} initial="hidden" animate="visible"
-            className="text-slate-400 text-[11px] sm:text-[13px] max-w-md mx-auto lg:mx-0 mb-6 sm:mb-8 leading-relaxed font-light opacity-80"
+            className="text-muted-foreground text-[11px] sm:text-[13px] max-w-md mx-auto lg:mx-0 mb-6 sm:mb-8 leading-relaxed font-light opacity-80"
           >
             {t('hero.tagline')}
           </motion.p>
@@ -126,16 +126,16 @@ export default function Hero() {
               href="#experiencia"
               whileHover={{ x: 5, backgroundColor: '#3b82f6' }}
               whileTap={{ scale: 0.98 }}
-              className="px-6 py-3 sm:px-8 sm:py-3.5 rounded-xl bg-blue-600 text-white font-bold text-[9px] sm:text-[10px] uppercase tracking-[2px] transition-all shadow-lg shadow-blue-900/20"
+              className="px-6 py-3 sm:px-8 sm:py-3.5 rounded-xl bg-primary text-primary-foreground font-bold text-[9px] sm:text-[10px] uppercase tracking-[2px] transition-all shadow-lg shadow-blue-900/20"
             >
               {t('hero.cta.history')}
             </motion.a>
 
             <motion.a
               href="#arquitectura"
-              whileHover={{ x: 5, borderColor: 'rgba(255,255,255,0.3)' }}
+              whileHover={{ x: 5, borderColor: 'var(--blue)' }}
               whileTap={{ scale: 0.98 }}
-              className="px-6 py-3 sm:px-8 sm:py-3.5 rounded-xl bg-transparent text-white/80 font-bold text-[9px] sm:text-[10px] uppercase tracking-[2px] border border-white/10 hover:bg-white/5 transition-all"
+              className="px-6 py-3 sm:px-8 sm:py-3.5 rounded-xl bg-transparent text-foreground/80 font-bold text-[9px] sm:text-[10px] uppercase tracking-[2px] border border-border-interactive hover:bg-muted transition-all"
             >
               {t('hero.cta.architecture')}
             </motion.a>
@@ -147,11 +147,11 @@ export default function Hero() {
             transition={{ delay: 1.8, duration: 1 }}
             className="pt-10 flex flex-col items-center gap-1.5 lg:items-start"
           >
-            <span className="text-[0.7rem] text-slate-500 uppercase tracking-[2px]">{t('hero.scroll')}</span>
+            <span className="text-[0.7rem] text-muted-foreground uppercase tracking-[2px]">{t('hero.scroll')}</span>
             <motion.div
               animate={{ y: [0, 8, 0] }}
               transition={{ repeat: Infinity, duration: 2, ease: 'easeInOut' }}
-              className="w-[1.5px] h-7 bg-gradient-to-b from-blue-500 to-transparent rounded"
+              className="w-[1.5px] h-7 bg-gradient-to-b from-[var(--blue)] to-transparent rounded"
             />
           </motion.div>
         </div>

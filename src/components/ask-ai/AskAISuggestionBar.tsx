@@ -12,8 +12,8 @@ export function AskAISuggestionBar({ prompts, onSelect, variant = 'default' }: A
   if (prompts.length === 0) return null;
 
   const className = variant === 'followup'
-    ? 'text-xs border-slate-700/50 text-slate-500 hover:text-orange-400 hover:border-orange-500/30 transition-colors gap-1'
-    : 'text-xs border-slate-700 text-slate-400 hover:text-orange-400 hover:border-orange-500/40 transition-colors';
+    ? 'text-xs border-[var(--border-interactive)] text-[var(--text-subtle)] hover:text-orange-400 hover:border-orange-500/30 transition-colors gap-1'
+    : 'text-xs border-[var(--border-interactive)] text-[var(--text-muted)] hover:text-orange-400 hover:border-orange-500/40 transition-colors';
 
   return (
     <Suggestions>

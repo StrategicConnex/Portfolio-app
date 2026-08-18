@@ -70,31 +70,31 @@ export function HttpHeadersResultCard({ result }: Props) {
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.25 }}
-      className="rounded-xl border border-slate-700/50 bg-slate-900/70 overflow-hidden"
+      className="console rounded-xl border border-[var(--surface-border)] bg-slate-900/70 overflow-hidden"
     >
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-slate-700/30 bg-slate-800/40">
+      <div className="flex items-center justify-between px-4 py-3 border-b border-[var(--surface-border)]/30 bg-[var(--surface-fill-strong)]/40">
         <div className="flex items-center gap-2.5 min-w-0">
           <div className="w-7 h-7 rounded-lg bg-cyan-500/15 border border-cyan-500/25 flex items-center justify-center flex-shrink-0">
             <Shield className="w-3.5 h-3.5 text-cyan-400" />
           </div>
           <div className="min-w-0">
-            <span className="text-sm font-semibold text-slate-100 truncate block">
+            <span className="text-sm font-semibold text-[var(--text-primary)] truncate block">
               {result.url}
             </span>
-            <span className="text-[10px] text-slate-500">HTTP Security Headers</span>
+            <span className="text-[10px] text-[var(--text-subtle)]">HTTP Security Headers</span>
           </div>
         </div>
         <div className="flex items-center gap-2 flex-shrink-0">
           {result.server && (
-            <Badge variant="outline" className="h-5 text-[10px] border-slate-600 text-slate-400 bg-slate-800">
+            <Badge variant="outline" className="h-5 text-[10px] border-[var(--surface-border-strong)] text-[var(--text-muted)] bg-[var(--surface-fill-strong)]">
               {result.server}
             </Badge>
           )}
           {!result.error && (
             <button
               onClick={handleCopy}
-              className="h-7 w-7 rounded-md hover:bg-slate-700/50 flex items-center justify-center text-slate-500 hover:text-slate-300 transition-colors"
+              className="h-7 w-7 rounded-md hover:bg-[var(--surface-fill-strong)] flex items-center justify-center text-[var(--text-subtle)] hover:text-[var(--text-secondary)] transition-colors"
               aria-label="Copy headers analysis"
             >
               {copied ? (
@@ -128,7 +128,7 @@ export function HttpHeadersResultCard({ result }: Props) {
                 <span className={`text-sm font-bold ${getScoreColor()}`}>
                   Security Score: {score}%
                 </span>
-                <p className="text-[10px] text-slate-500 mt-0.5">
+                <p className="text-[10px] text-[var(--text-subtle)] mt-0.5">
                   {presentCount} of {totalCount} security headers present
                 </p>
               </div>
@@ -149,15 +149,15 @@ export function HttpHeadersResultCard({ result }: Props) {
 
           {/* Headers list */}
           <div className="space-y-1.5">
-            <span className="text-[10px] text-slate-500 font-medium uppercase tracking-wider block">
+            <span className="text-[10px] text-[var(--text-subtle)] font-medium uppercase tracking-wider block">
               Security Headers
             </span>
-            <div className="divide-y divide-slate-700/20 rounded-lg border border-slate-700/30 overflow-hidden">
+            <div className="divide-y divide-slate-700/20 rounded-lg border border-[var(--surface-border)]/30 overflow-hidden">
               {result.headers.map((h) => (
                 <div
                   key={h.header}
                   className={`flex items-center justify-between px-3 py-2 ${
-                    h.present ? 'hover:bg-slate-800/30' : 'bg-slate-800/20'
+                    h.present ? 'hover:bg-[var(--surface-fill-strong)]/30' : 'bg-[var(--surface-fill-strong)]/20'
                   } transition-colors`}
                 >
                   <div className="flex items-center gap-2.5 min-w-0">
@@ -169,17 +169,17 @@ export function HttpHeadersResultCard({ result }: Props) {
                     <div className="min-w-0">
                       <span
                         className={`text-xs font-medium ${
-                          h.present ? 'text-slate-200' : 'text-slate-500'
+                          h.present ? 'text-[var(--text-secondary)]' : 'text-[var(--text-subtle)]'
                         }`}
                       >
                         {h.name}
                       </span>
-                      <span className="text-[10px] text-slate-600 ml-1.5">{h.description}</span>
+                      <span className="text-[10px] text-[var(--text-faint)] ml-1.5">{h.description}</span>
                     </div>
                   </div>
                   <div className="flex-shrink-0 ml-2">
                     {h.present ? (
-                      <span className="text-[10px] font-mono text-slate-400 truncate max-w-[200px] block text-right">
+                      <span className="text-[10px] font-mono text-[var(--text-muted)] truncate max-w-[200px] block text-right">
                         {h.value.length > 40 ? h.value.substring(0, 40) + '…' : h.value}
                       </span>
                     ) : (
@@ -195,8 +195,8 @@ export function HttpHeadersResultCard({ result }: Props) {
 
           {/* Other notable headers */}
           {result.otherNotable.length > 0 && (
-            <div className="pt-2 border-t border-slate-700/30">
-              <span className="text-[10px] text-slate-500 font-medium uppercase tracking-wider block mb-2">
+            <div className="pt-2 border-t border-[var(--surface-border)]/30">
+              <span className="text-[10px] text-[var(--text-subtle)] font-medium uppercase tracking-wider block mb-2">
                 Other Notable Headers
               </span>
               <div className="flex flex-wrap gap-1.5">
@@ -204,7 +204,7 @@ export function HttpHeadersResultCard({ result }: Props) {
                   <Badge
                     key={h.header}
                     variant="outline"
-                    className="h-5 text-[10px] border-slate-700/50 text-slate-400 bg-slate-800/50"
+                    className="h-5 text-[10px] border-[var(--surface-border)] text-[var(--text-muted)] bg-[var(--surface-fill-strong)]"
                     title={`${h.header}: ${h.value}`}
                   >
                     {h.header}

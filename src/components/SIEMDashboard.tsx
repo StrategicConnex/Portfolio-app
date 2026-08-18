@@ -46,12 +46,12 @@ const MitigationTooltip = memo(({ m }: { m: NonNullable<LogLine['mitigation']> }
       </div>
       <ul className="list-none p-0 m-0 mb-1.5">
         {m.steps.map((s, i) => (
-          <li key={i} className="text-[0.7rem] text-slate-400/85 py-0.5 pl-4 relative">
+          <li key={i} className="text-[0.7rem] text-[var(--text-muted)]/85 py-0.5 pl-4 relative">
             <span className="absolute left-0 text-emerald-500">✓</span>{s}
           </li>
         ))}
       </ul>
-      <div className="text-[0.65rem] text-emerald-500 font-mono border-t border-white/10 pt-1.5">
+      <div className="text-[0.65rem] text-emerald-500 font-mono border-t border-[var(--surface-border)] pt-1.5">
         {t('siem.ui.mttr')}: {m.time}
       </div>
     </motion.div>
@@ -96,10 +96,10 @@ const LogScroller = memo(() => {
               hovered === line.renderKey ? 'bg-red-500/10' : ''
             }`}
           >
-            <span className="text-slate-500 flex-shrink-0 w-12">{line.time}</span>
+            <span className="text-[var(--text-subtle)] flex-shrink-0 w-12">{line.time}</span>
             <span style={{ color: line.color }} className="font-bold min-w-[35px] sm:min-w-[40px] flex-shrink-0">{line.level}</span>
-            <span className="text-slate-400 flex-shrink-0 min-w-[80px] sm:min-w-[96px] truncate">{line.src}</span>
-            <span className="text-slate-300 flex-1 min-w-[120px]">{line.msg}</span>
+            <span className="text-[var(--text-muted)] flex-shrink-0 min-w-[80px] sm:min-w-[96px] truncate">{line.src}</span>
+            <span className="text-[var(--text-secondary)] flex-1 min-w-[120px]">{line.msg}</span>
             {line.mitigation && (
               <span className="text-red-500 text-[9px] self-center opacity-70 hidden sm:inline">
                 {t('siem.hover_hint').split(' ')[0]} ▸
@@ -125,13 +125,13 @@ const ZoneBar = memo(({ zone, delay }: { zone: (typeof PURDUE_ZONES)[0]; delay: 
   return (
     <div ref={ref} className="mb-2">
       <div className="flex justify-between mb-1">
-        <span className="text-[0.72rem] text-slate-400">{t(zone.labelKey)}</span>
+        <span className="text-[0.72rem] text-[var(--text-muted)]">{t(zone.labelKey)}</span>
         <div className="flex gap-3">
-          <span className="text-[0.7rem] text-slate-500">{zone.events} ev/h</span>
+          <span className="text-[0.7rem] text-[var(--text-subtle)]">{zone.events} ev/h</span>
           <span style={{ color: zone.color }} className="text-[0.72rem] font-bold">{zone.pct}%</span>
         </div>
       </div>
-      <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
+      <div className="h-1.5 bg-[var(--surface-fill)] rounded-full overflow-hidden">
         <motion.div
           initial={{ width: 0 }}
           animate={inView ? { width: `${zone.pct}%` } : {}}
@@ -213,12 +213,12 @@ export default function SIEMDashboard() {
   }, [])
 
   return (
-    <section id="siem" className="py-20 px-6 bg-slate-950">
+    <section id="siem" className="console py-20 sm:py-32 px-4 sm:px-6 md:px-8 bg-slate-950">
       <div className="max-w-6xl mx-auto">
         <SectionHeader label={t('siem.label')} title={t('siem.title')} highlight={t('siem.highlight')} />
 
-        <FadeIn delay={0.1}>
-          <p className="text-slate-400 mb-2 text-sm max-w-2xl">
+        <FadeIn delay={0.1} variant="blur">
+          <p className="text-[var(--text-muted)] mb-2 text-sm max-w-2xl">
             {t('siem.map_desc')}
           </p>
           <p className="text-red-500/80 text-[10px] tracking-wider mb-8 font-mono">
@@ -226,7 +226,7 @@ export default function SIEMDashboard() {
           </p>
         </FadeIn>
 
-        <FadeIn delay={0.15}>
+        <FadeIn delay={0.15} variant="clip" duration={0.8}>
           {/* Dashboard Header */}
           <div className="glass rounded-t-2xl p-4 flex flex-wrap items-center justify-between gap-4 border-b-0">
             <div className="flex items-center gap-2.5">
@@ -241,17 +241,17 @@ export default function SIEMDashboard() {
             </div>
             
             <div className="flex gap-4 items-center flex-1 justify-end">
-              <span className="hidden md:inline font-mono text-[10px] text-slate-500">
+              <span className="hidden md:inline font-mono text-[10px] text-[var(--text-subtle)]">
                 IEC 62443 | NIST CSF | ISO 27001
               </span>
-              <span className="font-mono text-xs text-slate-400">{timeStr} UTC-3</span>
+              <span className="font-mono text-xs text-[var(--text-muted)]">{timeStr} UTC-3</span>
               <button
                 type="button"
                 onClick={simulateIncident}
                 disabled={incidentActive}
                 className={`px-4 py-2 text-[10px] md:text-xs font-bold rounded-full transition-all ${
                   incidentActive 
-                    ? 'bg-slate-800 text-slate-500 cursor-not-allowed' 
+                    ? 'bg-[var(--surface-fill-strong)] text-[var(--text-subtle)] cursor-not-allowed' 
                     : 'bg-blue-600 hover:bg-blue-500 text-white shadow-lg shadow-blue-600/20 cursor-pointer active:scale-95'
                 }`}
               >
@@ -310,7 +310,7 @@ export default function SIEMDashboard() {
                 </h4>
                 <div className="grid grid-cols-2 gap-2">
                   {liveThreats.map(threat => (
-                    <div key={threat.label} className="bg-black/30 border border-white/5 rounded-lg p-3 flex justify-between items-center transition-hover hover:border-white/10">
+                    <div key={threat.label} className="bg-black/30 border border-[var(--surface-border)] rounded-lg p-3 flex justify-between items-center transition-hover hover:border-[var(--surface-border)]">
                       <span style={{ color: threat.color }} className="text-[10px] font-bold font-mono">{threat.label}</span>
                       <span style={{ background: `${threat.color}20`, color: threat.color }} className="rounded-full px-2 py-0.5 text-[10px] font-black">{threat.count}</span>
                     </div>
@@ -325,8 +325,8 @@ export default function SIEMDashboard() {
                 </h4>
                 <div className="space-y-0.5">
                   {OPERATIONAL_KPIS.map(k => (
-                    <div key={k.labelKey} className="flex justify-between py-2 border-b border-white/5 text-xs">
-                      <span className="text-slate-400 flex items-center gap-2">
+                    <div key={k.labelKey} className="flex justify-between py-2 border-b border-[var(--surface-border)] text-xs">
+                      <span className="text-[var(--text-muted)] flex items-center gap-2">
                         <Icon name={k.icon} label={t(k.labelKey)} size={14} />{t(k.labelKey)}
                       </span>
                       <span className="text-amber-500 font-bold font-mono">{t(k.valKey)}</span>
@@ -348,7 +348,7 @@ export default function SIEMDashboard() {
                     </h4>
                     <div className="space-y-1.5">
                       {stat.data.map((item) => (
-                        <div key={item.label} className="flex justify-between px-1 text-[11px] text-slate-300">
+                        <div key={item.label} className="flex justify-between px-1 text-[11px] text-[var(--text-secondary)]">
                           <span>{item.label}</span>
                           <span className="text-amber-500 font-bold">{item.pct}%</span>
                         </div>

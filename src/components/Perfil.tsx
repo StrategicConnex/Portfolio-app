@@ -109,7 +109,7 @@ export default function Perfil() {
       <div className="max-w-[1100px] mx-auto">
         <SectionHeader label={t('profile.label')} title={t('profile.title')} highlight={t('profile.highlight')} />
 
-        <FadeIn delay={0.1}>
+        <FadeIn delay={0.1} variant="hero" duration={0.8}>
           <div className="flex flex-col md:flex-row items-start gap-8 md:gap-12 mb-12">
             {/* Profile image — left */}
             <motion.div
@@ -133,7 +133,7 @@ export default function Perfil() {
                 <div className="absolute top-2 right-2 w-5 h-5 border-t border-r border-blue-500/40 rounded-tr-md" />
                 <div className="absolute bottom-2 left-2 w-5 h-5 border-b border-l border-blue-500/40 rounded-bl-md" />
                 {/* Status indicator */}
-                <div className="absolute bottom-2 right-2 flex items-center gap-1.5 px-2 py-0.5 bg-black/60 backdrop-blur-md rounded-full border border-white/10">
+                <div className="absolute bottom-2 right-2 flex items-center gap-1.5 px-2 py-0.5 bg-black/60 backdrop-blur-md rounded-full border border-[var(--surface-border)]">
                   <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse shadow-[0_0_8px_#22c55e]" />
                   <span className="text-[7px] text-white/70 uppercase tracking-tighter">{language === 'en' ? 'System Active' : 'Sistema Activo'}</span>
                 </div>
@@ -142,10 +142,10 @@ export default function Perfil() {
 
             {/* Bio text — right */}
             <div className="flex-1 min-w-0">
-              <p className="text-sm md:text-[0.97rem] text-white mb-5 leading-relaxed">
+              <p className="text-sm md:text-[0.97rem] mb-5 leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
                 {t('profile.description1')}
               </p>
-              <p className="text-sm md:text-[0.97rem] text-white mb-5 leading-relaxed">
+              <p className="text-sm md:text-[0.97rem] mb-5 leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
                 {t('profile.description2')}
               </p>
             </div>
@@ -197,7 +197,7 @@ export default function Perfil() {
                     </div>
                     <div className="flex flex-wrap gap-1.5">
                       {c.items.map(item => (
-                        <span key={item} className="text-xs font-medium px-2 py-1 rounded-full bg-white/5 text-white/90 border border-white/10">
+                        <span key={item} className="text-xs font-medium px-2 py-1 rounded-full bg-[var(--surface-fill)] text-white/90 border border-[var(--surface-border)]">
                           {t(item)}
                         </span>
                       ))}

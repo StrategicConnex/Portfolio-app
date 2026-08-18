@@ -136,16 +136,16 @@ export default function Proyecto() {
                 className={`text-left p-6 rounded-2xl border transition-all duration-300 relative overflow-hidden group ${
                   activeCase === i 
                     ? 'bg-blue-600/10 border-blue-500/50 shadow-[0_0_20px_rgba(30,144,255,0.1)]' 
-                    : 'bg-white/5 border-white/10 hover:bg-white/10'
+                    : 'bg-[var(--surface-fill)] border-[var(--border-interactive)] hover:bg-[var(--surface-fill-strong)]'
                 }`}
               >
                 <div className="text-[10px] text-blue-400 font-bold uppercase tracking-widest mb-2">
                   {t(cs.companyKey)}
                 </div>
-                <h4 className="text-white font-bold mb-2 leading-tight">{t(cs.titleKey)}</h4>
+                <h4 className="font-bold mb-2 leading-tight" style={{ color: 'var(--text-primary)' }}>{t(cs.titleKey)}</h4>
                 
                 <div className={`h-1 w-8 rounded-full transition-all duration-500 ${
-                  activeCase === i ? 'bg-blue-500 w-16' : 'bg-white/10 group-hover:w-12 group-hover:bg-white/20'
+                  activeCase === i ? 'bg-blue-500 w-16' : 'bg-[var(--surface-fill-strong)] group-hover:w-12 group-hover:bg-[var(--surface-fill-strong)]'
                 }`} />
 
                 {activeCase === i && (
@@ -160,11 +160,11 @@ export default function Proyecto() {
             {/* Senior Impact Badge */}
             <div className="mt-8 p-6 rounded-2xl bg-gradient-to-br from-emerald-500/10 to-blue-500/10 border border-emerald-500/20">
               <div className="flex items-center gap-2 mb-3">
-                <Zap size={16} className="text-emerald-400" />
-                <span className="text-[11px] font-black text-emerald-400 uppercase tracking-wider">Impacto de Seniority</span>
+                <Zap size={16} className="text-[var(--ok)]" />
+                <span className="text-[11px] font-black text-[var(--ok)] uppercase tracking-wider">Impacto de Seniority</span>
               </div>
-              <p className="text-xs text-slate-400 leading-relaxed italic">
-                &quot;Juniors muestran código. <span className="text-white font-bold">Seniors muestran impacto real y ROI operativo.</span>&quot;
+              <p className="text-xs text-[var(--text-muted)] leading-relaxed italic">
+                &quot;Juniors muestran código. <span className="font-bold" style={{ color: 'var(--text-primary)' }}>Seniors muestran impacto real y ROI operativo.</span>&quot;
               </p>
             </div>
           </div>
@@ -178,25 +178,25 @@ export default function Proyecto() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.5 }}
-                className="glass scanline-container rounded-3xl p-6 sm:p-10 border border-white/5 min-h-[600px] flex flex-col"
+                className="glass scanline-container rounded-3xl p-6 sm:p-10 border border-[var(--surface-border)] min-h-[600px] flex flex-col"
               >
                 <div className="flex flex-col sm:flex-row justify-between gap-6 mb-10">
                   <div className="max-w-md">
-                    <h3 className="text-2xl sm:text-3xl font-black text-white mb-4 leading-tight">
+                    <h3 className="text-2xl sm:text-3xl font-black mb-4 leading-tight" style={{ color: 'var(--text-primary)' }}>
                       {t(CASE_STUDIES[activeCase].titleKey)}
                     </h3>
-                    <p className="text-slate-400 text-sm leading-relaxed">
+                    <p className="text-[var(--text-muted)] text-sm leading-relaxed">
                       {t(CASE_STUDIES[activeCase].descriptionKey)}
                     </p>
                   </div>
                   <div className="flex flex-wrap gap-4">
                     {CASE_STUDIES[activeCase].metrics.map(m => (
-                      <div key={m.labelKey} className="bg-white/5 border border-white/10 rounded-2xl p-4 text-center min-w-[110px] flex-1 relative overflow-hidden group">
-                        <div className={`absolute top-0 right-0 p-1 ${m.trend === 'up' ? 'text-emerald-500' : 'text-blue-500'}`}>
+                      <div key={m.labelKey} className="bg-[var(--surface-fill)] border border-[var(--surface-border)] rounded-2xl p-4 text-center min-w-[110px] flex-1 relative overflow-hidden group">
+                        <div className={`absolute top-0 right-0 p-1 ${m.trend === 'up' ? 'text-[var(--ok)]' : 'text-[var(--blue)]'}`}>
                           <Zap size={10} className="animate-pulse" />
                         </div>
-                        <div className="text-2xl font-black text-white mb-1 group-hover:scale-110 transition-transform duration-500">{m.value}</div>
-                        <div className="text-[9px] text-slate-500 font-bold uppercase tracking-widest leading-none">{t(m.labelKey)}</div>
+                        <div className="text-2xl font-black mb-1 group-hover:scale-110 transition-transform duration-500" style={{ color: 'var(--text-primary)' }}>{m.value}</div>
+                        <div className="text-[9px] text-[var(--text-subtle)] font-bold uppercase tracking-widest leading-none">{t(m.labelKey)}</div>
                       </div>
                     ))}
                   </div>
@@ -204,7 +204,7 @@ export default function Proyecto() {
 
                 {/* Interactive Slider Container */}
                 <div 
-                  className="relative flex-grow rounded-2xl overflow-hidden bg-white/5 border border-white/10 cursor-col-resize select-none h-[500px] sm:h-[450px] md:h-[400px]"
+                  className="relative flex-grow rounded-2xl overflow-hidden bg-[var(--surface-fill)] border border-[var(--surface-border)] cursor-col-resize select-none h-[500px] sm:h-[450px] md:h-[400px]"
                   onMouseDown={() => setIsDragging(true)}
                   onMouseUp={() => setIsDragging(false)}
                   onMouseLeave={() => setIsDragging(false)}
@@ -226,7 +226,7 @@ export default function Proyecto() {
                           initial={{ opacity: 0, x: 20 }}
                           animate={{ opacity: 1, x: 0 }}
                           transition={{ delay: i * 0.1 }}
-                          className="flex gap-4 text-slate-200 text-base font-medium items-start"
+                          className="flex gap-4 text-[var(--text-secondary)] text-base font-medium items-start"
                         >
                           <div className="mt-1 flex-shrink-0 w-5 h-5 rounded-full bg-emerald-500/20 flex items-center justify-center border border-emerald-500/30">
                             <span className="text-emerald-500 text-[10px] font-bold">✓</span>
@@ -248,7 +248,7 @@ export default function Proyecto() {
                     </div>
                     <ul className="space-y-5">
                       {CASE_STUDIES[activeCase].before.map((itemKey, i) => (
-                        <li key={i} className="flex gap-4 text-slate-500 text-base italic items-start">
+                        <li key={i} className="flex gap-4 text-[var(--text-subtle)] text-base italic items-start">
                           <div className="mt-1 flex-shrink-0 w-5 h-5 rounded-full bg-red-500/10 flex items-center justify-center border border-red-500/20">
                             <span className="text-red-900/50 text-[10px]">✕</span>
                           </div>
@@ -265,8 +265,8 @@ export default function Proyecto() {
                   >
                     <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-blue-500 border-4 border-slate-900 flex items-center justify-center shadow-xl">
                       <div className="flex gap-1">
-                        <div className="w-0.5 h-3 bg-white/50 rounded-full" />
-                        <div className="w-0.5 h-3 bg-white/50 rounded-full" />
+                        <div className="w-0.5 h-3 bg-[var(--surface-fill)]0 rounded-full" />
+                        <div className="w-0.5 h-3 bg-[var(--surface-fill)]0 rounded-full" />
                       </div>
                     </div>
                     <div className="absolute top-4 left-1/2 -translate-x-1/2 whitespace-nowrap text-[10px] font-black text-blue-400 uppercase tracking-widest bg-slate-900/80 px-2 py-1 rounded border border-blue-500/30">
@@ -275,13 +275,13 @@ export default function Proyecto() {
                   </div>
                 </div>
 
-                <div className="mt-8 pt-8 border-t border-white/5 flex flex-wrap gap-4 items-center justify-between">
+                <div className="mt-8 pt-8 border-t border-[var(--surface-border)] flex flex-wrap gap-4 items-center justify-between">
                   <div className="flex gap-6">
-                    <div className="flex items-center gap-2 text-slate-500">
+                    <div className="flex items-center gap-2 text-[var(--text-subtle)]">
                       <Lock size={14} className="text-blue-500/50" />
                       <span className="text-[10px] font-bold uppercase tracking-wider">{t('projects.nda')}</span>
                     </div>
-                    <div className="flex items-center gap-2 text-slate-500">
+                    <div className="flex items-center gap-2 text-[var(--text-subtle)]">
                       <Database size={14} className="text-blue-500/50" />
                       <span className="text-[10px] font-bold uppercase tracking-wider">{t('projects.iot')}</span>
                     </div>
@@ -320,7 +320,7 @@ export default function Proyecto() {
           >
             <div className="w-[min(90vw,600px)] p-6 bg-black/50 border border-blue-500/20 rounded-lg shadow-[0_0_50px_rgba(30,144,255,0.1)] relative overflow-hidden">
               <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-blue-500 to-transparent opacity-50" />
-              <div className="flex gap-2 mb-4 border-b border-white/10 pb-2">
+              <div className="flex gap-2 mb-4 border-b border-[var(--surface-border)] pb-2">
                 <div className="w-3 h-3 rounded-full bg-red-500/50 border border-red-500" />
                 <div className="w-3 h-3 rounded-full bg-amber-500/50 border border-amber-500" />
                 <div className="w-3 h-3 rounded-full bg-emerald-500/50 border border-emerald-500" />

@@ -48,17 +48,17 @@ export function PortAnalyzerResultCard({ result }: Props) {
 
   return (
     <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25 }}
-      className="rounded-xl border border-slate-700/50 bg-slate-900/70 overflow-hidden">
-      <div className="flex items-center justify-between px-4 py-3 border-b border-slate-700/30 bg-slate-800/40">
+      className="console rounded-xl border border-[var(--surface-border)] bg-slate-900/70 overflow-hidden">
+      <div className="flex items-center justify-between px-4 py-3 border-b border-[var(--surface-border)]/30 bg-[var(--surface-fill-strong)]/40">
         <div className="flex items-center gap-2.5">
           <div className="w-7 h-7 rounded-lg bg-rose-500/15 border border-rose-500/25 flex items-center justify-center">
             <Shield className="w-3.5 h-3.5 text-rose-400" />
           </div>
-          <div><span className="text-sm font-semibold text-slate-100">{result.service}</span><span className="text-[10px] text-slate-500 ml-2">{t('tool.port.label')}</span></div>
+          <div><span className="text-sm font-semibold text-[var(--text-primary)]">{result.service}</span><span className="text-[10px] text-[var(--text-subtle)] ml-2">{t('tool.port.label')}</span></div>
         </div>
         <div className="flex items-center gap-2">
-          <Badge variant="outline" className="h-5 text-[10px] border-slate-600 text-slate-400 bg-slate-800">{portLabel}</Badge>
-          {!result.error && <button onClick={handleCopy} className="h-7 w-7 rounded-md hover:bg-slate-700/50 flex items-center justify-center text-slate-500 hover:text-slate-300 transition-colors" aria-label={t('tool.copy')}>{copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}</button>}
+          <Badge variant="outline" className="h-5 text-[10px] border-[var(--surface-border-strong)] text-[var(--text-muted)] bg-[var(--surface-fill-strong)]">{portLabel}</Badge>
+          {!result.error && <button onClick={handleCopy} className="h-7 w-7 rounded-md hover:bg-[var(--surface-fill-strong)] flex items-center justify-center text-[var(--text-subtle)] hover:text-[var(--text-secondary)] transition-colors" aria-label={t('tool.copy')}>{copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}</button>}
         </div>
       </div>
       {result.error ? (
@@ -72,17 +72,17 @@ export function PortAnalyzerResultCard({ result }: Props) {
             const colors = RISK_COLORS[p.risk] || RISK_COLORS.low;
             const Icon = colors.icon;
             return (
-              <div key={i} className="px-4 py-3 hover:bg-slate-800/30 transition-colors">
+              <div key={i} className="px-4 py-3 hover:bg-[var(--surface-fill-strong)]/30 transition-colors">
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2">
-                    <Badge variant="outline" className="h-6 text-xs font-mono font-semibold border-slate-600 text-slate-300 bg-slate-800">{p.port}/{p.protocol}</Badge>
-                    <span className="text-xs font-medium text-slate-200">{p.service}</span>
+                    <Badge variant="outline" className="h-6 text-xs font-mono font-semibold border-[var(--surface-border-strong)] text-[var(--text-secondary)] bg-[var(--surface-fill-strong)]">{p.port}/{p.protocol}</Badge>
+                    <span className="text-xs font-medium text-[var(--text-secondary)]">{p.service}</span>
                   </div>
                   <Badge variant="outline" className={`h-5 text-[10px] gap-1 border ${colors.border} ${colors.text} ${colors.bg}`}>
                     <Icon className="w-2.5 h-2.5" />{p.risk.toUpperCase()}
                   </Badge>
                 </div>
-                <p className="text-[10px] text-slate-500 mb-1.5">{p.description}</p>
+                <p className="text-[10px] text-[var(--text-subtle)] mb-1.5">{p.description}</p>
                 <div className="flex items-start gap-1.5">
                   <AlertTriangle className="w-3 h-3 text-amber-500 mt-0.5 flex-shrink-0" />
                   <p className="text-[10px] text-amber-300/80">{p.recommendation}</p>

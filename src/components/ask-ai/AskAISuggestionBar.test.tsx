@@ -25,15 +25,15 @@ describe('AskAISuggestionBar', () => {
   it('applies the followup variant styling', () => {
     render(<AskAISuggestionBar prompts={['Seguir']} onSelect={vi.fn()} variant="followup" />)
     const button = screen.getByRole('button', { name: 'Seguir' })
-    // followup: border-slate-700/50 + text-slate-500 (más tenue que el default)
-    expect(button.className).toContain('border-slate-700/50')
-    expect(button.className).toContain('text-slate-500')
+    // followup: borde + text-[var(--text-subtle)] (más tenue que el default)
+    expect(button.className).toContain('border-[var(--border-interactive)]')
+    expect(button.className).toContain('text-[var(--text-subtle)]')
   })
 
   it('does not apply the followup styling on the default variant', () => {
     render(<AskAISuggestionBar prompts={['Seguir']} onSelect={vi.fn()} />)
     const button = screen.getByRole('button', { name: 'Seguir' })
-    expect(button.className).not.toContain('border-slate-700/50')
-    expect(button.className).toContain('text-slate-400')
+    expect(button.className).not.toContain('text-[var(--text-subtle)]')
+    expect(button.className).toContain('text-[var(--text-muted)]')
   })
 })

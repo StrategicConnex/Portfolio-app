@@ -26,14 +26,14 @@ interface Feature {
 }
 
 const FEATURES: Feature[] = [
-  { key: 'rum',     icon: '⟳',  color: 'text-cyan-400',    accent: 'border-cyan-500/20 bg-cyan-500/5 hover:border-cyan-500/40' },
-  { key: 'vitals',  icon: '⚡', color: 'text-emerald-400', accent: 'border-emerald-500/20 bg-emerald-500/5 hover:border-emerald-500/40' },
-  { key: 'audit',   icon: '⊕',  color: 'text-blue-400',    accent: 'border-blue-500/20 bg-blue-500/5 hover:border-blue-500/40' },
-  { key: 'seo',     icon: '⌕',  color: 'text-violet-400',  accent: 'border-violet-500/20 bg-violet-500/5 hover:border-violet-500/40' },
-  { key: 'errors',  icon: '⚠',  color: 'text-amber-400',   accent: 'border-amber-500/20 bg-amber-500/5 hover:border-amber-500/40' },
-  { key: 'ai',      icon: '✦',  color: 'text-rose-400',    accent: 'border-rose-500/20 bg-rose-500/5 hover:border-rose-500/40' },
-  { key: 'score',   icon: '◎',  color: 'text-teal-400',    accent: 'border-teal-500/20 bg-teal-500/5 hover:border-teal-500/40' },
-  { key: 'reports', icon: '⊞',  color: 'text-indigo-400',  accent: 'border-indigo-500/20 bg-indigo-500/5 hover:border-indigo-500/40' },
+  { key: 'rum',     icon: '⟳',  color: 'text-[var(--info)]',    accent: 'border-cyan-500/20 bg-cyan-500/5 hover:border-cyan-500/40' },
+  { key: 'vitals',  icon: '⚡', color: 'text-[var(--ok)]',      accent: 'border-emerald-500/20 bg-emerald-500/5 hover:border-emerald-500/40' },
+  { key: 'audit',   icon: '⊕',  color: 'text-[var(--blue)]',    accent: 'border-blue-500/20 bg-blue-500/5 hover:border-blue-500/40' },
+  { key: 'seo',     icon: '⌕',  color: 'text-[var(--violet)]',  accent: 'border-violet-500/20 bg-violet-500/5 hover:border-violet-500/40' },
+  { key: 'errors',  icon: '⚠',  color: 'text-[var(--warn)]',    accent: 'border-amber-500/20 bg-amber-500/5 hover:border-amber-500/40' },
+  { key: 'ai',      icon: '✦',  color: 'text-[var(--rose)]',    accent: 'border-rose-500/20 bg-rose-500/5 hover:border-rose-500/40' },
+  { key: 'score',   icon: '◎',  color: 'text-[var(--teal)]',    accent: 'border-teal-500/20 bg-teal-500/5 hover:border-teal-500/40' },
+  { key: 'reports', icon: '⊞',  color: 'text-[var(--indigo)]',  accent: 'border-indigo-500/20 bg-indigo-500/5 hover:border-indigo-500/40' },
 ]
 
 /* ─── Metric pill data ─── */
@@ -54,9 +54,9 @@ const METRICS: Metric[] = [
 ]
 
 const statusColor = (s: Metric['status']) =>
-  s === 'good' ? 'text-emerald-400 border-emerald-500/20 bg-emerald-500/5'
-  : s === 'warn' ? 'text-amber-400 border-amber-500/20 bg-amber-500/5'
-  : 'text-cyan-400 border-cyan-500/20 bg-cyan-500/5'
+  s === 'good' ? 'text-[var(--ok)] border-emerald-500/20 bg-emerald-500/5'
+  : s === 'warn' ? 'text-[var(--warn)] border-amber-500/20 bg-amber-500/5'
+  : 'text-[var(--info)] border-cyan-500/20 bg-cyan-500/5'
 
 /* ─── Component ─── */
 const SCAudit = () => {
@@ -96,14 +96,14 @@ const SCAudit = () => {
         {/* ── Description + Badge row ── */}
         <FadeIn delay={0.1}>
           <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-14 -mt-4">
-            <p className="text-slate-400 text-[0.9rem] leading-relaxed max-w-2xl">
+            <p className="text-[var(--text-muted)] text-[0.9rem] leading-relaxed max-w-2xl">
               {t('scaudit.description')}
             </p>
             <div className="flex flex-wrap gap-2 sm:ml-auto flex-shrink-0">
               {['SOC 2', 'Lighthouse v12', 'GSC API'].map(badge => (
                 <span
                   key={badge}
-                  className="text-[0.6rem] font-bold uppercase tracking-widest px-2.5 py-1 rounded border border-white/10 bg-white/[0.03] text-slate-400"
+                  className="text-[0.6rem] font-bold uppercase tracking-widest px-2.5 py-1 rounded border border-[var(--surface-border)] bg-[var(--surface-fill)] text-[var(--text-muted)]"
                 >
                   {badge}
                 </span>
@@ -117,7 +117,7 @@ const SCAudit = () => {
 
           {/* Left: product visual */}
           <FadeIn direction="left" delay={0.1}>
-            <div className="relative rounded-2xl overflow-hidden border border-white/10 shadow-[0_30px_80px_rgba(0,0,0,0.6)] group">
+            <div className="relative rounded-2xl overflow-hidden border border-[var(--surface-border)] shadow-[0_30px_80px_rgba(0,0,0,0.6)] group">
               {/* Scanline effect overlay */}
               <div
                 className="absolute inset-0 z-10 pointer-events-none"
@@ -127,9 +127,9 @@ const SCAudit = () => {
                 aria-hidden="true"
               />
               {/* Status bar */}
-              <div className="absolute top-3 left-3 z-20 flex items-center gap-2 bg-black/50 backdrop-blur-sm rounded-md px-2.5 py-1.5 border border-white/10">
+              <div className="absolute top-3 left-3 z-20 flex items-center gap-2 bg-black/50 backdrop-blur-sm rounded-md px-2.5 py-1.5 border border-[var(--surface-border)]">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                <span className="text-[0.6rem] font-mono font-bold text-emerald-400 uppercase tracking-widest">
+                <span className="text-[0.6rem] font-mono font-bold text-[var(--ok)] uppercase tracking-widest">
                   {t('scaudit.status.live')}
                 </span>
               </div>
@@ -173,7 +173,7 @@ const SCAudit = () => {
                       <div className={`text-[0.72rem] font-bold mb-0.5 transition-colors ${f.color}`}>
                         {t(`scaudit.feat.${f.key}.name`)}
                       </div>
-                      <div className="text-[0.65rem] text-slate-500 leading-relaxed line-clamp-2 group-hover:text-slate-400 transition-colors">
+                      <div className="text-[0.65rem] text-[var(--text-subtle)] leading-relaxed line-clamp-2 group-hover:text-[var(--text-muted)] transition-colors">
                         {t(`scaudit.feat.${f.key}.desc`)}
                       </div>
                     </div>
@@ -186,25 +186,25 @@ const SCAudit = () => {
 
         {/* ── Metrics bar ── */}
         <FadeIn delay={0.3}>
-          <div className="glass scanline-container rounded-2xl border border-white/[0.06] overflow-hidden mb-10">
+          <div className="glass scanline-container rounded-2xl border border-[var(--surface-border)] overflow-hidden mb-10">
             {/* Bar header */}
-            <div className="flex items-center justify-between px-6 py-3 border-b border-white/[0.06] bg-white/[0.02]">
+            <div className="flex items-center justify-between px-6 py-3 border-b border-[var(--surface-border)] bg-[var(--surface-fill)]">
               <div className="flex items-center gap-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
                 <span className="text-[0.6rem] font-mono font-bold text-blue-400 uppercase tracking-[2px]">
                   {t('scaudit.metrics.title')}
                 </span>
               </div>
-              <span className="text-[0.58rem] text-slate-600 font-mono">{t('scaudit.metrics.source')}</span>
+              <span className="text-[0.58rem] text-[var(--text-faint)] font-mono">{t('scaudit.metrics.source')}</span>
             </div>
 
             {/* Metrics row */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 divide-x divide-white/[0.04]">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 divide-x divide-[var(--surface-border)]">
               {METRICS.map((m) => (
-                <div key={m.label} className="px-5 py-4 flex flex-col gap-1 hover:bg-white/[0.02] transition-colors">
-                  <span className="text-[0.58rem] text-slate-500 uppercase tracking-widest font-bold">{m.label}</span>
+                <div key={m.label} className="px-5 py-4 flex flex-col gap-1 hover:bg-[var(--surface-fill)] transition-colors">
+                  <span className="text-[0.58rem] text-[var(--text-subtle)] uppercase tracking-widest font-bold">{m.label}</span>
                   <span className={`text-xl font-black font-mono ${statusColor(m.status).split(' ')[0]}`}>{m.value}</span>
-                  <span className="text-[0.58rem] text-slate-600 leading-tight">{m.sub}</span>
+                  <span className="text-[0.58rem] text-[var(--text-faint)] leading-tight">{m.sub}</span>
                 </div>
               ))}
             </div>
@@ -214,7 +214,7 @@ const SCAudit = () => {
         {/* ── CTA block ── */}
         <FadeIn delay={0.35}>
           <div
-            className="relative rounded-2xl border border-white/10 overflow-hidden p-8 sm:p-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6"
+            className="relative rounded-2xl border border-[var(--surface-border)] overflow-hidden p-8 sm:p-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6"
             style={{ background: 'linear-gradient(135deg, rgba(30,144,255,0.06) 0%, rgba(197,164,109,0.04) 100%)' }}
           >
             {/* Left copy */}
@@ -224,10 +224,10 @@ const SCAudit = () => {
                   {t('scaudit.cta.badge')}
                 </span>
               </div>
-              <h3 className="text-lg sm:text-xl font-bold text-slate-100 mb-1.5 tracking-tight">
+              <h3 className="text-lg sm:text-xl font-bold text-[var(--text-primary)] mb-1.5 tracking-tight">
                 {t('scaudit.cta.title')}
               </h3>
-              <p className="text-[0.82rem] text-slate-400 leading-relaxed">
+              <p className="text-[0.82rem] text-[var(--text-muted)] leading-relaxed">
                 {t('scaudit.cta.desc')}
               </p>
             </div>
@@ -250,7 +250,7 @@ const SCAudit = () => {
                   e.preventDefault()
                   document.getElementById('scaudit')?.scrollIntoView({ behavior: 'smooth' })
                 }}
-                className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-sm font-bold tracking-tight text-slate-300 border border-white/10 hover:border-white/25 hover:text-white transition-all duration-200 bg-white/[0.03] hover:bg-white/[0.06]"
+                className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-sm font-bold tracking-tight text-[var(--text-secondary)] border border-[var(--border-interactive)] hover:border-[var(--surface-border-strong)] hover:text-[var(--text-primary)] transition-all duration-200 bg-[var(--surface-fill)] hover:bg-[var(--surface-fill-strong)]"
               >
                 {t('scaudit.cta.secondary')}
               </a>
