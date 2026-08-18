@@ -49,7 +49,7 @@ const TimelineItem = memo(({ job, index }: { job: Job; index: number }) => {
           background: job.color, 
           boxShadow: `0 0 0 3px ${hexToRgba(job.color, 0.2)}` 
         }}
-        className="absolute left-[-10px] top-1.5 w-4 h-4 rounded-full border-2 border-slate-900 z-10"
+        className="absolute left-[-10px] top-1.5 w-4 h-4 rounded-full border-2 border-[var(--background)] z-10"
       />
 
       {/* Header Info */}

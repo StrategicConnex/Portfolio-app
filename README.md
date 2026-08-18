@@ -389,6 +389,32 @@ Migrados a `--border-interactive` (13 componentes): button outline, badge outlin
 
 `src/lib/design-tokens.contrast.test.ts` (17 tests) parsea `globals.css` en vivo (no puede desincronizarse del CSS), compone las superficies translúcidas reales (fill → glass → bg2) y falla si un tier de texto baja de 4.5:1 o un borde interactivo baja de 3:1, en light, dark y console. Ya atrapó casos marginales durante la implementación (p. ej. `--text-subtle` sobre el stack glass en light).
 
+### Utilidades CSS
+
+| Utility | Descripción | Uso |
+|---|---|---|
+| `.console` | Re-fija tokens a valores dark dentro del scope | Panel Ask AI, SIEM, tool cards, CaseStudyDetail |
+| `.console-bg` | Fija `background: var(--background)` (equivale a `bg-slate-950`) | Secciones que necesitan identidad oscura en ambos temas |
+| `.console-gold-tile` | Tile dorado con borde y glow | Header de Tanos AI, empty state |
+| `.console-led` | LED circular con glow (cyan = link, amber = streaming) | Strip de telemetría |
+| `.console-eq` | Equalizer de 3 barras animado | Indicador de transmisión TX |
+| `.console-accent-line` | Línea de chasis dorada fading | Borde inferior del header |
+| `.console-corners` | Esquinas de instrumento (pseudo-elements) | Marco del panel flotante |
+| `.glass` | Glassmorphism con fallback sólido | Tarjetas con transparencia |
+| `.gradient-text` | Texto con gradiente brand (blue → gold) | Títulos decorativos |
+| `.tech-tag` | Tag de tecnología con color-mix | Stack tecnológico |
+| `.mono` | Font family monospace (JetBrains Mono) | Readouts de consola |
+
+### Reglas de migración de tokens
+
+Para evitar hardcoding que rompa en light theme:
+
+1. **Nunca** usar `text-slate-*`, `bg-slate-*`, `border-slate-*` → usar `--text-*`, `--bg-*`, `--border-*`
+2. **Nunca** usar `style={{ color: '#hex' }}` → usar `className="text-[var(--text-primary)]"` o token correspondiente
+3. **Nunca** usar `style={{ background: '#hex' }}` → usar `className="bg-[var(--card)]"` o `bg-[var(--background)]`
+4. Para fondos oscuros fijos (instrument panels) → usar `.console-bg` en vez de `bg-slate-950`
+5. Para scopes que necesitan tokens dark en ambos temas → usar `.console`
+
 ---
 
 ## API Routes

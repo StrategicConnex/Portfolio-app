@@ -103,7 +103,7 @@ function ParticleNode({
             pointerEvents: 'none',
             backdropFilter: 'blur(5px)',
           }}>
-            <strong style={{ display: 'block', marginBottom: '0.25rem', color: '#BAE6FD' }}>{t('arch.mindmap.deps')}</strong>
+            <strong style={{ display: 'block', marginBottom: '0.25rem', color: 'var(--info)' }}>{t('arch.mindmap.deps')}</strong>
             <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
               {node.subKeys.map((subKey, idx) => (
                 <li key={idx} style={{ margin: '2px 0', fontSize: '10px' }}>▸ {t(subKey)}</li>

@@ -239,7 +239,7 @@ const SCAudit = () => {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-sm font-bold tracking-tight text-white transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
-                style={{ background: 'linear-gradient(135deg, #1E90FF, #1a6bcc)', boxShadow: '0 0 24px rgba(30,144,255,0.3)' }}
+                style={{ background: `linear-gradient(135deg, var(--blue), color-mix(in srgb, var(--blue) 70%, black))`, boxShadow: `0 0 24px color-mix(in srgb, var(--blue) 30%, transparent)` }}
               >
                 <span aria-hidden="true">→</span>
                 {t('scaudit.cta.primary')}

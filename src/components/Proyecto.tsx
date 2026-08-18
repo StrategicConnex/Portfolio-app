@@ -263,13 +263,13 @@ export default function Proyecto() {
                     className="absolute top-0 bottom-0 w-1 bg-blue-500 shadow-[0_0_15px_rgba(59,130,246,0.5)] z-10 pointer-events-none"
                     style={{ left: `${sliderPos}%` }}
                   >
-                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-blue-500 border-4 border-slate-900 flex items-center justify-center shadow-xl">
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-blue-500 border-4 border-[var(--background)] flex items-center justify-center shadow-xl">
                       <div className="flex gap-1">
                         <div className="w-0.5 h-3 bg-[var(--surface-fill)]0 rounded-full" />
                         <div className="w-0.5 h-3 bg-[var(--surface-fill)]0 rounded-full" />
                       </div>
                     </div>
-                    <div className="absolute top-4 left-1/2 -translate-x-1/2 whitespace-nowrap text-[10px] font-black text-blue-400 uppercase tracking-widest bg-slate-900/80 px-2 py-1 rounded border border-blue-500/30">
+                    <div className="absolute top-4 left-1/2 -translate-x-1/2 whitespace-nowrap text-[10px] font-black text-blue-400 uppercase tracking-widest bg-[var(--background)]/80 px-2 py-1 rounded border border-blue-500/30">
                       Slide to Compare
                     </div>
                   </div>
@@ -316,7 +316,7 @@ export default function Proyecto() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[110] bg-slate-950/90 backdrop-blur-md flex flex-col items-center justify-center font-mono"
+            className="fixed inset-0 z-[110] bg-[var(--background)]/90 backdrop-blur-md flex flex-col items-center justify-center font-mono"
           >
             <div className="w-[min(90vw,600px)] p-6 bg-black/50 border border-blue-500/20 rounded-lg shadow-[0_0_50px_rgba(30,144,255,0.1)] relative overflow-hidden">
               <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-blue-500 to-transparent opacity-50" />

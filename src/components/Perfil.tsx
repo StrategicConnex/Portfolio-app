@@ -118,7 +118,7 @@ export default function Perfil() {
               transition={{ delay: 0.2, duration: 0.7, ease: 'easeOut' }}
               className="relative w-[160px] h-[160px] sm:w-[200px] sm:h-[200px] md:w-[240px] md:h-[240px] flex-shrink-0 mx-auto md:mx-0"
             >
-              <div className="relative w-full h-full rounded-2xl overflow-hidden border border-blue-500/20 shadow-[0_0_60px_rgba(30,144,255,0.08)] bg-slate-900 group">
+              <div className="relative w-full h-full rounded-2xl overflow-hidden border border-blue-500/20 shadow-[0_0_60px_rgba(30,144,255,0.08)] bg-[var(--card)] group">
                 <Image
                   src="/JuanPalacios.webp"
                   alt={t('profile.photo_alt')}

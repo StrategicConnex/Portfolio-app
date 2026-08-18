@@ -145,6 +145,12 @@ body {
 /* Console surfaces (Ask AI panel, SIEM, tool cards) keep the dark identity in
    BOTH themes: re-pin the text tokens to their dark values inside the scope,
    so tokenized children stay light-on-dark even in light theme. */
+/* Console background — use on <section> elements that need the dark instrument
+   identity (bg-slate-950 equivalent) without hardcoding. */
+.console-bg {
+  background: var(--background);
+}
+
 .console {
   color: var(--text-primary); /* dark text inherits inside the scope */
   --text: #E5E7EB;

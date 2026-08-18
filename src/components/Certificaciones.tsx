@@ -163,39 +163,26 @@ function ModalViewer({ file, onClose }: ModalViewerProps) {
                 <span className="text-[11px] font-semibold uppercase tracking-wide px-2 py-0.5 rounded flex-shrink-0"
                   style={{
                     color: 'var(--accent)',
-                    background: 'rgba(197,164,109,0.12)',
+                    background: 'var(--accent)',
                   }}
                 >
                   {isPdf ? 'PDF' : t('certs.image_label')}
                 </span>
-                <span className="text-sm font-medium truncate" style={{ color: '#e2e8f0' }}>
+                <span className="text-sm font-medium truncate text-[var(--text-primary)]">
                   {file && t(file.nameKey)}
                 </span>
               </div>
               <button
                 onClick={onClose}
                 aria-label={t('certs.close_viewer')}
-                className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 text-base cursor-pointer transition-colors"
-                style={{
-                  background: 'rgba(148,163,184,0.1)',
-                  border: '1px solid rgba(148,163,184,0.15)',
-                  color: '#94a3b8',
-                }}
-                onMouseEnter={e => {
-                  (e.currentTarget as HTMLButtonElement).style.background = 'rgba(148,163,184,0.2)'
-                  ;(e.currentTarget as HTMLButtonElement).style.color = '#e2e8f0'
-                }}
-                onMouseLeave={e => {
-                  (e.currentTarget as HTMLButtonElement).style.background = 'rgba(148,163,184,0.1)'
-                  ;(e.currentTarget as HTMLButtonElement).style.color = '#94a3b8'
-                }}
+                className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 text-base cursor-pointer transition-colors bg-[var(--muted)] border border-[var(--surface-border)] text-[var(--text-muted)] hover:bg-[var(--surface-fill-strong)] hover:text-[var(--text-primary)]"
               >
                 ✕
               </button>
             </div>
 
             {/* Content — anti-download protections */}
-            <div className="flex-1 overflow-hidden relative min-h-0 select-none" style={{ background: '#0f172a' }}>
+            <div className="flex-1 overflow-hidden relative min-h-0 select-none bg-[var(--background)]">
               {isPdf ? (
                 <iframe
                   src={`${src}#toolbar=0&navpanes=0&scrollbar=1&view=FitH`}
@@ -240,22 +227,10 @@ function ModalViewer({ file, onClose }: ModalViewerProps) {
             </div>
 
             {/* Footer hint */}
-            <div className="flex items-center justify-center px-5 py-2.5 border-t flex-shrink-0 text-[11px]"
-              style={{
-                borderColor: 'var(--border)',
-                color: '#64748b',
-                background: 'var(--card)',
-              }}
-            >
+            <div className="flex items-center justify-center px-5 py-2.5 border-t border-[var(--border)] flex-shrink-0 text-[11px] text-[var(--text-muted)] bg-[var(--card)]">
               <span>
                 {t('certs.reading_mode')}{' '}
-                <kbd className="px-1 py-0.5 rounded font-mono text-[11px]"
-                  style={{
-                    background: 'rgba(148,163,184,0.1)',
-                    border: '1px solid rgba(148,163,184,0.15)',
-                    color: '#94a3b8',
-                  }}
-                >
+                <kbd className="px-1 py-0.5 rounded font-mono text-[11px] bg-[var(--muted)] border border-[var(--surface-border)] text-[var(--text-muted)]">
                   Esc
                 </kbd>
                 {' '}{t('certs.close_hint')}
