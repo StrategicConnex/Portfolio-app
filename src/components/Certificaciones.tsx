@@ -378,10 +378,10 @@ export default function Certificaciones() {
               </motion.div>
             </div>
 
-            {/* Grid */}
+            {/* Grid — console scope keeps the dark instrument cards readable in both themes */}
             <motion.div
               layout
-              className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"
+              className="console grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"
               role="tabpanel"
               id={`certs-panel-${activeCategory}`}
               aria-label={`${t('certs.panel_label')} ${t(`certs.cat.${activeCategory}`)}`}
@@ -403,8 +403,8 @@ export default function Certificaciones() {
                       className="group flex flex-col p-4 rounded-xl cursor-pointer text-left relative overflow-hidden"
                       aria-label={`${t('certs.view')} ${t(c.nameKey)}`}
                       style={{
-                        background: '#111827',
-                        border: '1px solid rgba(255, 255, 255, 0.08)',
+                        background: 'var(--card)',
+                        border: '1px solid var(--border)',
                         transition: 'border-color 0.2s ease-in-out, transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out',
                       }}
                     >
