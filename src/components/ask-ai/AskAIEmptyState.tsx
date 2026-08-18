@@ -21,7 +21,7 @@ export function AskAIEmptyState({ onSelectPrompt }: AskAIEmptyStateProps) {
   return (
     <div className="flex flex-col items-center justify-center flex-1 px-6 pt-12 pb-8 text-center">
       <div className="console-gold-tile w-12 h-12 rounded-xl flex items-center justify-center mb-4">
-        <CloudIcon className="w-6 h-6" />
+        <CloudIcon className="w-7 h-7" />
       </div>
       <h3 className="text-sm font-semibold text-[var(--text-secondary)] mb-2">
         {language === 'en' ? 'IT/OT Cybersecurity Consultant' : 'Consultor de Ciberseguridad IT/OT'}

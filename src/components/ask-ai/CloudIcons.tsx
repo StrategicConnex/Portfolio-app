@@ -10,22 +10,22 @@
 export function CloudIcon({ className = 'w-6 h-6' }: { className?: string }) {
   return (
     <svg
-      viewBox="0 0 24 24"
+      viewBox="0 0 32 32"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       className={className}
       aria-hidden="true"
     >
-      {/* Cloud body */}
+      {/* Cloud body — fills most of the 32x32 viewBox */}
       <path
-        d="M6.5 19a4.5 4.5 0 0 1-.42-8.98A7.003 7.003 0 0 1 19.73 11a4.5 4.5 0 0 1-.73 8.98A4.48 4.48 0 0 1 16 20H7.5a4.48 4.48 0 0 1-1-.5z"
+        d="M7 26a6 6 0 0 1-.56-11.97A9.3 9.3 0 0 1 26 16a6 6 0 0 1-.97 11.98A5.97 5.97 0 0 1 22 28H8.5a5.97 5.97 0 0 1-1.5-.67z"
         fill="white"
       />
       {/* Cloud highlight */}
       <path
-        d="M9 12.5a3 3 0 0 1 5.73-1.2"
-        stroke="rgba(255,255,255,0.4)"
-        strokeWidth="1"
+        d="M10.5 17a4 4 0 0 1 7.65-1.6"
+        stroke="rgba(255,255,255,0.35)"
+        strokeWidth="1.2"
         strokeLinecap="round"
         fill="none"
       />
@@ -36,29 +36,29 @@ export function CloudIcon({ className = 'w-6 h-6' }: { className?: string }) {
 export function StormIcon({ className = 'w-6 h-6' }: { className?: string }) {
   return (
     <svg
-      viewBox="0 0 24 24"
+      viewBox="0 0 32 32"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       className={className}
       aria-hidden="true"
     >
-      {/* Cloud body */}
+      {/* Cloud body — fills top portion */}
       <path
-        d="M6.5 15a4.5 4.5 0 0 1-.42-8.98A7.003 7.003 0 0 1 19.73 7a4.5 4.5 0 0 1-.73 8.98A4.48 4.48 0 0 1 16 16H7.5a4.48 4.48 0 0 1-1-.5z"
+        d="M6 19a6 6 0 0 1-.56-11.97A9.3 9.3 0 0 1 25 10a6 6 0 0 1-.97 11.98A5.97 5.97 0 0 1 21 22H7.5a5.97 5.97 0 0 1-1.5-.67z"
         fill="white"
       />
-      {/* Lightning bolt */}
+      {/* Lightning bolt — bigger, centered */}
       <path
-        d="M13 12l-1.5 3H13l-2 4.5L13.5 16H12l1.5-3H12l1.5-3.5L11 13h1.5L11.5 12h1.5z"
+        d="M17.5 14l-2 4.5h2.5l-3 6.5L18.5 20H16l2.5-4.5H16L18 12l-3 4h2.5L15 14h2.5z"
         fill="#FBBF24"
         stroke="#F59E0B"
-        strokeWidth="0.3"
+        strokeWidth="0.4"
         strokeLinejoin="round"
       />
-      {/* Small rain drops */}
-      <line x1="8" y1="17" x2="8" y2="19" stroke="rgba(255,255,255,0.5)" strokeWidth="0.8" strokeLinecap="round" />
-      <line x1="16" y1="17.5" x2="16" y2="19.5" stroke="rgba(255,255,255,0.5)" strokeWidth="0.8" strokeLinecap="round" />
-      <line x1="10" y1="18" x2="10" y2="20" stroke="rgba(255,255,255,0.5)" strokeWidth="0.8" strokeLinecap="round" />
+      {/* Rain drops */}
+      <line x1="9" y1="22" x2="9" y2="25" stroke="rgba(255,255,255,0.5)" strokeWidth="1" strokeLinecap="round" />
+      <line x1="21" y1="22.5" x2="21" y2="25.5" stroke="rgba(255,255,255,0.5)" strokeWidth="1" strokeLinecap="round" />
+      <line x1="12" y1="23" x2="12" y2="26" stroke="rgba(255,255,255,0.5)" strokeWidth="1" strokeLinecap="round" />
     </svg>
   )
 }

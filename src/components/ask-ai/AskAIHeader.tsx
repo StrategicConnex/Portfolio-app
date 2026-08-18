@@ -49,7 +49,7 @@ export function AskAIHeader({
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2.5 min-w-0">
             <div className="console-gold-tile w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0">
-              {isLoading ? <StormIcon className="w-4 h-4" /> : <CloudIcon className="w-4 h-4" />}
+              {isLoading ? <StormIcon className="w-5.5 h-5.5" /> : <CloudIcon className="w-5.5 h-5.5" />}
             </div>
             <div className="flex items-center gap-2 min-w-0">
               <span className="mono text-sm font-bold tracking-wider text-[var(--text-primary)] whitespace-nowrap">

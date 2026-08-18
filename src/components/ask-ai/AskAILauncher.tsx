@@ -24,7 +24,7 @@ export function AskAILauncher() {
               className="w-14 h-14 rounded-full shadow-2xl bg-orange-500 hover:bg-orange-600 border-0 relative overflow-hidden"
               onClick={() => setIsOpen(true)}
             >
-              <CloudIcon className="w-7 h-7" />
+              <CloudIcon className="w-10 h-10" />
             </Button>
           </motion.div>
         )}
