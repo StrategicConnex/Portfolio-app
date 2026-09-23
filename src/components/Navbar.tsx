@@ -13,6 +13,7 @@ const linkKeys = [
   { href: '#siem',         key: 'nav.siem', label: 'SIEM' },
   { href: '#audit-hub',    key: 'nav.audit', label: 'Audit' },
   { href: '#blog',         key: 'nav.blog', label: 'Inteligencia' },
+  { href: '#recursos',     key: 'nav.resources', label: 'Recursos' },
   { href: '#stack',        key: 'nav.stack', label: 'Stack' },
   { href: '#proyecto',     key: 'nav.projects', label: 'Proyectos' },
   { href: '#contacto',     key: 'nav.contact', label: 'Contacto' },
@@ -82,7 +83,7 @@ export default function Navbar() {
           </motion.a>
 
           {/* Desktop Navigation */}
-          <ul className="hidden lg:flex items-center gap-6 md:gap-8 list-none m-0 p-0">
+          <ul className="hidden lg:flex items-center gap-5 lg:gap-6 xl:gap-8 list-none m-0 p-0">
             {linkKeys.map(link => {
               const isActive = active === link.href.slice(1)
               const label = t(link.key) || link.label
