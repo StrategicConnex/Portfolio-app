@@ -72,4 +72,25 @@ describe('corpus projection — derived, not duplicated (C2)', () => {
     expect(SOURCE_COUNT).toBe(ALL_SOURCES.length)
     expect(SOURCE_COUNT).toBe(es.length + en.length)
   })
+
+  it('projects the downloadable library with real extracted text (61 docs × 2 locales)', () => {
+    const esLib = es.filter((s) => s.type === 'library')
+    const enLib = en.filter((s) => s.type === 'library')
+    expect(esLib.length).toBe(61)
+    expect(enLib.length).toBe(61)
+
+    const iec = esLib.find((s) => s.id === 'recurso-recursos-estandares-IEC_62443_resumen')!
+    expect(iec.title).toBe('Resumen: IEC 62443')
+    // Text extracted from the actual DOCX, not invented
+    expect(iec.content).toContain('ISA99/IEC SC65')
+    expect(iec.url).toBe('/recursos/estandares/IEC_62443_resumen.docx')
+
+    const enIec = enLib.find((s) => s.id === 'recurso-recursos-estandares-IEC_62443_resumen-en')!
+    expect(enIec.content).toContain('Downloadable from the book library')
+
+    // Every library entry carries extracted corpus text
+    for (const s of [...esLib, ...enLib]) {
+      expect(s.content.length).toBeGreaterThan(100)
+    }
+  })
 })

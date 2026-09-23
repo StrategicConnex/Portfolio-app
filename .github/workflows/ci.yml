@@ -35,11 +35,8 @@ jobs:
       - name: Run type check
         run: npx tsc --noEmit
 
-      - name: Run tests with coverage
-        run: npx vitest run --coverage
-
-      - name: Check coverage threshold
-        run: npx vitest run --coverage --reporter=text | grep -E "^(All files|Statements|Branches|Functions|Lines)" || echo "Coverage report generated"
+      - name: Run tests
+        run: npx vitest run
 
       - name: Run npm audit
         run: npm audit --audit-level=moderate

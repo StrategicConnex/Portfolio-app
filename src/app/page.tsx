@@ -23,6 +23,7 @@ const Certificaciones = dynamic(() => import('@/components/Certificaciones'))
 const AuditHub        = dynamic(() => import('@/components/AuditHub'))
 const SCAudit         = dynamic(() => import('@/components/SCAudit'))
 const Blog            = dynamic(() => import('@/components/Blog'))
+const Recursos        = dynamic(() => import('@/components/Recursos'))
 import { AskAICopilotShell } from '@/components/ask-ai/AskAICopilotShell'
 
 const Proyecto        = dynamic(() => import('@/components/Proyecto'))
@@ -76,6 +77,11 @@ export default function Home() {
         </Suspense>
         <Suspense fallback={<SectionFallbackBg2 />}>
           <Blog />
+        </Suspense>
+
+        {/* ── 6.5 Downloadable IT/OT library ── */}
+        <Suspense fallback={<SectionFallback />}>
+          <Recursos />
         </Suspense>
 
         {/* ── 7. CTA ── */}

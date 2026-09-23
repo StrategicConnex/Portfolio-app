@@ -50,3 +50,5 @@ next-env.d.ts
 # playwright test report (generated artifact)
 playwright-report/
 test-results/
+.lighthouseci/
+.tmp-meta/

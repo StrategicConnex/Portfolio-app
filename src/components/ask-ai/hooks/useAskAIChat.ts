@@ -7,6 +7,7 @@ import { z } from 'zod';
 import { useConversationMemory } from '@/lib/ask-ai/memory/use-conversation-memory';
 import { loadFailedModels, persistFailedModels } from '@/lib/ask-ai/pool-health';
 import { trackAiEvent } from '@/lib/observability/posthog';
+import { useAskAIStore } from '@/stores/ask-ai-store';
 
 const STORAGE_KEY = 'ask-ai-messages';
 
@@ -40,6 +41,10 @@ export function useAskAIChat({ language, mode }: UseAskAIChatOptions) {
 
   // Conversation memory (seam)
   const { memoryContext, rememberConversation } = useConversationMemory(language);
+
+  // One-shot pending prompt seeded by other sections (e.g. Recursos)
+  const pendingPrompt = useAskAIStore((s) => s.pendingPrompt);
+  const setPendingPrompt = useAskAIStore((s) => s.setPendingPrompt);
 
   // Transport — language-aware API URL
   const chatTransport = useMemo(
@@ -152,6 +157,19 @@ export function useAskAIChat({ language, mode }: UseAskAIChatOptions) {
       // Ignore localStorage write errors
     }
   }, [messages, isLoading]);
+
+  // Auto-send a pending prompt seeded from other sections once the panel mounts
+  useEffect(() => {
+    const text = pendingPrompt?.trim();
+    if (!text || status === 'streaming' || status === 'submitted') return;
+    setPendingPrompt(null);
+    trackAiEvent('message_sent', { language, mode, chars: text.length, source: 'suggestion' });
+    requestStartRef.current = performance.now();
+    sendMessage(
+      { text },
+      { body: { memoryContext, skipModels: failedModelsRef.current } },
+    );
+  }, [pendingPrompt, setPendingPrompt, status, sendMessage, language, mode, memoryContext]);
 
   // ─── Handlers ───
 

@@ -68,3 +68,20 @@ describe('useAskAIStore', () => {
     expect(useAskAIStore.getState().isOpen).toBe(false)
   })
 })
+
+describe('useAskAIStore pendingPrompt', () => {
+  beforeEach(() => {
+    useAskAIStore.setState({ isOpen: false, mode: 'ask', pendingPrompt: null })
+  })
+
+  it('should initialize pendingPrompt as null', () => {
+    expect(useAskAIStore.getState().pendingPrompt).toBeNull()
+  })
+
+  it('should set and clear pendingPrompt', () => {
+    useAskAIStore.getState().setPendingPrompt('Describe el documento X')
+    expect(useAskAIStore.getState().pendingPrompt).toBe('Describe el documento X')
+    useAskAIStore.getState().setPendingPrompt(null)
+    expect(useAskAIStore.getState().pendingPrompt).toBeNull()
+  })
+})

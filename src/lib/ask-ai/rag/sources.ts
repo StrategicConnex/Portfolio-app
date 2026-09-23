@@ -21,6 +21,8 @@ import { JOBS } from '@/data/experiencia'
 import { ATTACK_VECTORS, OPERATIONAL_KPIS, PURDUE_ZONES, TOP_ATTACKERS } from '@/data/siem'
 import { AUDIT_SUMMARY, COMPLIANCE_MARCOS } from '@/data/audit'
 import { BLOG_POSTS } from '@/data/blog'
+import { RECURSO_FILES, type RecursoDocMeta } from '@/data/recursos'
+import recursosTextJson from '@/data/recursos-text.json'
 
 export interface KnowledgeSource {
   id: string;
@@ -28,7 +30,7 @@ export interface KnowledgeSource {
   content: string;
   tags: string[];
   locale: 'es' | 'en' | 'both';
-  type: 'profile' | 'experience' | 'stack' | 'certification' | 'case-study' | 'audit' | 'siem' | 'blog' | 'service';
+  type: 'profile' | 'experience' | 'stack' | 'certification' | 'case-study' | 'audit' | 'siem' | 'blog' | 'service' | 'library';
   url?: string;
 }
 
@@ -451,6 +453,56 @@ function projectCases(lang: Locale): KnowledgeSource[] {
   })
 }
 
+// ─── Downloadable library projection (61 corpus documents) ────────────────────
+
+const RECURSOS_TEXT = recursosTextJson as Record<string, string>
+
+/** Cap per document so 61 entries don't dominate TF-IDF cache/retrieval cost. */
+const DOC_TEXT_CAP = 4000
+
+/** Volume number → human-readable label per locale. */
+const VOLUME_LABELS: Record<string, { es: string; en: string }> = {
+  vol1: { es: 'Volumen 1 — Fundamentos de IT para OT', en: 'Volume 1 — IT Foundations for OT' },
+  vol2: { es: 'Volumen 2 — Fundamentos de OT', en: 'Volume 2 — OT Foundations' },
+  vol3: { es: 'Volumen 3 — Integración IT/OT', en: 'Volume 3 — IT/OT Integration' },
+  vol4: { es: 'Volumen 4 — Ciberseguridad Industrial', en: 'Volume 4 — Industrial Cybersecurity' },
+  vol5: { es: 'Volumen 5 — Tendencias y Tecnologías Emergentes', en: 'Volume 5 — Trends & Emerging Technologies' },
+  standards: { es: 'Resúmenes de estándares', en: 'Standards summaries' },
+  project: { es: 'Documentos del proyecto', en: 'Project documents' },
+}
+
+function projectRecursos(lang: Locale): KnowledgeSource[] {
+  return RECURSO_FILES.map((doc: RecursoDocMeta) => {
+    const format = doc.path.toLowerCase().endsWith('.xlsx') ? 'XLSX' : 'DOCX'
+    const title = translations[lang][doc.labelKey ?? ''] ?? doc.fallback
+    const rawText = (RECURSOS_TEXT[doc.path] ?? '').slice(0, DOC_TEXT_CAP)
+    const plainText = rawText
+      .replace(/^#{1,6}\s+/gm, '')
+      .replace(/\*\*([^*]+)\*\*/g, '$1')
+      .replace(/\s*\n\s*/g, ' · ')
+      .trim()
+    const volume = VOLUME_LABELS[doc.category]
+    const kind = lang === 'en'
+      ? (format === 'XLSX' ? 'Template / matrix (XLSX)' : 'Technical guide (DOCX)')
+      : (format === 'XLSX' ? 'Plantilla o matriz (XLSX)' : 'Guía técnica (DOCX)')
+    const prefix = lang === 'en' ? 'Downloadable from the book library' : 'Descargable de la biblioteca del libro'
+    const content = volume
+      ? `${prefix} — ${volume[lang]}. ${kind} "${title}". ${plainText}`
+      : `${prefix}. ${kind} "${title}". ${plainText}`
+    return {
+      id: projectId(lang, `recurso-${doc.path.replace(/\.[^.]+$/, '').replace(/\//g, '-')}`),
+      title,
+      content,
+      tags: lang === 'en'
+        ? ['library', 'document', 'template', 'guide', 'download', doc.category]
+        : ['biblioteca', 'documento', 'plantilla', 'guía', 'descarga', doc.category],
+      locale: lang,
+      type: 'library' as const,
+      url: `/${doc.path}`,
+    }
+  })
+}
+
 // ─── Export consolidated ────────────────────────────────────────────────────
 
 export const ALL_SOURCES: KnowledgeSource[] = [
@@ -470,6 +522,8 @@ export const ALL_SOURCES: KnowledgeSource[] = [
   ...projectCompliance('en'),
   ...projectBlog('es'),
   ...projectBlog('en'),
+  ...projectRecursos('es'),
+  ...projectRecursos('en'),
 ]
 
 export const SOURCE_COUNT = ALL_SOURCES.length
