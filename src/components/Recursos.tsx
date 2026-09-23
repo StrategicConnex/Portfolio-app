@@ -5,7 +5,6 @@ import { useRef, useState, useCallback, useMemo } from 'react'
 import SectionHeader from './ui/SectionHeader'
 import Icon from './ui/Icon'
 import { useLanguage } from '@/context/LanguageContext'
-import { useAskAIStore } from '@/stores/ask-ai-store'
 
 export type RecursoCat = 'vol1' | 'vol2' | 'vol3' | 'vol4' | 'vol5' | 'standards' | 'project'
 
@@ -110,7 +109,6 @@ function formatLabel(path: string): string {
 
 export default function Recursos() {
   const { t } = useLanguage()
-  const setIsOpen = useAskAIStore((s) => s.setIsOpen)
   const ref = useRef(null)
   const inView = useInView(ref, { once: true, margin: '-60px' })
 
@@ -248,45 +246,6 @@ export default function Recursos() {
             {t('recursos.empty')}
           </p>
         )}
-
-        {/* CTA banner: contact advisory + Ask AI copilot */}
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.5, delay: 0.25 }}
-          className="mt-10 p-6 sm:p-8 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center gap-5 sm:gap-8"
-          style={{ background: 'var(--card)', border: '1px solid var(--border)' }}
-        >
-          <div className="flex-1 min-w-0">
-            <h3 className="text-base font-semibold mb-1" style={{ color: 'var(--text-primary)' }}>
-              {t('recursos.cta_title')}
-            </h3>
-            <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
-              {t('recursos.cta')}
-            </p>
-          </div>
-          <div className="flex flex-wrap gap-3">
-            <motion.a
-              href="#contacto"
-              whileHover={{ y: -2 }}
-              whileTap={{ scale: 0.98 }}
-              className="px-5 py-2.5 rounded-xl bg-primary text-primary-foreground font-bold text-[10px] uppercase tracking-[2px] transition-all shadow-lg shadow-blue-900/20"
-            >
-              {t('recursos.cta_contact')}
-            </motion.a>
-            <motion.button
-              type="button"
-              onClick={() => setIsOpen(true)}
-              whileHover={{ y: -2 }}
-              whileTap={{ scale: 0.98 }}
-              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-transparent text-foreground/80 font-bold text-[10px] uppercase tracking-[2px] border border-border-interactive hover:bg-muted transition-all cursor-pointer"
-              aria-haspopup="dialog"
-            >
-              <Icon name="ai" label={t('recursos.cta_ask_ai')} size={16} />
-              {t('recursos.cta_ask_ai')}
-            </motion.button>
-          </div>
-        </motion.div>
       </div>
     </section>
   )

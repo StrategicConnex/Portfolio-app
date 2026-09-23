@@ -26,10 +26,6 @@ const es = {
   'recursos.gallery_title': 'Archivos descargables',
   'recursos.download': 'Descargar',
   'recursos.empty': 'No hay recursos en esta categoría.',
-  'recursos.cta': '¿Preguntas sobre cómo aplicarlos? Escríbeme.',
-  'recursos.cta_title': '¿Necesitas ayuda con estos recursos?',
-  'recursos.cta_contact': 'Contactar',
-  'recursos.cta_ask_ai': 'Pregunta a la IA',
 } satisfies TranslationModule['es']
 
 const en: TranslationModule['en'] = {
@@ -58,10 +54,6 @@ const en: TranslationModule['en'] = {
   'recursos.gallery_title': 'Downloadable files',
   'recursos.download': 'Download',
   'recursos.empty': 'No resources in this category.',
-  'recursos.cta': 'Questions about applying them? Get in touch.',
-  'recursos.cta_title': 'Need help with these resources?',
-  'recursos.cta_contact': 'Contact',
-  'recursos.cta_ask_ai': 'Ask the AI',
 } satisfies TranslationModule['en']
 
 export const recursos = { es, en }

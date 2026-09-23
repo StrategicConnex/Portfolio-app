@@ -1,26 +1,14 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent, act } from '@testing-library/react'
 import Recursos from './Recursos'
-import { useAskAIStore } from '@/stores/ask-ai-store'
 
 vi.mock('framer-motion', async () => {
   const { createMotionMock } = await import('@/test-utils/framer-motion')
   return {
-    motion: createMotionMock(['a', 'div', 'p', 'span', 'button']),
+    motion: createMotionMock(['a', 'div', 'p', 'span']),
     AnimatePresence: ({ children }: React.PropsWithChildren) => <>{children}</>,
     useInView: () => true,
   }
-})
-
-vi.mock('@/stores/ask-ai-store', async () => {
-  const { create } = await import('zustand')
-  const useAskAIStore = create(() => ({
-    isOpen: false,
-    mode: 'ask' as const,
-    setIsOpen: vi.fn(),
-    setMode: vi.fn(),
-  }))
-  return { useAskAIStore }
 })
 
 const mockT = vi.fn((key: string) => {
@@ -42,9 +30,6 @@ const mockT = vi.fn((key: string) => {
     'recursos.gallery_title': 'Archivos descargables',
     'recursos.download': 'Descargar',
     'recursos.empty': 'No hay recursos en esta categoría.',
-    'recursos.cta_title': '¿Necesitas ayuda con estos recursos?',
-    'recursos.cta_contact': 'Contactar',
-    'recursos.cta_ask_ai': 'Pregunta a la IA',
   }
   return m[key] || key
 })
@@ -147,16 +132,12 @@ describe('Recursos', () => {
     expect(screen.getAllByRole('link').filter(l => l.hasAttribute('download')).length).toBe(61)
   })
 
-  it('should render CTA banner with contact link to #contacto', () => {
+  it('should keep the section as a pure documentation repository with no CTAs', () => {
     render(<Recursos />)
-    const contactCta = screen.getByRole('link', { name: 'Contactar' })
-    expect(contactCta.getAttribute('href')).toBe('#contacto')
-  })
-
-  it('should open Ask AI copilot when CTA button is clicked', () => {
-    render(<Recursos />)
-    const askButton = screen.getByRole('button', { name: /Pregunta a la IA/ })
-    fireEvent.click(askButton)
-    expect(useAskAIStore.getState().setIsOpen).toHaveBeenCalledWith(true)
+    const downloadLinks = screen.getAllByRole('link').filter(l => l.hasAttribute('download'))
+    expect(downloadLinks.length).toBe(61)
+    // Only download links exist: no contact anchor, no copilot buttons
+    expect(screen.getAllByRole('link').length).toBe(downloadLinks.length)
+    expect(screen.queryByRole('button')).toBeNull()
   })
 })
