@@ -1,50 +1,56 @@
-/* eslint-disable @typescript-eslint/no-require-imports, @typescript-eslint/no-explicit-any */
 /**
- * Sentry SDK initialization for error tracking.
- * Only initializes if SENTRY_DSN is set.
+ * Sentry SDK loader for error tracking.
+ *
+ * The SDK is imported lazily and only when a DSN is actually configured —
+ * its bundle (which pulls in session-replay machinery) must never land in
+ * the initial page payload of deployments that don't use Sentry.
  */
+type SentryLike = {
+  init: (opts: Record<string, unknown>) => void
+  captureException: (e: Error, ctx?: Record<string, unknown>) => void
+  captureMessage: (m: string, level?: string) => void
+}
 
-/**
- * Initialize Sentry error tracking.
- */
-export function initSentry(): void {
-  if (!process.env.SENTRY_DSN) return;
+const DSN = process.env.NEXT_PUBLIC_SENTRY_DSN || process.env.SENTRY_DSN
+
+/** Initialize Sentry error tracking (no-op without a configured DSN). */
+export async function initSentry(): Promise<void> {
+  if (!DSN) return;
   try {
-    const Sentry = require('@sentry/nextjs');
+    const Sentry = (await import('@sentry/nextjs')) as unknown as SentryLike;
     Sentry.init({
-      dsn: process.env.SENTRY_DSN,
+      dsn: DSN,
       tracesSampleRate: 0.1,
       environment: process.env.NODE_ENV || 'development',
-      beforeSend: (event: any) => {
+      beforeSend: (event: unknown) => {
         if (process.env.NODE_ENV === 'development') return null;
         return event;
       },
     });
   } catch {
-    // Sentry not configured
+    // Sentry not configured — silently skip
   }
 }
 
-/**
- * Log an error to Sentry.
- */
-export function captureError(error: Error, context?: Record<string, unknown>): void {
-  if (!process.env.SENTRY_DSN) return;
+/** Capture an exception with optional context (no-op without a DSN). */
+export async function captureError(error: Error, context?: Record<string, unknown>): Promise<void> {
+  if (!DSN) return;
   try {
-    const Sentry = require('@sentry/nextjs');
+    const Sentry = (await import('@sentry/nextjs')) as unknown as SentryLike;
     Sentry.captureException(error, { extra: context });
   } catch {
     // Silently fail
   }
 }
 
-/**
- * Log a message to Sentry.
- */
-export function captureMessage(message: string, level: 'info' | 'warning' | 'error' = 'info'): void {
-  if (!process.env.SENTRY_DSN) return;
+/** Capture a message (no-op without a DSN). */
+export async function captureMessage(
+  message: string,
+  level: 'info' | 'warning' | 'error' = 'info',
+): Promise<void> {
+  if (!DSN) return;
   try {
-    const Sentry = require('@sentry/nextjs');
+    const Sentry = (await import('@sentry/nextjs')) as unknown as SentryLike;
     Sentry.captureMessage(message, level);
   } catch {
     // Silently fail

@@ -6,9 +6,42 @@ import { motion } from 'framer-motion'
 import type { Variants } from 'framer-motion'
 import { useLanguage } from '@/context/LanguageContext'
 import dynamic from 'next/dynamic'
+import { useEffect, useState } from 'react'
 
 const ParticleCanvas = dynamic(() => import('./ParticleCanvas'), { ssr: false })
 const RadarSweep     = dynamic(() => import('./RadarSweep'),     { ssr: false })
+
+/**
+ * Deferrable wrapper: renders `children` once the main hero content has
+ * painted (idle delay). Keeps the LCP/TBT cost of the heavy canvas layers
+ * out of the critical rendering path.
+ */
+function DeferAfter({ delay, children }: { delay: number; children: React.ReactNode }) {
+  const [ready, setReady] = useState(false)
+  useEffect(() => {
+    const t = window.setTimeout(() => setReady(true), delay)
+    return () => window.clearTimeout(t)
+  }, [delay])
+  return ready ? <>{children}</> : null
+}
+
+/**
+ * Radar sweep is hidden below lg purely via CSS, yet its rAF loop still
+ * burns main-thread time on phones. Mount it only on real desktops, honoring
+ * prefers-reduced-motion, after the page is interactive.
+ */
+function LazyRadarSweep() {
+  const [enabled, setEnabled] = useState(false)
+  useEffect(() => {
+    if (typeof window.matchMedia !== 'function') return
+    if (!window.matchMedia('(min-width: 1024px)').matches) return
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    const t = window.setTimeout(() => setEnabled(true), 2500)
+    return () => window.clearTimeout(t)
+  }, [])
+  if (!enabled) return null
+  return <RadarSweep />
+}
 
 const TEXT_VARIANTS: Variants = {
   hidden: { opacity: 0, y: 30 },
@@ -31,10 +64,12 @@ export default function Hero() {
       id="home"
       className="min-h-screen flex items-center justify-center text-center relative overflow-hidden bg-[var(--bg)] px-4 py-20"
     >
-      <ParticleCanvas />
+      <DeferAfter delay={1500}>
+        <ParticleCanvas />
+      </DeferAfter>
 
       <div className="hero-radar invisible lg:visible">
-        <RadarSweep />
+        <LazyRadarSweep />
       </div>
 
       <div

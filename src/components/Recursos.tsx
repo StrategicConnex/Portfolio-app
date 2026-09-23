@@ -7,6 +7,7 @@ import Icon from './ui/Icon'
 import { useLanguage } from '@/context/LanguageContext'
 import { useAskAIStore } from '@/stores/ask-ai-store'
 import { RECURSO_FILES, type RecursoDocMeta, type RecursoCat } from '@/data/recursos'
+import { RECURSO_SEARCH } from '@/data/recursos-outline'
 import { trackLibraryEvent } from '@/lib/observability/posthog'
 
 export type { RecursoCat } from '@/data/recursos'
@@ -28,6 +29,16 @@ function formatLabel(path: string): string {
   return path.toLowerCase().endsWith('.xlsx') ? 'XLSX' : 'DOCX'
 }
 
+/** Case/accent-insensitive normalize for the search index. */
+function normalize(s: string): string {
+  return s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
+}
+
+/** Per-file haystack: label + real extracted content snippet + headings. */
+const SEARCH_INDEX: Record<string, string> = Object.fromEntries(
+  RECURSO_FILES.map((f) => [f.path, normalize(`${f.fallback} ${RECURSO_SEARCH[f.path] || ''}`)]),
+)
+
 export default function Recursos() {
   const { t, language } = useLanguage()
   const setIsOpen = useAskAIStore((s) => s.setIsOpen)
@@ -36,13 +47,16 @@ export default function Recursos() {
   const inView = useInView(ref, { once: true, margin: '-60px' })
 
   const [activeCategory, setActiveCategory] = useState<RecursoCat | 'all'>('all')
+  const [query, setQuery] = useState('')
 
-  const filteredFiles = useMemo(
-    () => activeCategory === 'all'
+  const filteredFiles = useMemo(() => {
+    const byCategory = activeCategory === 'all'
       ? recursoFiles
-      : recursoFiles.filter(f => f.category === activeCategory),
-    [activeCategory],
-  )
+      : recursoFiles.filter((f) => f.category === activeCategory)
+    const q = normalize(query.trim())
+    if (!q) return byCategory
+    return byCategory.filter((f) => SEARCH_INDEX[f.path]?.includes(q))
+  }, [activeCategory, query])
 
   const nameFor = useCallback((f: RecursoDocMeta) => (f.labelKey ? t(f.labelKey) : f.fallback), [t])
 
@@ -100,6 +114,24 @@ export default function Recursos() {
             {recursoFiles.length}
           </span>
         </motion.p>
+
+        {/* Search box — matches on real document content (see SEARCH_INDEX) */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.5, delay: 0.18 }}
+          className="mb-4"
+        >
+          <input
+            type="search"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder={t('recursos.search_placeholder')}
+            aria-label={t('recursos.search_label')}
+            className="w-full sm:max-w-sm px-4 py-2 rounded-xl text-sm bg-transparent border outline-none transition-colors focus:border-amber-500/50"
+            style={{ borderColor: 'var(--surface-border)', color: 'var(--text-primary)' }}
+          />
+        </motion.div>
 
         {/* Category filter tabs */}
         <motion.div
