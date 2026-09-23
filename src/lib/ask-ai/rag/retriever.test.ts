@@ -81,13 +81,17 @@ describe('retrieve — unified seam', () => {
 
   it('fuses results that only the semantic component found', () => {
     const results = retrieve('gobernanza y gestión de riesgos', 'es', 10);
-    const withSemanticOnly = results.find((r) => r.keywordScore === 0 && r.semanticScore > 0);
     // The fusion must admit sources the keyword component misses: min-max maps
     // their raw keyword score (the candidate minimum) to 0 and they enter via
-    // TF-IDF similarity alone. The exact first match shifts with the corpus —
-    // today certs-main ties iso27001 at sem=8 and precedes it in ALL_SOURCES.
-    expect(withSemanticOnly).toBeDefined();
-    expect(withSemanticOnly?.source.id).toBe('certs-main');
+    // TF-IDF similarity alone. The exact winner shifts with the corpus — the
+    // downloadable library docs are strong TF-IDF matches for governance
+    // queries — so assert the invariant (semantic-only hits ranked by score)
+    // instead of a specific source id.
+    const semanticOnly = results.filter((r) => r.keywordScore === 0 && r.semanticScore > 0);
+    expect(semanticOnly.length).toBeGreaterThan(0);
+    for (let i = 1; i < semanticOnly.length; i++) {
+      expect(semanticOnly[i - 1]!.score).toBeGreaterThanOrEqual(semanticOnly[i]!.score);
+    }
   });
 });
 
