@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent, act } from '@testing-library/react'
 import Recursos from './Recursos'
+import { useAskAIStore } from '@/stores/ask-ai-store'
 
 vi.mock('framer-motion', async () => {
   const { createMotionMock } = await import('@/test-utils/framer-motion')
@@ -29,6 +30,7 @@ const mockT = vi.fn((key: string) => {
     'recursos.panel_label': 'Recursos de categoría',
     'recursos.gallery_title': 'Archivos descargables',
     'recursos.download': 'Descargar',
+    'recursos.describe': 'Describir con IA',
     'recursos.empty': 'No hay recursos en esta categoría.',
   }
   return m[key] || key
@@ -53,6 +55,7 @@ vi.mock('./ui/Icon', () => ({
 describe('Recursos', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    useAskAIStore.setState({ isOpen: false, mode: 'ask', pendingPrompt: null })
   })
 
   it('should render the section header', () => {
@@ -132,12 +135,35 @@ describe('Recursos', () => {
     expect(screen.getAllByRole('link').filter(l => l.hasAttribute('download')).length).toBe(61)
   })
 
-  it('should keep the section as a pure documentation repository with no CTAs', () => {
+  it('should keep the 61 download links intact', () => {
     render(<Recursos />)
     const downloadLinks = screen.getAllByRole('link').filter(l => l.hasAttribute('download'))
     expect(downloadLinks.length).toBe(61)
-    // Only download links exist: no contact anchor, no copilot buttons
-    expect(screen.getAllByRole('link').length).toBe(downloadLinks.length)
-    expect(screen.queryByRole('button')).toBeNull()
+    expect(screen.getAllByRole('link').length).toBe(61)
+  })
+
+  it('should render a describe-with-AI control for every document', () => {
+    render(<Recursos />)
+    expect(screen.getAllByRole('button', { name: /Describir con IA/ }).length).toBe(61)
+  })
+
+  it('should seed the copilot pendingPrompt and open it when describing a document', () => {
+    render(<Recursos />)
+    const buttons = screen.getAllByRole('button', { name: /Describir con IA/ })
+    act(() => { fireEvent.click(buttons[0]) })
+    const { isOpen, pendingPrompt } = useAskAIStore.getState()
+    expect(isOpen).toBe(true)
+    expect(pendingPrompt).toContain('Describe el documento')
+    expect(pendingPrompt).toContain('Guía: Directorio Activo (Active Directory)')
+  })
+
+  it('should clear any previous pendingPrompt when describing another document', () => {
+    useAskAIStore.setState({ pendingPrompt: 'stale prompt' })
+    render(<Recursos />)
+    const buttons = screen.getAllByRole('button', { name: /Describir con IA/ })
+    act(() => { fireEvent.click(buttons[1]) })
+    const { pendingPrompt } = useAskAIStore.getState()
+    expect(pendingPrompt).not.toBe('stale prompt')
+    expect(pendingPrompt).toContain('Guía: Hardening de Servidores')
   })
 })

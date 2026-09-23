@@ -25,6 +25,7 @@ const es = {
   'recursos.panel_label': 'Recursos de categoría',
   'recursos.gallery_title': 'Archivos descargables',
   'recursos.download': 'Descargar',
+  'recursos.describe': 'Describir con IA',
   'recursos.empty': 'No hay recursos en esta categoría.',
 } satisfies TranslationModule['es']
 
@@ -53,6 +54,7 @@ const en: TranslationModule['en'] = {
   'recursos.panel_label': 'Category resources',
   'recursos.gallery_title': 'Downloadable files',
   'recursos.download': 'Download',
+  'recursos.describe': 'Describe with AI',
   'recursos.empty': 'No resources in this category.',
 } satisfies TranslationModule['en']
 

@@ -5,6 +5,7 @@ import { useRef, useState, useCallback, useMemo } from 'react'
 import SectionHeader from './ui/SectionHeader'
 import Icon from './ui/Icon'
 import { useLanguage } from '@/context/LanguageContext'
+import { useAskAIStore } from '@/stores/ask-ai-store'
 
 export type RecursoCat = 'vol1' | 'vol2' | 'vol3' | 'vol4' | 'vol5' | 'standards' | 'project'
 
@@ -108,7 +109,9 @@ function formatLabel(path: string): string {
 }
 
 export default function Recursos() {
-  const { t } = useLanguage()
+  const { t, language } = useLanguage()
+  const setIsOpen = useAskAIStore((s) => s.setIsOpen)
+  const setPendingPrompt = useAskAIStore((s) => s.setPendingPrompt)
   const ref = useRef(null)
   const inView = useInView(ref, { once: true, margin: '-60px' })
 
@@ -122,6 +125,21 @@ export default function Recursos() {
   )
 
   const nameFor = useCallback((f: RecursoFile) => (f.labelKey ? t(f.labelKey) : f.fallback), [t])
+
+  const describeWithAI = useCallback(
+    (f: RecursoFile) => {
+      const format = formatLabel(f.path)
+      const prompt =
+        language === 'en'
+          ? `Describe the document "${nameFor(f)}" (${format}) from the IT/OT library: ` +
+            `what it contains and what it is used for in practice. Answer in at most 120 words, no headings or lists.`
+          : `Describe el documento "${nameFor(f)}" (${format}) de la biblioteca IT/OT: ` +
+            `qué contiene y para qué se utiliza en la práctica. Responde en máximo 120 palabras, sin encabezados ni listas.`
+      setPendingPrompt(prompt)
+      setIsOpen(true)
+    },
+    [language, nameFor, setPendingPrompt, setIsOpen],
+  )
 
   return (
     <section
@@ -198,18 +216,15 @@ export default function Recursos() {
             {filteredFiles.map((f) => {
               const isXlsx = formatLabel(f.path) === 'XLSX'
               return (
-                <motion.a
+                <motion.div
                   key={f.path}
                   layout
-                  href={`/${encodeURI(f.path)}`}
-                  download
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.9 }}
                   transition={{ duration: 0.3 }}
                   whileHover={{ y: -4, borderColor: 'rgba(197,164,109,0.5)', boxShadow: '0 12px 24px -6px rgba(0,0,0,0.6)' }}
-                  className="group flex flex-col p-4 rounded-xl text-left relative overflow-hidden cursor-pointer"
-                  aria-label={`${t('recursos.download')} — ${nameFor(f)}`}
+                  className="group flex flex-col p-4 rounded-xl text-left relative overflow-hidden"
                   style={{
                     background: 'var(--card)',
                     border: '1px solid var(--border)',
@@ -235,7 +250,26 @@ export default function Recursos() {
                   <h4 className="text-[13px] font-medium leading-relaxed line-clamp-3 group-hover:text-amber-300 transition-colors" style={{ color: 'var(--text-primary)' }}>
                     {nameFor(f)}
                   </h4>
-                </motion.a>
+                  <a
+                    href={`/${encodeURI(f.path)}`}
+                    download
+                    className="mt-3 flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-amber-300/90 hover:text-amber-300 transition-colors self-start"
+                    aria-label={`${t('recursos.download')} — ${nameFor(f)}`}
+                  >
+                    {t('recursos.download')}
+                    <span aria-hidden="true">↓</span>
+                  </a>
+                  <button
+                    type="button"
+                    onClick={() => describeWithAI(f)}
+                    className="mt-1.5 flex items-center gap-1.5 text-[11px] font-medium text-amber-300/90 hover:text-amber-300 transition-colors cursor-pointer self-start"
+                    aria-label={`${t('recursos.describe')} — ${nameFor(f)}`}
+                  >
+                    <Icon name="ai" label={t('recursos.describe')} size={14} />
+                    {t('recursos.describe')}
+                    <span aria-hidden="true">→</span>
+                  </button>
+                </motion.div>
               )
             })}
           </AnimatePresence>
