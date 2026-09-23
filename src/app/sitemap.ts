@@ -1,5 +1,6 @@
 import { MetadataRoute } from 'next'
 import { SITE } from '@/lib/constants'
+import { VOLUMES } from '@/lib/recursos-volumes'
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return [
@@ -39,5 +40,17 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'monthly',
       priority: 0.6,
     },
+    {
+      url: `${SITE.url}/recursos`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly',
+      priority: 0.9,
+    },
+    ...VOLUMES.map((v) => ({
+      url: `${SITE.url}/recursos/${v.slug}`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly' as const,
+      priority: 0.8,
+    })),
   ]
 }

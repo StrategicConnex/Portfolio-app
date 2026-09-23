@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-require-imports, @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * PostHog analytics client for the Ask AI Copilot.
  * Only initializes if NEXT_PUBLIC_POSTHOG_KEY is set.
@@ -12,16 +12,26 @@ let posthogClient: any = null;
 export function initPosthog(): void {
   if (typeof window === 'undefined') return;
   if (posthogClient) return;
-  if (!process.env.NEXT_PUBLIC_POSTHOG_KEY) return;
+  const key = process.env.NEXT_PUBLIC_POSTHOG_KEY;
+  if (!key) return;
 
   try {
-    const posthog = require('posthog-js');
-    posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY, {
-      api_host: process.env.NEXT_PUBLIC_POSTHOG_HOST || 'https://app.posthog.com',
-      loaded: (ph: any) => {
-        posthogClient = ph;
-      },
-    });
+    // Dynamic import keeps the posthog bundle (~230 KB) out of the initial
+    // page payload; it streams in on idle and events before `loaded` are
+    // dropped exactly as they were before any client existed.
+    void import('posthog-js')
+      .then((mod) => {
+        const posthog = (mod as { default: { init: (k: string, o: Record<string, unknown>) => void } }).default;
+        posthog.init(key, {
+          api_host: process.env.NEXT_PUBLIC_POSTHOG_HOST || 'https://app.posthog.com',
+          loaded: (ph: any) => {
+            posthogClient = ph;
+          },
+        });
+      })
+      .catch(() => {
+        console.warn('[PostHog] Failed to initialize');
+      });
   } catch {
     console.warn('[PostHog] Failed to initialize');
   }

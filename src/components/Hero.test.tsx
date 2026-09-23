@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { render, screen, act } from '@testing-library/react'
 import Hero from './Hero'
 
 vi.mock('framer-motion', async () => {
@@ -111,10 +111,22 @@ describe('Hero', () => {
     expect(screen.getByText('SISTEMA ACTIVO')).toBeDefined()
   })
 
-  it('should render dynamic components (ParticleCanvas, RadarSweep)', () => {
-    render(<Hero />)
-    const dynamicComponents = screen.getAllByTestId('dynamic-component')
-    expect(dynamicComponents.length).toBe(2)
+  it('defers heavy canvas layers until after the hero paints', () => {
+    vi.useFakeTimers()
+    try {
+      render(<Hero />)
+      // Nothing heavy mounted during the critical rendering path.
+      expect(screen.queryAllByTestId('dynamic-component')).toHaveLength(0)
+
+      act(() => {
+        vi.advanceTimersByTime(1600)
+      })
+      // ParticleCanvas mounted after idle. RadarSweep stays off: jsdom has no
+      // desktop viewport and no matchMedia, so LazyRadarSweep keeps it disabled.
+      expect(screen.getAllByTestId('dynamic-component')).toHaveLength(1)
+    } finally {
+      vi.useRealTimers()
+    }
   })
 
   it('should render decorative gradient orb', () => {

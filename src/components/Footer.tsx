@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { useLanguage } from '@/context/LanguageContext'
 
 export default function Footer() {
@@ -26,6 +27,7 @@ export default function Footer() {
         {t('footer.built_with')}
       </p>
       <p className="mt-3 opacity-70 text-xs">
+        <Link href="/recursos" className="underline mr-3" style={{ color: 'inherit' }}>{t('recursos.hub_label')}</Link>
         <a href="https://linkedin.com/in/juanfpalacios" target="_blank" rel="noopener noreferrer" className="underline mr-3" style={{ color: 'inherit' }}>LinkedIn</a>
         <a href="https://github.com/StrategicConnex/" target="_blank" rel="noopener noreferrer" className="underline mr-3" style={{ color: 'inherit' }}>GitHub</a>
         <a href="https://www.credly.com/users/juan-palacios.88e7ba6c" target="_blank" rel="noopener noreferrer" className="underline" style={{ color: 'inherit' }}>Credly</a>

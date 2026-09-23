@@ -15,6 +15,7 @@ import zlib from 'node:zlib';
 const ROOT = process.cwd();
 const DIR = path.join(ROOT, 'public/recursos');
 const OUT = path.join(ROOT, 'src/data/recursos-text.json');
+const OUT_OUTLINE = path.join(ROOT, 'src/data/recursos-outline.json');
 
 // ── Minimal ZIP reader (store + deflate) ────────────────────────────────────
 
@@ -74,6 +75,34 @@ function docxText(buf) {
   return paras.join('\n');
 }
 
+// Document outline: paragraphs styled as Heading N / Título N (any Word locale
+// that uses headingNN-style ids) map to chapters; other styles are ignored.
+function docxHeadings(buf) {
+  const xml = readZipEntry(buf, 'word/document.xml');
+  if (!xml) return [];
+  const headings = [];
+  for (const chunk of xml.split(/<\/w:p>/)) {
+    const style = /<w:pStyle w:val="([^"]+)"/.exec(chunk)?.[1] || '';
+    const m = /^(?:heading|t\u00edtulo|t\u00edtulo|ttulo|titre|berschrift)[\s_-]*(\d)/i.exec(style);
+    if (!m) continue;
+    const text = chunk.replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
+    if (text) headings.push({ t: Number.parseInt(m[1], 10), x: decodeEntities(text).slice(0, 120) });
+  }
+  return headings;
+}
+
+// Spreadsheet outline: one chapter per worksheet.
+function xlsxSheetNames(buf) {
+  const wb = readZipEntry(buf, 'xl/workbook.xml');
+  if (!wb) return [];
+  const names = [];
+  for (const m of wb.matchAll(/<sheet[^>]*name="([^"]+)"/g)) {
+    const name = decodeEntities(m[1]).trim();
+    if (name) names.push({ t: 1, x: name.slice(0, 120) });
+  }
+  return names;
+}
+
 function xlsxText(buf) {
   const sst = readZipEntry(buf, 'xl/sharedStrings.xml');
   const strings = [];
@@ -126,6 +155,7 @@ function walk(dir) {
 
 const files = walk(DIR).sort();
 const index = {};
+const outline = {};
 let failed = 0;
 
 for (const file of files) {
@@ -137,11 +167,21 @@ for (const file of files) {
     // Some corpus files are plain text (Markdown) with an Office extension —
     // fall back to a direct UTF-8 read when the ZIP signature is absent.
     const isZip = buf.length > 4 && buf.readUInt32LE(0) === 0x04034b50;
-    const text = isZip
-      ? (/\.xlsx$/i.test(rel) ? xlsxText(buf) : docxText(buf))
-      : buf.toString('utf8');
+    const isXlsx = /\.xlsx$/i.test(rel);
+    const text = isZip ? (isXlsx ? xlsxText(buf) : docxText(buf)) : buf.toString('utf8');
     index[rel] = text;
-    console.log(`✓ ${rel} — ${text.length} chars${isZip ? '' : ' (plaintext)'}`);
+
+    // Outline (chapter index) per format.
+    let heads = [];
+    if (isZip) heads = isXlsx ? xlsxSheetNames(buf) : docxHeadings(buf);
+    else for (const line of text.split('\n')) {
+      const m = /^(#{1,6})\s+(.+)/.exec(line.trim());
+      if (m) heads.push({ t: m[1].length, x: m[2].slice(0, 120) });
+    }
+    outline[rel] = heads;
+
+    // Search snippet: the document's opening text (title zone), collapsed.
+    console.log(`✓ ${rel} — ${text.length} chars, ${heads.length} headings${isZip ? '' : ' (plaintext)'}`);
   } catch (err) {
     failed += 1;
     console.error(`✗ ${rel} — ${err.message}`);
@@ -151,5 +191,16 @@ for (const file of files) {
 
 fs.mkdirSync(path.dirname(OUT), { recursive: true });
 fs.writeFileSync(OUT, `${JSON.stringify(index, null, 2)}\n`, 'utf8');
+
+// Search index: first ~800 chars per document + all heading texts, so the
+// library search matches on real content without shipping the full corpus.
+const search = {};
+for (const [rel, text] of Object.entries(index)) {
+  const heads = (outline[rel] || []).map((h) => h.x).join(' · ');
+  search[rel] = `${text.replace(/\s+/g, ' ').trim().slice(0, 800)}${heads ? ` || ${heads}` : ''}`;
+}
+fs.writeFileSync(OUT_OUTLINE, `${JSON.stringify({ outline, search }, null, 2)}\n`, 'utf8');
+
 console.log(`\n${Object.keys(index).length} files indexed → ${path.relative(ROOT, OUT)} (${failed} failed)`);
+console.log(`outline+search → ${path.relative(ROOT, OUT_OUTLINE)}`);
 if (failed > 0) process.exit(1);

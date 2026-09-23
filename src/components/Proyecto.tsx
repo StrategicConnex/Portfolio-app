@@ -1,12 +1,18 @@
 'use client'
 
 import React, { useState } from 'react'
+import dynamic from 'next/dynamic'
 import { motion, AnimatePresence } from 'framer-motion'
 import SectionHeader from './ui/SectionHeader'
 
 import { useLanguage } from '@/context/LanguageContext'
 import { ShieldCheck, ShieldAlert, ArrowRight, Zap, Database, Lock } from 'lucide-react'
-import CaseStudyDetail from './CaseStudyDetail'
+
+/**
+ * Case-study detail overlay (three.js hero inside) is only ever shown on
+ * click — never render it (or its ~1.2 MB three.js bundle) during hydration.
+ */
+const CaseStudyDetail = dynamic(() => import('./CaseStudyDetail'), { ssr: false })
 
 const CASE_STUDIES = [
   {
