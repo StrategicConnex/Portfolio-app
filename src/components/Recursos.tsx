@@ -7,6 +7,7 @@ import Icon from './ui/Icon'
 import { useLanguage } from '@/context/LanguageContext'
 import { useAskAIStore } from '@/stores/ask-ai-store'
 import { RECURSO_FILES, type RecursoDocMeta, type RecursoCat } from '@/data/recursos'
+import { trackLibraryEvent } from '@/lib/observability/posthog'
 
 export type { RecursoCat } from '@/data/recursos'
 
@@ -44,6 +45,17 @@ export default function Recursos() {
   )
 
   const nameFor = useCallback((f: RecursoDocMeta) => (f.labelKey ? t(f.labelKey) : f.fallback), [t])
+
+  const trackEvent = useCallback(
+    (eventType: 'download' | 'describe', f: RecursoDocMeta) =>
+      trackLibraryEvent(eventType, {
+        file: f.path,
+        category: f.category,
+        format: formatLabel(f.path),
+        language,
+      }),
+    [language],
+  )
 
   const describeWithAI = useCallback(
     (f: RecursoDocMeta) => {
@@ -172,6 +184,7 @@ export default function Recursos() {
                   <a
                     href={`/${encodeURI(f.path)}`}
                     download
+                    onClick={() => trackEvent('download', f)}
                     className="mt-3 flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-amber-300/90 hover:text-amber-300 transition-colors self-start"
                     aria-label={`${t('recursos.download')} — ${nameFor(f)}`}
                   >
@@ -180,7 +193,7 @@ export default function Recursos() {
                   </a>
                   <button
                     type="button"
-                    onClick={() => describeWithAI(f)}
+                    onClick={() => { trackEvent('describe', f); describeWithAI(f) }}
                     className="mt-1.5 flex items-center gap-1.5 text-[11px] font-medium text-amber-300/90 hover:text-amber-300 transition-colors cursor-pointer self-start"
                     aria-label={`${t('recursos.describe')} — ${nameFor(f)}`}
                   >

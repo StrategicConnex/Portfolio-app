@@ -60,3 +60,21 @@ export function trackAiEvent(
 ): void {
   captureEvent(`ask_ai_${eventType}`, data as Record<string, unknown>);
 }
+
+/**
+ * Track library (Recursos) event.
+ */
+export function trackLibraryEvent(
+  eventType: 'download' | 'describe',
+  data: {
+    /** Path under public/, e.g. 'recursos/estandares/IEC_62443_resumen.docx'. */
+    file: string;
+    /** Category tab: vol1..vol5 | standards | project. */
+    category: string;
+    /** File format: DOCX | XLSX. */
+    format: string;
+    language?: string;
+  },
+): void {
+  captureEvent(`library_${eventType}`, data as Record<string, unknown>);
+}

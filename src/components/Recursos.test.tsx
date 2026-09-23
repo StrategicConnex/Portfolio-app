@@ -2,6 +2,11 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent, act } from '@testing-library/react'
 import Recursos from './Recursos'
 import { useAskAIStore } from '@/stores/ask-ai-store'
+import { trackLibraryEvent } from '@/lib/observability/posthog'
+
+vi.mock('@/lib/observability/posthog', () => ({
+  trackLibraryEvent: vi.fn(),
+}))
 
 vi.mock('framer-motion', async () => {
   const { createMotionMock } = await import('@/test-utils/framer-motion')
@@ -165,5 +170,29 @@ describe('Recursos', () => {
     const { pendingPrompt } = useAskAIStore.getState()
     expect(pendingPrompt).not.toBe('stale prompt')
     expect(pendingPrompt).toContain('Guía: Hardening de Servidores')
+  })
+
+  it('should track a download event with file metadata', () => {
+    render(<Recursos />)
+    const links = screen.getAllByRole('link').filter(l => l.hasAttribute('download')) as HTMLAnchorElement[]
+    fireEvent.click(links[0])
+    expect(vi.mocked(trackLibraryEvent)).toHaveBeenCalledWith('download', {
+      file: 'recursos/guias/vol1/guia_directorio_activedirectory.docx',
+      category: 'vol1',
+      format: 'DOCX',
+      language: 'es',
+    })
+  })
+
+  it('should track a describe event when opening the copilot from a card', () => {
+    render(<Recursos />)
+    const buttons = screen.getAllByRole('button', { name: /Describir con IA/ })
+    fireEvent.click(buttons[0])
+    expect(vi.mocked(trackLibraryEvent)).toHaveBeenCalledWith('describe', {
+      file: 'recursos/guias/vol1/guia_directorio_activedirectory.docx',
+      category: 'vol1',
+      format: 'DOCX',
+      language: 'es',
+    })
   })
 })
