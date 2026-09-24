@@ -17,6 +17,12 @@ vi.mock('framer-motion', async () => {
   }
 })
 
+/** Devuelve el parámetro `f` (ruta real) de un enlace /api/track/download. */
+function trackedFile(l: HTMLAnchorElement): string | null {
+  const href = l.getAttribute('href') ?? ''
+  return new URLSearchParams(href.split('?')[1] ?? '').get('f')
+}
+
 const mockT = vi.fn((key: string) => {
   const m: Record<string, string> = {
     'recursos.label': 'Recursos',
@@ -95,12 +101,14 @@ describe('Recursos', () => {
     expect(downloadLinks.length).toBe(61)
   })
 
-  it('should expose download links pointing to /recursos paths', () => {
+  it('should route download links through the tracking endpoint with the real path', () => {
     render(<Recursos />)
     const links = screen.getAllByRole('link') as HTMLAnchorElement[]
     const standards = links.filter(l => l.getAttribute('href')?.includes('IEC_62443_resumen'))
     expect(standards.length).toBe(1)
-    expect(standards[0].getAttribute('href')).toBe('/recursos/estandares/IEC_62443_resumen.docx')
+    expect(standards[0].getAttribute('href')).toBe(
+      '/api/track/download?f=%2Frecursos%2Festandares%2FIEC_62443_resumen.docx',
+    )
     expect(standards[0].hasAttribute('download')).toBe(true)
   })
 
@@ -119,7 +127,7 @@ describe('Recursos', () => {
     const links = screen.getAllByRole('link').filter(l => l.hasAttribute('download')) as HTMLAnchorElement[]
     expect(links.length).toBe(8)
     for (const l of links) {
-      expect(l.getAttribute('href')).toContain('/recursos/estandares/')
+      expect(trackedFile(l)?.startsWith('/recursos/estandares/')).toBe(true)
     }
   })
 
@@ -129,7 +137,7 @@ describe('Recursos', () => {
     const links = screen.getAllByRole('link').filter(l => l.hasAttribute('download')) as HTMLAnchorElement[]
     expect(links.length).toBe(2)
     expect(links.some(l => l.getAttribute('href')?.includes('ROADMAP_ITOT_2025_2035'))).toBe(true)
-    expect(links.some(l => l.getAttribute('href')?.endsWith('/recursos/README.docx'))).toBe(true)
+    expect(links.some(l => trackedFile(l) === '/recursos/README.docx')).toBe(true)
   })
 
   it('should return to all files when Todos is clicked', () => {

@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { RECURSO_FILES } from '@/data/recursos'
+import { RECURSO_FILES, recursoDownloadHref } from '@/data/recursos'
 import { VOLUMES } from '@/lib/recursos-volumes'
 import { getServerT } from '@/lib/server-i18n'
 import { SITE } from '@/lib/constants'
@@ -89,7 +89,7 @@ export default async function RecursosHubPage() {
                       {(f.labelKey && dict[f.labelKey]) || f.fallback}
                     </span>
                     <a
-                      href={`/${encodeURI(f.path)}`}
+                      href={recursoDownloadHref(f.path)}
                       download
                       className="shrink-0 text-[10px] font-bold uppercase tracking-[2px] text-[var(--blue)] hover:underline"
                     >

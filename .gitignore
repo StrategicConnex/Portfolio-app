@@ -52,3 +52,9 @@ playwright-report/
 test-results/
 .lighthouseci/
 .tmp-meta/
+
+# download-stats log (registro local de descargas)
+.data/
+
+# auditoría visual (capturas Playwright)
+.audit/

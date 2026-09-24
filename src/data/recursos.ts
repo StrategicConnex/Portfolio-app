@@ -76,3 +76,12 @@ export const RECURSO_FILES: RecursoDocMeta[] = [
   { path: 'recursos/README.docx', fallback: 'README — Sobre el proyecto del libro', category: 'project' },
   { path: 'recursos/ROADMAP_ITOT_2025_2035.docx', fallback: 'Roadmap IT/OT 2025–2035', category: 'project' },
 ]
+
+/**
+ * href de descarga: pasa por el endpoint de tracking
+ * (`/api/track/download`), que registra el evento (IP, archivo, UA…) y
+ * redirige con 307 al archivo estático de `public/`.
+ */
+export function recursoDownloadHref(path: string): string {
+  return `/api/track/download?f=${encodeURIComponent(`/${path}`)}`
+}

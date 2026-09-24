@@ -75,10 +75,12 @@ describe('Volume detail page (/recursos/[volumen])', () => {
     expect(downloads).toHaveLength(expected)
   })
 
-  it('builds download hrefs from the real file paths', async () => {
+  it('builds download hrefs through the tracking endpoint with the real file path', async () => {
     const ui = await VolumePage({ params: Promise.resolve({ volumen: 'vol1' }) })
     const { container } = render(ui)
-    const link = container.querySelector('a[href="/recursos/guias/vol1/guia_implementacion_vpn.docx"]')
+    const link = container.querySelector(
+      'a[href="/api/track/download?f=%2Frecursos%2Fguias%2Fvol1%2Fguia_implementacion_vpn.docx"]',
+    )
     expect(link).not.toBeNull()
     expect(link?.getAttribute('download')).not.toBeNull()
   })
