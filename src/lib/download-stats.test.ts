@@ -101,6 +101,72 @@ describe('file backend (NDJSON)', () => {
   })
 })
 
+describe('redis backend (Upstash REST)', () => {
+  const ev: DownloadEvent = {
+    file: '/recursos/estandares/IEC_62443_resumen.docx',
+    ts: '2026-09-24T12:00:00.000Z',
+    ip: '203.0.113.9',
+  }
+
+  beforeEach(() => {
+    vi.stubEnv('UPSTASH_REDIS_REST_URL', 'https://example.upstash.io')
+    vi.stubEnv('UPSTASH_REDIS_REST_TOKEN', 'tok')
+  })
+
+  afterEach(() => {
+    vi.unstubAllEnvs()
+    vi.unstubAllGlobals()
+    vi.restoreAllMocks()
+  })
+
+  it('sends one flat command per request (never a nested pipeline)', async () => {
+    const fetchMock = vi.fn<
+      (url: string | URL | Request, init?: RequestInit) => Promise<Response>
+    >(async () => ({ ok: true, json: async () => ({ result: 1 }) }) as Response)
+    vi.stubGlobal('fetch', fetchMock)
+
+    await recordDownload(ev)
+
+    // El endpoint de Upstash rechaza con 400 los cuerpos anidados [[cmd,…],…]:
+    // cada petición debe llevar UN comando plano cuyo primer elemento es string.
+    expect(fetchMock).toHaveBeenCalledTimes(2)
+    const bodies = fetchMock.mock.calls.map((c) => JSON.parse(String(c[1]?.body)))
+    expect(bodies[0]).toEqual(['RPUSH', 'downloads:log', JSON.stringify(ev)])
+    expect(bodies[1][0]).toBe('LTRIM')
+    for (const body of bodies) expect(typeof body[0]).toBe('string')
+    expect((fetchMock.mock.calls[0][1]?.headers as Record<string, string>).Authorization).toBe('Bearer tok')
+  })
+
+  it('readRecent parses LRANGE results', async () => {
+    const fetchMock = vi.fn<
+      (url: string | URL | Request, init?: RequestInit) => Promise<Response>
+    >(async () => ({ ok: true, json: async () => ({ result: [JSON.stringify(ev)] }) }) as Response)
+    vi.stubGlobal('fetch', fetchMock)
+
+    expect(await readRecent(10)).toEqual([ev])
+    expect(JSON.parse(String(fetchMock.mock.calls[0][1]?.body))).toEqual([
+      'LRANGE',
+      'downloads:log',
+      -10,
+      -1,
+    ])
+  })
+
+  it('never throws on HTTP errors and the panel falls back to no data', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn<
+        (url: string | URL | Request, init?: RequestInit) => Promise<Response>
+      >(async () =>
+        ({ ok: false, status: 400, text: async () => '{"error":"bad"}' }) as unknown as Response),
+    )
+    vi.spyOn(console, 'warn').mockImplementation(() => {})
+
+    await expect(recordDownload(ev)).resolves.toBeUndefined()
+    expect(await readRecent()).toEqual([])
+  })
+})
+
 describe('countByFile', () => {
   it('aggregates per file sorted by count desc', () => {
     const events: DownloadEvent[] = [

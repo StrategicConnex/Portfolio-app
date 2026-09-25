@@ -57,17 +57,24 @@ function logFile(): string {
   return process.env.DOWNLOAD_STATS_FILE ?? join(process.cwd(), '.data', 'descargas.ndjson')
 }
 
-/** Ejecuta comandos Redis vía la REST API de Upstash (pipeline). */
-async function redis(commands: (string | number)[][]): Promise<unknown> {
+/**
+ * Ejecuta un comando Redis vía la REST API de Upstash — **un comando por
+ * petición**: el endpoint rechaza con 400 el formato de pipeline anidado
+ * (`[[cmd, ...], …]`), así que cada comando viaja solo.
+ */
+async function redis(cmd: (string | number)[]): Promise<unknown> {
   const cfg = redisConfig()
   if (!cfg) throw new Error('upstash no configurado')
   const res = await fetch(cfg.url, {
     method: 'POST',
     headers: { Authorization: `Bearer ${cfg.token}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify(commands),
+    body: JSON.stringify(cmd),
     cache: 'no-store',
   })
-  if (!res.ok) throw new Error(`upstash HTTP ${res.status}`)
+  if (!res.ok) {
+    const detail = await res.text().catch(() => '')
+    throw new Error(`upstash HTTP ${res.status}: ${detail}`)
+  }
   return res.json()
 }
 
@@ -76,10 +83,8 @@ export async function recordDownload(ev: DownloadEvent): Promise<void> {
   try {
     const line = JSON.stringify(ev)
     if (redisConfig()) {
-      await redis([
-        ['RPUSH', REDIS_KEY, line],
-        ['LTRIM', REDIS_KEY, -MAX_EVENTS, -1],
-      ])
+      await redis(['RPUSH', REDIS_KEY, line])
+      await redis(['LTRIM', REDIS_KEY, -MAX_EVENTS, -1])
       return
     }
     const file = logFile()
@@ -104,7 +109,7 @@ export async function readRecent(limit = 500): Promise<DownloadEvent[]> {
   const take = Math.min(limit, MAX_EVENTS)
   try {
     if (redisConfig()) {
-      const res = (await redis([['LRANGE', REDIS_KEY, -take, -1]])) as { result?: string[] }
+      const res = (await redis(['LRANGE', REDIS_KEY, -take, -1])) as { result?: string[] }
       return (res.result ?? []).map(safeParse).filter((e): e is DownloadEvent => e !== null)
     }
     const raw = await readFile(logFile(), 'utf8')
