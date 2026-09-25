@@ -1,7 +1,11 @@
 import { NextResponse, type NextRequest } from 'next/server'
 import { isTrackableFile, recordDownload, type DownloadEvent } from '@/lib/download-stats'
+import { checkRateLimit, getClientId } from '@/lib/rate-limit'
 
 export const dynamic = 'force-dynamic'
+
+/** Descargas por minuto y cliente (ventana fija Redis/memoria). */
+const DOWNLOADS_PER_MIN = 30
 
 /**
  * Registra una descarga de la biblioteca y redirige (307) al archivo estático.
@@ -17,6 +21,17 @@ export async function GET(req: NextRequest) {
   const file = req.nextUrl.searchParams.get('f')
   if (!isTrackableFile(file)) {
     return new NextResponse('Not found', { status: 404 })
+  }
+
+  // Rate limit por cliente (última entrada de x-forwarded-for, la que añade
+  // el edge confiable). Fail-open: si Redis cae, la descarga pasa igual.
+  // Un humano no descarga 30 documentos/minuto; un scraper sí.
+  const limit = await checkRateLimit(getClientId(req), DOWNLOADS_PER_MIN)
+  if (!limit.allowed) {
+    return new NextResponse('Too many requests', {
+      status: 429,
+      headers: { 'Retry-After': String(Math.ceil(limit.resetIn / 1000)) },
+    })
   }
 
   const forwarded = req.headers.get('x-forwarded-for')
