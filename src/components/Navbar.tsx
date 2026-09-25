@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { usePathname } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useLanguage } from '@/context/LanguageContext'
 import { ThemeToggle } from '@/components/ui/theme-toggle'
@@ -21,6 +22,11 @@ const linkKeys = [
 
 export default function Navbar() {
   const { language, setLanguage, t } = useLanguage()
+  const pathname = usePathname()
+  // Las secciones (#perfil, …) viven en la home: desde otra ruta el ancla
+  // debe incluir la ruta (/ + #perfil) para no caer en un hash muerto.
+  const onHome = pathname === '/'
+  const hrefFor = (href: string) => (onHome ? href : `/${href}`)
   const [scrolled, setScrolled]   = useState(false)
   const [active,   setActive]     = useState('')
   const [menuOpen, setMenuOpen]   = useState(false)
@@ -53,6 +59,16 @@ export default function Navbar() {
     return () => observer.disconnect()
   }, [])
 
+  // Escape cierra el drawer móvil (accesibilidad de teclado).
+  useEffect(() => {
+    if (!menuOpen) return
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setMenuOpen(false)
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [menuOpen])
+
   return (
     <>
       <motion.nav
@@ -71,11 +87,11 @@ export default function Navbar() {
           style={{ width: `${progress}%` }} 
         />
 
-        <div className="max-w-[1100px] mx-auto px-6 h-16 md:h-20 flex items-center justify-between">
+        <div className="max-w-[1280px] mx-auto px-6 h-16 md:h-20 flex items-center justify-between">
           
           {/* Logo */}
           <motion.a
-            href="#"
+            href="/"
             whileHover={{ scale: 1.05 }}
             className="text-[var(--gold)] font-bold text-lg md:text-xl tracking-[2px] cursor-pointer"
           >
@@ -83,15 +99,15 @@ export default function Navbar() {
           </motion.a>
 
           {/* Desktop Navigation */}
-          <ul className="hidden lg:flex items-center gap-5 lg:gap-6 xl:gap-8 list-none m-0 p-0">
+          <ul className="hidden lg:flex items-center gap-4 lg:gap-5 xl:gap-6 list-none m-0 p-0">
             {linkKeys.map(link => {
               const isActive = active === link.href.slice(1)
               const label = t(link.key) || link.label
               return (
                 <li key={link.href}>
                   <a
-                    href={link.href}
-                    className={`nav-link text-[10px] uppercase tracking-wider transition-colors duration-300 font-medium relative py-1 ${
+                    href={hrefFor(link.href)}
+                    className={`nav-link whitespace-nowrap text-[10px] uppercase tracking-wider transition-colors duration-300 font-medium relative py-1 ${
                       isActive ? 'text-[var(--blue)]' : 'text-muted-foreground hover:text-[var(--blue)]'
                     }`}
                   >
@@ -145,15 +161,17 @@ export default function Navbar() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setMenuOpen(false)}
-              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[98] lg:hidden"
+              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] lg:hidden"
             />
-            {/* Scrim stays dark in both themes — it must dim whatever sits behind. */}
+            {/* Scrim stays dark in both themes — it must dim whatever sits behind.
+                The panel sits ABOVE the nav (z-101 > z-100): otherwise the fixed
+                nav intercepts clicks on the drawer's own close button. */}
             <motion.div
               initial={{ x: '100%' }}
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'spring', stiffness: 300, damping: 35 }}
-              className="fixed top-0 right-0 bottom-0 w-[280px] bg-[var(--surface-elevated)] z-[99] p-8 flex flex-col gap-8 shadow-2xl lg:hidden"
+              className="fixed top-0 right-0 bottom-0 w-[280px] bg-[var(--surface-elevated)] z-[101] p-8 flex flex-col gap-8 shadow-2xl lg:hidden"
             >
               <div className="flex justify-between items-center mb-4">
                 <span className="text-[var(--gold)] font-bold text-xl tracking-wider">MENU</span>
@@ -165,7 +183,7 @@ export default function Navbar() {
                 {linkKeys.map((link, i) => (
                   <motion.a
                     key={link.href}
-                    href={link.href}
+                    href={hrefFor(link.href)}
                     initial={{ x: 20, opacity: 0 }}
                     animate={{ x: 0, opacity: 1 }}
                     transition={{ delay: i * 0.05 }}

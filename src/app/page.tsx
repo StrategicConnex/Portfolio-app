@@ -1,6 +1,5 @@
 import dynamic from 'next/dynamic'
 import { Suspense } from 'react'
-import Navbar          from '@/components/Navbar'
 import Hero            from '@/components/Hero'
 import Perfil          from '@/components/Perfil'
 
@@ -24,16 +23,15 @@ const AuditHub        = dynamic(() => import('@/components/AuditHub'))
 const SCAudit         = dynamic(() => import('@/components/SCAudit'))
 const Blog            = dynamic(() => import('@/components/Blog'))
 const Recursos        = dynamic(() => import('@/components/Recursos'))
-import { AskAICopilotShell } from '@/components/ask-ai/AskAICopilotShell'
 
 const Proyecto        = dynamic(() => import('@/components/Proyecto'))
 const Contacto        = dynamic(() => import('@/components/Contacto'))
-const Footer          = dynamic(() => import('@/components/Footer'))
 
 export default function Home() {
   return (
     <>
-      <Navbar />
+      {/* Navbar, copiloto y footer vienen del layout raíz (globales en todas
+          las rutas); la home solo compone sus secciones. */}
       <main id="main-content">
         {/* ── 1. Anchor — Hero + identity ── */}
         <Hero />
@@ -89,10 +87,6 @@ export default function Home() {
           <Contacto />
         </Suspense>
       </main>
-      <AskAICopilotShell />
-      <Suspense fallback={<div aria-hidden="true" />}>
-        <Footer />
-      </Suspense>
     </>
   )
 }

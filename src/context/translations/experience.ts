@@ -2,7 +2,7 @@ import type { TranslationModule } from './index'
 
 const es = {
   'experience.label': 'Trayectoria',
-  'experience.title': 'Experience',
+  'experience.title': 'Experiencia',
   'experience.highlight': 'Laboral',
   'experience.badge.years': '20+ años en el sector industrial',
   'experience.badge.location': 'Oil & Gas · Neuquén · Argentina',

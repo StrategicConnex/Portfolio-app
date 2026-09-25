@@ -11,6 +11,9 @@ import Script from 'next/script'
 import { ObservabilityProvider } from '@/components/observability/ObservabilityProvider'
 import { HtmlLangUpdater } from '@/components/HtmlLangUpdater'
 import { SkipToContent } from '@/components/ui/SkipToContent'
+import Navbar from '@/components/Navbar'
+import Footer from '@/components/Footer'
+import { AskAICopilotShell } from '@/components/ask-ai/AskAICopilotShell'
 
 export const viewport: Viewport = {
   themeColor: [
@@ -226,7 +229,14 @@ export default async function RootLayout({
           <ThemeProvider initialPreference={initialTheme}>
             <HtmlLangUpdater />
             <ObservabilityProvider>
+              {/* Chrome global en TODAS las rutas: sin esto, cualquier página
+                  fuera de la home (p. ej. /recursos) queda huérfana — sin menú,
+                  sin footer y sin copiloto, un callejón sin salida para quien
+                  llega desde buscadores. */}
+              <Navbar />
               {children}
+              <AskAICopilotShell />
+              <Footer />
             </ObservabilityProvider>
           </ThemeProvider>
         </LanguageProvider>

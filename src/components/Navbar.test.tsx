@@ -35,6 +35,13 @@ vi.mock('@/context/LanguageContext', () => ({
   }),
 }))
 
+// La nav es global (layout raíz): los tests asumen la home, donde los links
+// son anclas puras (#perfil, …) sin el prefijo de ruta.
+const mockPathname = vi.fn(() => '/')
+vi.mock('next/navigation', () => ({
+  usePathname: () => mockPathname(),
+}))
+
 vi.mock('@/context/ThemeContext', () => ({
   useTheme: () => ({
     preference: 'system',
