@@ -56,7 +56,10 @@ export default function NotFound() {
           className="inline-block px-6 py-2.5 rounded-lg text-sm font-semibold transition-opacity hover:opacity-90"
           style={{
             background: 'var(--gold)',
-            color: '#0a0d12',
+            // Texto en el color del fondo de página: pasa 4.5:1 contra el
+            // --gold de AMBOS temas (el gold claro es oscuro, el oscuro es
+            // claro — el texto siempre queda del lado opuesto del contraste).
+            color: 'var(--bg)',
           }}
         >
           {t('shell.notfound.back')}

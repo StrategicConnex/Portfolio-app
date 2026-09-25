@@ -18,15 +18,41 @@ import AxeBuilder from '@axe-core/playwright';
 const LANGS = ['es', 'en'] as const;
 type Lang = (typeof LANGS)[number];
 
+interface AuditedRoute {
+  /** App-router path to `page.goto`. */
+  path: string;
+  /** UI copy painted by SSR differs per language → scan both, report per lang. */
+  langs?: readonly Lang[];
+}
+
 /** Home page (dynamic SSR with the full layout chrome) is always audited. */
-const HOME = '/';
+const HOME: AuditedRoute = { path: '/', langs: LANGS };
 
 /**
  * Static index pages are also audited: they bypass the home streaming shell
- * and exercise their own layouts. Keep the list short — each route is
- * scanned twice (once per language) and axe is not free.
+ * and exercise their own layouts. Keep the list short — each (route × lang)
+ * pair is a full axe scan and axe is not free.
  */
-const EXTRA_ROUTES = ['/recursos', '/estadisticas'];
+const EXTRA_ROUTES: AuditedRoute[] = [
+  { path: '/recursos', langs: LANGS },
+  { path: '/estadisticas', langs: LANGS },
+  // The private login page paints Spanish-only copy (VOLUME_LABEL and the
+  // form live in Spanish; no i18n seam on this route yet).
+  { path: '/estadisticas-privadas/login' },
+];
+
+/** Languages to audit for a route (defaults to both). */
+const langsFor = (route: AuditedRoute): readonly Lang[] => route.langs ?? LANGS;
+
+/**
+ * Navigate + scan in one place so every (route × lang) audit exercises the
+ * exact same sequence: set language seam → goto → settle → scan.
+ */
+async function navigateAndScan(page: Page, route: AuditedRoute, lang: Lang) {
+  await setLanguage(page, lang);
+  await page.goto(route.path);
+  return scanAxe(page);
+}
 
 const BLOCKING_IMPACTS = ['critical', 'serious'] as const;
 
@@ -108,15 +134,10 @@ async function scanAxe(page: Page) {
   return violations;
 }
 
-for (const lang of LANGS) {
-  test.describe(`a11y gate: language ${lang}`, () => {
-    test.beforeEach(async ({ page }) => {
-      await setLanguage(page, lang);
-    });
-
-    test(`home page has no blocking a11y violations (${lang})`, async ({ page }) => {
-      await page.goto(HOME);
-      const violations = await scanAxe(page);
+for (const route of [HOME, ...EXTRA_ROUTES]) {
+  for (const lang of langsFor(route)) {
+    test(`no blocking a11y violations on ${route.path} (${lang})`, async ({ page }) => {
+      const violations = await navigateAndScan(page, route, lang);
 
       const blocking = violations.filter((v) =>
         (BLOCKING_IMPACTS as readonly string[]).includes(v.impact ?? ''),
@@ -127,7 +148,7 @@ for (const lang of LANGS) {
 
       if (advisories.length > 0) {
         console.warn(
-          `[axe advisory] ${lang}${HOME}:`,
+          `[axe advisory] ${lang}${route.path}:`,
           JSON.stringify(
             advisories.map((v) => ({ id: v.id, impact: v.impact, nodes: v.nodes.length })),
           ),
@@ -136,26 +157,10 @@ for (const lang of LANGS) {
 
       expect(
         blocking,
-        `Blocking a11y violations on ${HOME} (${lang}). ` +
+        `Blocking a11y violations on ${route.path} (${lang}). ` +
           'Fix them or, for intentional/embedded third-party widgets, justify ' +
           'an exclusion in this spec — never lower the threshold.',
       ).toEqual([]);
     });
-
-    for (const route of EXTRA_ROUTES) {
-      test(`no blocking a11y violations on ${route} (${lang})`, async ({ page }) => {
-        await page.goto(route);
-        const violations = await scanAxe(page);
-
-        const blocking = violations.filter((v) =>
-          (BLOCKING_IMPACTS as readonly string[]).includes(v.impact ?? ''),
-        );
-
-        expect(
-          blocking,
-          `Blocking a11y violations on ${route} (${lang})`,
-        ).toEqual([]);
-      });
-    }
-  });
+  }
 }

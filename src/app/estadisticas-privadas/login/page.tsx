@@ -25,19 +25,25 @@ export default async function PanelLoginPage({ searchParams }: Props) {
   return (
     <main
       className="mx-auto flex min-h-screen max-w-md flex-col items-center justify-center px-4 py-10"
-      style={{ background: 'var(--bg2, #0b1220)', color: 'var(--text, #e2e8f0)' }}
+      // Tokens del tema (no dark fijo): el chrome global (navbar/footer con
+      // blur) sí sigue el tema del sitio, así que un fondo dark fijo creaba
+      // una mezcla imposible (blur claro sobre oscuro → gris sin contraste).
+      style={{ background: 'var(--bg)', color: 'var(--text)' }}
     >
-      <div className="w-full rounded-xl border border-slate-700/60 bg-slate-900/60 p-6">
-        <p className="text-[11px] font-bold uppercase tracking-[3px] text-blue-400">Panel privado</p>
+      <div
+        className="w-full rounded-xl border border-[var(--surface-border)] p-6"
+        style={{ background: 'var(--card)' }}
+      >
+        <p className="text-[11px] font-bold uppercase tracking-[3px]" style={{ color: 'var(--blue)' }}>Panel privado</p>
         <h1 className="mt-1 text-xl font-bold">Acceso restringido</h1>
 
         {e === '1' && (
-          <p className="mt-3 text-xs text-amber-400" data-testid="login-error">
+          <p className="mt-3 text-xs" style={{ color: 'var(--warn)' }} data-testid="login-error">
             Clave incorrecta.
           </p>
         )}
         {e === 'rate' && (
-          <p className="mt-3 text-xs text-amber-400" data-testid="login-rate">
+          <p className="mt-3 text-xs" style={{ color: 'var(--warn)' }} data-testid="login-rate">
             Demasiados intentos. Espera un minuto.
           </p>
         )}
@@ -50,11 +56,17 @@ export default async function PanelLoginPage({ searchParams }: Props) {
             autoComplete="off"
             placeholder="Clave de acceso"
             aria-label="Clave de acceso"
-            className="w-full rounded-lg border border-slate-600/60 bg-slate-800/60 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-500 focus:border-blue-500 focus:outline-none"
+            className="w-full rounded-lg px-3 py-2 text-sm focus:outline-none"
+            style={{
+              border: '1px solid var(--surface-border-strong, var(--surface-border))',
+              background: 'var(--card)',
+              color: 'var(--text)',
+            }}
           />
           <button
             type="submit"
-            className="w-full rounded-lg bg-blue-600 px-3 py-2 text-sm font-bold text-white transition-colors hover:bg-blue-500"
+            className="w-full rounded-lg px-3 py-2 text-sm font-bold transition-colors"
+            style={{ background: 'var(--blue)', color: 'var(--bg)' }}
           >
             Entrar
           </button>

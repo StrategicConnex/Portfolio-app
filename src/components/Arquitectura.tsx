@@ -6,10 +6,12 @@ import FadeIn from './ui/FadeIn'
 import Icon from './ui/Icon'
 import { useLanguage } from '@/context/LanguageContext'
 
+// `color` (hex) queda para fills/borders/glow translúcidos; el TEXTO usa un
+// token AA (`textColor`) que cambia por tema — mismo criterio que Experiencia.
 const domainCards = [
-  { color: '#F97316', icon: 'industry', title: 'arch.domain.ot', items: ['Modbus', 'DNP3', 'SCADA', 'Field Devices'] },
-  { color: '#8B5CF6', icon: 'network', title: 'arch.domain.infra', items: ['arch.domain.items.virt', 'arch.domain.items.networks', 'arch.domain.items.firewalls'] },
-  { color: '#EF4444', icon: 'shield', title: 'arch.domain.security', items: ['SIEM / SOC', 'NIST CSF', 'ISO 27001', 'arch.domain.items.strategy'] },
+  { color: '#F97316', textColor: 'var(--warn)', icon: 'industry', title: 'arch.domain.ot', items: ['Modbus', 'DNP3', 'SCADA', 'Field Devices'] },
+  { color: '#8B5CF6', textColor: 'var(--violet)', icon: 'network', title: 'arch.domain.infra', items: ['arch.domain.items.virt', 'arch.domain.items.networks', 'arch.domain.items.firewalls'] },
+  { color: '#EF4444', textColor: 'var(--danger)', icon: 'shield', title: 'arch.domain.security', items: ['SIEM / SOC', 'NIST CSF', 'ISO 27001', 'arch.domain.items.strategy'] },
 ]
 
 export default function Arquitectura() {
@@ -90,7 +92,7 @@ export default function Arquitectura() {
                       <div className="mb-0.5">
                         <Icon name={card.icon} label={t(card.title)} size={36} />
                       </div>
-                      <span className="font-bold uppercase text-sm tracking-wide" style={{ color: card.color, textShadow: `0 0 10px ${card.color}60` }}>
+                      <span className="font-bold uppercase text-sm tracking-wide" style={{ color: card.textColor }}>
                         {t(card.title)}
                       </span>
                     </div>
@@ -98,10 +100,9 @@ export default function Arquitectura() {
                       {card.items.map(item => (
                         <span key={item} className="text-sm font-medium px-3 py-1.5 rounded-full backdrop-blur cursor-default" style={{
                           background: `rgba(${r}, ${g}, ${b}, 0.15)`,
-                          color: card.color,
+                          color: card.textColor,
                           border: `1px solid ${card.color}50`,
                           transition: 'all 0.2s ease',
-                          textShadow: `0 0 8px ${card.color}40`,
                         }}>
                           {t(item)}
                         </span>
