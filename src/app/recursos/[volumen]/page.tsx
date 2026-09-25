@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { RECURSO_FILES, type RecursoDocMeta } from '@/data/recursos'
+import { RECURSO_FILES, recursoDownloadHref, type RecursoDocMeta } from '@/data/recursos'
 import { RECURSO_OUTLINE, type OutlineHeading } from '@/data/recursos-outline'
 import { VOLUMES, volumeBySlug } from '@/lib/recursos-volumes'
 import { getServerT } from '@/lib/server-i18n'
@@ -144,7 +144,7 @@ export default async function VolumePage({
                     )}
                   </div>
                   <a
-                    href={`/${encodeURI(f.path)}`}
+                    href={recursoDownloadHref(f.path)}
                     download
                     className="shrink-0 rounded-xl bg-primary px-4 py-2 text-[10px] font-bold uppercase tracking-[2px] text-primary-foreground transition-colors hover:bg-blue-600"
                   >

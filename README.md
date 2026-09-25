@@ -510,7 +510,7 @@ npm run test:e2e                    # contra dev server (reusa el puerto 3000)
 npm run build && PORT=3100 E2E_PROD_SERVER=1 npm run test:e2e   # contra build prod
 ```
 
-7 specs · 33 tests: `landing`, `nav`, `hero`, `app-shell` (loading/error/not-found), `ask-ai` (panel), `contact` + `contact-form` (formulario contra la ruta real).
+7 specs · 33 tests: `landing`, `nav`, `hero`, `app-shell` (loading/error/not-found), `ask-ai` (panel), `contact` (sección) + `contact-api` (contrato de validación de /api/contact).
 
 ### CI/CD (GitHub Actions — `.github/workflows/ci.yml`)
 

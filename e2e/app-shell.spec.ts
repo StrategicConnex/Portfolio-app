@@ -68,8 +68,10 @@ test.describe('App shell conventions', () => {
     const html = await response!.text();
     expect(html).toContain('h-10 rounded-md animate-pulse');
 
-    // The real page content eventually replaces the shell.
-    await expect(page.locator('nav')).toBeVisible();
+    // The real page content eventually replaces the shell. Scope to the real
+    // navbar (not the loading skeleton's bare <nav>): since the chrome moved
+    // to the root layout there can transiently be two navs while streaming.
+    await expect(page.locator('nav[aria-label="Main navigation"], nav[aria-label="Navegación principal"]').first()).toBeVisible();
   });
 
   for (const lang of LANGS) {
@@ -109,15 +111,17 @@ test.describe('App shell conventions', () => {
         const response = await page.goto('/coordenada-404');
         expect(response?.status()).toBe(404);
 
-        await expect(page.getByText(TEXTS[lang].notFoundEyebrow)).toBeVisible();
+        await expect(page.getByText(TEXTS[lang].notFoundEyebrow).first()).toBeVisible();
         await expect(
-          page.getByRole('heading', { name: TEXTS[lang].notFoundTitle }),
+          page.getByRole('heading', { name: TEXTS[lang].notFoundTitle }).first(),
         ).toBeVisible();
 
         // The "back home" link resolves to the landing page.
         await page.getByRole('link', { name: TEXTS[lang].back }).click();
         await expect(page).toHaveURL(/\/$/);
-        await expect(page.locator('nav')).toBeVisible();
+        // Scope to the layout navbar: the loading skeleton renders a bare
+        // <nav> that can coexist during a streamed re-entry to home.
+        await expect(page.locator('nav[aria-label="Main navigation"], nav[aria-label="Navegación principal"]').first()).toBeVisible();
       });
     });
   }
@@ -137,8 +141,12 @@ test.describe('App shell conventions', () => {
 
     // The stored preference is preserved, not overwritten by SSR…
     expect(await page.evaluate(() => localStorage.getItem('portfolio_lang'))).toBe('en');
-    // …but the cookie is re-established from it, so the NEXT request honors it.
-    expect(await page.evaluate(() => document.cookie)).toContain('portfolio_lang=en');
+    // …but the cookie is re-established from the post-hydration effect, so the
+    // NEXT request honors it. Poll: hydration of the heavy home page (and the
+    // layout chrome) can take a moment before the effect rewrites the cookie.
+    await expect
+      .poll(() => page.evaluate(() => document.cookie), { timeout: 15_000 })
+      .toContain('portfolio_lang=en');
 
     // Reload: SSR now reads the re-established cookie → English, still no flip.
     await page.reload();

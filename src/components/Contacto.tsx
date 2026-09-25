@@ -3,7 +3,6 @@
 import { motion } from 'framer-motion'
 import SectionHeader from './ui/SectionHeader'
 import FadeIn from './ui/FadeIn'
-import ContactForm from './ContactForm'
 import { useLanguage } from '@/context/LanguageContext'
 
 const actions = [
@@ -208,12 +207,6 @@ export default function Contacto() {
           </div>
         </FadeIn>
 
-        {/* Contact form — validated client-side, posts to /api/contact */}
-        <FadeIn delay={0.6}>
-          <div style={{ marginTop: '2rem' }}>
-            <ContactForm />
-          </div>
-        </FadeIn>
       </div>
     </section>
   )

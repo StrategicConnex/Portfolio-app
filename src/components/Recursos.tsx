@@ -6,7 +6,7 @@ import SectionHeader from './ui/SectionHeader'
 import Icon from './ui/Icon'
 import { useLanguage } from '@/context/LanguageContext'
 import { useAskAIStore } from '@/stores/ask-ai-store'
-import { RECURSO_FILES, type RecursoDocMeta, type RecursoCat } from '@/data/recursos'
+import { RECURSO_FILES, recursoDownloadHref, type RecursoDocMeta, type RecursoCat } from '@/data/recursos'
 import { RECURSO_SEARCH } from '@/data/recursos-outline'
 import { trackLibraryEvent } from '@/lib/observability/posthog'
 
@@ -214,7 +214,7 @@ export default function Recursos() {
                     {nameFor(f)}
                   </h4>
                   <a
-                    href={`/${encodeURI(f.path)}`}
+                    href={recursoDownloadHref(f.path)}
                     download
                     onClick={() => trackEvent('download', f)}
                     className="mt-3 flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-amber-300/90 hover:text-amber-300 transition-colors self-start"

@@ -43,7 +43,7 @@ const competencias = [
   {
     grupoKey: 'profile.comp.dev',
     color: '#8B5CF6',
-    items: ['Next.js 14', 'React.js', 'Tailwind CSS', 'JavaScript ES6+', 'TypeScript', 'Python', 'Power BI', 'CI/CD', 'Vercel'],
+    items: ['Next.js 16', 'React.js', 'Tailwind CSS', 'JavaScript ES6+', 'TypeScript', 'Python', 'Power BI', 'CI/CD', 'Vercel'],
     img: '/comp_web.webp'
   },
   {
