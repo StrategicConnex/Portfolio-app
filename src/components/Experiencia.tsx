@@ -11,6 +11,20 @@ import { useLanguage } from '@/context/LanguageContext'
 
 /* ─── Timeline Item Component ─── */
 
+/**
+ * Data colors (src/data/experiencia.ts) mapped to the theme-pinned text
+ * tokens, AA-verified on both themes (design-tokens.contrast.test.ts).
+ * Only TEXT color resolves through this map — translucent fills/borders
+ * keep the raw hex via hexToRgba().
+ */
+const COLOR_TOKEN: Record<string, string> = {
+  '#C5A46D': 'var(--gold)',
+  '#1E90FF': 'var(--blue)',
+  '#6366F1': 'var(--indigo)',
+  '#10B981': 'var(--ok)',
+}
+const textColor = (hex: string) => COLOR_TOKEN[hex] ?? hex
+
 interface Achievement {
   textKey: string;
   icon: string;
@@ -55,18 +69,18 @@ const TimelineItem = memo(({ job, index }: { job: Job; index: number }) => {
       {/* Header Info */}
       <div className="flex flex-wrap items-start justify-between gap-3 mb-2">
         <div className="space-y-1">
-          <div style={{ color: job.color }} className="text-[11px] font-bold tracking-[1px] uppercase">
+          <div style={{ color: textColor(job.color) }} className="text-[11px] font-bold tracking-[1px] uppercase">
             {t(job.periodKey)}
           </div>
           <h3 className="text-lg md:text-xl font-extrabold text-[var(--text-primary)]">{job.company}</h3>
-          <div style={{ color: job.color }} className="text-sm font-medium">
+          <div style={{ color: textColor(job.color) }} className="text-sm font-medium">
             {t(job.roleKey)}
           </div>
         </div>
         
         <span 
           style={{ 
-            color: job.color,
+            color: textColor(job.color),
             background: hexToRgba(job.color, 0.12),
             borderColor: hexToRgba(job.color, 0.2)
           }}
@@ -90,7 +104,7 @@ const TimelineItem = memo(({ job, index }: { job: Job; index: number }) => {
       <ul className="space-y-1.5 mb-5">
         {job.bullets.map((bKey: string, i: number) => (
           <li key={i} className="text-sm text-[var(--text-muted)] pl-4 relative leading-relaxed">
-            <span style={{ color: job.color }} className="absolute left-0">▸</span>
+            <span style={{ color: textColor(job.color) }} className="absolute left-0">▸</span>
             {t(bKey)}
           </li>
         ))}
@@ -101,7 +115,7 @@ const TimelineItem = memo(({ job, index }: { job: Job; index: number }) => {
         {job.tags.map((tag: string) => (
           <span key={tag} 
             style={{ 
-              color: job.color,
+              color: textColor(job.color),
               background: hexToRgba(job.color, 0.08),
               borderColor: hexToRgba(job.color, 0.15)
             }}
@@ -134,7 +148,7 @@ export default function Experiencia() {
             ].map(b => (
               <span key={b.label} 
                 style={{ 
-                  color: b.color,
+                  color: textColor(b.color),
                   background: hexToRgba(b.color, 0.1),
                   borderColor: hexToRgba(b.color, 0.2)
                 }}

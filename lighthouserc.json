@@ -4,7 +4,11 @@
       "startServerCommand": "npx next start -p 3101",
       "startServerReadyPattern": "[Rr]eady",
       "startServerReadyTimeout": 60000,
-      "url": ["http://localhost:3101/"],
+      "url": [
+        "http://localhost:3101/",
+        "http://localhost:3101/recursos",
+        "http://localhost:3101/estadisticas"
+      ],
       "numberOfRuns": 1,
       "settings": { "onlyCategories": ["performance", "accessibility", "best-practices", "seo"] }
     },

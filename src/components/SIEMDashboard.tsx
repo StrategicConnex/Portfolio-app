@@ -221,7 +221,7 @@ export default function SIEMDashboard() {
           <p className="text-[var(--text-muted)] mb-2 text-sm max-w-2xl">
             {t('siem.map_desc')}
           </p>
-          <p className="text-red-500/80 text-[10px] tracking-wider mb-8 font-mono">
+          <p className="text-[10px] tracking-wider mb-8 font-mono" style={{ color: 'var(--danger)' }}>
             {t('siem.hover_hint')}
           </p>
         </FadeIn>

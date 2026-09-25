@@ -51,7 +51,7 @@ jobs:
           CONTACT_FROM_EMAIL: ${{ secrets.CONTACT_FROM_EMAIL || 'portfolio@juanpalacios.vercel.app' }}
 
   lighthouse:
-    name: Lighthouse CI (Performance Budget)
+    name: Lighthouse CI (Perf · A11y · Best-Practices · SEO budget)
     runs-on: ubuntu-latest
     needs: validate
     timeout-minutes: 10

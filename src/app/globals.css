@@ -14,7 +14,7 @@
 
 :root {
   /* Brand primitives — intensity adjusted per theme for contrast */
-  --blue: #0F6BC8;
+  --blue: #0D5FA9;
   --gold: #82652C;
 
   /* Level 2 — semantic */
@@ -81,8 +81,11 @@
   --surface-border: rgba(15, 23, 42, 0.08);
 
   /* Status / accent text — dark enough to pass AA on light surfaces.
-     Dark theme re-pins these to the brighter 400-scale below. */
-  --ok: #15803D;
+     Dark theme re-pins these to the brighter 400-scale below.
+     --blue/--ok sit ≥4.6:1 on their own 10% badge tints, not just on
+     plain cards (axe color-contrast gate scans those combinations). */
+  --blue: #0D5FA9;
+  --ok: #166534;
   --warn: #B45309;
   --danger: #B91C1C;
   --info: #0369A1;
@@ -184,6 +187,17 @@ body {
   --border: rgba(255, 255, 255, 0.1);
   --border-interactive: rgba(255, 255, 255, 0.4);
   --input: rgba(255, 255, 255, 0.4);
+  /* Status/accent tokens — re-pinned to the AA-verified DARK values so
+     status text, badges and accents stay readable on the permanently dark
+     console surfaces in BOTH themes (see design-tokens.contrast.test.ts). */
+  --ok: #34D399;
+  --warn: #FBBF24;
+  --danger: #F87171;
+  --info: #22D3EE;
+  --violet: #A78BFA;
+  --indigo: #818CF8;
+  --blue: #1E90FF;
+  --gold: #C5A46D;
   --ring: #1E90FF;
 }
 

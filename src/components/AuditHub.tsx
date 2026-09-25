@@ -14,10 +14,25 @@ import {
 
 /* ─── Sub-components ─── */
 
+/**
+ * Data colors (src/data/audit.ts, tuned for the dark theme) mapped to the
+ * theme-pinned status tokens, which are AA-verified on BOTH themes by
+ * design-tokens.contrast.test.ts. Unmapped values fall through unchanged.
+ */
+const AA_TOKEN: Record<string, string> = {
+  '#3B82F6': 'var(--info)',
+  '#10B981': 'var(--ok)',
+  '#EF4444': 'var(--danger)',
+  '#8B5CF6': 'var(--violet)',
+  '#6366F1': 'var(--indigo)',
+}
+
+const aaColor = (color: string) => AA_TOKEN[color] ?? color
+
 const StatCard = ({ label, value, color }: { label: string, value: string | number, color: string }) => (
   <div className="glass rounded-xl p-4 sm:p-5 flex flex-col items-center justify-center text-center transition-all duration-300 hover:border-[var(--surface-border-strong)] hover:bg-[var(--surface-fill-strong)] group">
     <div className="text-[0.6rem] sm:text-[0.65rem] text-[var(--text-subtle)] uppercase tracking-[0.2em] mb-1.5 group-hover:text-[var(--text-muted)] transition-colors font-bold">{label}</div>
-    <div className="text-2xl sm:text-3xl font-bold font-mono transition-all duration-300" style={{ color, textShadow: `0 0 20px ${color}40` }}>{value}</div>
+    <div className="text-2xl sm:text-3xl font-bold font-mono transition-all duration-300" style={{ color: aaColor(color), textShadow: `0 0 20px ${color}40` }}>{value}</div>
   </div>
 )
 
@@ -30,7 +45,7 @@ const ComplianceBar = ({ name, progress, color, descriptionKey }: { name: string
           <span className="text-[0.8rem] sm:text-[0.85rem] font-bold text-[var(--text-secondary)] group-hover:text-[var(--text-primary)] transition-colors">{name}</span>
           <span className="text-[0.6rem] text-[var(--text-subtle)] uppercase tracking-tighter">{t(descriptionKey)}</span>
         </div>
-        <span className="text-[0.75rem] font-mono font-bold" style={{ color }}>{progress}%</span>
+        <span className="text-[0.75rem] font-mono font-bold" style={{ color: aaColor(color) }}>{progress}%</span>
       </div>
       <div className="h-1.5 w-full bg-[var(--surface-fill)] rounded-full overflow-hidden border border-[var(--surface-border)]">
         <motion.div
@@ -268,7 +283,7 @@ const AuditHub = () => {
                                     <div className="text-[0.65rem] text-[var(--text-subtle)] line-clamp-1 italic">{t(finding.descriptionKey)}</div>
                                   </td>
                                   <td className="px-4 py-4 bg-[var(--surface-fill)] rounded-r-lg border-y border-r border-[var(--surface-border)] text-right">
-                                    <button className="text-[0.65rem] text-blue-400 font-bold uppercase tracking-tighter hover:text-blue-300 transition-colors">
+                                    <button className="text-[0.65rem] font-bold uppercase tracking-tighter transition-colors" style={{ color: 'var(--info)' }}>
                                       {expandedId === finding.id ? t('audit.ui.close') : t('audit.ui.details')}
                                     </button>
                                   </td>
@@ -287,7 +302,7 @@ const AuditHub = () => {
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                           <div className="space-y-4">
                                             <div>
-                                              <h4 className="text-[0.65rem] text-blue-400 uppercase tracking-widest font-bold mb-2">{t('audit.ui.impact')}</h4>
+                                              <h4 className="text-[0.65rem] uppercase tracking-widest font-bold mb-2" style={{ color: 'var(--info)' }}>{t('audit.ui.impact')}</h4>
                                               <p className="text-[0.8rem] text-[var(--text-secondary)] leading-relaxed font-medium">
                                                 {t(finding.impactKey)}
                                               </p>
