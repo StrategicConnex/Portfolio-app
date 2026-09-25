@@ -2,6 +2,8 @@ import type { Metadata } from 'next'
 import { countByCountry, countByDay, countByFile, countByVolume, readRecent } from '@/lib/download-stats'
 import { getServerT } from '@/lib/server-i18n'
 import { SITE } from '@/lib/constants'
+import { CopyButton } from './CopyButton'
+import { pctDelta, sparklinePath, sumLastDays, trendDirection } from './trends'
 
 export const dynamic = 'force-dynamic'
 
@@ -36,7 +38,15 @@ export default async function EstadisticasPublicas() {
   const events = await readRecent(10_000)
   const total = events.length
   const byFile = countByFile(events)
-  const byDay = countByDay(events, { days: 30 })
+  // 60 días para derivar semana actual vs. previa y el sparkline de los 30
+  // últimos; la gráfica principal sigue siendo de 30 días.
+  const byDay60 = countByDay(events, { days: 60 })
+  const byDay = byDay60.slice(-30)
+  const weekNow = sumLastDays(byDay60, 7)
+  const weekPrev = sumLastDays(byDay60.slice(0, -7), 7)
+  const weekDelta = pctDelta(weekNow, weekPrev)
+  const weekTrend = trendDirection(weekDelta)
+  const sparkPath = sparklinePath(byDay)
   const byVolume = countByVolume(events)
   const byCountry = countByCountry(events)
   const maxDay = Math.max(...byDay.map((d) => d.count), 1)
@@ -70,14 +80,41 @@ export default async function EstadisticasPublicas() {
           </p>
         ) : (
           <>
+            <div className="mb-3 flex items-center justify-between gap-3">
+              <h2 className="text-xs font-bold uppercase tracking-[2px] text-foreground">{dict['stats.kpis']}</h2>
+              <span
+                data-testid="week-trend"
+                className={
+                  'rounded-full border px-2.5 py-1 text-[11px] font-semibold ' +
+                  (weekTrend === 'up'
+                    ? 'border-[var(--ok)] text-[var(--ok)]'
+                    : weekTrend === 'down'
+                      ? 'border-[var(--danger)] text-[var(--danger)]'
+                      : 'border-[var(--surface-border)] text-muted-foreground')
+                }
+              >
+                {weekDelta !== null && (
+                  <span aria-hidden="true" className="mr-1">
+                    {weekTrend === 'up' ? '▲' : weekTrend === 'down' ? '▼' : '■'}
+                  </span>
+                )}
+                {weekDelta !== null ? `${weekDelta > 0 ? '+' : ''}${weekDelta}% ` : ''}
+                {dict['stats.trend.vs_prev']}
+              </span>
+            </div>
             <section aria-label={dict['stats.kpis']} className="mb-10 grid grid-cols-2 gap-4 sm:grid-cols-4">
               {[
-                { label: dict['stats.kpi.total'], value: String(total) },
-                { label: dict['stats.kpi.files'], value: String(byFile.length) },
-                { label: dict['stats.kpi.countries'], value: String(byCountry.filter((c) => c.country !== '??').length) },
+                { label: dict['stats.kpi.total'], value: String(total), spark: undefined },
+                { label: dict['stats.kpi.files'], value: String(byFile.length), spark: undefined },
+                {
+                  label: dict['stats.kpi.countries'],
+                  value: String(byCountry.filter((c) => c.country !== '??').length),
+                  spark: undefined,
+                },
                 {
                   label: dict['stats.kpi.last30'],
                   value: String(byDay.reduce((sum, d) => sum + d.count, 0)),
+                  spark: sparkPath || undefined,
                 },
               ].map((kpi) => (
                 <div
@@ -88,6 +125,18 @@ export default async function EstadisticasPublicas() {
                     {kpi.label}
                   </div>
                   <div className="mt-1 text-xl font-bold text-[var(--blue)]">{kpi.value}</div>
+                  {kpi.spark && (
+                    <svg
+                      data-testid="sparkline"
+                      viewBox="0 0 100 32"
+                      preserveAspectRatio="none"
+                      className="mt-2 h-8 w-full"
+                      aria-hidden="true"
+                      focusable="false"
+                    >
+                      <path d={kpi.spark} fill="none" stroke="var(--blue)" strokeWidth="2" />
+                    </svg>
+                  )}
                 </div>
               ))}
             </section>
@@ -174,9 +223,18 @@ export default async function EstadisticasPublicas() {
             </section>
 
             <section>
-              <h2 className="mb-3 text-xs font-bold uppercase tracking-[2px] text-foreground">
-                {dict['stats.by_file.title']}
-              </h2>
+              <div className="mb-3 flex items-center justify-between gap-3">
+                <h2 className="text-xs font-bold uppercase tracking-[2px] text-foreground">
+                  {dict['stats.by_file.title']}
+                </h2>
+                <CopyButton
+                  label={dict['stats.trend.copy']}
+                  copiedLabel={dict['stats.trend.copied']}
+                  getText={() =>
+                    ['Documento\tDescargas', ...byFile.map((c) => `${c.file}\t${c.count}`)].join('\n')
+                  }
+                />
+              </div>
               <div className="overflow-x-auto rounded-2xl border border-[var(--surface-border)]">
                 <table className="w-full text-left text-xs">
                   <thead className="text-[10px] uppercase tracking-wider text-muted-foreground" style={{ background: 'var(--surface-fill)' }}>

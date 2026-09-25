@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import EstadisticasPublicas from './page'
 import { readRecent } from '@/lib/download-stats'
 import type { DownloadEvent } from '@/lib/download-stats'
@@ -28,6 +28,9 @@ vi.mock('@/lib/server-i18n', () => {
     'stats.by_file.file': 'Documento',
     'stats.by_file.downloads': 'Descargas',
     'stats.footer_note': 'Los datos se registran al momento de cada descarga.',
+    'stats.trend.vs_prev': 'vs 7 días previos',
+    'stats.trend.copy': 'Copiar',
+    'stats.trend.copied': 'Copiado ✓',
     'recursos.cat.vol1': 'Vol. I · IT',
     'recursos.cat.vol2': 'Vol. II · OT',
     'recursos.cat.vol3': 'Vol. III · Integración',
@@ -117,6 +120,43 @@ describe('estadisticas (pública)', () => {
     expect(container.querySelector('[data-volume="project"]')?.textContent).toContain('1')
     expect(container.querySelector('[data-country="AR"]')?.textContent).toContain('1')
     expect(container.querySelector('[data-country="??"]')?.textContent).toContain('1')
+  })
+
+  it('renders the weekly trend chip flat (no pct) when there is no prior-week baseline', async () => {
+    const ui = await EstadisticasPublicas()
+    const { container } = render(ui)
+
+    const chip = container.querySelector('[data-testid="week-trend"]')
+    expect(chip).not.toBeNull()
+    // Fixture: 4 descargas hoy, 0 en la semana previa → sin % (evita +∞)
+    expect(chip?.textContent).toContain('vs 7 días previos')
+    expect(chip?.textContent).not.toContain('%')
+  })
+
+  it('renders the 30-day sparkline inside the last-30-days KPI', async () => {
+    const ui = await EstadisticasPublicas()
+    const { container } = render(ui)
+
+    const spark = container.querySelector('[data-testid="sparkline"]')
+    expect(spark).not.toBeNull()
+    expect(spark?.querySelector('path')?.getAttribute('d')).toMatch(/^M/)
+  })
+
+  it('copies the per-file table as plain text to the clipboard', async () => {
+    const writeText = vi.fn().mockResolvedValue(undefined)
+    vi.stubGlobal('navigator', { ...navigator, clipboard: { writeText } })
+
+    const ui = await EstadisticasPublicas()
+    render(ui)
+
+    fireEvent.click(screen.getByRole('button', { name: 'Copiar' }))
+    await waitFor(() => expect(writeText).toHaveBeenCalledTimes(1))
+    const text = writeText.mock.calls[0][0] as string
+    expect(text).toContain('Documento\tDescargas')
+    expect(text).not.toContain('/recursos/estadisticas-privadas')
+    expect(text).toContain('/recursos/estandares/IEC_62443_resumen.docx\t2')
+
+    vi.unstubAllGlobals()
   })
 
   it('shows the empty state when there are no downloads', async () => {

@@ -114,6 +114,9 @@ jobs:
         env:
           NEXT_PUBLIC_VERCEL_URL: ${{ vars.VERCEL_URL || 'juanpalacios.vercel.app' }}
           NEXT_PUBLIC_E2E_ERROR_ROUTE: '1'
+          # Token de PRUEBA (no secreto): habilita /estadisticas-privadas/login
+          # para el gate axe. Prod usa otro valor rotado vía dashboard.
+          DOWNLOAD_STATS_TOKEN: 'e2e-panel-token'
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY || '' }}
           RESEND_API_KEY: ${{ secrets.RESEND_API_KEY || '' }}
           CONTACT_TO_EMAIL: ${{ secrets.CONTACT_TO_EMAIL || '' }}
@@ -126,6 +129,9 @@ jobs:
         run: npx playwright test
         env:
           E2E_PROD_SERVER: '1'
+          # Runtime env para `next start`: sin esto /estadisticas-privadas/login
+          # responde 404 y el gate axe no puede escanear el formulario.
+          DOWNLOAD_STATS_TOKEN: 'e2e-panel-token'
 
       - name: Upload Playwright report on failure
         if: failure()
