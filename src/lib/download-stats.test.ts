@@ -9,6 +9,7 @@ import {
   countByFile,
   countByDay,
   countByVolume,
+  countByCountry,
   categoryForFile,
   type DownloadEvent,
 } from './download-stats'
@@ -226,6 +227,39 @@ describe('countByDay', () => {
   it('rolls month and year boundaries correctly', () => {
     const days = countByDay([], { days: 3, now: new Date('2026-10-01T00:00:00.000Z') })
     expect(days.map((d) => d.day)).toEqual(['2026-09-29', '2026-09-30', '2026-10-01'])
+  })
+})
+
+describe('countByCountry', () => {
+  it('aggregates per country sorted by count desc', () => {
+    const events: DownloadEvent[] = [
+      { file: '/recursos/a.docx', ts: 't', ip: '1', country: 'AR' },
+      { file: '/recursos/b.docx', ts: 't', ip: '2', country: 'AR' },
+      { file: '/recursos/c.docx', ts: 't', ip: '3', country: 'CL' },
+    ]
+    expect(countByCountry(events)).toEqual([
+      { country: 'AR', count: 2 },
+      { country: 'CL', count: 1 },
+    ])
+  })
+
+  it('uppercases and ignores malformed country codes', () => {
+    const events: DownloadEvent[] = [
+      { file: '/recursos/a.docx', ts: 't', ip: '1', country: 'br' },
+      { file: '/recursos/b.docx', ts: 't', ip: '2', country: 'XYZ' }, // no alpha-2
+      { file: '/recursos/c.docx', ts: 't', ip: '3', country: '' },
+      { file: '/recursos/d.docx', ts: 't', ip: '4' }, // sin país
+    ]
+    expect(countByCountry(events)).toEqual([
+      { country: 'BR', count: 1 },
+      { country: '??', count: 3 },
+    ])
+  })
+
+  it('buckets events without country under ?? so bars sum to the total', () => {
+    expect(countByCountry([{ file: '/recursos/a.docx', ts: 't', ip: '1' }])).toEqual([
+      { country: '??', count: 1 },
+    ])
   })
 })
 

@@ -17,6 +17,7 @@
 import { appendFile, mkdir, readFile } from 'node:fs/promises'
 import { dirname, join } from 'node:path'
 import { RECURSO_FILES, type RecursoCat } from '@/data/recursos'
+import { upstashRest, upstashConfig, isUpstashConfigured } from './upstash-rest'
 
 export interface DownloadEvent {
   /** Ruta pública del archivo, p. ej. `/recursos/estandares/IEC_62443_resumen.docx`. */
@@ -47,44 +48,22 @@ export function isTrackableFile(f: string | null | undefined): f is string {
   return TRACKED_EXT.test(f)
 }
 
-function redisConfig(): { url: string; token: string } | null {
-  const url = process.env.UPSTASH_REDIS_REST_URL
-  const token = process.env.UPSTASH_REDIS_REST_TOKEN
-  return url && token ? { url, token } : null
-}
+/**
+ * ¿Backend durable de Redis configurado? (para el aviso del panel).
+ */
+export const isDurableBackend = isUpstashConfigured
 
 function logFile(): string {
   return process.env.DOWNLOAD_STATS_FILE ?? join(process.cwd(), '.data', 'descargas.ndjson')
-}
-
-/**
- * Ejecuta un comando Redis vía la REST API de Upstash — **un comando por
- * petición**: el endpoint rechaza con 400 el formato de pipeline anidado
- * (`[[cmd, ...], …]`), así que cada comando viaja solo.
- */
-async function redis(cmd: (string | number)[]): Promise<unknown> {
-  const cfg = redisConfig()
-  if (!cfg) throw new Error('upstash no configurado')
-  const res = await fetch(cfg.url, {
-    method: 'POST',
-    headers: { Authorization: `Bearer ${cfg.token}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify(cmd),
-    cache: 'no-store',
-  })
-  if (!res.ok) {
-    const detail = await res.text().catch(() => '')
-    throw new Error(`upstash HTTP ${res.status}: ${detail}`)
-  }
-  return res.json()
 }
 
 /** Registra un evento. Fire-safe: nunca tira la descarga si falla el log. */
 export async function recordDownload(ev: DownloadEvent): Promise<void> {
   try {
     const line = JSON.stringify(ev)
-    if (redisConfig()) {
-      await redis(['RPUSH', REDIS_KEY, line])
-      await redis(['LTRIM', REDIS_KEY, -MAX_EVENTS, -1])
+    if (upstashConfig()) {
+      await upstashRest(['RPUSH', REDIS_KEY, line])
+      await upstashRest(['LTRIM', REDIS_KEY, -MAX_EVENTS, -1])
       return
     }
     const file = logFile()
@@ -108,8 +87,8 @@ function safeParse(line: string): DownloadEvent | null {
 export async function readRecent(limit = 500): Promise<DownloadEvent[]> {
   const take = Math.min(limit, MAX_EVENTS)
   try {
-    if (redisConfig()) {
-      const res = (await redis(['LRANGE', REDIS_KEY, -take, -1])) as { result?: string[] }
+    if (upstashConfig()) {
+      const res = (await upstashRest(['LRANGE', REDIS_KEY, -take, -1])) as { result?: string[] }
       return (res.result ?? []).map(safeParse).filter((e): e is DownloadEvent => e !== null)
     }
     const raw = await readFile(logFile(), 'utf8')
@@ -193,4 +172,25 @@ export function countByVolume(
     category,
     count: counts.get(category) ?? 0,
   }))
+}
+
+/**
+ * Descargas por país (código ISO-3166 alpha-2 del edge, p. ej. `AR`).
+ *
+ * Aislado para la página pública: **nunca** expone la IP ni el user-agent —
+ * el país es el único dato geográfico que viaja en el evento y es una
+ * agregación de baja resolución. Los eventos sin país van a `??`.
+ */
+export function countByCountry(events: DownloadEvent[]): { country: string; count: number }[] {
+  const counts = new Map<string, number>()
+  let unknown = 0
+  for (const ev of events) {
+    const c = ev.country?.trim().toUpperCase()
+    if (c && /^[A-Z]{2}$/.test(c)) counts.set(c, (counts.get(c) ?? 0) + 1)
+    else unknown += 1
+  }
+  return [...counts.entries()]
+    .map(([country, count]) => ({ country, count }))
+    .sort((a, b) => b.count - a.count || a.country.localeCompare(b.country))
+    .concat(unknown > 0 ? [{ country: '??', count: unknown }] : [])
 }
