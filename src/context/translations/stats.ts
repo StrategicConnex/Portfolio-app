@@ -24,6 +24,9 @@ const es = {
   'stats.by_file.downloads': 'Descargas',
   'stats.footer_note': 'Los datos se registran al momento de cada descarga desde la biblioteca.',
   'stats.footer_link': 'Estadísticas',
+  'stats.trend.vs_prev': 'vs 7 días previos',
+  'stats.trend.copy': 'Copiar',
+  'stats.trend.copied': 'Copiado ✓',
 } satisfies TranslationModule['es']
 
 const en: TranslationModule['en'] = {
@@ -50,6 +53,9 @@ const en: TranslationModule['en'] = {
   'stats.by_file.downloads': 'Downloads',
   'stats.footer_note': 'Data is recorded at download time from the library.',
   'stats.footer_link': 'Stats',
+  'stats.trend.vs_prev': 'vs previous 7 days',
+  'stats.trend.copy': 'Copy',
+  'stats.trend.copied': 'Copied ✓',
 }
 
 export const stats = { es, en }
