@@ -184,7 +184,9 @@ export default function Contacto() {
                 alignItems: 'center',
                 gap: '0.5rem',
                 background: 'color-mix(in srgb, var(--ok) 7%, transparent)',
-                color: 'var(--ok)',
+                /* 85% mix toward black keeps AA on the pill's own translucent
+                   fill in light (>=4.5:1) and still passes on dark cards. */
+                color: 'color-mix(in srgb, var(--ok) 85%, black)',
                 border: '1px solid color-mix(in srgb, var(--ok) 22%, transparent)',
                 padding: '0.5rem 1.2rem',
                 borderRadius: 20,

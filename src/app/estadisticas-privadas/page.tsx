@@ -1,5 +1,6 @@
-import { notFound } from 'next/navigation'
+import { notFound, redirect } from 'next/navigation'
 import { countByDay, countByFile, countByVolume, readRecent } from '@/lib/download-stats'
+import { hasValidPanelSession, isPanelAuthConfigured, matchesPanelToken } from '@/lib/panel-auth'
 
 export const dynamic = 'force-dynamic'
 
@@ -34,7 +35,16 @@ const VOLUME_LABEL: Record<string, string> = {
 export default async function EstadisticasDescargas({ searchParams }: Props) {
   const token = process.env.DOWNLOAD_STATS_TOKEN
   const { k } = await searchParams
-  if (!token || k !== token) notFound()
+  if (!isPanelAuthConfigured()) notFound()
+
+  // Sesión válida por cookie → entra. Si no hay sesión pero `?k=` matchea
+  // (bookmark/enlace viejo), deriva al route handler de sesión para que emita
+  // la cookie y regrese al panel con URL limpia. Cualquier otra cosa → 404:
+  // la ruta "no existe" para quien no tiene acceso.
+  if (!(await hasValidPanelSession())) {
+    if (matchesPanelToken(k)) redirect(`/estadisticas-privadas/sesion?k=${encodeURIComponent(String(k))}`)
+    notFound()
+  }
 
   const events = await readRecent(10_000)
   const counts = countByFile(events)
@@ -63,12 +73,22 @@ export default async function EstadisticasDescargas({ searchParams }: Props) {
 
   return (
     <main className="mx-auto min-h-screen max-w-5xl px-4 py-10 text-sm" style={{ background: 'var(--bg2, #0b1220)', color: 'var(--text, #e2e8f0)' }}>
-      <header className="mb-8">
-        <p className="text-[11px] font-bold uppercase tracking-[3px] text-blue-400">Panel privado</p>
-        <h1 className="mt-1 text-2xl font-bold">Descargas de la biblioteca</h1>
-        <p className="mt-2 text-xs" style={{ color: 'var(--text-muted, #94a3b8)' }}>
-          Almacenamiento: {durable ? 'Upstash Redis (durable)' : 'archivo local — en Vercel es efímero; configura UPSTASH_REDIS_REST_URL/TOKEN'}
-        </p>
+      <header className="mb-8 flex items-start justify-between gap-4">
+        <div>
+          <p className="text-[11px] font-bold uppercase tracking-[3px] text-blue-400">Panel privado</p>
+          <h1 className="mt-1 text-2xl font-bold">Descargas de la biblioteca</h1>
+          <p className="mt-2 text-xs" style={{ color: 'var(--text-muted, #94a3b8)' }}>
+            Almacenamiento: {durable ? 'Upstash Redis (durable)' : 'archivo local — en Vercel es efímero; configura UPSTASH_REDIS_REST_URL/TOKEN'}
+          </p>
+        </div>
+        <form method="post" action="/estadisticas-privadas/logout">
+          <button
+            type="submit"
+            className="rounded-lg border border-slate-600/60 px-3 py-1.5 text-xs text-slate-300 transition-colors hover:border-slate-400 hover:text-slate-100"
+          >
+            Cerrar sesión
+          </button>
+        </form>
       </header>
 
       <section className="mb-8 grid grid-cols-2 gap-4 sm:grid-cols-4">

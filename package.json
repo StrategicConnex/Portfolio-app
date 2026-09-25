@@ -73,6 +73,7 @@
     "fflate@>=0.6.0 <0.6.11": "0.6.11"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.13.0",
     "@axe-core/react": "^4.12.1",
     "@playwright/test": "^1.61.1",
     "@tailwindcss/postcss": "^4",

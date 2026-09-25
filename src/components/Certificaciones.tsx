@@ -393,13 +393,13 @@ export default function Certificaciones() {
                         </div>
                         <span className={`text-[10px] uppercase tracking-wider font-semibold px-2 py-0.5 rounded border ${
                           isPdf
-                            ? 'bg-amber-500/10 text-amber-300 border-amber-500/20'
-                            : 'bg-blue-500/10 text-blue-300 border-blue-500/20'
-                        }`}>
+                            ? 'bg-amber-500/10 border-amber-500/20'
+                            : 'bg-blue-500/10 border-blue-500/20'
+                        }`} style={{ color: isPdf ? 'var(--warn)' : 'var(--info)' }}>
                           {isPdf ? 'PDF' : 'IMG'}
                         </span>
                       </div>
-                      <h4 className="text-[13px] font-medium leading-relaxed line-clamp-3 group-hover:text-amber-300 transition-colors" style={{ color: 'var(--text-primary)' }}>
+                      <h4 className="text-[13px] font-medium leading-relaxed line-clamp-3 transition-colors" style={{ color: 'var(--text-primary)' }}>
                         {t(c.nameKey)}
                       </h4>
                     </motion.button>

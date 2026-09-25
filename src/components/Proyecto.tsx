@@ -145,7 +145,7 @@ export default function Proyecto() {
                     : 'bg-[var(--surface-fill)] border-[var(--border-interactive)] hover:bg-[var(--surface-fill-strong)]'
                 }`}
               >
-                <div className="text-[10px] text-blue-400 font-bold uppercase tracking-widest mb-2">
+                <div className="text-[10px] font-bold uppercase tracking-widest mb-2" style={{ color: 'var(--info)' }}>
                   {t(cs.companyKey)}
                 </div>
                 <h4 className="font-bold mb-2 leading-tight" style={{ color: 'var(--text-primary)' }}>{t(cs.titleKey)}</h4>
@@ -338,7 +338,8 @@ export default function Proyecto() {
                     key={i} 
                     initial={{ opacity: 0, x: -10 }} 
                     animate={{ opacity: 1, x: 0 }}
-                    className={line.includes('Concedido') ? 'text-emerald-500 font-bold drop-shadow-[0_0_8px_rgba(16,185,129,0.5)]' : 'text-blue-400 drop-shadow-[0_0_5px_rgba(59,130,246,0.3)]'}
+                    className={line.includes('Concedido') ? 'font-bold drop-shadow-[0_0_8px_rgba(16,185,129,0.5)]' : 'drop-shadow-[0_0_5px_rgba(59,130,246,0.3)]'}
+                    style={{ color: line.includes('Concedido') ? 'var(--ok)' : 'var(--info)' }}
                   >
                     {line}
                   </motion.div>

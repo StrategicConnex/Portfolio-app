@@ -217,7 +217,8 @@ export default function Recursos() {
                     href={recursoDownloadHref(f.path)}
                     download
                     onClick={() => trackEvent('download', f)}
-                    className="mt-3 flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-amber-300/90 hover:text-amber-300 transition-colors self-start"
+                    className="mt-3 flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider transition-colors self-start"
+                    style={{ color: 'var(--warn)' }}
                     aria-label={`${t('recursos.download')} — ${nameFor(f)}`}
                   >
                     {t('recursos.download')}
@@ -226,7 +227,8 @@ export default function Recursos() {
                   <button
                     type="button"
                     onClick={() => { trackEvent('describe', f); describeWithAI(f) }}
-                    className="mt-1.5 flex items-center gap-1.5 text-[11px] font-medium text-amber-300/90 hover:text-amber-300 transition-colors cursor-pointer self-start"
+                    className="mt-1.5 flex items-center gap-1.5 text-[11px] font-medium transition-colors cursor-pointer self-start"
+                    style={{ color: 'var(--warn)' }}
                     aria-label={`${t('recursos.describe')} — ${nameFor(f)}`}
                   >
                     <Icon name="ai" label={t('recursos.describe')} size={14} />

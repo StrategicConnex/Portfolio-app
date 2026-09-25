@@ -4,6 +4,7 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { NextRequest } from 'next/server'
 import { GET } from './route'
+import { resetRateLimit } from '@/lib/rate-limit'
 
 function makeRequest(url: string, headers: Record<string, string> = {}) {
   return new NextRequest(url, { headers })
@@ -17,6 +18,7 @@ describe('GET /api/track/download', () => {
     vi.stubEnv('DOWNLOAD_STATS_FILE', join(dir, 'descargas.ndjson'))
     vi.stubEnv('UPSTASH_REDIS_REST_URL', '')
     vi.stubEnv('UPSTASH_REDIS_REST_TOKEN', '')
+    resetRateLimit()
   })
 
   afterEach(async () => {
@@ -85,5 +87,23 @@ describe('GET /api/track/download', () => {
     )
     const res = await GET(req)
     expect(res.status).toBe(307)
+  })
+
+  it('responds 429 once the per-client burst limit is exhausted', async () => {
+    const url = 'http://localhost:3000/api/track/download?f=/recursos/README.docx'
+    // El límite por defecto es 30/min: agota exactamente 30 descargas.
+    for (let i = 0; i < 30; i++) {
+      const res = await GET(makeRequest(url))
+      expect(res.status, `iter ${i}`).toBe(307)
+    }
+    const blocked = await GET(makeRequest(url))
+    expect(blocked.status).toBe(429)
+    expect(blocked.headers.get('retry-after')).toBeDefined()
+
+    // Otro cliente (x-forwarded-for distinto por el edge) NO comparte la ventana.
+    const other = await GET(
+      makeRequest(url, { 'x-forwarded-for': '198.51.100.200, 10.0.0.1' }),
+    )
+    expect(other.status).toBe(307)
   })
 })
