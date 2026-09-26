@@ -1,6 +1,6 @@
 import { notFound, redirect } from 'next/navigation'
-import { countByDay, countByFile, countByVolume, readRecent } from '@/lib/download-stats'
-import { hasValidPanelSession, isPanelAuthConfigured, matchesPanelToken } from '@/lib/panel-auth'
+import { countByDay, countByFile, countByVolume, readRecent } from '@/features/stats/download-stats'
+import { hasValidPanelSession, isPanelAuthConfigured, matchesPanelToken } from '@/features/stats/panel-auth'
 
 export const dynamic = 'force-dynamic'
 

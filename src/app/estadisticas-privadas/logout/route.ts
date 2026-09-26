@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from 'next/server'
-import { PANEL_COOKIE } from '@/lib/panel-auth'
+import { PANEL_COOKIE } from '@/features/stats/panel-auth'
 
 export const dynamic = 'force-dynamic'
 

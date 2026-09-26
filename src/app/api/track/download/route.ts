@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from 'next/server'
-import { isTrackableFile, recordDownload, type DownloadEvent } from '@/lib/download-stats'
+import { isTrackableFile, recordDownload, type DownloadEvent } from '@/features/stats/download-stats'
 import { checkRateLimit, getClientId } from '@/lib/rate-limit'
 
 export const dynamic = 'force-dynamic'

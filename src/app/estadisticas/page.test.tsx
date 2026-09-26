@@ -1,8 +1,8 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import EstadisticasPublicas from './page'
-import { readRecent } from '@/lib/download-stats'
-import type { DownloadEvent } from '@/lib/download-stats'
+import { readRecent } from '@/features/stats/download-stats'
+import type { DownloadEvent } from '@/features/stats/download-stats'
 
 vi.mock('@/lib/server-i18n', () => {
   const dict: Record<string, string> = {
@@ -49,8 +49,8 @@ vi.mock('@/lib/server-i18n', () => {
   }
 })
 
-vi.mock('@/lib/download-stats', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@/lib/download-stats')>()
+vi.mock('@/features/stats/download-stats', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/features/stats/download-stats')>()
   return { ...actual, readRecent: vi.fn() }
 })
 

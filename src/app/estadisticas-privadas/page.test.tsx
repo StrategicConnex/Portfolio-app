@@ -1,12 +1,12 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import EstadisticasDescargas from './page'
-import { readRecent } from '@/lib/download-stats'
-import { createPanelCookieValue } from '@/lib/panel-auth'
-import type { DownloadEvent } from '@/lib/download-stats'
+import { readRecent } from '@/features/stats/download-stats'
+import { createPanelCookieValue } from '@/features/stats/panel-auth'
+import type { DownloadEvent } from '@/features/stats/download-stats'
 
-vi.mock('@/lib/download-stats', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@/lib/download-stats')>()
+vi.mock('@/features/stats/download-stats', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/features/stats/download-stats')>()
   return { ...actual, readRecent: vi.fn() }
 })
 

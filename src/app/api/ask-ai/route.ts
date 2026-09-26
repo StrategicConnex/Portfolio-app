@@ -3,11 +3,11 @@ import { createOpenAI } from '@ai-sdk/openai';
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { checkRateLimit, getClientId } from '@/lib/rate-limit';
-import { buildRagContext } from '@/lib/ask-ai/rag/retriever';
-import { askAiTools } from '@/lib/ask-ai/tools/registry';
-import { buildSystemPrompt } from '@/lib/ask-ai/prompt/system-prompt';
-import { streamWithFallback, ModelPoolError, buildFreeModelPool } from '@/lib/ask-ai/model-pool';
-import { emitAskAiEvent, withToolTelemetry, hashQuery, messageOf } from '@/lib/ask-ai/telemetry';
+import { buildRagContext } from '@/features/ask-ai/lib/rag/retriever';
+import { askAiTools } from '@/features/ask-ai/lib/tools/registry';
+import { buildSystemPrompt } from '@/features/ask-ai/lib/prompt/system-prompt';
+import { streamWithFallback, ModelPoolError, buildFreeModelPool } from '@/features/ask-ai/lib/model-pool';
+import { emitAskAiEvent, withToolTelemetry, hashQuery, messageOf } from '@/features/ask-ai/lib/telemetry';
 
 export const maxDuration = 30;
 

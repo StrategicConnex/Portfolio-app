@@ -3,7 +3,7 @@ import { render, screen } from '@testing-library/react'
 import RecursosHubPage from './page'
 import VolumePage from './[volumen]/page'
 import { RECURSO_FILES } from '@/data/recursos'
-import { VOLUMES } from '@/lib/recursos-volumes'
+import { VOLUMES } from '@/features/recursos/recursos-volumes'
 
 vi.mock('@/lib/server-i18n', () => {
   const dict: Record<string, string> = {

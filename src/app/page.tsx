@@ -1,7 +1,7 @@
 import dynamic from 'next/dynamic'
 import { Suspense } from 'react'
-import Hero            from '@/components/Hero'
-import Perfil          from '@/components/Perfil'
+import Hero            from '@/features/portfolio/Hero'
+import Perfil          from '@/features/portfolio/Perfil'
 
 // Loading fallbacks for Suspense boundaries
 function SectionFallback() {
@@ -13,19 +13,19 @@ function SectionFallbackBg2() {
 }
 
 // Dynamic imports for components below the fold
-const Arquitectura    = dynamic(() => import('@/components/Arquitectura'))
-const Experiencia     = dynamic(() => import('@/components/Experiencia'))
-const TrustBadges     = dynamic(() => import('@/components/TrustBadges'))
-const SIEMDashboard   = dynamic(() => import('@/components/SIEMDashboard'))
-const Stack           = dynamic(() => import('@/components/Stack'))
-const Certificaciones = dynamic(() => import('@/components/Certificaciones'))
-const AuditHub        = dynamic(() => import('@/components/AuditHub'))
-const SCAudit         = dynamic(() => import('@/components/SCAudit'))
-const Blog            = dynamic(() => import('@/components/Blog'))
-const Recursos        = dynamic(() => import('@/components/Recursos'))
+const Arquitectura    = dynamic(() => import('@/features/portfolio/Arquitectura'))
+const Experiencia     = dynamic(() => import('@/features/portfolio/Experiencia'))
+const TrustBadges     = dynamic(() => import('@/features/portfolio/TrustBadges'))
+const SIEMDashboard   = dynamic(() => import('@/features/portfolio/SIEMDashboard'))
+const Stack           = dynamic(() => import('@/features/portfolio/Stack'))
+const Certificaciones = dynamic(() => import('@/features/portfolio/Certificaciones'))
+const AuditHub        = dynamic(() => import('@/features/portfolio/AuditHub'))
+const SCAudit         = dynamic(() => import('@/features/portfolio/SCAudit'))
+const Blog            = dynamic(() => import('@/features/portfolio/Blog'))
+const Recursos        = dynamic(() => import('@/features/recursos/Recursos'))
 
-const Proyecto        = dynamic(() => import('@/components/Proyecto'))
-const Contacto        = dynamic(() => import('@/components/Contacto'))
+const Proyecto        = dynamic(() => import('@/features/portfolio/Proyecto'))
+const Contacto        = dynamic(() => import('@/features/portfolio/Contacto'))
 
 export default function Home() {
   return (

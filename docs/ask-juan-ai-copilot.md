@@ -24,9 +24,9 @@ Tres seams del server hacen todo el trabajo pesado:
 
 | Pieza | Módulo | Rol |
 |---|---|---|
-| **Prompt** | `src/lib/ask-ai/prompt/system-prompt.ts` | Ensambla el system prompt bilingüe: headers, bloque RAG, memoria, reglas de comportamiento y guía de tools |
-| **Tools** | `src/lib/ask-ai/tools/` | 6 herramientas pasivas con Zod schema + `safe-fetch` anti-SSRF |
-| **RAG + corpus** | `src/lib/ask-ai/rag/` | Retrieval fusionado (keyword + TF-IDF) sobre el corpus proyectado per-locale |
+| **Prompt** | `src/features/ask-ai/lib/prompt/system-prompt.ts` | Ensambla el system prompt bilingüe: headers, bloque RAG, memoria, reglas de comportamiento y guía de tools |
+| **Tools** | `src/features/ask-ai/lib/tools/` | 6 herramientas pasivas con Zod schema + `safe-fetch` anti-SSRF |
+| **RAG + corpus** | `src/features/ask-ai/lib/rag/` | Retrieval fusionado (keyword + TF-IDF) sobre el corpus proyectado per-locale |
 
 ---
 
@@ -105,7 +105,7 @@ Genera la guía de tools en el idioma pedido. Contiene tres bloques:
 
 ---
 
-## 3. Las Tools (`src/lib/ask-ai/tools/`)
+## 3. Las Tools (`src/features/ask-ai/lib/tools/`)
 
 ### 3.1 Registry — `registry.ts`
 
@@ -134,13 +134,13 @@ Todas las tools que tocan red pasan por `safeFetch()`:
 - **Redirects manuales** (`redirect: 'manual'`) con re-validación de cada salto.
 - **`extractDomain`**: normaliza input del usuario (agrega `https://` si falta) y valida formato de dominio.
 
-> La protección SSRF fue verificada por tests en `src/lib/ask-ai/tools/__tests__/safe-fetch.test.ts`.
+> La protección SSRF fue verificada por tests en `src/features/ask-ai/lib/tools/__tests__/safe-fetch.test.ts`.
 
 ---
 
 ## 4. Tests Golden — qué protegen
 
-Los golden tests son la red de seguridad del copilot: definen **qué debe rankear primero** para las preguntas clave del portfolio y detectan cualquier regresión del corpus o del scoring. Viven en `src/lib/ask-ai/rag/retriever.test.ts`.
+Los golden tests son la red de seguridad del copilot: definen **qué debe rankear primero** para las preguntas clave del portfolio y detectan cualquier regresión del corpus o del scoring. Viven en `src/features/ask-ai/lib/rag/retriever.test.ts`.
 
 ### 4.1 Los golden de ranking
 
@@ -286,7 +286,7 @@ Todas las tools son **pasivas** (solo lectura de datos públicos): no escanean a
 
 ## 7. Telemetría (Fase 5 — enterprise hardening)
 
-**Seam:** `src/lib/ask-ai/telemetry.ts` — el único lugar que define el vocabulario de eventos del copilot (`ask_ai_*`). Un solo punto de entrada `emitAskAiEvent(name, props)` con **transporte inyectable** (tests) y un transporte default serverless: **línea JSON estructurada a stdout** (el host la drena a su pipeline de logs) + **captura a Sentry** de los eventos `ask_ai_error` cuando hay DSN.
+**Seam:** `src/features/ask-ai/lib/telemetry.ts` — el único lugar que define el vocabulario de eventos del copilot (`ask_ai_*`). Un solo punto de entrada `emitAskAiEvent(name, props)` con **transporte inyectable** (tests) y un transporte default serverless: **línea JSON estructurada a stdout** (el host la drena a su pipeline de logs) + **captura a Sentry** de los eventos `ask_ai_error` cuando hay DSN.
 
 Los eventos se emiten en la **orquesta** (la ruta `/api/ask-ai`), nunca dentro de los seams puros: retriever, pool y tools siguen libres de side effects. El pool solo *reenvía* el hook `onFinish` (datos que solo él observa: modelo ganador, usage, finishReason).
 
@@ -331,12 +331,12 @@ request
 
 | Tema | Ubicación |
 |---|---|
-| Prompt builder + tests | `src/lib/ask-ai/prompt/system-prompt.ts` · `system-prompt.test.ts` |
-| Tools + registry + safe-fetch | `src/lib/ask-ai/tools/` · `__tests__/` |
-| RAG (retriever/tokenizer/sources) + tests golden | `src/lib/ask-ai/rag/` |
-| Model pool | `src/lib/ask-ai/model-pool.ts` · `model-pool.test.ts` — **free-only por invariante** (sin fallback pago; pool vacío → 503) · health-check persistido en `pool-health.ts` (localStorage, TTL 24h) |
-| Memoria | `src/lib/ask-ai/memory/` |
-| Telemetría | `src/lib/ask-ai/telemetry.ts` · `telemetry.test.ts` |
+| Prompt builder + tests | `src/features/ask-ai/lib/prompt/system-prompt.ts` · `system-prompt.test.ts` |
+| Tools + registry + safe-fetch | `src/features/ask-ai/lib/tools/` · `__tests__/` |
+| RAG (retriever/tokenizer/sources) + tests golden | `src/features/ask-ai/lib/rag/` |
+| Model pool | `src/features/ask-ai/lib/model-pool.ts` · `model-pool.test.ts` — **free-only por invariante** (sin fallback pago; pool vacío → 503) · health-check persistido en `pool-health.ts` (localStorage, TTL 24h) |
+| Memoria | `src/features/ask-ai/lib/memory/` |
+| Telemetría | `src/features/ask-ai/lib/telemetry.ts` · `telemetry.test.ts` |
 | Ruta | `src/app/api/ask-ai/route.ts` · `route.test.ts` |
 | Glosario de seams | `CONTEXT.md` |
 | Visión general + diagramas | `README.md` |

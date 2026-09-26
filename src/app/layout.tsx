@@ -9,11 +9,11 @@ import { THEME_COOKIE, THEME_INIT_SCRIPT, detectThemeServer } from '@/lib/theme'
 import React from 'react'
 import Script from 'next/script'
 import { ObservabilityProvider } from '@/components/observability/ObservabilityProvider'
-import { HtmlLangUpdater } from '@/components/HtmlLangUpdater'
+import { HtmlLangUpdater } from '@/features/portfolio/HtmlLangUpdater'
 import { SkipToContent } from '@/components/ui/SkipToContent'
-import Navbar from '@/components/Navbar'
-import Footer from '@/components/Footer'
-import { AskAICopilotShell } from '@/components/ask-ai/AskAICopilotShell'
+import Navbar from '@/features/portfolio/Navbar'
+import Footer from '@/features/portfolio/Footer'
+import { AskAICopilotShell } from '@/features/ask-ai/components/ask-ai/AskAICopilotShell'
 
 export const viewport: Viewport = {
   themeColor: [

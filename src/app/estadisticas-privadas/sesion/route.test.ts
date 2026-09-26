@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { NextRequest } from 'next/server'
 import { GET, POST } from './route'
-import { PANEL_COOKIE, verifyPanelCookie } from '@/lib/panel-auth'
+import { PANEL_COOKIE, verifyPanelCookie } from '@/features/stats/panel-auth'
 import { resetRateLimit } from '@/lib/rate-limit'
 
 const BASE = 'http://localhost:3000'

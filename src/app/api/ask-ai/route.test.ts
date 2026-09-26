@@ -23,8 +23,8 @@ vi.mock('ai', async (importOriginal) => {
 
 import { POST } from './route'
 import { resetRateLimit } from '@/lib/rate-limit'
-import { askAiTools } from '@/lib/ask-ai/tools/registry'
-import { setTelemetryTransport, type AskAiTelemetryTransport } from '@/lib/ask-ai/telemetry'
+import { askAiTools } from '@/features/ask-ai/lib/tools/registry'
+import { setTelemetryTransport, type AskAiTelemetryTransport } from '@/features/ask-ai/lib/telemetry'
 
 const ORIGINAL_KEY = process.env.OPENROUTER_API_KEY
 

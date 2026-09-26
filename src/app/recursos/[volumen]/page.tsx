@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { RECURSO_FILES, recursoDownloadHref, type RecursoDocMeta } from '@/data/recursos'
 import { RECURSO_OUTLINE, type OutlineHeading } from '@/data/recursos-outline'
-import { VOLUMES, volumeBySlug } from '@/lib/recursos-volumes'
+import { VOLUMES, volumeBySlug } from '@/features/recursos/recursos-volumes'
 import { getServerT } from '@/lib/server-i18n'
 import { SITE } from '@/lib/constants'
 
