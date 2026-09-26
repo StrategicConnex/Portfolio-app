@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { RECURSO_FILES, recursoDownloadHref } from '@/data/recursos'
-import { VOLUMES } from '@/lib/recursos-volumes'
+import { VOLUMES } from '@/features/recursos/recursos-volumes'
 import { getServerT } from '@/lib/server-i18n'
 import { SITE } from '@/lib/constants'
 

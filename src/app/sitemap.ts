@@ -1,6 +1,6 @@
 import { MetadataRoute } from 'next'
 import { SITE } from '@/lib/constants'
-import { VOLUMES } from '@/lib/recursos-volumes'
+import { VOLUMES } from '@/features/recursos/recursos-volumes'
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return [

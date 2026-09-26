@@ -4,6 +4,31 @@ Terms that name good seams in this codebase. Architecture reviews should use
 these names instead of inventing new ones, and should not re-suggest seams
 that are already recorded here.
 
+## Layout convention
+
+Domain code lives in **feature modules**, not in the shared roots:
+
+- `src/features/ask-ai/` — the copilot: `ask-ai-store.ts` (Zustand), `lib/`
+  (rag, prompt, model-pool, memory, tools, telemetry), `components/ask-ai/`
+  (panel UI + tool cards) and `components/ai-elements/`.
+- `src/features/stats/` — download metrics: `download-stats.ts`,
+  `panel-auth.ts` (HMAC cookie), `upstash-rest.ts`.
+- `src/features/recursos/` — the downloadable library UI (`Recursos.tsx`) and
+  `recursos-volumes.ts`.
+- `src/features/portfolio/` — all portfolio sections (Hero, Perfil,
+  Arquitectura, Experiencia, SIEMDashboard, AuditHub, SCAudit, Blog, Stack,
+  Certificaciones, Proyecto, Contacto) plus global chrome (Navbar, Footer,
+  HtmlLangUpdater) and 3D/canvas visuals.
+- `src/lib/` — **shared seams only** (language, rate-limit, server-i18n,
+  theme, observability, utils, constants): code used by more than one
+  feature. Do not grow feature logic here.
+- `src/components/` — shared kernel only: `ui/` (shadcn primitives +
+  SectionHeader/FadeIn/Icon) and `observability/`. Feature components do not
+  live here.
+- `src/app/` — routes only; pages/route handlers compose features and must
+  not hold domain logic. `src/data/` — content (consumed by features and by
+  the ask-ai corpus projection).
+
 ## i18n
 
 - **Language detection seam** (`src/lib/language.ts`): the single module that
@@ -24,7 +49,7 @@ that are already recorded here.
 
 ## RAG / Ask Juan AI
 
-- **Retrieval seam** (`src/lib/ask-ai/rag/retriever.ts`): the single module
+- **Retrieval seam** (`src/features/ask-ai/lib/rag/retriever.ts`): the single module
   that owns retrieval for the copilot (candidate C1, now closed). One public
   entry point `retrieve()` fuses keyword scoring and TF-IDF semantic
   similarity — keyword scores are min-max normalized to 0–100 and weighted
@@ -35,14 +60,14 @@ that are already recorded here.
   internal components exported only for tests. The corpus lives in
   `sources.ts`. Do not re-suggest splitting the seam or re-duplicating its
   components.
-- **Tokenizer primitive** (`src/lib/ask-ai/rag/tokenizer.ts`): single home
+- **Tokenizer primitive** (`src/features/ask-ai/lib/rag/tokenizer.ts`): single home
   for `tokenize()` and `STOP_WORDS` — the shared language rule for all
   retrieval scoring. The accented-question-word gap (`qué` matching
   `neuquén` by substring) is fixed — question words are stop words. Known
   remaining limitation (pre-existing): TF-without-IDF prefers short
   documents; a future ranking pass may address it, but it is not a seam
   defect.
-- **Knowledge corpus projection** (`src/lib/ask-ai/rag/sources.ts`): the
+- **Knowledge corpus projection** (`src/features/ask-ai/lib/rag/sources.ts`): the
   corpus is *derived*, not duplicated (candidate C2, now closed). Profile,
   experience, SIEM, compliance, blog and case-study entries are projected
   from the live content modules (`src/data/*`) and the translation
@@ -73,13 +98,13 @@ that are already recorded here.
 
 ## Ask Juan AI — orchestration (candidate C5, closed)
 
-- **Prompt builder** (`src/lib/ask-ai/prompt/system-prompt.ts`): the single
+- **Prompt builder** (`src/features/ask-ai/lib/prompt/system-prompt.ts`): the single
   home for the copilot system-prompt assembly. `buildSystemPrompt()` composes
   the language/mode headers, the RAG context block (from the retrieval seam),
   the behavior rules and the passive-analysis tool guide;
   `buildToolDescriptions()` renders the six-tool guide per locale. The route
   must not inline prompt templates anymore.
-- **Model pool** (`src/lib/ask-ai/model-pool.ts`): the only place that
+- **Model pool** (`src/features/ask-ai/lib/model-pool.ts`): the only place that
   decides which model serves a request — and it is **free-only by code
   invariant**: `buildFreeModelPool()` drops any configured entry that is not
   a `:free` endpoint (or the `openrouter/free` router) and throws
@@ -103,14 +128,14 @@ that are already recorded here.
   with exponential backoff (600ms→1200ms, ±50% jitter, max 2 retries,
   global 5s budget) before the pool advances — do not skip straight to
   the next model on a rate limit. The client persists the health-check
-  (`src/lib/ask-ai/pool-health.ts`, localStorage key `ask-ai-failed-models`,
+  (`src/features/ask-ai/lib/pool-health.ts`, localStorage key `ask-ai-failed-models`,
   24h TTL): failed models start skipped on the next visit and the list
   self-heals as entries expire. Do not re-suggest inlining model selection
   in the route, and do not re-suggest adding a paid fallback.
 - **Conversation memory** (connected to the client seam): the server-side
   summarization call (`generateConversationSummary` / `shouldSummarize`) was
   **deleted** in C5 — it ran in the ask-ai route and its result was
-  discarded. Memory lives client-side: `src/lib/ask-ai/memory/` holds the
+  discarded. Memory lives client-side: `src/features/ask-ai/lib/memory/` holds the
   pure seam (`conversation-memory.ts`: `loadMemory` / `saveMemory` /
   `addSummary` / `updatePreferences` / `buildMemoryContext` /
   `summarizeConversation`) and the connector
@@ -121,7 +146,7 @@ that are already recorded here.
   the pre-formatted block verbatim in the system prompt (`buildSystemPrompt`
   `memoryContext` option). Do not resurrect the server-side summarization
   call; memory is a client-seam feature.
-- **Telemetry seam** (`src/lib/ask-ai/telemetry.ts`): the single home for the
+- **Telemetry seam** (`src/features/ask-ai/lib/telemetry.ts`): the single home for the
   copilot telemetry event vocabulary (`ask_ai_*`, Fase 5 enterprise). One
   entry point `emitAskAiEvent()` with an injectable transport (tests) and a
   default serverless transport: structured JSON line to stdout + Sentry

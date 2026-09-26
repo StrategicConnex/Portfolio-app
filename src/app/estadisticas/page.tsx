@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { countByCountry, countByDay, countByFile, countByVolume, readRecent } from '@/lib/download-stats'
+import { countByCountry, countByDay, countByFile, countByVolume, readRecent } from '@/features/stats/download-stats'
 import { getServerT } from '@/lib/server-i18n'
 import { SITE } from '@/lib/constants'
 import { CopyButton } from './CopyButton'

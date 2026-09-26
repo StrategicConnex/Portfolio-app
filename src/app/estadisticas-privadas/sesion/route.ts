@@ -5,7 +5,7 @@ import {
   createPanelCookieValue,
   matchesPanelToken,
   isPanelAuthConfigured,
-} from '@/lib/panel-auth'
+} from '@/features/stats/panel-auth'
 import { checkRateLimit, getClientId } from '@/lib/rate-limit'
 
 export const dynamic = 'force-dynamic'

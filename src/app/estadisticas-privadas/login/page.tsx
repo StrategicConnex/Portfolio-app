@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { isPanelAuthConfigured } from '@/lib/panel-auth'
+import { isPanelAuthConfigured } from '@/features/stats/panel-auth'
 
 export const dynamic = 'force-dynamic'
 

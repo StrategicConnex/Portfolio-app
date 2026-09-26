@@ -112,13 +112,13 @@ flowchart TD
 | Seam | Módulo | Responsabilidad |
 |---|---|---|
 | **Detección de idioma** | `src/lib/language.ts` + `src/proxy.ts` | Regla única *cookie → Accept-Language → default*; el proxy garantiza `portfolio_lang` en cada respuesta de página (el layout no puede setear cookies en Server Components) |
-| **Retrieval (RAG)** | `src/lib/ask-ai/rag/retriever.ts` | `retrieve()` fusiona keyword + TF-IDF (normalizados 0–100, pesos 0.6/0.4); contexto y lista de fuentes salen de la misma retrieval |
-| **Tokenizer** | `src/lib/ask-ai/rag/tokenizer.ts` | `tokenize()` + `STOP_WORDS` (interrogativos ES/EN incluidos) |
-| **Corpus** | `src/lib/ask-ai/rag/sources.ts` | Proyección derivada de `src/data/*` + traducciones (per-locale `es`/`en`, nunca `both` con contenido español) |
+| **Retrieval (RAG)** | `src/features/ask-ai/lib/rag/retriever.ts` | `retrieve()` fusiona keyword + TF-IDF (normalizados 0–100, pesos 0.6/0.4); contexto y lista de fuentes salen de la misma retrieval |
+| **Tokenizer** | `src/features/ask-ai/lib/rag/tokenizer.ts` | `tokenize()` + `STOP_WORDS` (interrogativos ES/EN incluidos) |
+| **Corpus** | `src/features/ask-ai/lib/rag/sources.ts` | Proyección derivada de `src/data/*` + traducciones (per-locale `es`/`en`, nunca `both` con contenido español) |
 | **Rate limit** | `src/lib/rate-limit.ts` | `checkRateLimit()` async: Upstash Redis con fallback in-memory; `getClientId()` lee la **última** IP de `x-forwarded-for` (ADR-001) |
-| **Prompt builder** | `src/lib/ask-ai/prompt/system-prompt.ts` | `buildSystemPrompt()` + `buildToolDescriptions()` (templates bilingües, opción `memoryContext`) |
-| **Model pool** | `src/lib/ask-ai/model-pool.ts` | `streamWithFallback()`: lee el primer chunk del stream antes de comprometerse (fallback real — `streamText` no lanza en la llamada); todo el pool falla → 503 |
-| **Memoria** | `src/lib/ask-ai/memory/` | Client-side: `summarizeConversation` → `addSummary` en `onFinish`; `buildMemoryContext()` viaja en el body (cap 3000) y se embebe en el system prompt |
+| **Prompt builder** | `src/features/ask-ai/lib/prompt/system-prompt.ts` | `buildSystemPrompt()` + `buildToolDescriptions()` (templates bilingües, opción `memoryContext`) |
+| **Model pool** | `src/features/ask-ai/lib/model-pool.ts` | `streamWithFallback()`: lee el primer chunk del stream antes de comprometerse (fallback real — `streamText` no lanza en la llamada); todo el pool falla → 503 |
+| **Memoria** | `src/features/ask-ai/lib/memory/` | Client-side: `summarizeConversation` → `addSummary` en `onFinish`; `buildMemoryContext()` viaja en el body (cap 3000) y se embebe en el system prompt |
 
 ---
 
@@ -224,7 +224,7 @@ a diario).
 
 ### Herramientas (pasivas)
 
-`dnsAnalyzer` · `sslChecker` · `httpHeadersAnalyzer` · `whoisLookup` · `techStackDetector` · `portAnalyzer` — todas con Zod schema, `safe-fetch` (bloqueo de IPs privadas/SSRF) y tarjetas de resultado dedicadas en `src/components/ask-ai/tools/`.
+`dnsAnalyzer` · `sslChecker` · `httpHeadersAnalyzer` · `whoisLookup` · `techStackDetector` · `portAnalyzer` — todas con Zod schema, `safe-fetch` (bloqueo de IPs privadas/SSRF) y tarjetas de resultado dedicadas en `src/features/ask-ai/components/ask-ai/tools/`.
 
 ---
 
@@ -233,45 +233,47 @@ a diario).
 ```
 src/
 ├── proxy.ts                      # Next 16 Proxy: garantiza cookie de idioma
-├── app/
+├── app/                          # Rutas (componen features; sin lógica de dominio)
 │   ├── layout.tsx                # SSR i18n, JSON-LD, SCAudit RUM, Observability
 │   ├── page.tsx                  # Composición home (secciones lazy + Suspense)
 │   ├── loading.tsx / error.tsx / not-found.tsx
 │   ├── robots.ts / sitemap.ts
+│   ├── estadisticas/             # Métricas públicas de descargas (trend, sparkline)
+│   ├── estadisticas-privadas/    # Panel privado (login/sesion/logout + cookie HMAC)
+│   ├── recursos/                 # Biblioteca + volúmenes (/recursos/[volumen])
 │   ├── test-error/               # Solo con NEXT_PUBLIC_E2E_ERROR_ROUTE=1
 │   └── api/
 │       ├── ask-ai/route.ts       # Copilot (streaming + RAG + tools + pool)
 │       ├── contact/route.ts      # Formulario → Resend (rate limit 5/min)
+│       ├── track/download/route.ts # Registra descargas (Redis/NDJSON)
+│       ├── csp-report/route.ts   # Reportes CSP
 │       └── chat/route.ts         # Fallback legacy → reenvía a /api/ask-ai
-├── components/
-│   ├── Hero, Perfil, Arquitectura (Purdue), Experiencia, TrustBadges,
-│   │   SIEMDashboard, AuditHub, SCAudit, Blog, Stack, Certificaciones,
-│   │   Proyecto, Contacto, Footer, Navbar, HtmlLangUpdater
-│   ├── ask-ai/                   # Copilot UI (shell, launcher, panel, header,
-│   │   │                         #   prompt-input, suggestion bar, empty state,
-│   │   │                         #   status pill, error boundary)
-│   │   └── tools/                # ToolCallCard + 6 tarjetas de resultado
-│   ├── ai-elements/              # Conversación, mensajes, sources, prompt-input
-│   │                             #   (componentes propios, render con Streamdown)
+├── features/                     # Módulos por dominio (la lógica vive aquí)
+│   ├── ask-ai/
+│   │   ├── ask-ai-store.ts       # Zustand: isOpen, mode, pendingPrompt
+│   │   ├── lib/                  # rag/, prompt/, model-pool, memory, tools, telemetry
+│   │   └── components/
+│   │       ├── ask-ai/           # Copilot UI (shell, launcher, panel, tools cards…)
+│   │       └── ai-elements/      # Conversación, mensajes, sources, prompt-input
+│   ├── stats/                    # download-stats, panel-auth (HMAC), upstash-rest
+│   ├── recursos/                 # Recursos.tsx (biblioteca UI) + recursos-volumes
+│   └── portfolio/                # Hero, Perfil, Arquitectura (Purdue), Experiencia,
+│                                 #   TrustBadges, SIEMDashboard, AuditHub, SCAudit,
+│                                 #   Blog, Stack, Certificaciones, Proyecto,
+│                                 #   CaseStudyDetail, Contacto, Footer, Navbar,
+│                                 #   HtmlLangUpdater, MindMap3D, ParticleCanvas…
+├── components/                   # Kernel compartido
 │   ├── observability/            # ObservabilityProvider (PostHog + Sentry)
-│   └── ui/                       # shadcn/ui primitives
+│   └── ui/                       # shadcn/ui primitives + SectionHeader/FadeIn/Icon
 ├── context/
 │   ├── LanguageContext.tsx       # Proveedor i18n (usa el seam de idioma)
 │   └── translations/             # Diccionarios ES/EN por sección (19 archivos)
 ├── data/                         # Contenido: siem, audit, blog, experiencia,
-│                                 #   mindmap, caseStudyData
-├── lib/
-│   ├── language.ts               # Seam de detección de idioma
-│   ├── rate-limit.ts             # Seam de rate limiting
-│   ├── constants.ts / utils.ts
-│   ├── observability/            # posthog.ts, sentry.ts
-│   └── ask-ai/
-│       ├── rag/                  # retriever, sources, tokenizer
-│       ├── prompt/               # system-prompt
-│       ├── model-pool.ts
-│       ├── memory/               # conversation-memory + use-conversation-memory
-│       └── tools/                # registry + 6 tools + safe-fetch
-├── stores/ask-ai-store.ts        # Zustand: isOpen, mode
+│                                 #   mindmap, caseStudyData, recursos* (lo genera
+│                                 #   scripts/extract-recursos-text.mjs)
+├── lib/                          # Seams compartidos: language, rate-limit,
+│                                 #   server-i18n, constants, theme, utils,
+│                                 #   observability/, design-tokens test
 └── test-utils/                   # Mocks de framer-motion y next/image
 ```
 
