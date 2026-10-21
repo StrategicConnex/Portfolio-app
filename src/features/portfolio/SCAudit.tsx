@@ -9,31 +9,29 @@ import { useLanguage } from '@/context/LanguageContext'
 
 /* ─── Feature card data ─── */
 type FeatureKey =
-  | 'rum'
-  | 'vitals'
-  | 'audit'
-  | 'seo'
-  | 'errors'
+  | 'discovery'
+  | 'mitre'
+  | 'api'
+  | 'siem'
   | 'ai'
-  | 'score'
   | 'reports'
+  | 'defense'
+  | 'pwa'
 
 interface Feature {
   key: FeatureKey
   icon: string
   color: string
   accent: string
-}
-
-const FEATURES: Feature[] = [
-  { key: 'rum',     icon: '⟳',  color: 'text-[var(--info)]',    accent: 'border-cyan-500/20 bg-cyan-500/5 hover:border-cyan-500/40' },
-  { key: 'vitals',  icon: '⚡', color: 'text-[var(--ok)]',      accent: 'border-emerald-500/20 bg-emerald-500/5 hover:border-emerald-500/40' },
-  { key: 'audit',   icon: '⊕',  color: 'text-[var(--blue)]',    accent: 'border-blue-500/20 bg-blue-500/5 hover:border-blue-500/40' },
-  { key: 'seo',     icon: '⌕',  color: 'text-[var(--violet)]',  accent: 'border-violet-500/20 bg-violet-500/5 hover:border-violet-500/40' },
-  { key: 'errors',  icon: '⚠',  color: 'text-[var(--warn)]',    accent: 'border-amber-500/20 bg-amber-500/5 hover:border-amber-500/40' },
-  { key: 'ai',      icon: '✦',  color: 'text-[var(--rose)]',    accent: 'border-rose-500/20 bg-rose-500/5 hover:border-rose-500/40' },
-  { key: 'score',   icon: '◎',  color: 'text-[var(--teal)]',    accent: 'border-teal-500/20 bg-teal-500/5 hover:border-teal-500/40' },
-  { key: 'reports', icon: '⊞',  color: 'text-[var(--indigo)]',  accent: 'border-indigo-500/20 bg-indigo-500/5 hover:border-indigo-500/40' },
+}const FEATURES: Feature[] = [
+  { key: 'discovery', icon: '⟳',  color: 'text-[var(--info)]',   accent: 'border-cyan-500/20 bg-cyan-500/5 hover:border-cyan-500/40' },
+  { key: 'mitre',     icon: '◎',  color: 'text-[var(--teal)]',   accent: 'border-teal-500/20 bg-teal-500/5 hover:border-teal-500/40' },
+  { key: 'api',       icon: '⊞',  color: 'text-[var(--indigo)]', accent: 'border-indigo-500/20 bg-indigo-500/5 hover:border-indigo-500/40' },
+  { key: 'siem',      icon: '⚠',  color: 'text-[var(--warn)]',   accent: 'border-amber-500/20 bg-amber-500/5 hover:border-amber-500/40' },
+  { key: 'ai',        icon: '✦',  color: 'text-[var(--rose)]',   accent: 'border-rose-500/20 bg-rose-500/5 hover:border-rose-500/40' },
+  { key: 'reports',   icon: '⊕',  color: 'text-[var(--blue)]',   accent: 'border-blue-500/20 bg-blue-500/5 hover:border-blue-500/40' },
+  { key: 'defense',   icon: '⬡',  color: 'text-[var(--ok)]',     accent: 'border-emerald-500/20 bg-emerald-500/5 hover:border-emerald-500/40' },
+  { key: 'pwa',       icon: '◈',  color: 'text-[var(--violet)]', accent: 'border-violet-500/20 bg-violet-500/5 hover:border-violet-500/40' },
 ]
 
 /* ─── Metric pill data ─── */
@@ -44,13 +42,17 @@ interface Metric {
   status: 'good' | 'warn' | 'info'
 }
 
+/**
+ * Cifras verificadas contra el producto en vivo (scaudit.vercel.app, 2026-10-21).
+ * Si cambian allá, este bloque y su test tienen que cambiar acá.
+ */
 const METRICS: Metric[] = [
-  { label: 'LCP',           value: '1.8s',  sub: 'Largest Contentful Paint', status: 'good' },
-  { label: 'CLS',           value: '0.03',  sub: 'Cumulative Layout Shift',  status: 'good' },
-  { label: 'INP',           value: '210ms', sub: 'Interaction to Next Paint', status: 'warn' },
-  { label: 'Lighthouse',    value: '91.4',  sub: 'Global Performance Index',  status: 'info' },
-  { label: 'SEO Health',    value: '88%',   sub: 'Technical SEO Score',       status: 'good' },
-  { label: 'Error Rate',    value: '0.2%',  sub: 'Frontend Error Rate',       status: 'good' },
+  { label: 'MITRE',        value: '23',   sub: 'Técnicas ATT&CK v15',      status: 'good' },
+  { label: 'Tácticas',     value: '7/14', sub: 'Cobertura Enterprise',      status: 'info' },
+  { label: 'Herramientas', value: '46',   sub: 'Escaneo mapeado a MITRE',   status: 'good' },
+  { label: 'API REST',     value: '10',   sub: 'Endpoints · v1.0.0',        status: 'info' },
+  { label: 'Rate limit',   value: '60/m', sub: 'Por API key · ventana 60s', status: 'good' },
+  { label: 'Estado',       value: 'Beta', sub: 'Roadmap público abierto',   status: 'warn' },
 ]
 
 const statusColor = (s: Metric['status']) =>
@@ -100,7 +102,7 @@ const SCAudit = () => {
               {t('scaudit.description')}
             </p>
             <div className="flex flex-wrap gap-2 sm:ml-auto flex-shrink-0">
-              {['SOC 2', 'Lighthouse v12', 'GSC API'].map(badge => (
+              {['MITRE ATT&CK', 'API REST v1', 'BETA'].map(badge => (
                 <span
                   key={badge}
                   className="text-[0.6rem] font-bold uppercase tracking-widest px-2.5 py-1 rounded border border-[var(--surface-border)] bg-[var(--surface-fill)] text-[var(--text-muted)]"
@@ -245,11 +247,9 @@ const SCAudit = () => {
                 {t('scaudit.cta.primary')}
               </a>
               <a
-                href="#scaudit"
-                onClick={(e) => {
-                  e.preventDefault()
-                  document.getElementById('scaudit')?.scrollIntoView({ behavior: 'smooth' })
-                }}
+                href="https://scaudit.vercel.app/disclaimer"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-sm font-bold tracking-tight text-[var(--text-secondary)] border border-[var(--border-interactive)] hover:border-[var(--surface-border-strong)] hover:text-[var(--text-primary)] transition-all duration-200 bg-[var(--surface-fill)] hover:bg-[var(--surface-fill-strong)]"
               >
                 {t('scaudit.cta.secondary')}
