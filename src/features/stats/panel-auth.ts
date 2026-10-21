@@ -9,9 +9,10 @@
  *   ninguna credencial nueva: quien la conoce puede abrir sesión).
  * - El valor de la cookie es `<expiresMs>.<hmac(expiresMs)>` — sin PII, con
  *   expiración verificada en tiempo constante junto con la firma.
- * - Las cookies las establece el route handler `/estadisticas-privadas/login`
- *   (GET con `?k=` para automatización, POST de formulario sin JS); en esta
- *   versión de Next ni las páginas ni el layout pueden setear cookies.
+ * - Las cookies las establece el route handler `/estadisticas-privadas/sesion`
+ *   (GET con `?k=` para automatización, POST del formulario sin JS que vive en
+ *   `/estadisticas-privadas/login`); en esta versión de Next ni las páginas ni
+ *   el layout pueden setear cookies.
  * - Sin env configurada, todo el subsistema reporta "no configurado" y el
  *   panel sigue respondiendo 404 (la ruta no existe).
  */

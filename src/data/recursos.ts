@@ -1,6 +1,6 @@
 /** Metadata for the downloadable IT/OT book library (public/recursos/**).
  * Single source of truth shared by the Recursos section (UI) and the copilot
- * RAG corpus projection (src/lib/ask-ai/rag/sources.ts).
+ * RAG corpus projection (src/features/ask-ai/lib/rag/sources.ts).
  */
 export type RecursoCat = 'vol1' | 'vol2' | 'vol3' | 'vol4' | 'vol5' | 'standards' | 'project'
 

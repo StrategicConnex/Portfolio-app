@@ -8,13 +8,13 @@
 >
 > | Plan original | Estado real hoy |
 > |---|---|
-> | `src/components/AIConsultant.tsx` (widget monolítico) | **Eliminado** — reemplazado por `src/components/ask-ai/AskAICopilotShell.tsx` (modular) |
+> | `src/components/AIConsultant.tsx` (widget monolítico) | **Eliminado** — reemplazado por `src/features/ask-ai/components/ask-ai/AskAICopilotShell.tsx` (modular) |
 > | `/api/chat` como API principal (SSE manual a OpenRouter) | **Fallback legacy** que reenvía a `/api/ask-ai`; la API principal es `/api/ask-ai` con Vercel AI SDK v7 |
 > | Rate limiting en memoria con `Map` en la ruta | **Seam unificado** `src/lib/rate-limit.ts` (Upstash + fallback in-memory, `getClientId` anti-spoofing) |
-> | Sin RAG (conocimiento en el system prompt) | **RAG unificado** `src/lib/ask-ai/rag/retriever.ts` (keyword + TF-IDF) con corpus **derivado** `sources.ts` |
-> | Sin memoria | **Memoria client-side** conectada (`src/lib/ask-ai/memory/`, resúmenes reales por conversación) |
-> | Prompt inline en la ruta | **Prompt builder** `src/lib/ask-ai/prompt/system-prompt.ts` |
-> | Fallback de modelo ilusorio (try/catch sobre `streamText`) | **Model pool real** `src/lib/ask-ai/model-pool.ts` (fallback sobre el primer chunk del stream) |
+> | Sin RAG (conocimiento en el system prompt) | **RAG unificado** `src/features/ask-ai/lib/rag/retriever.ts` (keyword + TF-IDF) con corpus **derivado** `src/features/ask-ai/lib/rag/sources.ts` (174 entradas: 87 es + 87 en) |
+> | Sin memoria | **Memoria client-side** conectada (`src/features/ask-ai/lib/memory/`, resúmenes reales por conversación) |
+> | Prompt inline en la ruta | **Prompt builder** `src/features/ask-ai/lib/prompt/system-prompt.ts` |
+> | Fallback de modelo ilusorio (try/catch sobre `streamText`) | **Model pool real** `src/features/ask-ai/lib/model-pool.ts` (fallback sobre el primer chunk del stream, **free-only**: pool vacío → 503, nunca un modelo pago) |
 >
 > Las secciones siguientes describen el plan y los criterios de diseño que se siguieron; **no describen el estado actual del código**. Para la arquitectura vigente ver `README.md`.
 

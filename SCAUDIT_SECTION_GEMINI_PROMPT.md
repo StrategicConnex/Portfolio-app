@@ -2,7 +2,9 @@
 
 > ## ⚠️ ESTADO: EJECUTADO
 >
-> Este prompt se ejecutó: la sección **StrategicAudit Pro** está implementada en `src/components/SCAudit.tsx` e integrada en la home (`src/app/page.tsx`, import dinámico con Suspense, entre `AuditHub` y `Blog`). Traducciones en `src/context/translations/scaudit.ts`. CTA a `https://scaudit.vercel.app` con `target="_blank" rel="noopener noreferrer"`. El **RUM** (`https://scaudit.vercel.app/scripts/vitals.js`) se carga en `src/app/layout.tsx` solo en producción fuera de localhost.
+> Este prompt se ejecutó: la sección **StrategicAudit Pro** está implementada en `src/features/portfolio/SCAudit.tsx` e integrada en la home (`src/app/page.tsx`, import dinámico con Suspense, entre `AuditHub` y `Blog`). Traducciones en `src/context/translations/scaudit.ts`. CTA a `https://scaudit.vercel.app` con `target="_blank" rel="noopener noreferrer"`. El **RUM** (`https://scaudit.vercel.app/scripts/vitals.js`) se carga en `src/app/layout.tsx` solo en producción fuera de localhost.
+>
+> **Nota de layout (post-refactor):** los componentes de portfolio ya no viven en `src/components/` sino en `src/features/portfolio/`. Las rutas citadas en el cuerpo del prompt (`src/components/AuditHub.tsx`, `src/components/SIEMDashboard.tsx`, `src/components/Proyecto.tsx`, `src/components/Stack.tsx`) hoy son `src/features/portfolio/<componente>.tsx`; `src/components/ui/` sí sigue siendo el kernel compartido (shadcn + `SectionHeader`/`FadeIn`/`Icon`).
 >
 > Se conserva como registro histórico del prompt de trabajo. Ver `README.md` para el estado vigente.
 

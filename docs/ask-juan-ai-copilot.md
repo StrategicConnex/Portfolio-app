@@ -28,6 +28,14 @@ Tres seams del server hacen todo el trabajo pesado:
 | **Tools** | `src/features/ask-ai/lib/tools/` | 6 herramientas pasivas con Zod schema + `safe-fetch` anti-SSRF |
 | **RAG + corpus** | `src/features/ask-ai/lib/rag/` | Retrieval fusionado (keyword + TF-IDF) sobre el corpus proyectado per-locale |
 
+### 1.1 Resiliencia del pool (free-only, con jitter)
+
+El pool es **free-only por invariante de código**: `buildFreeModelPool()` descarta cualquier id que no sea `:free` o el router `openrouter/free`; si el pool queda vacío tras el saneamiento, la ruta responde **503** en lugar de gastar dinero. Un modelo cuenta como fallido solo si su stream **falla al arrancar** (read rechazado, stream vacío, primer evento SSE `{"type":"error"}` o 429 de rate limit); los errores mid-stream no se reintentan (requeriría buffering).
+
+Los modelos free tienen rate limit propio (20 req/min por cuenta, límites más estrictos por modelo), así que un **429 al arrancar el stream no salta directamente al siguiente modelo**: el modelo entra en una **cola de reintentos con backoff exponencial** (600ms → 1200ms, **±50% de jitter**, máx. 2 reintentos por modelo) con un **presupuesto global de 5s**, para que el pool completo quepa dentro del `maxDuration` de la ruta (30s). Solo al agotar los reintentos el pool avanza al siguiente modelo.
+
+Si un stream se corta a mitad, el panel **reintenta automáticamente** (máx. 2 por respuesta) con el siguiente modelo, enviando `skipModels` (los ids que fallaron mid-stream) para no repetirlos; si los skips vacían el pool, la ruta responde 503. El health-check del pool se persiste en localStorage (`ask-ai-failed-models`, TTL 24h): los modelos que fallaron mid-stream arrancan skippeados en la siguiente visita, y la lista se auto-cura al expirar cada entrada.
+
 ---
 
 ## 2. El Prompt (`system-prompt.ts`)
@@ -205,7 +213,7 @@ El retrieval es **puramente determinístico** (sin vector DB, sin embeddings ext
 ### Limitaciones conocidas (documentadas, no defects)
 
 - **TF sin IDF** prefiere documentos cortos — por eso el blog IEC 62443 supera al estándar por 1 punto en queries "what is" (el golden top-2 lo fija).
-- El corpus se escanea una vez por request (sin caché de retrieval) — deliberado: el corpus es pequeño (**52 fuentes: 26 es + 26 en**).
+- El corpus se escanea una vez por request (sin caché de retrieval) — deliberado: el corpus es pequeño (**174 fuentes: 87 es + 87 en**; 122 de ellas son la biblioteca `/recursos`, 61 por locale).
 
 **Versión Mermaid del pipeline de scoring** (renderiza en GitHub):
 

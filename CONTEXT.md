@@ -28,6 +28,10 @@ Domain code lives in **feature modules**, not in the shared roots:
 - `src/app/` — routes only; pages/route handlers compose features and must
   not hold domain logic. `src/data/` — content (consumed by features and by
   the ask-ai corpus projection).
+- `src/context/` — React context providers and the i18n/theme dictionaries:
+  `LanguageContext.tsx`, `ThemeContext.tsx` and `translations/` (22
+  dictionaries, one per section). Providers consume the seams; they never
+  re-derive the rules.
 
 ## i18n
 
@@ -46,6 +50,37 @@ Domain code lives in **feature modules**, not in the shared roots:
   `proxy.ts` and `LanguageContext.tsx` (post-hydration state) consume this
   seam and must never re-derive the rule themselves. Do not re-suggest
   extracting, duplicating or moving cookie-writing into the layout.
+
+## Theme
+
+- **Theme seam** (`src/lib/theme.ts`): the single module that owns the
+  portfolio's light/dark rule, mirroring the language seam. Three sides must
+  never drift apart — the server (`layout.tsx` + `src/proxy.ts`), the client
+  (`src/context/ThemeContext.tsx`) and the inline no-flash script in `<head>` —
+  and all three
+  call the same pure functions in this file: `resolveTheme()`,
+  `detectThemeServer()` (cookie → default `'system'`), `detectThemeClient()`
+  (cookie → localStorage → default) and `resolveHydrationTheme()` (the
+  flash-free hydration decision, same contract as `resolveHydrationLanguage`).
+  The cookie (`portfolio_theme`, 1 year) is the agreement channel: the proxy
+  guarantees it on every page response, so the inline script resolves the
+  `light`/`dark` class **before first paint**. The resolved class is always
+  either `light` or `dark` — never absent. `THEME_INIT_SCRIPT` is a
+  self-contained string so the layout can inline it synchronously.
+  Do not re-suggest extracting the theme rule into a component, duplicating
+  the `matchMedia` check, or moving cookie-writing into the layout.
+
+## Design tokens / accessibility
+
+- **Design-token audit** (`src/lib/design-tokens.contrast.test.ts`): the
+  permanent guard for the three CSS scopes — `:root` (light), `.dark` and
+  `.console` (deliberately dark in both themes). It parses `src/app/globals.css`
+  live (so it cannot desynchronize from the CSS), composes the real
+  translucent surfaces (fill → glass → bg2) and fails if a text tier drops
+  below 4.5:1 (WCAG AA) or an interactive border below 3:1 (WCAG 1.4.11) in
+  any scope. The rules it enforces are the migration rules: no hardcoded
+  `text-slate-*` / `bg-slate-*`, no inline hex colors, `.console-bg` for
+  fixed dark panels and `.console` for dark-in-both-themes scopes.
 
 ## RAG / Ask Juan AI
 
@@ -77,6 +112,50 @@ Domain code lives in **feature modules**, not in the shared roots:
   every entry is `es` or `en` (no `both` with Spanish content for English
   users) and every `es` entry has an `-en` sibling. Do not re-suggest a
   hand-maintained mirror or merging locales back into `both`.
+
+## Downloads & private panel
+
+- **Download metrics seam** (`src/features/stats/download-stats.ts`): the
+  single home for recording and aggregating download events. `recordDownload()`
+  writes through one of two backends — Upstash Redis REST (durable across
+  Vercel instances) or a local NDJSON file (`.data/descargas.ndjson`,
+  overridable with `DOWNLOAD_STATS_FILE`) — and never throws: a failed log
+  must not break the download. `readRecent()` + `countByDay()` /
+  `countByFile()` / `countByVolume()` / `countByCountry()` are the only
+  aggregation surface; the log is capped at the last 10.000 events.
+  `isTrackableFile()` is the guard that only accepts saneable paths under
+  `/recursos/`. Do not re-suggest a second storage backend or per-route
+  aggregation logic.
+- **Panel auth seam** (`src/features/stats/panel-auth.ts`): the single home
+  for the private panel's session. The signing key **is**
+  `DOWNLOAD_STATS_TOKEN` (the same secret used to log in) — there is no
+  separate session secret. `createPanelCookieValue()` emits an HMAC-SHA256
+  `panel_auth` cookie (httpOnly, 30 days) and verification compares in
+  constant time. With no `DOWNLOAD_STATS_TOKEN` configured, the panel page,
+  the login page and the session route answer **404** rather than 401, so the
+  surface is invisible by default.
+  Do not re-suggest a second token, a session store, or a non-constant-time
+  comparison.
+- **Tracking route** (`src/app/api/track/download/route.ts`): records the
+  event and redirects (307) to the static file. Its rate limit (30/min) is
+  **fail-open** — if Redis is down the download still works. Note the known
+  inconsistency: the limit keys on `getClientId()` (the **last**
+  `x-forwarded-for` entry) while the recorded event stores the **first**
+  entry; the latter is client-spoofable and is tracked as P1 debt in
+  `README.md` → "Deuda técnica conocida".
+
+## Resources library
+
+- **Library seam** (`src/data/recursos.ts` + `src/features/recursos/`):
+  `RECURSO_FILES` is the single metadata registry (61 documents, 7
+  categories: 5 book volumes with detail pages at `/recursos/[volumen]` plus
+  the `standards` and `project` collections). `recursos-volumes.ts` holds the
+  per-volume bilingual copy. The extracted text
+  (`src/data/recursos-text.json`, produced by
+  `scripts/extract-recursos-text.mjs`) and the chapter/search index
+  (`src/data/recursos-outline.json`) are what the copilot corpus projects, so
+  the copilot describes documents from their real content. Do not re-suggest
+  a parallel document list or re-scanning the corpus per request.
 
 ## Rate limiting
 
@@ -160,19 +239,28 @@ Domain code lives in **feature modules**, not in the shared roots:
   `src/lib/observability/posthog.ts` from `AskAIPanel`. Do not re-suggest
   emitting telemetry from inside the seams or replacing the stdout transport
   with a vendor-specific one.
-- **CI/CD pipeline** (`.github/workflows/ci.yml`): `validate` + `e2e` corren
-  en push a main/develop y PRs a main; un job `deploy` gateado por ambos
-  despliega a **producción en Vercel en cada push a main** usando el CLI
+- **CI/CD pipeline** (`.github/workflows/ci.yml`): cuatro jobs —
+  `validate` (lint, typecheck, test, **audit**, build) abre la rama; de ahí
+  cuelgan en paralelo `lighthouse` (budgets de perf/a11y/best-practices/SEO
+  sobre `/`, `/recursos` y `/estadisticas`) y `e2e` (Playwright contra el
+  build de producción); `deploy` espera a `validate` + `e2e`. Corren en push a
+  main/develop y PRs a main; `deploy` es
+  **hard-fail** si el project ID de Vercel no es
+  `prj_KmY2dJJgbui7LhuQyxZPKTU08T1h` (nunca desplegar a otro proyecto).
+  Despliega a **producción en Vercel en cada push a main** usando el CLI
   (`vercel pull --environment=production` → `vercel build --prod` →
   `vercel deploy --prebuilt --prod`), con `--prebuilt` para no duplicar el
-  build (compila en el runner, sube solo `.vercel/output`). El proyecto
-  destino está **fijado**: `vercel link --project juanpalacios --scope
-  strategicconnex` y un paso de verificación que **hard-fail si el project
-  ID no es `prj_KmY2dJJgbui7LhuQyxZPKTU08T1h`** (nunca desplegar a otro
-  proyecto). El único secret requerido es `VERCEL_TOKEN`; las env vars de
-  runtime se configuran en el dashboard de Vercel (Production) y `vercel
-  pull` las baja al build. También disparable manualmente
-  (`workflow_dispatch` sobre main). Do not re-suggest GitHub Pages: la app
-  necesita un runtime Node (API routes del copilot, chat y contacto); el
-  deploy pasa por un host con runtime (Vercel).
+  build (compila en el runner, sube solo `.vercel/output`). El único secret
+  requerido es `VERCEL_TOKEN`; las env vars de runtime se configuran en el
+  dashboard de Vercel (Production) y `vercel pull` las baja al build. También
+  disparable manualmente (`workflow_dispatch` sobre main).
+  ⚠️ **Estado actual**: el paso `npm audit --audit-level=moderate` de
+  `validate` sale con código 1 (37 avisos: 1 critical, 15 high, 13 moderate,
+  8 low), por lo que `lighthouse`, `e2e` y `deploy` quedan **skipped** y el
+  deploy está bloqueado. Varios overrides de `package.json` fijan versiones
+  **dentro** del rango afectado. Ver `README.md` → "Deuda técnica conocida" y
+  `docs/adr/ADR-001-production-hardening.md`.
+  Do not re-suggest GitHub Pages: la app necesita un runtime Node (API routes
+  del copilot, chat y contacto); el deploy pasa por un host con runtime
+  (Vercel).
 

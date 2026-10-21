@@ -49,24 +49,44 @@ Next.js 16.2.9, y el CSP incluía `unpkg.com` contradiciendo el plan interno RUM
 > bucket `internal` y un solo cliente puede agotar la cuota de todos.
 
 ### Dependencias (P0)
-Overrides npm para resolver el audit completo a **0 vulnerabilidades**:
+Intención original (Agosto 2026): overrides npm para resolver el audit completo a **0 vulnerabilidades**. Hoy esa meta **no se cumple** — ver la nota de estado al final de esta sección.
 
-| Paquete | Vulnerable | Fijado | Racional |
-| --- | --- | --- | --- |
-| `fast-uri` | <3.1.5 | 3.1.5 | transitiva, parche same-major |
-| `dompurify` | <3.4.12 | 3.4.12 | transitiva, parche same-major |
-| `brace-expansion` | 1.1.15 | 1.1.18 | scoped a `eslint-plugin-import → minimatch@3.1.5` (dev-only) |
-| `js-yaml` | 4.0.0–4.2.0 | 4.3.1 | transitiva de `shadcn` (dev) |
-| `undici` | 7.0.0–7.28.0 | 7.29.0 | transitiva de `jsdom`/`shadcn` (dev) |
-| `ip-address` | ≤10.3.0 | 10.4.0 | transitiva de `shadcn` (dev) |
-| `postcss` | ≤8.5.22 | 8.5.25 | transitiva de `@tailwindcss/postcss` |
-| `hono` | <4.12.34 | 4.12.34 | transitiva de `@modelcontextprotocol/sdk` (dev) |
-| `@modelcontextprotocol/sdk` | ≤1.29.0 | 1.30.0 | fix upstream de `@hono/node-server` |
-| `@hono/node-server` | <2.0.5 | 2.0.12 | requerido por SDK MCP 1.30.0 |
+**Tabla vigente (Octubre 2026)** — la columna “¿cierra el advisory?” compara el
+override contra el **rango afectado real** reportado por `npm audit` en la
+rama `19d3e86`:
+
+| Paquete | Rango afectado (actual) | Override vigente | ¿Cierra? | Racional |
+| --- | --- | --- | --- | --- |
+| `fast-uri` | — (fuera de rango) | `3.1.8` | ✅ | transitiva, parche same-major |
+| `dompurify` | — (fuera de rango) | `3.4.16` | ✅ | transitiva, parche same-major |
+| `js-yaml` | — (fuera de rango) | `4.3.2` | ✅ | transitiva de `shadcn` (dev) |
+| `postcss` | — (fuera de rango) | `8.5.28` | ✅ | transitiva de `@tailwindcss/postcss` — **pero** arrastra `postcss-selector-parser@7.1.4` (`<7.1.6`, moderate), que este override no cubre |
+| `@hono/node-server` | — (no vulnerable en sí) | `2.1.1` | ✅ | requerido por SDK MCP |
+| `baseline-browser-mapping` | — (fuera de rango) | `2.11.0` | ✅ | transitiva de `browserslist` |
+| `browserslist` | — (fuera de rango) | `4.28.7` | ✅ | transitiva dev |
+| `qs` | — (fuera de rango) | `6.16.0` | ✅ | transitiva dev |
+| `fflate@>=0.6.0 <0.6.11` | `<0.6.11` | `0.6.11` | ✅ | override *scoped por rango* |
+| `undici` | `7.0.0 – 7.29.0` | `7.29.0` | ❌ **dentro del rango** | transitiva de `jsdom`/`shadcn` (dev) |
+| `ip-address` | `≤10.7.0` | `10.4.0` | ❌ **dentro del rango** | transitiva de `express-rate-limit` (dev) |
+| `hono` | `4.12.4 – 4.13.10` | `4.13.8` | ❌ **dentro del rango** | transitiva de `@modelcontextprotocol/sdk` (dev) |
+| `@modelcontextprotocol/sdk` | `≤1.31.0` (GHSA-6qxp-vccf-f47h) | `1.30.1` | ❌ **dentro del rango** | fix upstream de `@hono/node-server` |
+| `mermaid` | `10.9.0-rc.1 – 12.1.0` (low) | `11.16.1` | ❌ **dentro del rango** | transitiva de `streamdown` |
+| `brace-expansion` | `≤1.1.20 \|\| 4.0.0 – 5.0.11` (high) | **sin override** | ❌ **regresión** | el override *scoped* se eliminó |
 
 > **Nota**: `eslint-plugin-import → minimatch` requiere override **scoped por
 > versión** (`minimatch@3.1.5`) para no afectar a `minimatch@10.2.5` (hoisted por
 > ESLint), que necesita la API de `brace-expansion` 2.x/5.x.
+
+> ⚠️ **Estado real (Octubre 2026):** el audit **no está en cero** —
+> `npm audit --audit-level=moderate` reporta **37 avisos (1 critical, 15 high,
+> 13 moderate, 8 low)** y sale con código 1, lo que deja el job `validate` de
+> GitHub Actions en **rojo** y los jobs `lighthouse`, `e2e` y `deploy` en
+> **skipped**: hoy **no se puede desplegar a producción**. Cinco overrides
+> (`undici`, `ip-address`, `hono`, `@modelcontextprotocol/sdk`, `mermaid`) fijan
+> versiones **dentro** del rango afectado y no aportan nada, y el override
+> *scoped* de `brace-expansion` ya no existe (el advisory **high** volvió).
+> La tabla de arriba es la que hay que re-auditar contra
+> `npm audit --audit-level=moderate` en cada actualización de dependencias.
 
 ### Testing (P1)
 - Nuevo helper compartido `src/test-utils/framer-motion.tsx`:
@@ -98,12 +118,17 @@ Overrides npm para resolver el audit completo a **0 vulnerabilidades**:
 
 ## Consequences
 
-- **Positivas**: 0 vulnerabilidades en `npm audit` completo; rate limiting
-  resistente a spoofing de IP; suite de tests limpia (250/250, sin warnings de
-  React); LCP más ligero; CSP alineada con el plan RUM.
-- **Negativas**: los overrides de npm deben mantenerse documentados; el override
-  de `brace-expansion` es scoped por versión y requiere cuidado al actualizar
+- **Positivas**: rate limiting resistente a spoofing de IP; suite de tests amplia
+  y en verde; LCP más ligero; CSP alineada con el plan RUM; cap de `memoryContext`
+  y cola 429 con backoff que mantienen el copilot dentro del `maxDuration`.
+- **Negativas**: los overrides de npm deben mantenerse documentados **y
+  re-auditados** — un override que fija una versión dentro del rango afectado
+  es peor que no tener override, porque aparenta estar resuelto. El override de
+  `brace-expansion` es scoped por versión y requiere cuidado al actualizar
   `eslint-plugin-import`.
+- **Pendiente (P0)**: el audit no está en cero. La afirmación original de este
+  ADR ("0 vulnerabilidades") **ya no es cierta**; ver la nota de estado en
+  "Dependencias" y la sección "Deuda abierta" al final.
 
 ## Risks
 
@@ -122,22 +147,44 @@ Overrides npm para resolver el audit completo a **0 vulnerabilidades**:
 ## Validation
 
 ```text
-npm audit            → found 0 vulnerabilities (full tree)
-npm run lint         → exit 0
+npm audit            → 37 vulnerabilities (8 low, 13 moderate, 15 high, 1 critical)  ← EXIT 1
+npm run lint         → exit 0 (3 warnings)
 npm run typecheck    → exit 0
-npm run test         → 250 passed (25 files)
-npm run build        → OK, 7 routes
-npx playwright test  → 17 passed
+npm run test         → 539 passed (50 files)
+npm run build        → OK, 17 routes
+npx playwright test  → 38 tests declarados (9 specs)
 ```
 
-> **Estado actualizado (Agosto 2026):** la suite creció con los seams de
+> **Estado actualizado (Octubre 2026):** la suite creció con los seams de
 > arquitectura cerrados posteriormente (RAG unificado, corpus proyectado,
-> rate-limit, prompt builder, model pool, memoria client-side, idioma). Hoy:
-> `npm test` → **381 passed (36 files)**, `npx playwright test` → **33 passed
-> (7 specs)** contra el build de producción (`E2E_PROD_SERVER=1`).
+> rate-limit, prompt builder, model pool, memoria client-side, idioma, tema,
+> stats/panel y biblioteca). Hoy: `npm test` → **539 passed (50 files)**,
+> `npx playwright test --list` → **38 tests (9 specs)** contra el build de
+> producción (`E2E_PROD_SERVER=1`).
 > Los overrides de npm, la CSP y el contrato `getClientId` (última IP de XFF)
 > siguen vigentes según lo decidido en este ADR. La cláusula de `/api/chat`
 > evolucionó con la remediación H2 (ver supersession arriba).
+>
+> ⚠️ La línea de `npm audit` **cambió**: este ADR se escribió cuando el audit
+> estaba en cero. Hoy el comando sale con **código 1**, lo que rompe el job
+> `validate` de CI y bloquea `lighthouse` / `e2e` / `deploy`.
+
+### Deuda abierta (Octubre 2026)
+
+| Ítem | Estado |
+|---|---|
+| `npm audit --audit-level=moderate` en verde | ❌ Exit 1 — 37 avisos (1 critical, 15 high, 13 moderate, 8 low) |
+| Overrides que fijan versiones dentro del rango afectado | ❌ 5 (`undici`, `ip-address`, `hono`, `@modelcontextprotocol/sdk`, `mermaid`) |
+| Override *scoped* de `brace-expansion` | ❌ eliminado — el advisory high volvió |
+| `next@16.3.6` dentro del rango `16.0.0–16.3.7` | ❌ fix en `≥16.3.8` |
+| `sharp@0.35.4` dentro del rango `<0.35.5` | ❌ fix en `≥0.35.5` |
+| Cadena del AI SDK en runtime (`ai`, `@ai-sdk/react`, `@ai-sdk/openai`, `@ai-sdk/gateway`, `@ai-sdk/mcp`, `@ai-sdk/provider-utils`) | ❌ Todos en el rango afectado (moderate); hay patch disponible |
+| `katex@0.16.47` en runtime (vía `mermaid` → `@streamdown/mermaid` → `streamdown`) | ❌ Rango `0.11.0–0.18.1` (low), sin parche publicado |
+| `proxy-addr@2.0.7` (critical) | ⚠️ Solo devDependencies: `shadcn` → `@modelcontextprotocol/sdk` → `express@5.2.1` → `proxy-addr` |
+| `vite@8.3.0` (vía `vitest`), `source-map-js@1.2.1`, `fast-glob`/`braces`, `ts-morph` | ⚠️ Solo dev/build, pero todos `high` y mantienen el CI rojo |
+| `postcss-selector-parser@7.1.4` (vía `postcss`) | ⚠️ El override de `postcss` **no** cubre este paquete (rango `<7.1.6`) |
+| `npm audit fix` sobre `eslint-config-next` | ❌ npm propone **downgrade** a `14.2.35` (`isSemVerMajor`), incompatible con Next 16 — no aceptar |
+| Warnings `act(...)` de React | ⚠️ 6 en la suite actual (2 en `src/features/portfolio/accessibility.test.tsx` + 4 en `src/features/ask-ai/components/ask-ai/AskAISuggestionBar.test.tsx`); el ADR los daba por resueltos |
 
 ---
 
@@ -145,9 +192,9 @@ npx playwright test  → 17 passed
 
 | Requerimiento | Decisión | Artefacto |
 | --- | --- | --- |
-| Eliminar vulns Next | Upgrade 16.3.0 | `package.json` |
+| Eliminar vulns Next | Upgrade 16.3.0 (hoy `^16.3.3` → instalado 16.3.6) | `package.json` |
 | CSP sin unpkg | Editar CSP | `next.config.ts` |
-| Anti-spoofing rate limit | Última IP + reenvío verbatim del header del edge | `rate-limit.ts`, `chat/route.ts` |
+| Anti-spoofing rate limit | Última IP + reenvío verbatim del header del edge | `src/lib/rate-limit.ts`, `src/app/api/chat/route.ts` |
 | Tests sin warnings | Helper compartido | `src/test-utils/framer-motion.tsx`, 8 tests |
-| LCP más ligero | quality 75 | `Hero.tsx`, `Perfil.tsx` |
+| LCP más ligero | quality 75 | `src/features/portfolio/Hero.tsx`, `Perfil.tsx` |
 | Documentar | Este ADR | `docs/adr/ADR-001-production-hardening.md` |

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Extracts plain text from the downloadable library (public/recursos/**) into
- * src/data/recursos-text.json — consumed by src/lib/ask-ai/rag/sources.ts
+ * src/data/recursos-text.json — consumed by src/features/ask-ai/lib/rag/sources.ts
  * so the copilot describes documents from their real content.
  *
  * Zero-dependency DOCX/XLSX text extraction (Office files are ZIPs):
