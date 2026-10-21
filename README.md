@@ -1,5 +1,8 @@
 # Juan Felipe Palacios — Portfolio IT/OT
 
+[![CI · security gate](https://github.com/StrategicConnex/Portfolio-app/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/StrategicConnex/Portfolio-app/actions/workflows/ci.yml)
+[![npm audit · producción](https://img.shields.io/badge/npm%20audit%20(producci%C3%B3n)-0%20vulnerabilities-2ea44f?style=flat-square)](docs/adr/ADR-001-production-hardening.md)
+
 Portfolio de consultoría en **ciberseguridad industrial, IT/OT y redes para Oil & Gas** (Vaca Muerta, Neuquén, Argentina). Incluye un dashboard SIEM simulado, visualización del modelo Purdue, hub de compliance, sección de producto SaaS (StrategicAudit Pro), blog técnico y un **AI Cybersecurity Copilot bilingüe** con RAG del propio portfolio.
 
 **URL de producción:** `https://juanpalacios.vercel.app`
