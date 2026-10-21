@@ -58,3 +58,7 @@ test-results/
 
 # auditoría visual (capturas Playwright)
 .audit/
+
+# capturas de pantalla y PNGs locales (sin versionar)
+screenshots/
+*.png
