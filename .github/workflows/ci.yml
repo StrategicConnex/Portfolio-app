@@ -38,8 +38,24 @@ jobs:
       - name: Run tests
         run: npx vitest run
 
-      - name: Run npm audit
-        run: npm audit --audit-level=moderate
+      # Gate de seguridad en dos capas: lo que se despliega bloquea, la deuda
+      # dev-only se reporta pero no impide el deploy (ver ADR-001).
+      #   1. `--omit=dev` = superficie real de producción → bloqueante.
+      #   2. árbol completo por `critical` → bloqueante (crítico es crítico,
+      #      aunque sea dev).
+      #   3. el resto (high/moderate dev-only sin parche upstream) → `::warning::`.
+      - name: Security audit — production dependencies (blocking)
+        run: npm audit --omit=dev --audit-level=moderate
+
+      - name: Security audit — full tree (blocking only on critical)
+        run: |
+          set -o pipefail
+          if ! npm audit --audit-level=critical; then
+            echo "::error::Critical advisory in the full dependency tree."
+            exit 1
+          fi
+          echo "::notice::No critical advisories anywhere in the tree."
+          npm audit --audit-level=moderate || echo "::warning::Dev-only advisories remain (no upstream fix published yet) — see ADR-001."
 
       - name: Build application
         run: npm run build

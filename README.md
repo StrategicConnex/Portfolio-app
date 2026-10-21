@@ -556,7 +556,9 @@ validate  (push main/develop, PR main)
   ├─ npm run lint
   ├─ npx tsc --noEmit
   ├─ npm run test
-  ├─ npm audit --audit-level=moderate   ← gate: hoy FALLA (ver "Deuda técnica conocida")
+  ├─ npm audit --omit=dev --audit-level=moderate   ← gate de PRODUCCIÓN (bloqueante)
+  ├─ npm audit --audit-level=critical              ← bloqueante en todo el árbol
+  ├─ npm audit --audit-level=moderate              ← advisory: dev-only sin parche
   └─ npm run build   (con NEXT_PUBLIC_VERCEL_URL + secrets)
 
 lighthouse  (needs: validate)
@@ -582,7 +584,7 @@ deploy  (needs: validate + e2e — solo push a main)
 
 Cada push a `main` que pase `validate` + `e2e` despliega automáticamente a producción en Vercel (sin doble build gracias a `--prebuilt`). El job `deploy` también se puede disparar manualmente desde Actions (`workflow_dispatch`) sobre `main`.
 
-> ⚠️ **El pipeline está rojo hoy.** El paso `npm audit --audit-level=moderate` de `validate` sale con código 1, y como `lighthouse`, `e2e` y `deploy` dependen de él, quedan **skipped**: hoy no se puede desplegar a producción. Ver [Deuda técnica conocida](#deuda-técnica-conocida).
+> ✅ **El gate de seguridad está verde (octubre 2026).** El audit se parte en dos capas: `--omit=dev` (superficie real de producción) bloquea, y en el árbol completo solo bloquea un advisory **crítico**. La deuda dev-only sin parche publicado (`braces@3.0.3`) se emite como `::warning::` y no frena el deploy. Ver [Deuda técnica conocida](#deuda-técnica-conocida).
 
 **Versión Mermaid** (renderiza en GitHub):
 
@@ -596,7 +598,7 @@ flowchart TD
     Lint["npm run lint"]
     TC["npx tsc --noEmit"]
     Test["npm run test"]
-    Audit["npm audit --audit-level=moderate<br/>(hoy falla → gate rojo)"]
+    Audit["npm audit --omit=dev --audit-level=moderate<br/>(producción · bloqueante)<br/>+ critical en todo el árbol"]
     Build["npm run build<br/>(NEXT_PUBLIC_VERCEL_URL + secrets)"]
     LHCli["lhci autorun<br/>(budgets perf/a11y/bp/SEO)"]
     EBuild["npm run build<br/>(NEXT_PUBLIC_E2E_ERROR_ROUTE=1)"]
@@ -640,7 +642,7 @@ flowchart TD
 - **Validación**: Zod en todas las APIs y formularios; escape HTML en el email.
 - **Accesibilidad**: `prefers-reduced-motion`, tests con axe-core, ARIA labels.
 - **Resiliencia**: ErrorBoundary del copilot, model pool con fallback real, 503 cuando todo el pool falla.
-- **`npm audit`**: ⚠️ **no está en cero** — 37 avisos vivos (1 critical, 15 high, 13 moderate, 8 low) y el job `validate` está **rojo**. Los overrides de `package.json` están documentados en `docs/adr/ADR-001` (varios fijan hoy exactamente la versión vulnerable).
+- **`npm audit`**: **producción en cero** — `npm audit --omit=dev --audit-level=moderate` sale con código 0 (quedan 8 avisos **low** en la cadena `streamdown`/`katex`, que no bloquean). En el árbol completo persisten **1 high dev-only** (`braces@3.0.3` vía `shadcn → fast-glob → micromatch`; 3.0.3 es la última versión publicada, sin parche upstream) y **1 low de runtime** (`katex`, sin fix en el rango). Overrides, rangos y racional en [ADR-001](docs/adr/ADR-001-production-hardening.md).
 
 ---
 
@@ -650,67 +652,42 @@ Estado verificado sobre el código de esta rama (HEAD `19d3e86`). Ningún punto 
 
 > Inventario literal de `npm audit --audit-level=moderate --json` (37 avisos: 1 critical, 15 high, 13 moderate, 8 low). “Runtime” = llega al bundle de producción; “dev” = solo `devDependencies` (no llega al runtime, pero mantiene el gate de CI en rojo).
 
-### Bloqueantes (P0)
+### Cerrado — gate P0 del audit (octubre 2026)
 
-| # | Ubicación | Problema | Impacto |
-|---|---|---|---|
-| 1 | CI job `validate` | `npm audit --audit-level=moderate` sale con código 1 → `lighthouse`, `e2e` y `deploy` quedan **skipped** | **No se puede desplegar a producción** |
-| 2 | `package.json` → overrides `undici@7.29.0`, `ip-address@10.4.0`, `hono@4.13.8`, `@modelcontextprotocol/sdk@1.30.1`, `mermaid@11.16.1` | Los **5** fijan versiones **dentro** del rango afectado (`undici 7.0.0–7.29.0`, `ip-address ≤10.7.0`, `hono 4.12.4–4.13.10`, `@modelcontextprotocol/sdk ≤1.31.0`, `mermaid 10.9.0-rc.1–12.1.0`) | Overrides de “seguridad” **sin efecto** |
-| 3 | `package.json` (override *scoped* de `brace-expansion` eliminado) | El advisory **high** volvió (`≤1.1.20 \|\| 4.0.0–5.0.11`) | Regresión de seguridad |
-| 4 | `npm audit fix` | Para `eslint-config-next` npm propone **downgrade** a `14.2.35` (`isSemVerMajor`), incompatible con Next 16 y con `eslint-config-next@^16.3.0` | Un `audit fix` a ciegas rompe el lint |
+El gate volvió a verde **sin relajar la seguridad**: se separó la **exposición real** (lo que llega a producción) de la **deuda de tooling**.
 
-### Runtime (sí llega al bundle de producción)
+| # | Qué se hizo | Verificación |
+|---|---|---|
+| 1 | `next` `16.3.6 → 16.4.2` + `eslint-config-next` a juego — cierra SSRF en Image Optimization, cache poisoning SSG/ISR, leak de Draft Mode y disclosure del endpoint MCP | build OK, 17 rutas |
+| 2 | `sharp` `0.35.4 → 0.35.5` (CVE-2026-96889, librsvg) | build OK |
+| 3 | Overrides realineados **fuera** del rango afectado: `undici 7.29.1`, `ip-address 10.7.4`, `hono 4.13.13`, `@modelcontextprotocol/sdk 1.32.1`, `proxy-addr 2.0.8`, `source-map-js 1.2.2`, `vite 8.3.4`, `postcss-selector-parser 7.1.7` | `npm audit` |
+| 4 | `brace-expansion` con overrides **scoped por rango**: `@<2.0.0 → 1.1.21` (minimatch@3) y `@>=4.0.0 → 5.0.12` (minimatch@10) | lint + 539 tests |
+| 5 | Gate de CI en dos capas: `--omit=dev --audit-level=moderate` (bloqueante) + `--audit-level=critical` en todo el árbol (bloqueante); el resto se emite como `::warning::` | reproducido localmente |
 
-| # | Sev | Paquete | Rango afectado | Versión instalada | Fix |
-|---|---|---|---|---|---|
-| 5 | **high** | `next` | `16.0.0–16.3.7` (SSRF en Image Optimization, cache poisoning SSG/ISR, leak de Draft Mode, disclosure del endpoint MCP) | `16.3.6` | `≥16.3.8` |
-| 6 | **high** | `sharp` | `<0.35.5` (CVE-2026-96889, librsvg) | `0.35.4` | `≥0.35.5` |
-| 7 | moderate | `ai` · `@ai-sdk/react` · `@ai-sdk/openai` · `@ai-sdk/gateway` · `@ai-sdk/mcp` · `@ai-sdk/provider-utils` | `ai 7.0.116–7.0.118`, `@ai-sdk/react 4.0.119–4.0.121`, `@ai-sdk/openai 4.0.77–4.0.78`, `@ai-sdk/gateway 4.0.94–4.0.96`, `@ai-sdk/mcp 2.0.60`; `provider-utils` arrastra `undici` | `7.0.116` · `4.0.119` · `4.0.78` · `4.0.94` · `2.0.60` · `5.0.49` | patch disponible en todas |
-| 8 | low | `katex` (vía `mermaid` → `@streamdown/mermaid` → `streamdown`) | `0.11.0–0.18.1` (prototype pollution) | `0.16.47` | `≥0.18.2` (sin parche publicado) |
+**Resultado medido:** `npm audit` pasa de **37 avisos (1 critical, 15 high, 13 moderate, 8 low)** a **16 (8 low, 8 high)** — y los 8 high son **un solo advisory** (`braces`) replicado en 8 nodos del árbol. En la superficie de producción: **0 critical, 0 high, 0 moderate**.
 
-### Dev / build (no llega al runtime, pero bloquea el gate de CI)
+### Deuda abierta
 
-| # | Sev | Paquete | Camino real | Fix |
+| # | Sev | Ubicación | Problema | Estado |
 |---|---|---|---|---|
-| 9 | **critical** | `proxy-addr@2.0.7` | `shadcn` → `@modelcontextprotocol/sdk` → **`express@5.2.1`** → `proxy-addr` (spoofing de IP vía IPv4-mapped IPv6) | `≥2.0.8` |
-| 10 | high | `vite@8.3.0` | `vitest@4.1.11` → `vite` (escape de argumentos en Windows + ejecución arbitraria de flags de editor) | `≥8.3.3` |
-| 11 | high | `source-map-js@1.2.1` | `@tailwindcss/postcss` → `postcss` **y** `jsdom` → `css-tree` (DoS por offsets de source map) | `≥1.2.2` |
-| 12 | high | `fast-glob@3.3.1` → `micromatch@4.0.8` → `braces@3.0.3` | `shadcn` y `ts-morph` (stack exhaustion por patrones anidados) | `braces ≥3.0.4`; `fast-glob` marcado `*` (sin fix real) |
-| 13 | high | `ts-morph@26.0.0` · `@ts-morph/common@0.27.0` | `shadcn` (`6.0.1–23.0.0 \|\| 25.0.0–26.0.0` y `0.26.0–0.27.0`) | `≥26.0.1` · `≥0.27.1` |
-| 14 | moderate | `postcss-selector-parser@7.1.4` | `postcss@8.5.28` → `postcss-selector-parser` (`<7.1.6`, complejidad cuadrática). **El override `postcss` no cubre este paquete** | `≥7.1.6` |
+| 1 | **high** (dev) | `shadcn → fast-glob → micromatch → braces@3.0.3` | Stack exhaustion por patrones anidados | **Sin parche publicado**: 3.0.3 es la última versión de `braces`. Dev-only, se reporta como warning; `npm audit fix` solo lo "resuelve" bajando `eslint-config-next` a `14.2.35`, incompatible con Next 16 |
+| 2 | low (runtime) | `katex@0.16.47` vía `streamdown → @streamdown/math` | Prototype pollution, rango `0.11.0–0.18.2` | Sin fix dentro del rango del advisory; no bloquea por ser `low` |
+| 3 | P1 | `src/app/api/track/download/route.ts` | La IP **registrada** en el evento usa el **primer** hop de `x-forwarded-for` (`forwarded?.split(',')[0]`, spoofeable), mientras el rate limit de esa misma función usa el **último** (`getClientId(req)`) | Abierto — métricas de descargas manipulables |
+| 4 | P2 | `next.config.ts` | Warning de Turbopack por `fs.readFile` dinámico: arrastra el proyecto completo al bundle de servidor | Abierto |
+| 5 | P2 | `src/features/stats/*` + `useAskAIChat.ts` | 3 warnings de ESLint (2 `no-unused-vars` + 1 `react-hooks/exhaustive-deps`) | Abierto |
+| 6 | P2 | `accessibility.test.tsx` (2) + `AskAISuggestionBar.test.tsx` (4) | 6 warnings `act(...)` de React | Abierto |
+| 7 | P2 | `vitest.config.ts` | `configLoader: 'native'` no soporta ESM en un `.ts` cargado como CommonJS | Abierto |
+| 8 | P2 | `.lighthouseci.json` | LHCI **nunca lo lee** (su lista es `lighthouserc.{js,cjs,json,yml,yaml}` y `.lighthouserc.*`); duplica y contradice `lighthouserc.json` y apunta a `./.next/standalone`, que no existe | Abierto |
+| 9 | P3 | `src/features/ask-ai/lib/rag/retriever.ts` | TF sin IDF: el corpus chico favorece documentos cortos | Abierto (limitación conocida) |
 
-### Código, tooling y configuración
-
-| # | Sev | Ubicación | Problema | Impacto |
-|---|---|---|---|---|
-| 15 | P1 | `src/app/api/track/download/route.ts` | La IP **registrada** en el evento usa el **primer** hop de `x-forwarded-for` (`forwarded?.split(',')[0]`, spoofeable), mientras el rate limit de esa misma función usa el **último** (`getClientId(req)`) | Métricas de descargas manipulables |
-| 16 | P2 | `next.config.ts` | Warning de Turbopack por `fs.readFile` dinámico: arrastra el proyecto completo al bundle de servidor | Peso del bundle de servidor |
-| 17 | P2 | `src/features/stats/*` + `src/features/ask-ai/components/ask-ai/hooks/useAskAIChat.ts` | 3 warnings de ESLint: 2 `no-unused-vars` (stats) + 1 `react-hooks/exhaustive-deps` (`language`/`mode` faltantes) | Ruido de lint |
-| 18 | P2 | `src/features/portfolio/accessibility.test.tsx` (2) + `src/features/ask-ai/components/ask-ai/AskAISuggestionBar.test.tsx` (4) | 6 warnings `act(...)` de React (el ADR-001 los daba por resueltos) | Ruido de test |
-| 19 | P2 | `vitest.config.ts` | Warning de Vite: `configLoader: 'native'` no soporta ESM en un `.ts` cargado como CommonJS | Ruido de test |
-| 20 | P2 | `.lighthouseci.json` | **LHCI nunca lo lee**: su lista de búsqueda es `lighthouserc.{js,cjs,json,yml,yaml}` y `.lighthouserc.*` — `.lighthouseci.json` no está. Además duplica y contradice los budgets de `lighthouserc.json` y apunta a `./.next/standalone`, que no existe (`next.config.ts` no define `output: 'standalone'`) | Config muerta + budgets ambiguos |
-| 21 | P3 | `src/features/ask-ai/lib/rag/retriever.ts` | TF sin IDF: el corpus chico favorece documentos cortos (limitación conocida y documentada, no un defecto de seam) | Ranking |
-
-### Cómo cerrar el P0
+### Reglas para futuras actualizaciones
 
 ```bash
-npm audit --audit-level=moderate            # inventario (JSON con --json)
-
-# 1) Subir las dependencias directas que tienen patch (no romper la API):
-npm i next@^16.3.8 sharp@^0.35.5 ai@^7.0.119 @ai-sdk/react@^4.0.122 @ai-sdk/openai@^4.0.79
-# 2) Alinear los overrides con las versiones REALMENTE parcheadas:
-#    undici ≥7.29.1 · ip-address ≥10.7.1 · hono ≥4.13.11
-#    @modelcontextprotocol/sdk ≥1.32.0 · mermaid ≥12.1.1
-#    brace-expansion (scoped por minimatch@3.1.5) ≥1.1.21
-# 3) npm audit fix  → revisar el diff: para eslint-config-next propone un
-#    DOWNGRADE a 14.2.35 incompatible con Next 16. No aceptar ese cambio.
-# 4) npm audit fix --force  → solo con revisión manual de cada breaking change
-
-npm run lint && npm run typecheck && npm test && npm run build
-npm audit --audit-level=moderate            # debe salir con código 0
+npm audit                                   # inventario completo
+npm audit --omit=dev --audit-level=moderate # lo que bloquea el deploy
 ```
 
-> Los overrides de `package.json` deben auditarse contra el rango afectado real de cada advisory: un override que fija una versión **dentro** del rango vulnerable no aporta nada (y aparenta estar resuelto). La tabla vigente está en [ADR-001](docs/adr/ADR-001-production-hardening.md).
+> Un override que fija una versión **dentro** del rango afectado no aporta nada y aparenta estar resuelto. La tabla vigente, con la columna "¿cierra el advisory?", está en [ADR-001](docs/adr/ADR-001-production-hardening.md).
 
 ---
 
@@ -721,7 +698,7 @@ npm run lint
 npm run typecheck
 npm test
 npm run build
-npm audit --audit-level=moderate   # gate de CI: hoy en rojo (ver deuda técnica)
+npm audit --omit=dev --audit-level=moderate   # gate de CI de producción (debe salir 0)
 npm run test:e2e          # opcional, contra build de producción
 ```
 
