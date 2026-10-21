@@ -1,0 +1,54 @@
+name: Dependabot auto-merge
+
+# Auto-merge de actualizaciones **patch/minor** (incluidas las de seguridad).
+# Las **major** se quedan abiertas con un comentario: son las que rompen APIs
+# (next, react, three, framer-motion) y necesitan ojo humano.
+#
+# El merge no ocurre en el momento: `gh pr merge --auto` solo lo *habilita*.
+# GitHub lo ejecuta cuando TODOS los checks requeridos están en verde — o sea,
+# `validate` (lint, typecheck, tests, audit de producción, build) y `e2e`.
+# Si el audit se pone rojo, el auto-merge no llega a mergear nada.
+#
+# Requisitos (una sola vez, en Settings del repo):
+#   1. General → "Allow auto-merge" habilitado.
+#   2. Branch protection en `main` con `validate` + `e2e` como checks
+#      requeridos (sin esto, `--auto` puede mergear antes de que corra el CI).
+
+on: pull_request
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: dependabot-auto-merge-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  auto-merge:
+    name: Enable auto-merge (non-major)
+    runs-on: ubuntu-latest
+    if: |
+      github.event.pull_request.user.login == 'dependabot[bot]' &&
+      github.repository == 'StrategicConnex/Portfolio-app'
+    steps:
+      - name: Fetch Dependabot metadata
+        id: meta
+        uses: dependabot/fetch-metadata@v2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Enable auto-merge for patch/minor updates
+        if: steps.meta.outputs.update-type != 'version-update:semver-major'
+        run: gh pr merge --auto --squash --delete-branch "$PR_URL"
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Flag major updates for manual review
+        if: steps.meta.outputs.update-type == 'version-update:semver-major'
+        run: |
+          gh pr comment "$PR_URL" --body "Major bump de ${{ steps.meta.outputs.dependency-names }} (${{ steps.meta.outputs.prev-version }} → ${{ steps.meta.outputs.new-version }}). No se auto-mergea: revisar breaking changes y el ADR-001 antes de aprobar."
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
