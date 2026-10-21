@@ -7,6 +7,8 @@ const es = {
   'experience.badge.years': '20+ años en el sector industrial',
   'experience.badge.location': 'Oil & Gas · Neuquén · Argentina',
   'experience.badge.tech': 'IT/OT · Cloud · Security · Dev',
+  'experience.metrics.disclaimer':
+    'Métricas estimadas basadas en KPIs internos de proyectos y proyecciones de mejora; no son mediciones auditadas.',
 
   'exp.ypy.period': 'Julio 2025 – Actual',
   'exp.ypy.role': 'Project Manager IT | Cybersecurity Leader | SysAdmin',
@@ -73,6 +75,8 @@ const en: TranslationModule['en'] = {
   'experience.badge.years': '20+ years in the industrial sector',
   'experience.badge.location': 'Oil & Gas · Neuquén · Argentina',
   'experience.badge.tech': 'IT/OT · Cloud · Security · Dev',
+  'experience.metrics.disclaimer':
+    'Estimated metrics based on internal project KPIs and improvement projections; not audited measurements.',
 
   'exp.ypy.period': 'July 2025 – Present',
   'exp.ypy.role': 'IT Project Manager | Cybersecurity Leader | SysAdmin',

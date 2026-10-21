@@ -18,7 +18,8 @@ const mockT = vi.fn((key: string) => {
     'siem.label': 'Security Operations',
     'siem.title': 'SIEM',
     'siem.highlight': 'Dashboard',
-    'siem.map_desc': 'Live threat data based on Radware Live Threat Map',
+    'siem.map_desc': 'Panel de demostración con telemetría simulada',
+    'siem.demo_badge': 'DEMO · TELEMETRÍA SIMULADA',
     'siem.hover_hint': 'Hover over an ALERT event',
     'siem.incident_btn': 'Simular Incidente Industrial',
     'siem.incident_btn_active': 'ANALIZANDO EVENTO...',
@@ -36,7 +37,7 @@ const mockT = vi.fn((key: string) => {
     'siem.zone.control': 'Level 2 - Process Control',
     'siem.zone.operations': 'Level 3 - Plant Operations',
     'siem.zone.idmz': 'Industrial DMZ',
-    'siem.zone.enterprise': 'Level 4/5 - Enterprise Network',
+    'siem.zone.enterprise': 'Level 4 - Enterprise Network (+ Level 5 Cloud)',
     'siem.ui.auto_response': 'Respuesta automatica',
     'siem.ui.mttr': 'MTTR',
     'siem.ui.incident_title': 'SIMULATED INCIDENT',
@@ -92,9 +93,10 @@ describe('SIEMDashboard', () => {
     expect(screen.getByText('SIEM Dashboard')).toBeDefined()
   })
 
-  it('should render the dashboard title RADWARE LIVE THREAT MAP', () => {
+  it('should label the dashboard as a simulated demo, not live third-party data', () => {
     renderDashboard()
-    expect(screen.getByText(/RADWARE LIVE THREAT MAP/)).toBeDefined()
+    expect(screen.getByText(/DEMO · TELEMETRÍA SIMULADA/)).toBeDefined()
+    expect(screen.queryByText(/RADWARE/i)).toBeNull()
   })
 
   it('should render the simulate incident button', () => {

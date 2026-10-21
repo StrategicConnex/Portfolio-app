@@ -1,7 +1,7 @@
 import type { TranslationModule } from './index'
 
 const es = {
-  'projects.label': 'Impacto Real',
+  'projects.label': 'Impacto Operativo',
   'projects.title': 'Estudios de',
   'projects.highlight': 'Caso',
   'projects.before': 'Estado Inicial',
@@ -37,7 +37,7 @@ const es = {
   'projects.case3.before.3': 'Sin monitoreo centralizado (islas de datos)',
   'projects.case3.before.4': 'Infraestructura OT vulnerable y expuesta',
   'projects.case3.before.5': 'Procesos de remediación 100% manuales',
-  'projects.case3.after.1': 'MTTR reducido a 15 minutos garantizados',
+  'projects.case3.after.1': 'MTTR reducido de 4,2 h a 15 min',
   'projects.case3.after.2': 'Dashboards centralizados en tiempo real',
   'projects.case3.after.3': 'Alertas inteligentes y automáticas',
   'projects.case3.after.4': 'Seguridad reforzada (Micro-segmentación)',
@@ -46,10 +46,12 @@ const es = {
   'projects.case3.metric.2': 'Uptime',
   'projects.nda': 'Protegido por NDA',
   'projects.iot': 'IoT Industrial',
+  'projects.disclaimer':
+    'Casos representativos: cifras compuestas y anonimizadas por NDA. No son informes de cliente publicados ni resultados auditados por un tercero.',
 } satisfies TranslationModule['es']
 
 const en: TranslationModule['en'] = {
-  'projects.label': 'Real Impact',
+  'projects.label': 'Operational Impact',
   'projects.title': 'Case',
   'projects.highlight': 'Studies',
   'projects.before': 'Initial State',
@@ -85,7 +87,7 @@ const en: TranslationModule['en'] = {
   'projects.case3.before.3': 'No centralized monitoring (data silos)',
   'projects.case3.before.4': 'Vulnerable and exposed OT infrastructure',
   'projects.case3.before.5': '100% manual remediation processes',
-  'projects.case3.after.1': 'MTTR reduced to 15 guaranteed minutes',
+  'projects.case3.after.1': 'MTTR cut from 4.2 h to 15 min',
   'projects.case3.after.2': 'Real-time centralized dashboards',
   'projects.case3.after.3': 'Intelligent and automatic alerts',
   'projects.case3.after.4': 'Reinforced security (Micro-segmentation)',
@@ -94,6 +96,8 @@ const en: TranslationModule['en'] = {
   'projects.case3.metric.2': 'Uptime',
   'projects.nda': 'Protected by NDA',
   'projects.iot': 'Industrial IoT',
+  'projects.disclaimer':
+    'Representative cases: composite, NDA-anonymized figures. They are not published client reports or third-party audited results.',
 }
 
 export const projects = { es, en }

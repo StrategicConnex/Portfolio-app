@@ -6,7 +6,20 @@ const es = {
   'certs.highlight': 'Logros',
   'certs.analyst': 'Analista de sistemas – UNCO',
   'certs.pm': 'Project Management & IEC 62443 – Universidad Siglo 21',
+  'certs.ccna': 'Cisco CCNA: Automatización y programación de redes',
+  'certs.cisco_cyber': 'Cisco Cybersecurity Analyst',
   'certs.english': 'Inglés B2 – Intermedio Alto',
+  'certs.frameworks_title': 'Marcos de Trabajo y Normativas',
+  'certs.frameworks_desc':
+    'Marcos de cumplimiento y estándares aplicados en proyectos. No son credenciales personales: describen el marco normativo bajo el que se diseñaron los controles.',
+  'certs.framework.iec':
+    'Seguridad para sistemas de control y automatización industrial (IACS).',
+  'certs.framework.nist':
+    'Marco de ciberseguridad para infraestructuras críticas: identificar, proteger, detectar, responder y recuperar.',
+  'certs.framework.iso': 'Sistema de Gestión de Seguridad de la Información (SGSI).',
+  'certs.framework.sox':
+    'Control interno y reporte financiero aplicado a los procesos del área de IT.',
+  'certs.framework.pmi': 'Gestión de proyectos bajo metodología PMI.',
   'certs.cat.all': 'Todos',
   'certs.cat.cybersecurity': 'Ciberseguridad & Redes',
   'certs.cat.data_ai': 'Data & IA',
@@ -77,7 +90,20 @@ const en: TranslationModule['en'] = {
   'certs.highlight': 'Achievements',
   'certs.analyst': 'Systems Analyst – UNCO',
   'certs.pm': 'Project Management & IEC 62443 – Siglo 21 University',
+  'certs.ccna': 'Cisco CCNA: Network Automation & Programming',
+  'certs.cisco_cyber': 'Cisco Cybersecurity Analyst',
   'certs.english': 'English B2 – Upper Intermediate',
+  'certs.frameworks_title': 'Working Frameworks & Standards',
+  'certs.frameworks_desc':
+    'Compliance frameworks and standards applied across projects. These are not personal credentials: they describe the regulatory frame the controls were designed against.',
+  'certs.framework.iec':
+    'Security for industrial automation and control systems (IACS).',
+  'certs.framework.nist':
+    'Cybersecurity framework for critical infrastructures: identify, protect, detect, respond, recover.',
+  'certs.framework.iso': 'Information Security Management System (ISMS).',
+  'certs.framework.sox':
+    'Internal control and financial reporting applied to IT area processes.',
+  'certs.framework.pmi': 'Project management under PMI methodology.',
   'certs.cat.all': 'All',
   'certs.cat.cybersecurity': 'Cybersecurity & Networks',
   'certs.cat.data_ai': 'Data & AI',

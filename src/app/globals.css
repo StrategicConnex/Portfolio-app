@@ -166,6 +166,12 @@ body {
   --surface-fill-strong: rgba(255, 255, 255, 0.08);
   --surface-border: rgba(255, 255, 255, 0.08);
   --surface-border-strong: rgba(255, 255, 255, 0.15);
+  /* Glass/surface inside the console must stay dark-on-dark in BOTH themes:
+     the light-theme --glass-bg (65 % white) turns these panels milky over the
+     permanently dark .console-bg (SIEM dashboard, Ask AI panel, tool cards). */
+  --glass-bg: rgba(255, 255, 255, 0.04);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --surface: #0E1B30;
   /* Re-pin the shadcn semantic tokens to their dark values so children
      (badges, buttons, ai-elements) stay light-on-dark in BOTH themes. */
   --background: #0A192F;

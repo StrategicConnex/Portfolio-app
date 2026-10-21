@@ -236,7 +236,7 @@ export default function SIEMDashboard() {
                 className="w-2 h-2 rounded-full bg-emerald-500"
               />
               <span className="font-mono text-[10px] md:text-xs text-emerald-500 font-bold uppercase tracking-tight">
-                RADWARE LIVE THREAT MAP — 1H
+                {t('siem.demo_badge')}
               </span>
             </div>
             

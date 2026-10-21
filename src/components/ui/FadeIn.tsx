@@ -75,6 +75,8 @@ export default function FadeIn({
   // If user prefers reduced motion, skip all transforms
   const reduced: Variants = { hidden: { opacity: 0 }, visible: { opacity: 1 } }
 
+  const clipActive = !shouldReduceMotion && direction === 'up' && variant === 'clip'
+
   // Direction overrides variant when explicitly non-default
   const useDirection = direction !== 'up'
   const v = shouldReduceMotion
@@ -83,9 +85,9 @@ export default function FadeIn({
       ? directionOverrides[direction]
       : variants[variant]
 
-  return (
+  const animated = (
     <motion.div
-      ref={ref}
+      ref={clipActive ? undefined : ref}
       initial="hidden"
       animate={inView ? 'visible' : 'hidden'}
       variants={v}
@@ -94,10 +96,21 @@ export default function FadeIn({
         delay,
         ease: variant === 'clip' ? [0.25, 0.1, 0.25, 1] : 'easeOut',
       }}
-      className={className}
+      className={clipActive ? undefined : className}
     >
       {children}
     </motion.div>
+  )
+
+  // The `clip` variant hides itself with `clip-path: inset(100% 0 0 0)`, and a
+  // fully clipped target reports an empty intersection to IntersectionObserver:
+  // `useInView` would never flip to true and the panel stayed invisible forever.
+  // Observe an unclipped outer box instead and run the clip animation inside it.
+  if (!clipActive) return animated
+  return (
+    <div ref={ref} className={className}>
+      {animated}
+    </div>
   )
 }
 

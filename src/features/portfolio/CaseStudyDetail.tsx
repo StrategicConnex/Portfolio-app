@@ -188,7 +188,7 @@ export default function CaseStudyDetail({ onClose }: { onClose: () => void }) {
             {/* Dashboard Content */}
             <div className="p-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <div className="lg:col-span-2 bg-[#16181d] rounded-xl p-6 border border-[var(--surface-border)]">
-                <p className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-widest mb-6">Ahorro Generado</p>
+                <p className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-widest mb-6">Ahorro estimado</p>
                 <div className="flex items-end gap-4">
                   <h4 className="text-5xl font-black text-[#00ff88]">${(caseData.after.savings.value / 1000)}k</h4>
                   <p className="text-sm text-[var(--text-subtle)] mb-2">USD / año en downtime evitado</p>
@@ -207,7 +207,7 @@ export default function CaseStudyDetail({ onClose }: { onClose: () => void }) {
                 <p className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-widest mb-4">Cobertura</p>
                 <div className="text-4xl font-black text-white mb-2">{caseData.after.coverage.value}%</div>
                 <div className="flex items-center gap-2 text-xs font-bold text-[#00ff88] bg-[#00ff88]/10 w-fit px-2 py-1 rounded">
-                  ↑ 63% vs Inicial
+                  {caseData.before.coverage.value}% → {caseData.after.coverage.value}%
                 </div>
               </div>
             </div>
@@ -216,9 +216,12 @@ export default function CaseStudyDetail({ onClose }: { onClose: () => void }) {
 
         {/* SECCIÓN 5: STORYTELLING INCIDENTE */}
         <section className="py-24 border-b border-[var(--surface-border)]">
-          <h2 className="text-3xl font-black text-white mb-12 flex items-center gap-3">
-            <Clock className="text-[#ff6b00]" size={32} /> Incidente Real: {caseData.incident.date}
+          <h2 className="text-3xl font-black text-white mb-3 flex items-center gap-3">
+            <Clock className="text-[#ff6b00]" size={32} /> Incidente representativo: {caseData.incident.date}
           </h2>
+          <p className="text-xs text-[var(--text-subtle)] mb-12 max-w-2xl leading-relaxed">
+            Secuencia compuesta a partir de la línea de tiempo de respuesta del proyecto. Las horas son relativas al primer evento (T+0).
+          </p>
           
           <div className="relative pl-6 md:pl-0">
             {/* Línea vertical */}
@@ -265,9 +268,13 @@ export default function CaseStudyDetail({ onClose }: { onClose: () => void }) {
         <section className="py-24 text-center">
           <h2 className="text-3xl font-black text-white mb-8">¿Listo para optimizar tu infraestructura?</h2>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="flex items-center justify-center gap-3 bg-[#00d4ff] hover:bg-[#00b0d4] text-[#0a0a0f] font-black uppercase tracking-widest px-8 py-4 rounded-xl transition-transform hover:scale-105">
-              <Download size={20} /> Descargar Arquitectura PDF
-            </button>
+            <a
+              href="#contacto"
+              onClick={onClose}
+              className="flex items-center justify-center gap-3 bg-[#00d4ff] hover:bg-[#00b0d4] text-[#0a0a0f] font-black uppercase tracking-widest px-8 py-4 rounded-xl transition-transform hover:scale-105"
+            >
+              <ShieldCheck size={20} /> Hablar del proyecto
+            </a>
             <button 
               onClick={onClose}
               className="flex items-center justify-center gap-3 bg-[var(--surface-fill)] hover:bg-[var(--surface-fill-strong)] text-white font-black uppercase tracking-widest px-8 py-4 rounded-xl border border-[var(--border-interactive)] transition-transform hover:scale-105"
@@ -276,7 +283,7 @@ export default function CaseStudyDetail({ onClose }: { onClose: () => void }) {
             </button>
           </div>
           <div className="mt-16 text-[var(--text-subtle)] text-sm">
-            Stack: React 18, Three.js, GSAP, Tailwind CSS • 2026
+            Stack: Next.js 16 · React 19 · Three.js · Tailwind CSS
           </div>
         </section>
 

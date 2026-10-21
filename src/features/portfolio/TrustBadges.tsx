@@ -7,16 +7,17 @@ import SectionHeader from '@/components/ui/SectionHeader'
 import Icon from '@/components/ui/Icon'
 import { useLanguage } from '@/context/LanguageContext'
 
-/* ── Standards & Certifications (text-based, grayscale style) ── */
+/*
+ * Frameworks & standards — not personal credentials. MCSE (retired 2021) and
+ * VCA-DCV (discontinued) were removed for lack of a supporting artifact; CCNA
+ * is a course path and lives in the certifications section instead.
+ */
 const standards = [
   { label: 'IEC 62443',   sub: 'Industrial Cybersecurity', color: '#94A3B8' },
   { label: 'NIST CSF',    sub: 'Cybersecurity Framework',  color: '#94A3B8' },
   { label: 'ISO 27001',   sub: 'Information Security',     color: '#94A3B8' },
   { label: 'SOX',         sub: 'Financial Compliance IT',  color: '#94A3B8' },
   { label: 'PMI',         sub: 'Project Management',       color: '#94A3B8' },
-  { label: 'CCNA',        sub: 'Cisco Networking',         color: '#94A3B8' },
-  { label: 'MCSE',        sub: 'Microsoft Certified',      color: '#94A3B8' },
-  { label: 'VCA-DCV',     sub: 'VMware Certified',         color: '#94A3B8' },
 ]
 
 /* ── Companies worked with ── */
@@ -50,12 +51,15 @@ const companies = [
   },
 ]
 
-/* ── Operators / clients referenced ── */
+/*
+ * Operators / clients — anonymized on purpose. Naming the operators would
+ * disclose client relationships; the capability is what matters here.
+ */
 const operators = [
-  { name: 'YPF',      color: '#94A3B8', descKey: 'trust.operators.homologacion' },
-  { name: 'PAE',      color: '#94A3B8', descKey: 'trust.operators.gestion'  },
-  { name: 'Vista Oil',color: '#94A3B8', descKey: 'trust.operators.b2b'       },
-  { name: 'Vaca Muerta', color: '#94A3B8', descKey: 'trust.operators.regional' },
+  { nameKey: 'trust.operators.oil',      color: '#94A3B8', descKey: 'trust.operators.homologacion' },
+  { nameKey: 'trust.operators.energy',   color: '#94A3B8', descKey: 'trust.operators.b2b'          },
+  { nameKey: 'trust.operators.services', color: '#94A3B8', descKey: 'trust.operators.gestion'      },
+  { nameKey: 'trust.operators.basin',    color: '#94A3B8', descKey: 'trust.operators.regional'     },
 ]
 
 function BadgePill({ delay, children }: { delay: number; children: React.ReactNode }) {
@@ -151,7 +155,7 @@ export default function TrustBadges() {
           </p>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
             {operators.map((o, i) => (
-              <BadgePill key={o.name} delay={i * 0.06}>
+              <BadgePill key={o.nameKey} delay={i * 0.06}>
                 <div style={{
                   background: 'var(--surface-fill)',
                   border: '1px solid var(--surface-border)',
@@ -159,7 +163,7 @@ export default function TrustBadges() {
                   display: 'flex', alignItems: 'center', gap: '0.5rem',
                   transition: 'border-color 0.2s',
                 }}>
-                  <span style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--text-primary)' }}>{o.name}</span>
+                  <span style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--text-primary)' }}>{t(o.nameKey)}</span>
                   <span style={{ fontSize: '0.65rem', color: 'var(--text-muted)' }}>·</span>
                   <span style={{ fontSize: '0.65rem', color: 'var(--text-muted)' }}>{t(o.descKey)}</span>
                 </div>

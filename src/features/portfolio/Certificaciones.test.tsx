@@ -18,7 +18,16 @@ const mockT = vi.fn((key: string) => {
     'certs.highlight': 'Continua',
     'certs.analyst': 'Analista de Ciberseguridad',
     'certs.pm': 'Project Management Professional',
+    'certs.ccna': 'Cisco CCNA: Automatización y programación de redes',
+    'certs.cisco_cyber': 'Cisco Cybersecurity Analyst',
     'certs.english': 'Inglés Técnico Avanzado',
+    'certs.frameworks_title': 'Marcos de Trabajo y Normativas',
+    'certs.frameworks_desc': 'Marcos aplicados en proyectos',
+    'certs.framework.iec': 'Seguridad para IACS',
+    'certs.framework.nist': 'Marco para infraestructuras críticas',
+    'certs.framework.iso': 'SGSI',
+    'certs.framework.sox': 'Control interno de IT',
+    'certs.framework.pmi': 'Gestión de proyectos PMI',
     'certs.cat.all': 'Todos',
     'certs.cat.cybersecurity': 'Ciberseguridad',
     'certs.cat.data_ai': 'Datos & IA',
@@ -73,16 +82,24 @@ describe('Certificaciones', () => {
     expect(screen.getByText(/Continua/)).toBeDefined()
   })
 
-  it('should render all 8 featured certifications', () => {
+  it('should render only artifact-backed certifications', () => {
     render(<Certificaciones />)
     expect(screen.getByText('Analista de Ciberseguridad')).toBeDefined()
     expect(screen.getByText('Project Management Professional')).toBeDefined()
-    expect(screen.getByText('VMware Certified Associate – VCA-DCV')).toBeDefined()
-    expect(screen.getByText('Cisco CCNA Routing & Switching')).toBeDefined()
-    expect(screen.getByText('Cisco CyberSecurity')).toBeDefined()
-    expect(screen.getByText('Microsoft MCSE')).toBeDefined()
-    expect(screen.getByText('SOX · NIST · ISO 27001 · IEC 62443')).toBeDefined()
+    expect(screen.getByText('Cisco CCNA: Automatización y programación de redes')).toBeDefined()
+    expect(screen.getByText('Cisco Cybersecurity Analyst')).toBeDefined()
     expect(screen.getByText('Inglés Técnico Avanzado')).toBeDefined()
+    expect(screen.queryByText('Microsoft MCSE')).toBeNull()
+    expect(screen.queryByText('VMware Certified Associate – VCA-DCV')).toBeNull()
+  })
+
+  it('should list compliance frameworks in their own block, not as credentials', () => {
+    render(<Certificaciones />)
+    expect(screen.getByText('Marcos de Trabajo y Normativas')).toBeDefined()
+    for (const code of ['IEC 62443', 'NIST CSF', 'ISO 27001', 'SOX', 'PMI · PMBOK']) {
+      expect(screen.getByText(code)).toBeDefined()
+    }
+    expect(screen.queryByText('SOX · NIST · ISO 27001 · IEC 62443')).toBeNull()
   })
 
   it('should render all 6 category filter tabs', () => {

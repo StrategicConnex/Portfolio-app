@@ -153,9 +153,12 @@ export default function Perfil() {
         </FadeIn>
 
         {/* Metrics */}
-        <div className="grid grid-cols-[repeat(auto-fit,minmax(180px,1fr))] gap-3 md:gap-5 mb-10 md:mb-14">
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(180px,1fr))] gap-3 md:gap-5 mb-3 md:mb-4">
           {metrics.map((m, i) => <MetricCard key={m.labelKey} {...m} delay={i * 0.1 + 0.2} />)}
         </div>
+        <p className="mb-10 md:mb-14 text-[10px] leading-relaxed" style={{ color: 'var(--text-subtle)' }}>
+          {t('profile.metrics.disclaimer')}
+        </p>
 
         {/* Competencias grouped */}
         <FadeIn delay={0.3}>
