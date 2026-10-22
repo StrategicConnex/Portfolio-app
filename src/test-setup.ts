@@ -8,19 +8,28 @@
  * that its internal reference points to the filtered version.
  */
 
+// ResizeObserver polyfill for jsdom
+global.ResizeObserver = class ResizeObserver {
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+}
+
 const originalConsoleError = console.error
 
 // Three.js intrinsic element tags (lowercase) to suppress
 const suppressedTags = new Set([
   'ambientlight', 'pointlight', 'mesh', 'meshbasicmaterial', 'points',
   'pointsmaterial', 'spheregeometry', 'buffergeometry', 'bufferattribute',
-  'line', 'linebasicmaterial', 'group', 'color', 'fog',
+  'line', 'linebasicmaterial', 'group', 'color', 'fog', 'stars',
+  'orbitcontrols', 'canvas',
 ])
 
 // String patterns for Three.js-specific warnings that the tag filter misses
 const suppressedPatterns = [
   'using incorrect casing',
   'Received `true` for a non-boolean',
+  'ResizeObserver',
 ]
 
 console.error = (...args: unknown[]) => {

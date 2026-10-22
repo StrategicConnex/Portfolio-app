@@ -170,6 +170,41 @@ const MANUAL_CERTS: KnowledgeSource[] = [
   },
 ]
 
+const MANUAL_CYBER_THREATS: KnowledgeSource[] = [
+  {
+    id: 'cyber-threats-map',
+    title: 'Mapa de Ciberataques en Tiempo Real',
+    content: 'Mapa interactivo 3D de ciberataques en tiempo real con datos reales de DShield (SANS Internet Storm Center) y CISA KEV (Known Exploited Vulnerabilities). Muestra ataques globales con arcos animados entre origen y destino, satélites en órbita, y tipos de ataques: DDoS, Malware, Brute Force, SQL Injection, APT, Scan/Probe, Exploits. Actualización automática con inteligencia de amenazas pública.',
+    tags: ['mapa', 'ciberataques', 'tiempo real', 'dshield', 'cisa', 'kev', 'threat intelligence', 'ddos', 'malware', 'apt', 'globo 3d'],
+    locale: 'es',
+    type: 'siem',
+  },
+  {
+    id: 'cyber-threats-map-en',
+    title: 'Real-Time Cyber Attack Map',
+    content: 'Interactive 3D cyber attack map with real-time data from DShield (SANS Internet Storm Center) and CISA KEV (Known Exploited Vulnerabilities). Shows global attacks with animated arcs between source and destination, orbiting satellites, and attack types: DDoS, Malware, Brute Force, SQL Injection, APT, Scan/Probe, Exploits. Auto-updates with public threat intelligence.',
+    tags: ['map', 'cyber attacks', 'real-time', 'dshield', 'cisa', 'kev', 'threat intelligence', 'ddos', 'malware', 'apt', '3d globe'],
+    locale: 'en',
+    type: 'siem',
+  },
+  {
+    id: 'cyber-attack-types',
+    title: 'Tipos de Ataques Cibernéticos',
+    content: 'DDoS (Distributed Denial of Service): Sobrecarga de servidores con tráfico masivo. Malware: Software malicioso (virus, ransomware, trojans). Brute Force: Intentos masivos de autenticación. SQL Injection: Inyección de código SQL malicioso. APT (Advanced Persistent Threat): Amenazas persistentes avanzadas. Scan/Probe: Escaneo de puertos y vulnerabilidades. Exploits: Aprovechamiento de vulnerabilidades conocidas (CISA KEV).',
+    tags: ['tipos ataques', 'ddos', 'malware', 'brute force', 'sql injection', 'apt', 'exploit', 'cve', 'vulnerabilidades'],
+    locale: 'es',
+    type: 'siem',
+  },
+  {
+    id: 'cyber-attack-types-en',
+    title: 'Types of Cyber Attacks',
+    content: 'DDoS (Distributed Denial of Service): Overwhelming servers with massive traffic. Malware: Malicious software (viruses, ransomware, trojans). Brute Force: Mass authentication attempts. SQL Injection: Malicious SQL code injection. APT (Advanced Persistent Threat): Advanced persistent threats. Scan/Probe: Port and vulnerability scanning. Exploits: Exploitation of known vulnerabilities (CISA KEV).',
+    tags: ['attack types', 'ddos', 'malware', 'brute force', 'sql injection', 'apt', 'exploit', 'cve', 'vulnerabilities'],
+    locale: 'en',
+    type: 'siem',
+  },
+]
+
 const MANUAL_SERVICES: KnowledgeSource[] = [
   {
     id: 'service-audit',
@@ -517,6 +552,7 @@ export const ALL_SOURCES: KnowledgeSource[] = [
   ...projectCases('en'),
   projectSiem('es'),
   projectSiem('en'),
+  ...MANUAL_CYBER_THREATS,
   ...MANUAL_SERVICES,
   ...projectCompliance('es'),
   ...projectCompliance('en'),

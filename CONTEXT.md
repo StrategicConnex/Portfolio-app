@@ -18,10 +18,13 @@ Domain code lives in **feature modules**, not in the shared roots:
 - `src/features/portfolio/` — all portfolio sections (Hero, Perfil,
   Arquitectura, Experiencia, SIEMDashboard, AuditHub, SCAudit, Blog, Stack,
   Certificaciones, Proyecto, Contacto) plus global chrome (Navbar, Footer,
-  HtmlLangUpdater) and 3D/canvas visuals.
+  HtmlLangUpdater) and 3D/canvas visuals. The cyber-attack map lives here too:
+  `CyberAttackMap3D.tsx` (the WebGL scene), `ArcTooltipPanel.tsx` +
+  `arcTooltip.ts` (arc detail), `attackArc.ts` (arc geometry),
+  `globeRotation.ts` (frame-rate independent rotation).
 - `src/lib/` — **shared seams only** (language, rate-limit, server-i18n,
-  theme, observability, utils, constants): code used by more than one
-  feature. Do not grow feature logic here.
+  theme, next-cache, observability, utils, constants): code used by more than
+  one feature. Do not grow feature logic here.
 - `src/components/` — shared kernel only: `ui/` (shadcn primitives +
   SectionHeader/FadeIn/Icon) and `observability/`. Feature components do not
   live here.
@@ -29,7 +32,7 @@ Domain code lives in **feature modules**, not in the shared roots:
   not hold domain logic. `src/data/` — content (consumed by features and by
   the ask-ai corpus projection).
 - `src/context/` — React context providers and the i18n/theme dictionaries:
-  `LanguageContext.tsx`, `ThemeContext.tsx` and `translations/` (22
+  `LanguageContext.tsx`, `ThemeContext.tsx` and `translations/` (23
   dictionaries, one per section). Providers consume the seams; they never
   re-derive the rules.
 
@@ -157,6 +160,61 @@ Domain code lives in **feature modules**, not in the shared roots:
   the copilot describes documents from their real content. Do not re-suggest
   a parallel document list or re-scanning the corpus per request.
 
+## Threat map / cyber attack map
+
+- **Threat-intel seam** (`src/app/api/threat-intel/route.ts`): the single home
+  for live threat intelligence. It aggregates **DShield (SANS ISC)**
+  (`topips` + `ip/<ip>`) and **CISA KEV** into one response, with
+  `ipwho.is` as the HTTPS-capable geolocation fallback (ip-api.com only
+  allows HTTP on its free tier and fails server-side). The route publishes
+  the **real state of each source** (`sourceStatus`: `live` / `degraded` /
+  `unavailable`) plus the applied `cacheTtlSeconds` — a dead feed is
+  declared, never replaced with invented data. `coalesce()` collapses
+  concurrent bursts into a single upstream query per source. Do not
+  re-suggest a per-component feed fetch or a second aggregation point.
+- **Data-cache seam** (`src/lib/next-cache.ts`): `cachedData()` wraps
+  `unstable_cache` and degrades to a direct call when there is no Next
+  request context (vitest, scripts, utilities), where `unstable_cache`
+  throws `Invariant: incrementalCache missing`. The invariant is checked
+  *before* invoking the wrapped function, so the expensive work is never
+  repeated. Do not re-suggest calling `unstable_cache` directly outside a
+  route handler.
+- **Arc-geometry seam** (`src/features/portfolio/attackArc.ts`): the single
+  home for turning a threat event into a drawable arc. `attackTypeFor()`
+  maps the provider's free text to one of six attack types by keyword
+  (never a false positive — it falls back); `pickDestination()` applies the
+  fixed weights (5% Neuquén · 20% Argentina · 75% global illustrative) with
+  the random source injected so the weights are testable; `buildAttackArc()`
+  returns the `illustrative` and `destinationKind` flags that separate
+  provider data from the map's own choice. Do not re-suggest picking
+  destinations in the component.
+- **Geocoding seam** (`src/data/countryCoords.ts`): `COUNTRY_COORDS` and
+  `COUNTRY_BY_ISO` are the only source of positions and country names for
+  the map. Countries are resolved **by ISO code** so `originCountry` is
+  always a key the map can place, never free text.
+- **Globe-rotation seam** (`src/features/portfolio/globeRotation.ts`):
+  `advanceEarthRotation()` applies a **rad/s** speed with the real frame
+  delta (clamped to 100 ms), never `rotation.y += k`. The globe, the country
+  labels, the protected pin, the arcs and the bursts all live inside the
+  single `RotatingEarth` group that rotates — the globe mesh must not
+  rotate on its own, or the markers drift off their countries.
+  `cyberAttackMap3D.guard.test.ts` pins that invariant over the JSX tree
+  (the scene cannot be mounted in jsdom).
+- **Static-asset seam** (`public/textures/` + `public/fonts/`): the globe textures and the 3D label font are served by the app itself, never from a CDN at runtime. ADR-001 removed `unpkg.com` from the CSP precisely to avoid that dependency; `img-src` is therefore `'self' data:` and `font-src` is `'self' data:`. `src/lib/csp.test.ts` pins both directives, and `public/textures/NOTICE.md` records the provenance (three-globe MIT; NASA images, public domain). Do not re-suggest pointing `useTexture` at a remote host — that silently reopens both the CSP and a third-party request per visitor.
+- **Arc-tooltip seam** (`src/features/portfolio/arcTooltip.ts` +
+  `ArcTooltipPanel.tsx`): the tooltip *logic* is a pure function with no
+  React dependency; the *labels* are injected as `TooltipLabels` so the
+  panel can read them from the dictionary. A field the provider did not
+  publish is rendered as «—», never as a zero or an invented value, and
+  illustrative arcs carry an explicit notice. Do not re-suggest inlining
+  the tooltip logic in the 3D component.
+- **Map copy seam** (`src/context/translations/threatmap.ts`): the map is
+  drawn in a WebGL canvas, so there is no DOM to translate — **all** of its
+  visible text comes from this dictionary (ES + EN). The guard test fails
+  if a literal string is reintroduced in the component. Provider text
+  (DShield attack types, ASN names) and technical nomenclature (DDoS, Botnet
+  C2, SQL Injection, APT) stay untranslated on purpose.
+
 ## Rate limiting
 
 - **Rate-limit seam** (`src/lib/rate-limit.ts`): the single module that owns
@@ -254,11 +312,15 @@ Domain code lives in **feature modules**, not in the shared roots:
   requerido es `VERCEL_TOKEN`; las env vars de runtime se configuran en el
   dashboard de Vercel (Production) y `vercel pull` las baja al build. También
   disparable manualmente (`workflow_dispatch` sobre main).
-  ⚠️ **Estado actual**: el paso `npm audit --audit-level=moderate` de
-  `validate` sale con código 1 (37 avisos: 1 critical, 15 high, 13 moderate,
-  8 low), por lo que `lighthouse`, `e2e` y `deploy` quedan **skipped** y el
-  deploy está bloqueado. Varios overrides de `package.json` fijan versiones
-  **dentro** del rango afectado. Ver `README.md` → "Deuda técnica conocida" y
+  ⚠️ **Estado actual**: el gate de seguridad está **verde**. El audit se
+  parte en dos capas: `npm audit --omit=dev --audit-level=moderate` (la
+  superficie real de producción) **bloquea**, y en el árbol completo solo
+  bloquea un advisory **crítico**; el resto se emite como `::warning::`.
+  Inventario verificado (22 de octubre de 2026): **16 avisos en el árbol
+  completo (8 low, 8 high, 0 moderate, 0 critical)** — los 8 high son un
+  solo advisory (`braces`) replicado en 8 nodos, sin parche upstream
+  publicado; en producción (`--omit=dev`): **8 low, 0 high, 0 moderate, 0
+  critical**. Ver `README.md` → "Deuda técnica conocida" y
   `docs/adr/ADR-001-production-hardening.md`.
   Do not re-suggest GitHub Pages: la app necesita un runtime Node (API routes
   del copilot, chat y contacto); el deploy pasa por un host con runtime

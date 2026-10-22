@@ -1,11 +1,11 @@
 # Documento de Especificación de Requerimientos de Software (SRS)
 
 **Proyecto:** Portfolio Web Profesional (Cybersecurity Command Console) – Juan Felipe Palacios  
-**Versión:** 3.0  
+**Versión:** 3.1  
 **Fecha:** Octubre 2026  
 **Autor:** Juan Felipe Palacios  
 **Estado:** En producción (bilingüe ES/EN)  
-**Rama de referencia:** `19d3e86`
+**Rama de referencia:** rama `audit/portfolio-claims` (verificada el 22 de octubre de 2026)
 
 > Este documento describe el sistema **tal como está implementado**. La arquitectura
 > detallada de cada seam vive en [CONTEXT.md](CONTEXT.md) (glosario de seams) y
@@ -31,6 +31,7 @@ La aplicación es una SPA de alto rendimiento (App Router con secciones SSR + la
 - Tema claro/oscuro/sistema sin flash de tema.
 - Biblioteca descargable de recursos (`/recursos`) con registro de descargas.
 - Métricas públicas de descargas (`/estadisticas`) y panel privado con sesión firmada.
+- **Mapa global de ciberataques** (`/cyber-attack-map`): visualización 3D con inteligencia de amenazas **real** (DShield + CISA KEV).
 - Sección de artículos técnicos (Inteligencia IT/OT), casos de estudio y contacto por email.
 
 ### 1.3 Fuera de alcance
@@ -60,7 +61,7 @@ El producto comunica autoridad técnica con elementos visuales premium (glassmor
 ### RF-01 · Selector de Idioma (i18n)
 **Descripción:** Interruptor fluido entre Español e Inglés.
 **Criterios de aceptación:**
-- Cambia todos los textos de la UI instantáneamente (diccionarios en `src/context/translations/`, 22 archivos).
+- Cambia todos los textos de la UI instantáneamente (diccionarios en `src/context/translations/`, 23 archivos).
 - Persiste en cookie (`portfolio_lang`) + localStorage.
 - **Sin flash de idioma**: el primer paint del SSR nunca se invierte tras la hidratación (`resolveHydrationLanguage`).
 
@@ -77,6 +78,7 @@ El producto comunica autoridad técnica con elementos visuales premium (glassmor
 **Criterios de aceptación:**
 - Event stream con niveles CRITICAL/WARN/INFO, vectores de ataque, atacantes y KPIs por idioma.
 - Simulación de incidente industrial; zonas Purdue con disponibilidad.
+- El badge y la descripción **distinguen lo real de lo simulado**: el mapa 3D embebido consume inteligencia de amenazas real; el resto del panel (stream, KPIs, zonas) es simulado en el navegador.
 
 ### RF-04 · Ask Juan AI (Copilot)
 **Descripción:** Agente conversacional bilingüe con RAG, tools y memoria.
@@ -129,6 +131,18 @@ El producto comunica autoridad técnica con elementos visuales premium (glassmor
 - El panel privado **responde 404** si `DOWNLOAD_STATS_TOKEN` no está configurada.
 - La sesión del panel es una cookie HMAC-SHA256 (`panel_auth`, httpOnly, 30 días) emitida por el route handler `/estadisticas-privadas/sesion` (la página `/estadisticas-privadas/login` solo postea a él); la clave de firma **es** `DOWNLOAD_STATS_TOKEN` (mín. 8 caracteres). El login compara en tiempo constante y tiene rate limit de 5/min por cliente.
 
+### RF-11 · Mapa global de ciberataques
+**Descripción:** `/cyber-attack-map` visualiza actividad de amenazas **real** en un globo 3D, distinguiendo siempre el dato del proveedor de la elección del propio mapa.
+**Criterios de aceptación:**
+- **Datos reales y trazables:** la fuente de origen es DShield (SANS ISC) — IPs con mayor volumen de reportes — y CISA KEV (vulnerabilidades con explotación confirmada). El respaldo de geolocalización es `ipwho.is`.
+- **Atribución honesta:** solo los eventos con IP **y** país de origen reales originan un arco; CISA KEV se publica sin atribución de origen (no se inventa un país).
+- **Destino declarado:** el extremo derecho del arco no es un dato del proveedor (DShield no publica la víctima) sino la infraestructura protegida (Argentina / Neuquén) o un destino global ilustrativo, visualmente distinguido.
+- **Estado del feed declarado:** el pie de la escena indica si los datos son reales o si el origen de los arcos es ilustrativo. Nunca ambos a la vez.
+- **Tooltip sin invención:** IP, ASN, número de reportes y país de origen; los campos que el proveedor no publicó se muestran como «—», nunca como cero ni como valor inventado.
+- **Bilingüe:** todo el texto visible del mapa (incluido el canvas WebGL, que no tiene DOM que traducir) sale del diccionario `threatmap.*`, en ES y EN.
+- **Cache y coalesce:** TTL 300 s (DShield) y 3600 s (KEV), coalesce de peticiones concurrentes y estado por fuente publicado en la respuesta (`sourceStatus`, `cacheTtlSeconds`).
+- Detalle técnico completo en [`docs/cyber-attack-map.md`](docs/cyber-attack-map.md).
+
 ---
 
 ## 4. Requerimientos No Funcionales
@@ -154,10 +168,11 @@ El producto comunica autoridad técnica con elementos visuales premium (glassmor
 - `/api/chat` (fallback legacy) propaga `x-forwarded-for`/`x-real-ip` **verbatim** (los del edge), nunca construidos desde input del cliente.
 
 ### RNF-05 · Testing y CI
-- Vitest: **50 archivos · 539 tests** (unit/integración, jsdom).
+- Vitest: **60 archivos · 624 tests** (unit/integración, jsdom).
 - Playwright: **9 specs · 38 tests** contra build de producción.
 - CI en GitHub Actions (`.github/workflows/ci.yml`): `validate` (lint, typecheck, test, **audit**, build) → `lighthouse` → `e2e` → `deploy`.
 - El job `deploy` es **hard-fail** si el project ID de Vercel no es `prj_KmY2dJJgbui7LhuQyxZPKTU08T1h`.
+- El gate de seguridad tiene **dos capas**: `npm audit --omit=dev --audit-level=moderate` (superficie de producción, bloqueante) y `npm audit --audit-level=critical` en el árbol completo (bloqueante); el resto se emite como `::warning::`.
 
 ### RNF-06 · Coste de inferencia
 - El pool de modelos es **free-only por invariante de código** (`buildFreeModelPool()` descarta cualquier id que no sea `:free` o el router `openrouter/free`).
@@ -197,10 +212,12 @@ src/
 │   ├── estadisticas/             # Métricas públicas de descargas
 │   ├── estadisticas-privadas/    # Panel privado (login / sesion / logout + cookie HMAC)
 │   ├── recursos/                 # Biblioteca + volúmenes (/recursos/[volumen])
+│   ├── cyber-attack-map/         # Mapa 3D a pantalla completa (SSR i18n + metadata)
 │   ├── test-error/               # Solo con NEXT_PUBLIC_E2E_ERROR_ROUTE=1
 │   └── api/
 │       ├── ask-ai/route.ts       # Copilot (streaming + RAG + tools + pool)
 │       ├── contact/route.ts      # Email (Resend), rate limit 5/min
+│       ├── threat-intel/route.ts # Inteligencia de amenazas (DShield + CISA KEV)
 │       ├── track/download/route.ts # Registro de descargas (30/min) + 307
 │       ├── csp-report/route.ts   # Reportes CSP (POST) + health (GET)
 │       └── chat/route.ts         # Fallback legacy → reenvía a /api/ask-ai
@@ -216,17 +233,20 @@ src/
 │   ├── recursos/                 # UI de la biblioteca + volúmenes
 │   └── portfolio/                # Hero, Perfil, Arquitectura, Experiencia, SIEM,
 │                                 #   AuditHub, SCAudit, Blog, Stack, Certificaciones,
-│                                 #   Proyecto, Caso, Contacto, Navbar, Footer, 3D/canvas
+│                                 #   Proyecto, Caso, Contacto, Navbar, Footer, 3D/canvas,
+│                                 #   CyberAttackMap3D + ArcTooltipPanel + attackArc
+│                                 #   + globeRotation
 ├── components/                   # Kernel compartido
 │   ├── observability/            # ObservabilityProvider (PostHog + Sentry)
 │   └── ui/                       # shadcn/ui + SectionHeader/FadeIn/Icon
 ├── context/
 │   ├── LanguageContext.tsx       # Proveedor i18n (consume el seam)
-│   └── translations/             # Diccionarios ES/EN por sección (22 archivos)
+│   └── translations/             # Diccionarios ES/EN por sección (23 archivos)
 ├── data/                         # Contenido (siem, audit, blog, experiencia, mindmap,
-│                                 #   caseStudyData, recursos*) — alimenta el corpus RAG
+│                                 #   caseStudyData, recursos*, countryCoords) — alimenta
+│                                 #   el corpus RAG y el mapa
 ├── lib/                          # Seams compartidos: language, theme, rate-limit,
-│                                 #   server-i18n, constants, utils, observability/
+│                                 #   server-i18n, next-cache, constants, utils, observability/
 └── test-utils/                   # Mocks de framer-motion y next/image
 ```
 
@@ -245,12 +265,14 @@ src/
 | CA-05 | El build de producción no tiene errores de TS | ✅ Exitoso (`tsc --noEmit` exit 0) |
 | CA-06 | Las animaciones SIEM corren fluidas y respetan reduced-motion | ✅ Exitoso |
 | CA-07 | El sitio es 100% responsivo en desktop/mobile | ✅ Exitoso |
-| CA-08 | Los seams (idioma, tema, RAG, rate-limit, prompt, pool, memoria, stats) tienen tests | ✅ Exitoso (539 unit + 38 e2e) |
+| CA-08 | Los seams (idioma, tema, RAG, rate-limit, prompt, pool, memoria, stats, threat-intel, arco, rotación) tienen tests | ✅ Exitoso (624 unit + 38 e2e) |
 | CA-09 | El e2e pasa contra el build de producción en CI | ✅ Exitoso |
 | CA-10 | El contraste WCAG AA de la ladder de texto y los bordes interactivos está verificado por test | ✅ Exitoso (17 tests) |
-| CA-11 | El pipeline de CI está verde (audit incluido) | ❌ **Falla** — `npm audit --audit-level=moderate` sale con código 1 y bloquea `lighthouse`/`e2e`/`deploy` |
+| CA-11 | El pipeline de CI está verde (audit incluido) | ✅ Exitoso — gate en dos capas: producción (`--omit=dev`) bloqueante, árbol completo bloqueante solo en `critical`. Inventario verificado: **16 avisos (8 low, 8 high, 0 moderate, 0 critical)** en el árbol completo; **8 low, 0 high, 0 moderate** en producción |
+| CA-12 | El mapa de ciberataques no atribuye ataques a países que el proveedor no señaló | ✅ Exitoso — regla verificada por test (origen con IP+país reales, KEV sin atribución, destino declarado, pie con el estado del feed, tooltip sin invención) |
+| CA-13 | El mapa es bilingüe en su totalidad, incluido el canvas WebGL | ✅ Exitoso — todo el texto sale de `threatmap.*`; una guarda falla si vuelve una cadena literal al componente |
 
-> **Deuda abierta (ver README → "Deuda técnica conocida"):** el job `validate` de CI está rojo por el audit (37 avisos: 1 critical, 15 high, 13 moderate, 8 low) y varios overrides de `package.json` fijan hoy exactamente la versión vulnerable. Mientras eso no se cierre, el criterio CA-11 no se cumple y **el deploy a producción está bloqueado**.
+> **Deuda abierta (ver README → "Deuda técnica conocida"):** el único advisory que sobrevive en el árbol completo es `braces@3.0.3` (high, dev-only, **sin parche upstream publicado**), replicado en 8 nodos; se reporta como `::warning::` y no bloquea el deploy. En la superficie de producción no queda ningún advisory por encima de `low`.
 
 ---
 

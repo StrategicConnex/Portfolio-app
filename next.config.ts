@@ -23,7 +23,13 @@ const securityHeaders = [
   },
   {
     key: 'Content-Security-Policy',
-    value: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.vercel-scripts.com https://scaudit.vercel.app https://*.posthog.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https://scaudit.vercel.app https://*.vercel-scripts.com https://vitals.vercel-insights.com https://openrouter.ai https://*.posthog.com https://*.sentry.io wss://*.posthog.com; worker-src 'self' blob:; frame-ancestors 'self'; report-uri /api/csp-report; report-to csp-endpoint;",
+    // `blob:` en script-src es necesario para los workers de módulo: troika
+    // (texto 3D de @react-three/drei) genera el SDF de las fuentes en un
+    // worker creado con `new Worker(URL.createObjectURL(blob))`. Sin esa
+    // directiva, `worker-src` permite crear el worker pero el módulo que
+    // importa dentro queda bloqueado, el worker no inicializa y la
+    // excepción tumba el <Canvas> entero.
+    value: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' blob: https://*.vercel-scripts.com https://scaudit.vercel.app https://*.posthog.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:; connect-src 'self' https://scaudit.vercel.app https://*.vercel-scripts.com https://vitals.vercel-insights.com https://openrouter.ai https://*.posthog.com https://*.sentry.io wss://*.posthog.com; worker-src 'self' blob:; frame-ancestors 'self'; report-uri /api/csp-report; report-to csp-endpoint;",
   },
   {
     key: 'Report-To',

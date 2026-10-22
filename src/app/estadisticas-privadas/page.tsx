@@ -33,7 +33,6 @@ const VOLUME_LABEL: Record<string, string> = {
  * IP, país y user-agent.
  */
 export default async function EstadisticasDescargas({ searchParams }: Props) {
-  const token = process.env.DOWNLOAD_STATS_TOKEN
   const { k } = await searchParams
   if (!isPanelAuthConfigured()) notFound()
 

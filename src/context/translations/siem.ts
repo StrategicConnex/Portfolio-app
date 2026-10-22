@@ -4,9 +4,15 @@ const es = {
   'siem.label': 'Security Operations',
   'siem.title': 'SIEM',
   'siem.highlight': 'Dashboard',
+  // El mapa 3D consume datos reales (DShield + CISA KEV); el resto del panel
+  // (stream, KPIs, zonas, top atacantes) sigue siendo simulado en el
+  // navegador. La descripción y el badge distinguen ambas cosas para no
+  // atribuirle a todo el panel una precisión de datos en vivo que no tiene.
   'siem.map_desc':
-    'Panel de demostración: la telemetría es simulada en el navegador y se regenera cada 5 segundos. No proviene de una red real, de un cliente ni de Radware.',
-  'siem.demo_badge': 'DEMO · TELEMETRÍA SIMULADA',
+    'Mapa de amenazas con datos reales de DShield (SANS ISC) y CISA KEV. El resto del panel (stream, KPIs, zonas Purdue) es una demostración simulada en el navegador.',
+  'siem.demo_badge': 'MAPA EN VIVO · PANEL SIMULADO',
+  'siem.map.title': 'Mapa de Ciberataques en Tiempo Real',
+  'siem.map.open_full': 'Abrir en pantalla completa',
   'siem.hover_hint': '▸ Hover sobre un evento ALERT para ver la acción de mitigación',
   'siem.incident_btn': 'Simular Incidente Industrial',
   'siem.incident_btn_active': 'ANALIZANDO EVENTO...',
@@ -17,8 +23,10 @@ const es = {
   'siem.ui.incident_title': 'INCIDENTE SIMULADO – Purdue Nivel 1',
   'siem.ui.incident_desc': 'Detección de anomalía en dispositivos de campo. El SOC aplica mitigación automática.',
   'siem.ui.event_stream': 'Event Stream – Nivel IT/OT',
+  'siem.ui.stream_aria': 'Stream de eventos de seguridad en tiempo real',
   'siem.ui.availability': 'Disponibilidad por Zona Purdue',
   'siem.ui.threat_summary': 'Resumen de Amenazas',
+  'siem.ui.threat_summary_aria': 'Resumen de amenazas',
   'siem.ui.operational_kpis': 'KPIs de demostración',
   'siem.ui.top_attackers': 'Top Atacantes',
   'siem.ui.top_attacked': 'Top Atacados',
@@ -42,9 +50,14 @@ const en: TranslationModule['en'] = {
   'siem.label': 'Security Operations',
   'siem.title': 'SIEM',
   'siem.highlight': 'Dashboard',
+  // Same split as the ES copy: the 3D map is real, the rest of the panel is
+  // simulated. The badge must not claim live intelligence for KPIs that are
+  // generated in the browser.
   'siem.map_desc':
-    'Demo panel: telemetry is simulated in the browser and regenerated every 5 seconds. It does not come from a real network, a client, or Radware.',
-  'siem.demo_badge': 'DEMO · SIMULATED TELEMETRY',
+    'Threat map fed with live DShield (SANS ISC) and CISA KEV data. The rest of the panel (stream, KPIs, Purdue zones) is a browser-side simulation.',
+  'siem.demo_badge': 'LIVE MAP · SIMULATED PANEL',
+  'siem.map.title': 'Real-Time Cyber Attack Map',
+  'siem.map.open_full': 'Open full screen',
   'siem.hover_hint': '▸ Hover over an ALERT event to see mitigation action',
   'siem.incident_btn': 'Simulate Industrial Incident',
   'siem.incident_btn_active': 'ANALIZANDO EVENTO...',
@@ -55,8 +68,10 @@ const en: TranslationModule['en'] = {
   'siem.ui.incident_title': 'SIMULATED INCIDENT – Purdue Level 1',
   'siem.ui.incident_desc': 'Anomaly detection in field devices. SOC applies automatic mitigation.',
   'siem.ui.event_stream': 'Event Stream – IT/OT Level',
+  'siem.ui.stream_aria': 'Real-time security event stream',
   'siem.ui.availability': 'Purdue Zone Availability',
   'siem.ui.threat_summary': 'Threat Summary',
+  'siem.ui.threat_summary_aria': 'Threat summary',
   'siem.ui.operational_kpis': 'Demo KPIs',
   'siem.ui.top_attackers': 'Top Attackers',
   'siem.ui.top_attacked': 'Top Attacked',

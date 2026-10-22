@@ -75,7 +75,7 @@ describe('estadisticas-privadas', () => {
       name === 'panel_auth' ? { name, value: createPanelCookieValue()! } : undefined,
     )
     const ui = await page()
-    const { container } = render(ui)
+    render(ui)
 
     // KPIs: 3 eventos; '2' aparece en archivos distintos, IPs distintas y el conteo de IEC 62443
     expect(screen.getByText('3')).toBeDefined()

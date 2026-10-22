@@ -12,10 +12,10 @@ Cada afirmación numérica o de estado se clasificó en una de tres categorías:
 | Categoría | Criterio |
 |---|---|
 | **Verificado** | Reproducible desde el repo o desde un artefacto servido (`/public`) |
-| **Corregido** | Contradecía el repo, un estándar externo, o presentaba como actual algo imposible |
+| **Corregido** | Contradicía el repo, un estándar externo, o presentaba como actual algo imposible |
 | **Abierto** | Dato personal o de cliente que solo el autor puede confirmar |
 
-Comprobaciones ejecutadas: `tsc --noEmit`, `eslint`, 539 tests, `next build`, y
+Comprobaciones ejecutadas: `tsc --noEmit`, `eslint`, 624 tests, `next build`, y
 render SSR real en ES/EN sobre `next start` (grep de cadenas nuevas y obsoletas).
 
 ## Corregido
@@ -32,6 +32,12 @@ Map, intervalos de 1 hora»* + cabecera `RADWARE LIVE THREAT MAP — 1H`.
 **Ahora:** el panel se declara como demostración — insignia
 `DEMO · TELEMETRÍA SIMULADA` y nota que aclara que los datos son simulados, no
 provienen de una red real, de un cliente ni de Radware.
+
+> **Actualización posterior (mapa de ciberataques):** la declaración se afinó
+> porque el panel ya no es *todo* simulado. Se implantó la insignia
+> `MAPA EN VIVO · PANEL SIMULADO` y la descripción pasó a decir exactamente
+> qué es real (el mapa 3D, alimentado con DShield y CISA KEV) y qué es
+> simulado (stream, KPIs, zonas Purdue). Ver §8.
 
 ### 2. SIEM Dashboard — KPIs con unidades incoherentes
 
@@ -150,6 +156,58 @@ cifras de trayectoria.
 en el dashboard SIEM, y la descripción SEO de la arquitectura ahora dice «hasta
 el Nivel 4 (Red Corporativa), con integración a Nivel 5 (proveedores y cloud)».
 El nivel 5 deja de presentarse como parte de la pirámide clásica.
+
+## 8. Mapa de ciberataques — qué es real y qué no (segunda pasada)
+
+La incorporación del mapa 3D (`/cyber-attack-map`) introduce la categoría de claim
+más delicada del sitio: **un mapa de amenazas que convierte datos reales en
+afirmaciones falsas**. La auditoría se aplicó con el mismo criterio.
+
+### 8.1 Claims verificados
+
+| Claim | Evidencia |
+|---|---|
+| «Datos reales de inteligencia de amenazas» | `/api/threat-intel` consulta DShield (SANS ISC) `topips` + `ip/<ip>`, CISA KEV e `ipwho.is`; no hay feed simulado en el camino de datos real |
+| «Actualización en tiempo real» | TTL 300 s (DShield) / 3600 s (KEV) + poll de 60 s en el cliente; la respuesta publica `cacheTtlSeconds` |
+| «CISA KEV (Known Exploited Vulnerabilities)» | Feed oficial de CISA,endpoint real declarado en la ruta |
+| «ipwho.is (respaldo de geolocalización)» | Se usa **solo** cuando SANS no conoce el país del ASN; el campo `geoSource` distingue `dshield-as` de `ipwhois` |
+
+### 8.2 Claims corregidos
+
+| Antes | Ahora | Motivo |
+|---|---|---|
+| El panel SIEM se declaraba en bloque como «DEMO · TELEMETRÍA SIMULADA» | `MAPA EN VIVO · PANEL SIMULADO` | El mapa embebido **sí** es real; el badge anterior habría desmintido lo que el propio panel muestra |
+| La descripción del panel no decía qué parte era real | Distingue explícitamente el mapa real del resto simulado | Un lector no debe inferirlo |
+| Pie del mapa: «Origen: IP real (DShield/SANS ISC)» | «✓ Datos de inteligencia de amenazas reales» **o** «⚠ Feed sin datos: origen de los arcos ilustrativo» | La etiqueta anterior afirmaba datos reales incluso cuando el feed no había respondido |
+| El extremo derecho del arco se presenta como el destino del ataque | Se declara que es la infraestructura protegida o un destino global ilustrativo | DShield no publica la víctima: dibujar un destino como si fuera el objetivo real sería inventar el dato |
+| Los eventos de CISA KEV se contaban junto a los de DShield sin distinción | Se publican **sin atribución de origen** | Atribuir un ataque a un país que el proveedor no señaló convierte un dato real en una afirmación falsa |
+| El tooltip rellenaba los campos desconocidos con cadena vacía | Se muestran como «—» y las filas no reales se marcan | Una cadena vacía se lee como «no lo sé»; un «—» lo dice explícitamente |
+| El mapa vivía con copy en inglés (UI) y tooltip en español | Todo el texto sale del diccionario `threatmap.*` (ES/EN) | El sitio es bilingüe: un canvas WebGL sin DOM que traducir no puede quedarse en un solo idioma |
+| El mapa 3D se cargaba en la home sin separación | Sigue así, **declarado como deuda P2** (bundle de Three.js sin code-splitting) | No se maquilla: es una decisión pendiente con coste conocido |
+
+### 8.3 Reglas que el mapa garantiza (y sus tests)
+
+Cada regla de la §3 de [`docs/cyber-attack-map.md`](cyber-attack-map.md) tiene un
+test que la fija:
+
+1. Solo los eventos con `originIp` + `originCountry` reales originan un arco.
+2. El destino se marca como `hub` (real) o `illustrative` (elegido por el mapa).
+3. CISA KEV no lleva país de origen.
+4. El pie declara el estado del feed, y solo uno de los dos.
+5. El tooltip no inventa los campos que el proveedor no publicó.
+
+**Verificación:** `cyberAttackMap3D.guard.test.ts` (15 tests), `arcTooltip.test.ts`
+(5), `ArcTooltipPanel.test.tsx` (3), `attackArc.test.ts` (16),
+`app/api/threat-intel/route.test.ts` (11), `app/cyber-attack-map/page.test.tsx` (4).
+
+### 8.4 Consistencia con el asistente
+
+`src/features/ask-ai/lib/rag/sources.ts` incorporó 4 entradas nuevas
+(`cyber-threats-map`, `cyber-threats-map-en`, `cyber-attack-types`,
+`cyber-attack-types-en`) con el mismo criterio per-locale: el corpus no puede
+describir el mapa con copy en español a un usuario de inglés.
+
+---
 
 ## Consistencia con el asistente
 

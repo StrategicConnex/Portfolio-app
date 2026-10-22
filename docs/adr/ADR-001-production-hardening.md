@@ -225,3 +225,27 @@ npx playwright test                         → 38 tests declarados (9 specs)
 | Tests sin warnings | Helper compartido | `src/test-utils/framer-motion.tsx`, 8 tests |
 | LCP más ligero | quality 75 | `src/features/portfolio/Hero.tsx`, `Perfil.tsx` |
 | Documentar | Este ADR | `docs/adr/ADR-001-production-hardening.md` |
+
+---
+
+## Addendum (22 de octubre de 2026): `img-src` sin host remoto
+
+La decisión original quitó `unpkg.com` de `script-src` y `connect-src`, pero dejó
+`img-src 'self' data: https:`. Ese `https:` no lo necesitaba ninguna imagen del sitio:
+la única imagen remota en runtime era la del mapa 3D, que pedía sus texturas a
+`unpkg.com/three-globe@2.45.6/example/img/…` — es decir, **la decisión estaba a medias**:
+había una dependencia de CDN en runtime mientras la CSP seguía abierta a cualquier host.
+
+Se cierra:
+
+| | Antes | Ahora |
+|---|---|---|
+| Texturas del globo | `unpkg.com/three-globe@2.45.6/example/img/…` | `/textures/…` servidas por la app (`public/textures/`) |
+| `img-src` | `'self' data: https:` | `'self' data:` |
+| Peso de las texturas | 2,2 MB (4096×2048 + 2 PNG) | 368 KB (recodificadas con `sharp`, misma proyección 2:1) |
+| Privacidad | cada visita contactaba con un CDN externo | ninguna petición remota |
+
+Las texturas se sirven desde `public/textures/` con su procedencia y licencia en
+`public/textures/NOTICE.md` (three-globe MIT; las imágenes son de la NASA, dominio
+público). `src/lib/csp.test.ts` fija la directiva para que reabrirla exija una
+revisión explícita.
