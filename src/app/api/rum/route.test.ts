@@ -66,7 +66,7 @@ describe('POST /api/rum', () => {
       cache: 'no-store',
       headers: {
         'Content-Type': 'application/json',
-        Origin: SITE.scaudit.appUrl,
+        Origin: SITE.url,
         'User-Agent': 'Portfolio-RUM-Proxy/1.0',
         // Última entrada de x-forwarded-for (la del edge), no la primera.
         'X-Forwarded-For': '10.0.0.1',

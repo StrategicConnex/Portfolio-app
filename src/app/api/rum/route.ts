@@ -58,9 +58,10 @@ function byteLength(value: string): number {
  * origen del producto en `connect-src`) y el servidor controla tamaño,
  * validación y rate limit.
  *
- * SCAudit solo acepta peticiones cuyo `Origin` sea su propio dominio, por lo
- * que el reenvío server-side presenta ese origen. Es una integración
- * server-to-server del mismo producto, no un bypass del navegador.
+ * SCAudit valida el `Origin` contra `ALLOWED_TELEMETRY_ORIGINS`; el portfolio
+ * está en ese allowlist, así que el reenvío server-side se identifica con su
+ * propio origen. Es una integración server-to-server, no un bypass del
+ * navegador.
  */
 export async function POST(req: NextRequest) {
   const clientId = getClientId(req)
@@ -119,9 +120,8 @@ export async function POST(req: NextRequest) {
 
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
-    // El allowlist de SCAudit rechaza cualquier origen ajeno, incluido el del
-    // portfolio. El proxy se identifica como el propio producto.
-    Origin: SITE.scaudit.appUrl,
+    // El portfolio está en `ALLOWED_TELEMETRY_ORIGINS` de SCAudit.
+    Origin: SITE.url,
     'User-Agent': 'Portfolio-RUM-Proxy/1.0',
   }
   // `getClientId` devuelve la última entrada de x-forwarded-for (la que añade
