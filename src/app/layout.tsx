@@ -41,9 +41,11 @@ export const metadata: Metadata = {
     images: [
       {
         url: SITE.profileImage,
+        type: 'image/webp',
         alt: 'Foto de perfil de Juan Felipe Palacios',
-        width: 1200,
-        height: 1200,
+        // Real dimensions of public/JuanPalacios.webp (512×668).
+        width: 512,
+        height: 668,
       },
     ],
   },

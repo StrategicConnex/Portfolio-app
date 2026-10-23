@@ -127,9 +127,12 @@ export async function buildPageMetadata(page: PageKey): Promise<Metadata> {
       type: 'website',
       images: [
         {
+          // Real dimensions of public/JuanPalacios.webp — declaring 1200×1200
+          // made social previews reserve the wrong box.
           url: SITE.profileImage,
-          width: 1200,
-          height: 1200,
+          type: 'image/webp',
+          width: 512,
+          height: 668,
           alt: copy.title,
         },
       ],
