@@ -31,5 +31,12 @@ export const SITE = {
     apiUrl: 'https://scaudit.vercel.app/api/telemetry/vitals',
     scriptUrl: 'https://scaudit.vercel.app/scripts/vitals.js',
     appUrl: 'https://scaudit.vercel.app',
+    /**
+     * SRI of the RUM script (M-05). Update it when the remote file changes:
+     *   node -e "const c=require('crypto');fetch('https://scaudit.vercel.app/scripts/vitals.js').then(r=>r.arrayBuffer()).then(b=>console.log('sha384-'+c.createHash('sha384').update(Buffer.from(b)).digest('base64')))"
+     * If it is stale the browser blocks the script (fail-closed) and telemetry
+     * stops, but the site itself keeps working.
+     */
+    integrity: 'sha384-I/JyGQM8CFY2cOUC7ae7hCdaXTPi5LNUMeqRHiEWzP6AktUF9j8q3btvpYaIA1He',
   },
 } as const

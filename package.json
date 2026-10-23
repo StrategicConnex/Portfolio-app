@@ -12,6 +12,7 @@
     "test:watch": "vitest",
     "test:e2e": "playwright test",
     "extract:recursos": "node scripts/extract-recursos-text.mjs",
+    "og:generate": "node scripts/generate-og.mjs",
     "prepare": "husky"
   },
   "lint-staged": {

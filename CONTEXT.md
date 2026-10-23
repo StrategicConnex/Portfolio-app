@@ -70,6 +70,36 @@ Domain code lives in **feature modules**, not in the shared roots:
   JSON-LD (`Person`, `ProfessionalService`, `WebSite`, `BreadcrumbList`,
   `FAQPage`) lives in `layout.tsx`, and `sitemap.ts` derives its
   `alternates.languages` from the same localized URLs.
+- **Social-card seam** (`scripts/generate-og.mjs` → `public/og/`):
+  `npm run og:generate` renders one deterministic **1200×630** JPEG per page and
+  locale (Playwright + sharp, brand fonts, no hand-made assets). `seo.ts`
+  points `og:image`/`twitter:image` at `/og/${page}-${locale}.jpg`; the layout
+  uses `/og/home-es.jpg` as the default for routes without page metadata.
+  Re-run the script when a page title/description in `seo.ts` changes — never
+  ship an OG image that declares dimensions different from the real file.
+
+## Consent & analytics
+
+- **Consent seam** (`src/lib/consent.ts`): the single source of truth for the
+  analytics decision (`portfolio_consent` cookie: `granted` | `denied` |
+  `unknown`). **`unknown` is treated as denied**: PostHog and the SCAudit RUM
+  script must not load before an explicit choice. `writeConsent()` persists and
+  broadcasts; `subscribeConsent()` lets trackers start without a reload;
+  `openConsentPreferences()` re-opens the banner from the footer.
+- **Banner** (`src/components/consent/ConsentBanner.tsx`): rendered only after
+  hydration (no flash for returning visitors), non-modal bottom-left region
+  with both options always visible. Do not turn it into a blocking modal or
+  pre-check consent.
+- **Gated loaders**: `ObservabilityProvider` initializes Sentry always
+  (essential error reporting) but `initPosthog()` only on `granted`; RUM goes
+  through `RumScript` (`src/components/observability/RumScript.tsx`), which
+  renders nothing before consent and injects `next/script` with **SRI**
+  (`sha384`, from `SITE.scaudit.integrity`) once granted. If the remote
+  `vitals.js` changes, recompute the hash (command in `constants.ts`); a stale
+  hash fails closed — telemetry stops, the site keeps working. Never load the
+  RUM script directly from the layout again.
+- Tests: `src/lib/consent.test.ts`, `ConsentBanner.test.tsx`,
+  `ObservabilityProvider.test.tsx` and `e2e/consent.spec.ts` pin the gate.
 
 ## Theme
 

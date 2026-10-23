@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { useLanguage } from '@/context/LanguageContext'
+import { openConsentPreferences } from '@/lib/consent'
 
 export default function Footer() {
   const { t } = useLanguage()
@@ -31,7 +32,15 @@ export default function Footer() {
         <Link href="/estadisticas" className="underline mr-3" style={{ color: 'inherit' }}>{t('stats.footer_link')}</Link>
         <a href="https://linkedin.com/in/juanfpalacios" target="_blank" rel="noopener noreferrer" className="underline mr-3" style={{ color: 'inherit' }}>LinkedIn</a>
         <a href="https://github.com/StrategicConnex/" target="_blank" rel="noopener noreferrer" className="underline mr-3" style={{ color: 'inherit' }}>GitHub</a>
-        <a href="https://www.credly.com/users/juan-palacios.88e7ba6c" target="_blank" rel="noopener noreferrer" className="underline" style={{ color: 'inherit' }}>Credly</a>
+        <a href="https://www.credly.com/users/juan-palacios.88e7ba6c" target="_blank" rel="noopener noreferrer" className="underline mr-3" style={{ color: 'inherit' }}>Credly</a>
+        <button
+          type="button"
+          onClick={openConsentPreferences}
+          className="underline cursor-pointer"
+          style={{ color: 'inherit' }}
+        >
+          {t('footer.cookie_prefs')}
+        </button>
       </p>
     </footer>
   )

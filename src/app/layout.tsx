@@ -7,8 +7,9 @@ import { SITE } from '@/lib/constants'
 import { LANGUAGE_COOKIE, detectLanguageServer } from '@/lib/language'
 import { THEME_COOKIE, THEME_INIT_SCRIPT, detectThemeServer } from '@/lib/theme'
 import React from 'react'
-import Script from 'next/script'
 import { ObservabilityProvider } from '@/components/observability/ObservabilityProvider'
+import { RumScript } from '@/components/observability/RumScript'
+import { ConsentBanner } from '@/components/consent/ConsentBanner'
 import { HtmlLangUpdater } from '@/features/portfolio/HtmlLangUpdater'
 import { SkipToContent } from '@/components/ui/SkipToContent'
 import Navbar from '@/features/portfolio/Navbar'
@@ -40,12 +41,13 @@ export const metadata: Metadata = {
     siteName: SITE.applicationName,
     images: [
       {
-        url: SITE.profileImage,
-        type: 'image/webp',
-        alt: 'Foto de perfil de Juan Felipe Palacios',
-        // Real dimensions of public/JuanPalacios.webp (512×668).
-        width: 512,
-        height: 668,
+        // Default social card for routes without page metadata; pages override
+        // it through `buildPageMetadata()` with their own 1200×630 card.
+        url: `${SITE.url}/og/home-es.jpg`,
+        type: 'image/jpeg',
+        alt: 'Juan Felipe Palacios — Ciberseguridad Industrial IT/OT',
+        width: 1200,
+        height: 630,
       },
     ],
   },
@@ -55,7 +57,7 @@ export const metadata: Metadata = {
     description: 'Consultoría IT/OT y Ciberseguridad Industrial para Oil & Gas en Vaca Muerta y Neuquén.',
     creator: '@juanfpalacios',
     site: '@juanfpalacios',
-    images: [SITE.profileImage],
+    images: [`${SITE.url}/og/home-es.jpg`],
   },
   robots: { index: true, follow: true },
   alternates: { canonical: SITE.url, languages: { 'es-AR': SITE.url, en: `${SITE.url}?lang=en` } },
@@ -219,21 +221,6 @@ export default async function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
-        {/* SCAudit RUM only on deployed (non-localhost) production builds:
-            the telemetry API only allows deployed origins, so loading it on
-            localhost produces CORS errors in the console. */}
-        {process.env.NODE_ENV === 'production' && !isLocalHost && (
-          <Script
-            src={SITE.scaudit.scriptUrl}
-            strategy="afterInteractive"
-            data-project-id={SITE.scaudit.projectId}
-            data-api-url={SITE.scaudit.apiUrl}
-            data-sampling="1.0"
-            data-spa-tracking="true"
-            data-batch-size="10"
-            data-flush-interval="15000"
-          />
-        )}
       </head>
       <body className="font-sans antialiased bg-background text-foreground">
         <SkipToContent />
@@ -249,6 +236,17 @@ export default async function RootLayout({
               {children}
               <AskAICopilotShell />
               <Footer />
+              <ConsentBanner />
+              {/* SCAudit RUM: consent-gated + SRI. Localhost never loads it
+                  (the telemetry API only allows deployed origins). */}
+              {process.env.NODE_ENV === 'production' && !isLocalHost && (
+                <RumScript
+                  src={SITE.scaudit.scriptUrl}
+                  projectId={SITE.scaudit.projectId}
+                  apiUrl={SITE.scaudit.apiUrl}
+                  integrity={SITE.scaudit.integrity}
+                />
+              )}
             </ObservabilityProvider>
           </ThemeProvider>
         </LanguageProvider>
