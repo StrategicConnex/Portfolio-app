@@ -24,25 +24,25 @@ const mockT = vi.fn((key: string) => {
     'scaudit.description': 'Descripción de SCAudit',
     'scaudit.status.live': 'LIVE',
     'scaudit.img.alt': 'SCAudit Dashboard',
-    'scaudit.feat.rum.name': 'RUM',
-    'scaudit.feat.rum.desc': 'Real User Monitoring',
-    'scaudit.feat.vitals.name': 'Web Vitals',
-    'scaudit.feat.vitals.desc': 'Core Web Vitals',
-    'scaudit.feat.audit.name': 'Auditoría',
-    'scaudit.feat.audit.desc': 'Auditoría continua',
-    'scaudit.feat.seo.name': 'SEO',
-    'scaudit.feat.seo.desc': 'SEO Técnico',
-    'scaudit.feat.errors.name': 'Errores',
-    'scaudit.feat.errors.desc': 'Rateo de errores',
+    'scaudit.feat.discovery.name': 'Descubrimiento',
+    'scaudit.feat.discovery.desc': 'Activos expuestos',
+    'scaudit.feat.mitre.name': 'MITRE Mapping',
+    'scaudit.feat.mitre.desc': 'ATT&CK por táctica',
+    'scaudit.feat.api.name': 'API',
+    'scaudit.feat.api.desc': 'REST v1',
+    'scaudit.feat.siem.name': 'SIEM',
+    'scaudit.feat.siem.desc': 'Alertas multi-canal',
     'scaudit.feat.ai.name': 'AI Insights',
     'scaudit.feat.ai.desc': 'Recomendaciones IA',
-    'scaudit.feat.score.name': 'Score',
-    'scaudit.feat.score.desc': 'Puntuación global',
     'scaudit.feat.reports.name': 'Reportes',
-    'scaudit.feat.reports.desc': 'Reportes exportables',
+    'scaudit.feat.reports.desc': 'PDF white-label',
+    'scaudit.feat.defense.name': 'Hardening',
+    'scaudit.feat.defense.desc': 'CSP + rate limit',
+    'scaudit.feat.pwa.name': 'PWA',
+    'scaudit.feat.pwa.desc': 'Offline + push',
     'scaudit.metrics.title': 'MÉTRICAS',
-    'scaudit.metrics.source': 'Lighthouse + CrUX',
-    'scaudit.cta.badge': 'BETA',
+    'scaudit.metrics.source': 'scaudit.vercel.app',
+    'scaudit.cta.badge': 'BETA PÚBLICA',
     'scaudit.cta.title': 'Probá SCAudit',
     'scaudit.cta.desc': 'Monitoreá tu sitio',
     'scaudit.cta.primary': 'Ir a SCAudit',
@@ -93,11 +93,11 @@ describe('SCAudit', () => {
     expect(screen.getByText('Descripción de SCAudit')).toBeDefined()
   })
 
-  it('should render SOC 2, Lighthouse v12, and GSC API badges', () => {
+  it('should render the verified product badges', () => {
     render(<SCAudit />)
-    expect(screen.getByText('SOC 2')).toBeDefined()
-    expect(screen.getByText('Lighthouse v12')).toBeDefined()
-    expect(screen.getByText('GSC API')).toBeDefined()
+    expect(screen.getByText('MITRE ATT&CK')).toBeDefined()
+    expect(screen.getByText('API REST v1')).toBeDefined()
+    expect(screen.getByText('BETA')).toBeDefined()
   })
 
   it('should render the product image with correct alt text', () => {
@@ -114,17 +114,21 @@ describe('SCAudit', () => {
 
   it('should render all 8 feature cards with names and descriptions', () => {
     render(<SCAudit />)
-    expect(screen.getByText('RUM')).toBeDefined()
-    expect(screen.getByText('Real User Monitoring')).toBeDefined()
-    expect(screen.getByText('Web Vitals')).toBeDefined()
-    expect(screen.getByText('Core Web Vitals')).toBeDefined()
-    expect(screen.getByText('Auditoría')).toBeDefined()
-    expect(screen.getByText('SEO')).toBeDefined()
-    expect(screen.getByText('SEO Técnico')).toBeDefined()
-    expect(screen.getByText('Errores')).toBeDefined()
+    expect(screen.getByText('Descubrimiento')).toBeDefined()
+    expect(screen.getByText('Activos expuestos')).toBeDefined()
+    expect(screen.getByText('MITRE Mapping')).toBeDefined()
+    expect(screen.getByText('ATT&CK por táctica')).toBeDefined()
+    expect(screen.getByText('API')).toBeDefined()
+    expect(screen.getByText('REST v1')).toBeDefined()
+    expect(screen.getByText('SIEM')).toBeDefined()
+    expect(screen.getByText('Alertas multi-canal')).toBeDefined()
     expect(screen.getByText('AI Insights')).toBeDefined()
-    expect(screen.getByText('Score')).toBeDefined()
     expect(screen.getByText('Reportes')).toBeDefined()
+    expect(screen.getByText('PDF white-label')).toBeDefined()
+    expect(screen.getByText('Hardening')).toBeDefined()
+    expect(screen.getByText('CSP + rate limit')).toBeDefined()
+    expect(screen.getByText('PWA')).toBeDefined()
+    expect(screen.getByText('Offline + push')).toBeDefined()
   })
 
   it('should render metrics section title', () => {
@@ -132,25 +136,28 @@ describe('SCAudit', () => {
     expect(screen.getByText('MÉTRICAS')).toBeDefined()
   })
 
-  it('should render all 6 metric pills with values', () => {
+  // Cifras verificadas contra scaudit.vercel.app (/mitre-coverage y /openapi.json).
+  // Si cambian en el producto, este test debe fallar y forzar la actualización.
+  it('should render the 6 verified capability pills with real values', () => {
     render(<SCAudit />)
-    expect(screen.getByText('LCP')).toBeDefined()
-    expect(screen.getByText('1.8s')).toBeDefined()
-    expect(screen.getByText('CLS')).toBeDefined()
-    expect(screen.getByText('0.03')).toBeDefined()
-    expect(screen.getByText('INP')).toBeDefined()
-    expect(screen.getByText('210ms')).toBeDefined()
-    expect(screen.getByText('Lighthouse')).toBeDefined()
-    expect(screen.getByText('91.4')).toBeDefined()
-    expect(screen.getByText('SEO Health')).toBeDefined()
-    expect(screen.getByText('88%')).toBeDefined()
-    expect(screen.getByText('Error Rate')).toBeDefined()
-    expect(screen.getByText('0.2%')).toBeDefined()
+    expect(screen.getByText('MITRE')).toBeDefined()
+    expect(screen.getByText('23')).toBeDefined()
+    expect(screen.getByText('Técnicas ATT&CK v15')).toBeDefined()
+    expect(screen.getByText('Tácticas')).toBeDefined()
+    expect(screen.getByText('7/14')).toBeDefined()
+    expect(screen.getByText('Herramientas')).toBeDefined()
+    expect(screen.getByText('46')).toBeDefined()
+    expect(screen.getByText('API REST')).toBeDefined()
+    expect(screen.getByText('10')).toBeDefined()
+    expect(screen.getByText('Rate limit')).toBeDefined()
+    expect(screen.getByText('60/m')).toBeDefined()
+    expect(screen.getByText('Estado')).toBeDefined()
+    expect(screen.getByText('Beta')).toBeDefined()
   })
 
   it('should render the CTA block with badge, title, description', () => {
     render(<SCAudit />)
-    expect(screen.getByText('BETA')).toBeDefined()
+    expect(screen.getByText('BETA PÚBLICA')).toBeDefined()
     expect(screen.getByText('Probá SCAudit')).toBeDefined()
     expect(screen.getByText('Monitoreá tu sitio')).toBeDefined()
   })
@@ -163,11 +170,13 @@ describe('SCAudit', () => {
     expect(primaryLink.getAttribute('target')).toBe('_blank')
   })
 
-  it('should render secondary CTA link', () => {
+  it('should render secondary CTA pointing at the public roadmap', () => {
     render(<SCAudit />)
     const secondaryLink = screen.getByText('Más info')
     expect(secondaryLink).toBeDefined()
-    expect(secondaryLink.getAttribute('href')).toBe('#scaudit')
+    expect(secondaryLink.getAttribute('href')).toBe('https://scaudit.vercel.app/disclaimer')
+    expect(secondaryLink.getAttribute('target')).toBe('_blank')
+    expect(secondaryLink.getAttribute('rel')).toContain('noopener')
   })
 
   it('should render FadeIn wrappers', () => {
