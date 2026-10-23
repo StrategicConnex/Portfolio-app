@@ -1,3 +1,5 @@
+import { reportRouteError } from '@/lib/observability/route-errors'
+
 /**
  * Fallback chat endpoint.
  * This route exists as a compatibility layer during migration from the old AIConsultant
@@ -61,6 +63,7 @@ export async function POST(request: Request) {
     })
   } catch (error) {
     console.error('[Chat Fallback] Error:', error)
+    reportRouteError('/api/chat', error, { status: 500 })
     return new Response(JSON.stringify({ error: 'Internal server error' }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' },

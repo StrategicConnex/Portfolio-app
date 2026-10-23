@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { Resend } from 'resend';
 import { z } from 'zod';
 import { checkRateLimit, getClientId } from '@/lib/rate-limit';
+import { reportRouteError } from '@/lib/observability/route-errors';
 
 export const contactSchema = z.object({
   name: z.string().min(1, 'Name is required').max(100),
@@ -157,6 +158,7 @@ export async function POST(req: Request) {
 
     if (error) {
       console.error('Resend send error:', error);
+      reportRouteError('/api/contact', error, { status: 500, stage: 'resend' });
       return NextResponse.json({ error: 'Error al enviar el email' }, { status: 500 });
     }
 
@@ -165,6 +167,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ success: true, id: data?.id });
   } catch (error) {
     console.error('Contact API error:', error);
+    reportRouteError('/api/contact', error, { status: 500, stage: 'handler' });
     return NextResponse.json({ error: 'Error interno del servidor' }, { status: 500 });
   }
 }

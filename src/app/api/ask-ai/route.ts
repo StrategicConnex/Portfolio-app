@@ -8,6 +8,7 @@ import { askAiTools } from '@/features/ask-ai/lib/tools/registry';
 import { buildSystemPrompt } from '@/features/ask-ai/lib/prompt/system-prompt';
 import { streamWithFallback, ModelPoolError, buildFreeModelPool } from '@/features/ask-ai/lib/model-pool';
 import { emitAskAiEvent, withToolTelemetry, hashQuery, messageOf } from '@/features/ask-ai/lib/telemetry';
+import { reportRouteError } from '@/lib/observability/route-errors';
 
 export const maxDuration = 30;
 
@@ -237,6 +238,12 @@ export async function POST(req: Request) {
       stage: 'route',
       status: 500,
       providerError: messageOf(error),
+      locale: fallbackUrl.searchParams.get('lang') || 'es',
+      mode: fallbackUrl.searchParams.get('mode') || 'ask',
+    });
+    reportRouteError('/api/ask-ai', error, {
+      status: 500,
+      stage: 'route',
       locale: fallbackUrl.searchParams.get('lang') || 'es',
       mode: fallbackUrl.searchParams.get('mode') || 'ask',
     });
