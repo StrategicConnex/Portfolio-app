@@ -53,8 +53,15 @@ export function isTrackableFile(f: string | null | undefined): f is string {
  */
 export const isDurableBackend = isUpstashConfigured
 
+/**
+ * Default path is statically scoped under `.data/` so Turbopack only traces
+ * that subfolder instead of the whole project (deployment size). The env
+ * override remains available for self-hosting.
+ */
+const DEFAULT_LOG_FILE = join(process.cwd(), '.data', 'descargas.ndjson')
+
 function logFile(): string {
-  return process.env.DOWNLOAD_STATS_FILE ?? join(process.cwd(), '.data', 'descargas.ndjson')
+  return process.env.DOWNLOAD_STATS_FILE ?? DEFAULT_LOG_FILE
 }
 
 /** Registra un evento. Fire-safe: nunca tira la descarga si falla el log. */
@@ -91,7 +98,9 @@ export async function readRecent(limit = 500): Promise<DownloadEvent[]> {
       const res = (await upstashRest(['LRANGE', REDIS_KEY, -take, -1])) as { result?: string[] }
       return (res.result ?? []).map(safeParse).filter((e): e is DownloadEvent => e !== null)
     }
-    const raw = await readFile(logFile(), 'utf8')
+    // `turbopackIgnore` keeps the runtime path dynamic (env override) without
+    // making Turbopack trace the whole project as a static dependency.
+    const raw = await readFile(/* turbopackIgnore: true */ logFile(), 'utf8')
     const lines = raw.trim().split('\n').filter(Boolean).slice(-take)
     return lines.map(safeParse).filter((e): e is DownloadEvent => e !== null)
   } catch {
