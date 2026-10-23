@@ -27,16 +27,33 @@ import {
  * API routes are excluded: their responses do not carry the language cookie.
  */
 export function proxy(request: NextRequest) {
-  const response = NextResponse.next()
   const existing = request.cookies.get(LANGUAGE_COOKIE)?.value
+  const langParam = request.nextUrl.searchParams.get('lang')
+  const requestedLang = isLanguage(langParam) ? langParam : null
+
+  // `?lang=` is the crawlable language variant advertised by hreflang and the
+  // sitemap. Crawlers do not keep cookies between requests, so the override is
+  // forwarded to THIS render as a request cookie, and also persisted for the
+  // browser session (SSR and hydration then agree on the same language).
+  const requestHeaders = new Headers(request.headers)
+  if (requestedLang) {
+    const cookieParts = (requestHeaders.get('cookie') ?? '')
+      .split(';')
+      .map((part) => part.trim())
+      .filter(Boolean)
+      .filter((part) => !part.startsWith(`${LANGUAGE_COOKIE}=`))
+    cookieParts.push(`${LANGUAGE_COOKIE}=${requestedLang}`)
+    requestHeaders.set('cookie', cookieParts.join('; '))
+  }
+
+  const response = NextResponse.next({ request: { headers: requestHeaders } })
 
   // Only (re)establish the cookie when it is missing or invalid — a valid
   // cookie is the user's persisted choice and must be left untouched.
-  if (!isLanguage(existing)) {
-    const lang = detectLanguageServer(
-      existing,
-      request.headers.get('accept-language'),
-    )
+  if (!isLanguage(existing) || requestedLang) {
+    const lang =
+      requestedLang ??
+      detectLanguageServer(existing, request.headers.get('accept-language'))
     response.cookies.set(LANGUAGE_COOKIE, lang, {
       path: '/',
       maxAge: LANGUAGE_COOKIE_MAX_AGE,

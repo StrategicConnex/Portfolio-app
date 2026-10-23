@@ -2,6 +2,9 @@ import dynamic from 'next/dynamic'
 import { Suspense } from 'react'
 import Hero            from '@/features/portfolio/Hero'
 import Perfil          from '@/features/portfolio/Perfil'
+import { buildPageMetadata } from '@/lib/seo'
+
+export const generateMetadata = () => buildPageMetadata('home')
 
 // Loading fallbacks for Suspense boundaries
 function SectionFallback() {

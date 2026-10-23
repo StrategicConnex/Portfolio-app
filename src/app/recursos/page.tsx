@@ -1,26 +1,10 @@
-import type { Metadata } from 'next'
 import Link from 'next/link'
 import { RECURSO_FILES, recursoDownloadHref } from '@/data/recursos'
 import { VOLUMES } from '@/features/recursos/recursos-volumes'
 import { getServerT } from '@/lib/server-i18n'
-import { SITE } from '@/lib/constants'
+import { buildPageMetadata } from '@/lib/seo'
 
-export async function generateMetadata(): Promise<Metadata> {
-  const { language } = await getServerT()
-  const es = language === 'es'
-  const title = es
-    ? 'Biblioteca IT/OT — Libro descargable de guías, plantillas y estándares industriales'
-    : 'IT/OT Library — Downloadable book of guides, templates and industrial standards'
-  const description = es
-    ? 'Cinco volúmenes de documentación IT/OT en PDF/DOCX/XLSX: IT, OT, integración, ciberseguridad industrial (IEC 62443) y tendencias. Descarga gratuita.'
-    : 'Five volumes of IT/OT documentation (DOCX/XLSX): IT, OT, integration, industrial cybersecurity (IEC 62443) and trends. Free download.'
-  return {
-    title,
-    description,
-    alternates: { canonical: `${SITE.url}/recursos` },
-    openGraph: { title, description, url: `${SITE.url}/recursos`, type: 'website' },
-  }
-}
+export const generateMetadata = () => buildPageMetadata('recursos')
 
 export default async function RecursosHubPage() {
   const { language, dict } = await getServerT()

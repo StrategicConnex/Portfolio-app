@@ -1,0 +1,156 @@
+import type { Metadata } from 'next'
+import { SITE } from './constants'
+import { getServerLocale, type Locale } from './i18n-server'
+
+/**
+ * Single source of truth for per-page, per-language metadata.
+ *
+ * `buildPageMetadata()` resolves the locale on the server (cookie →
+ * Accept-Language → es) and emits a consistent block: localized title and
+ * description, page-scoped canonical, hreflang alternates, Open Graph,
+ * Twitter Cards and robots directives.
+ */
+
+export const SITE_URL = SITE.url
+export const SITE_NAME = SITE.name
+
+export type PageKey = 'home' | 'cyber-attack-map' | 'recursos' | 'estadisticas'
+
+interface LocalizedCopy {
+  title: string
+  description: string
+}
+
+interface PageSeo {
+  /** Path without the origin; the home page is `/`. */
+  path: string
+  es: LocalizedCopy
+  en: LocalizedCopy
+  keywords?: string[]
+}
+
+const PAGES: Record<PageKey, PageSeo> = {
+  home: {
+    path: '/',
+    es: {
+      title: 'Juan Felipe Palacios — Ciberseguridad Industrial IT/OT · Neuquén',
+      description:
+        'Arquitecto de redes IT/OT con 20+ años en Oil & Gas. Especialista en Modelo Purdue, IEC 62443, SIEM (Security Onion) y defensa activa para infraestructuras críticas en Vaca Muerta.',
+    },
+    en: {
+      title: 'Juan Felipe Palacios — Industrial IT/OT Cybersecurity · Neuquén',
+      description:
+        'IT/OT Network Architect with 20+ years in Oil & Gas. Specialist in Purdue Model, IEC 62443, SIEM (Security Onion) and active defense for critical infrastructure in Vaca Muerta.',
+    },
+    keywords: SITE.keywords,
+  },
+  'cyber-attack-map': {
+    path: '/cyber-attack-map',
+    es: {
+      title: 'Mapa Global de Ciberataques en Tiempo Real · Juan Palacios',
+      description:
+        'Visualización 3D de amenazas reales agregadas desde DShield (SANS ISC) y CISA KEV. Origen geolocalizado, destino ilustrativo sobre infraestructura protegida.',
+    },
+    en: {
+      title: 'Global Real-Time Cyber Attack Map · Juan Palacios',
+      description:
+        '3D visualization of real threats aggregated from DShield (SANS ISC) and CISA KEV. Geolocated origin, illustrative destination over protected infrastructure.',
+    },
+  },
+  recursos: {
+    path: '/recursos',
+    es: {
+      title: 'Biblioteca IT/OT · Guías, plantillas y estándares · Juan Palacios',
+      description:
+        'Recursos descargables en 5 volúmenes: guías de Active Directory, segmentación Purdue, hardening OT, matrices de riesgos IEC 62443 y plantillas de SOC industrial.',
+    },
+    en: {
+      title: 'IT/OT Library · Guides, templates and standards · Juan Palacios',
+      description:
+        'Downloadable resources in 5 volumes: Active Directory guides, Purdue segmentation, OT hardening, IEC 62443 risk matrices and industrial SOC templates.',
+    },
+  },
+  estadisticas: {
+    path: '/estadisticas',
+    es: {
+      title: 'Estadísticas de descargas · Biblioteca IT/OT',
+      description: 'Estadísticas agregadas y anónimas de descargas de la biblioteca IT/OT.',
+    },
+    en: {
+      title: 'Download stats · IT/OT Library',
+      description: 'Aggregated, anonymous download statistics of the IT/OT library.',
+    },
+  },
+}
+
+/** Absolute URL for a page path (`/` maps to the bare origin). */
+export function absoluteUrl(path: string): string {
+  return path === '/' ? SITE_URL : `${SITE_URL}${path}`
+}
+
+/** Language-specific URL used by hreflang and the sitemap. */
+export function localizedUrl(locale: Locale, path: string): string {
+  const base = absoluteUrl(path)
+  return `${base}${base.includes('?') ? '&' : '?'}lang=${locale}`
+}
+
+/**
+ * Builds the full metadata block for a page using the locale resolved on the
+ * server. Canonical points at the language-neutral URL (Spanish is the default
+ * and the crawlable canonical); hreflang advertises both language variants.
+ */
+export async function buildPageMetadata(page: PageKey): Promise<Metadata> {
+  const locale = await getServerLocale()
+  const alternate: Locale = locale === 'es' ? 'en' : 'es'
+  const seo = PAGES[page]
+  const copy = seo[locale]
+  const canonical = absoluteUrl(seo.path)
+
+  return {
+    title: copy.title,
+    description: copy.description,
+    ...(seo.keywords ? { keywords: seo.keywords } : {}),
+    alternates: {
+      canonical,
+      languages: {
+        'es-AR': localizedUrl('es', seo.path),
+        en: localizedUrl('en', seo.path),
+      },
+    },
+    openGraph: {
+      title: copy.title,
+      description: copy.description,
+      url: canonical,
+      siteName: SITE_NAME,
+      locale: locale === 'es' ? 'es_AR' : 'en_US',
+      alternateLocale: alternate === 'es' ? 'es_AR' : 'en_US',
+      type: 'website',
+      images: [
+        {
+          url: SITE.profileImage,
+          width: 1200,
+          height: 1200,
+          alt: copy.title,
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: copy.title,
+      description: copy.description,
+      creator: '@juanfpalacios',
+      site: '@juanfpalacios',
+      images: [SITE.profileImage],
+    },
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        'max-snippet': -1,
+        'max-image-preview': 'large',
+      },
+    },
+  }
+}

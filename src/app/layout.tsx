@@ -56,7 +56,7 @@ export const metadata: Metadata = {
     images: [SITE.profileImage],
   },
   robots: { index: true, follow: true },
-  alternates: { canonical: SITE.url, languages: { 'es-AR': SITE.url, 'en': SITE.url } },
+  alternates: { canonical: SITE.url, languages: { 'es-AR': SITE.url, en: `${SITE.url}?lang=en` } },
 }
 
 const jsonLd = {
@@ -64,6 +64,7 @@ const jsonLd = {
   '@graph': [
     {
       '@type': 'Person',
+      '@id': `${SITE.url}/#person`,
       name: SITE.name,
       jobTitle: 'Arquitecto IT/OT – Ciberseguridad Industrial',
       description: 'Especialista en ciberseguridad industrial con 20+ años en Oil & Gas. IEC 62443, NIST CSF, SCADA, Modelo Purdue. Basado en Neuquén, Argentina.',
@@ -106,6 +107,14 @@ const jsonLd = {
           { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Consultoría IEC 62443 / NIST' } },
         ],
       },
+    },
+    {
+      '@type': 'WebSite',
+      '@id': `${SITE.url}/#website`,
+      url: SITE.url,
+      name: SITE.applicationName,
+      inLanguage: ['es-AR', 'en'],
+      publisher: { '@id': `${SITE.url}/#person` },
     },
     {
       '@type': 'BreadcrumbList',
@@ -202,7 +211,8 @@ export default async function RootLayout({
             suppressHydrationWarning keeps React from diffing it. */}
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
         <meta name="color-scheme" suppressHydrationWarning />
-        <link rel="canonical" href={SITE.url} />
+        {/* Canonical/hreflang are emitted by `metadata.alternates` (per page),
+            so there is intentionally no hand-written <link rel="canonical">. */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

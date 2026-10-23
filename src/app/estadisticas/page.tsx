@@ -1,28 +1,12 @@
-import type { Metadata } from 'next'
 import { countByCountry, countByDay, countByFile, countByVolume, readRecent } from '@/features/stats/download-stats'
 import { getServerT } from '@/lib/server-i18n'
-import { SITE } from '@/lib/constants'
+import { buildPageMetadata } from '@/lib/seo'
 import { CopyButton } from './CopyButton'
 import { pctDelta, sparklinePath, sumLastDays, trendDirection } from './trends'
 
 export const dynamic = 'force-dynamic'
 
-export async function generateMetadata(): Promise<Metadata> {
-  const { language } = await getServerT()
-  const es = language === 'es'
-  const title = es
-    ? 'Estadísticas de descargas — Biblioteca IT/OT'
-    : 'Download stats — IT/OT Library'
-  const description = es
-    ? 'Métricas agregadas y anónimas de la biblioteca: descargas por documento, por día y por país. Sin datos personales.'
-    : 'Aggregated, anonymous library metrics: downloads per document, per day and per country. No personal data.'
-  return {
-    title,
-    description,
-    alternates: { canonical: `${SITE.url}/estadisticas` },
-    openGraph: { title, description, url: `${SITE.url}/estadisticas`, type: 'website' },
-  }
-}
+export const generateMetadata = () => buildPageMetadata('estadisticas')
 
 /**
  * Página pública de métricas agregadas de la biblioteca.
