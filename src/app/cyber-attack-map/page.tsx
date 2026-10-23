@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import CyberAttackMap3D from '@/features/portfolio/CyberAttackMap3D'
+import WebGLBoundary, { WebGLFallback } from '@/features/portfolio/WebGLBoundary'
 import { getServerT } from '@/lib/server-i18n'
 import { SITE } from '@/lib/constants'
 
@@ -44,7 +45,9 @@ export default async function CyberAttackMapPage() {
             {t('threatmap.intro')}
           </p>
         </div>
-        <CyberAttackMap3D />
+        <WebGLBoundary fallback={<WebGLFallback message={t('threatmap.webgl.unavailable')} />}>
+          <CyberAttackMap3D />
+        </WebGLBoundary>
         <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="bg-gray-900/50 border border-blue-500/30 rounded-lg p-4">
             <h3 className="text-blue-400 font-semibold mb-2">{t('threatmap.sources.title')}</h3>

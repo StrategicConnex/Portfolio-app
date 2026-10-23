@@ -186,6 +186,9 @@ describe('CyberAttackMap3D · escena sincronizada', () => {
 
   it('renders a tooltip with the data of the hovered arc', () => {
     expect(source).toContain('<ArcTooltipPanel attack={hovered} />')
-    expect(source).toContain('role="tooltip"')
+    // The tooltip role must not exist while the tooltip is empty: axe flags an
+    // empty role="tooltip" as a serious a11y violation on the home page.
+    expect(source).toContain("role={hovered ? 'tooltip' : undefined}")
+    expect(source).toContain('aria-hidden={hovered ? undefined : true}')
   })
 })

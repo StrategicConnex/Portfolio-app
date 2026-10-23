@@ -7,6 +7,7 @@ import * as THREE from 'three'
 import { COUNTRY_COORDS, latLngToVector3 } from '@/data/countryCoords'
 import { useLanguage } from '@/context/LanguageContext'
 import { interpolate } from '@/lib/utils'
+import { WebGLFallback, hasWebGLSupport } from './WebGLBoundary'
 import {
   ATTACK_TYPES,
   attackTypeFor,
@@ -486,6 +487,11 @@ export default function CyberAttackMap3D() {
   const { t } = useLanguage()
   const [attacks, setAttacks] = useState<AttackArcState[]>([])
   const [bursts, setBursts] = useState<Burst[]>([])
+  /**
+   * `null` = server render / first paint, `false` = no WebGL context
+   * available (render the fallback instead of letting three.js throw).
+   */
+  const [webglReady, setWebglReady] = useState<boolean | null>(null)
   const [feed, setFeed] = useState<ThreatIntelFeed>({
     events: [],
     dataSource: 'degraded',
@@ -523,6 +529,17 @@ export default function CyberAttackMap3D() {
     fetchRealData()
     const id = setInterval(fetchRealData, 60000)
     return () => clearInterval(id)
+  }, [])
+
+  // Probe WebGL on the client before mounting the renderer: without a context
+  // three.js throws during render and would take the whole section down.
+  // The probe needs the DOM, so it can only run after mount: a one-shot state
+  // update here is intentional (no render-loop) and cannot be a lazy initial
+  // state without breaking SSR/hydration.
+  useEffect(() => {
+    // Client-only probe (needs the DOM): one-shot state update, not a loop.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setWebglReady(hasWebGLSupport())
   }, [])
 
   /**
@@ -718,6 +735,17 @@ export default function CyberAttackMap3D() {
     { code: 'CVE', value: kevCount, title: t('threatmap.stat.kev') },
   ]
 
+  if (webglReady === false) {
+    return <WebGLFallback message={t('threatmap.webgl.unavailable')} />
+  }
+
+  // Keep the map's height during SSR/first paint to avoid layout shift.
+  if (webglReady === null) {
+    return (
+      <div className="relative w-full h-[500px] md:h-[600px] rounded-2xl overflow-hidden border border-blue-500/20 bg-black shadow-2xl" />
+    )
+  }
+
   return (
     <div
       ref={containerRef}
@@ -850,7 +878,8 @@ export default function CyberAttackMap3D() {
       */}
       <div
         ref={tooltipRef}
-        role="tooltip"
+        role={hovered ? 'tooltip' : undefined}
+        aria-hidden={hovered ? undefined : true}
         className={`pointer-events-none absolute top-0 left-0 z-20 w-60 rounded-lg border border-blue-500/40 bg-black/90 px-3 py-2 shadow-xl backdrop-blur-md transition-opacity duration-150 ${
           hovered ? 'opacity-100' : 'opacity-0'
         }`}

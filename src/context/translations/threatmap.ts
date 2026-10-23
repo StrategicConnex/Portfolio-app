@@ -61,6 +61,8 @@ const es = {
   'threatmap.tooltip.fallback_title': 'Ataque',
   'threatmap.tooltip.notice':
     'Origen ilustrativo: el proveedor no publicó una IP para este arco.',
+  'threatmap.webgl.unavailable':
+    'Tu navegador no pudo crear un contexto WebGL. Probá con otro navegador o activá la aceleración por hardware para ver el mapa 3D.',
 } satisfies TranslationModule['es']
 
 const en: TranslationModule['en'] = {
@@ -108,6 +110,8 @@ const en: TranslationModule['en'] = {
   'threatmap.tooltip.fallback_title': 'Attack',
   'threatmap.tooltip.notice':
     'Illustrative origin: the provider did not publish an IP for this arc.',
+  'threatmap.webgl.unavailable':
+    'Your browser could not create a WebGL context. Try another browser or enable hardware acceleration to view the 3D map.',
 }
 
 export const threatmap = { es, en }

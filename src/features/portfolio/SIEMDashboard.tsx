@@ -7,6 +7,7 @@ import FadeIn from '@/components/ui/FadeIn'
 import Icon from '@/components/ui/Icon'
 import { useLanguage } from '@/context/LanguageContext'
 import CyberAttackMap3D from './CyberAttackMap3D'
+import WebGLBoundary, { WebGLFallback } from './WebGLBoundary'
 import { 
   LOG_LINES, 
   PURDUE_ZONES, 
@@ -245,7 +246,9 @@ export default function SIEMDashboard() {
                 </svg>
               </a>
             </div>
-            <CyberAttackMap3D />
+            <WebGLBoundary fallback={<WebGLFallback message={t('siem.map.unavailable')} />}>
+              <CyberAttackMap3D />
+            </WebGLBoundary>
           </div>
         </FadeIn>
 

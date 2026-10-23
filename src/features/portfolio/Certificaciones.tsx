@@ -426,7 +426,10 @@ export default function Certificaciones() {
                       transition={{ duration: 0.3 }}
                       whileHover={{ y: -4, borderColor: 'rgba(197,164,109,0.5)', boxShadow: '0 12px 24px -6px rgba(0,0,0,0.6)' }}
                       className="group flex flex-col p-4 rounded-xl cursor-pointer text-left relative overflow-hidden"
-                      aria-label={`${t('certs.view')} ${t(c.nameKey)}`}
+                      // The accessible name must include the visible text of the
+                      // card (the PDF/IMG badge + the title), otherwise axe's
+                      // label-content-name-mismatch flags every card.
+                      aria-label={`${t('certs.view')} ${isPdf ? 'PDF' : 'IMG'} ${t(c.nameKey)}`}
                       style={{
                         background: 'var(--card)',
                         border: '1px solid var(--border)',
@@ -449,6 +452,9 @@ export default function Certificaciones() {
                           {isPdf ? 'PDF' : 'IMG'}
                         </span>
                       </div>
+                      {/* Explicit space node: axe concatenates adjacent text
+                          nodes without separators when computing visible text. */}
+                      {' '}
                       <h4 className="text-[13px] font-medium leading-relaxed line-clamp-3 transition-colors" style={{ color: 'var(--text-primary)' }}>
                         {t(c.nameKey)}
                       </h4>

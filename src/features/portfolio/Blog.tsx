@@ -69,7 +69,7 @@ export default function Blog() {
           </div>
           <span
             className="px-6 py-3 rounded-xl bg-[var(--surface-fill)] border border-[var(--border-interactive)] text-[11px] font-bold uppercase tracking-[2px] flex items-center gap-3 w-fit"
-            style={{ color: 'var(--text-subtle)' }}
+            style={{ color: 'var(--text-muted)' }}
           >
             {t('blog.status.pending')}
           </span>

@@ -11,6 +11,8 @@ const es = {
   'siem.map_desc':
     'Mapa de amenazas con datos reales de DShield (SANS ISC) y CISA KEV. El resto del panel (stream, KPIs, zonas Purdue) es una demostración simulada en el navegador.',
   'siem.demo_badge': 'MAPA EN VIVO · PANEL SIMULADO',
+  'siem.map.unavailable':
+    'La visualización 3D no está disponible en este navegador. El mapa completo sigue accesible en su página dedicada.',
   'siem.map.title': 'Mapa de Ciberataques en Tiempo Real',
   'siem.map.open_full': 'Abrir en pantalla completa',
   'siem.hover_hint': '▸ Hover sobre un evento ALERT para ver la acción de mitigación',
@@ -56,6 +58,8 @@ const en: TranslationModule['en'] = {
   'siem.map_desc':
     'Threat map fed with live DShield (SANS ISC) and CISA KEV data. The rest of the panel (stream, KPIs, Purdue zones) is a browser-side simulation.',
   'siem.demo_badge': 'LIVE MAP · SIMULATED PANEL',
+  'siem.map.unavailable':
+    'The 3D visualization is not available in this browser. The full map is still available on its dedicated page.',
   'siem.map.title': 'Real-Time Cyber Attack Map',
   'siem.map.open_full': 'Open full screen',
   'siem.hover_hint': '▸ Hover over an ALERT event to see mitigation action',
