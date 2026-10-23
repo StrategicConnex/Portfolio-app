@@ -54,6 +54,23 @@ Domain code lives in **feature modules**, not in the shared roots:
   seam and must never re-derive the rule themselves. Do not re-suggest
   extracting, duplicating or moving cookie-writing into the layout.
 
+## SEO metadata
+
+- **SEO seam** (`src/lib/seo.ts` + `src/lib/i18n-server.ts`):
+  `buildPageMetadata(page)` is the single source of `title`, `description`,
+  canonical, hreflang, Open Graph and Twitter metadata per page **and
+  locale**. `getServerLocale()` resolves the locale server-side with the same
+  rule as the language seam (*cookie → Accept-Language → es*);
+  `src/proxy.ts` forwards `?lang=es|en` as a **request cookie** so the
+  hreflang URLs render in the advertised language on the first byte, even for
+  crawlers that do not keep cookies. Pages export
+  `generateMetadata = () => buildPageMetadata(key)` — never hardcode metadata
+  per page and never add a second `<link rel="canonical">` (the layout
+  intentionally renders none; `metadata.alternates` owns canonical/hreflang).
+  JSON-LD (`Person`, `ProfessionalService`, `WebSite`, `BreadcrumbList`,
+  `FAQPage`) lives in `layout.tsx`, and `sitemap.ts` derives its
+  `alternates.languages` from the same localized URLs.
+
 ## Theme
 
 - **Theme seam** (`src/lib/theme.ts`): the single module that owns the
@@ -214,6 +231,16 @@ Domain code lives in **feature modules**, not in the shared roots:
   if a literal string is reintroduced in the component. Provider text
   (DShield attack types, ASN names) and technical nomenclature (DDoS, Botnet
   C2, SQL Injection, APT) stay untranslated on purpose.
+- **Lazy-loading seam** (`LazyCyberAttackMap.tsx` +
+  `CyberAttackMap3D.loader.tsx`): the **only** supported way to mount the 3D
+  scene. three.js + `@react-three/fiber` + `drei` (~914 KB) live in a dynamic
+  chunk requested by an `IntersectionObserver` (`rootMargin: 200px`) on the
+  home, or immediately on `/cyber-attack-map`. `ssr: false` must live inside
+  this Client Component — a Server Component cannot use it (Next 16 ignores or
+  rejects it) — and the loader is the accessible placeholder shown while the
+  chunk downloads. Never re-import `CyberAttackMap3D` statically from a section
+  or page: that puts three.js back into the home's initial JS (verified
+  regression: +914 KB).
 
 ## Rate limiting
 
