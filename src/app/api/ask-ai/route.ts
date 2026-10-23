@@ -28,27 +28,60 @@ function createProvider(apiKey?: string) {
   });
 }
 
+// Query params are validated against the real client contracts: `lang` is the
+// UI locale and `mode` is the copilot mode from the Zustand store. Anything
+// else is rejected before any model work happens.
+const ALLOWED_LANGS: readonly string[] = ['es', 'en'];
+const ALLOWED_MODES: readonly string[] = ['ask', 'analyze', 'osint', 'services', 'contact'];
+
+// UIMessage parts are owned by the AI SDK (text, tool-*, reasoning, …), so the
+// envelope and sizes are bounded without freezing the part union.
+const MessagePartSchema = z.object({ type: z.string().min(1).max(64) }).passthrough();
+const MessageSchema = z
+  .object({
+    id: z.string().max(128).optional(),
+    role: z.enum(['system', 'user', 'assistant']),
+    parts: z.array(MessagePartSchema).max(200),
+    metadata: z.unknown().optional(),
+  })
+  .passthrough();
+
 const RequestSchema = z.object({
-  messages: z.array(z.any()).max(50).optional().default([]),
+  messages: z.array(MessageSchema).min(1).max(50),
   // Pre-formatted past-conversation block from the client memory seam.
   // Capped: it is embedded into the system prompt verbatim.
   memoryContext: z.string().trim().max(3000).optional(),
   // Free models that failed mid-stream this session — excluded from the
   // pool so a client auto-retry lands on a different model.
-  skipModels: z.array(z.string()).max(5).optional().default([]),
+  skipModels: z.array(z.string().max(200)).max(5).optional().default([]),
 });
 
 export async function POST(req: Request) {
   try {
     const url = new URL(req.url);
-    const language: string = url.searchParams.get('lang') || 'es';
-    const mode: string = url.searchParams.get('mode') || 'ask';
+    const langParam = url.searchParams.get('lang');
+    const modeParam = url.searchParams.get('mode');
+
+    // P0: reject unknown locales/modes instead of forwarding them verbatim to
+    // the system prompt and telemetry.
+    if (langParam !== null && !ALLOWED_LANGS.includes(langParam)) {
+      return NextResponse.json({ error: 'Invalid lang parameter' }, { status: 400 });
+    }
+    if (modeParam !== null && !ALLOWED_MODES.includes(modeParam)) {
+      return NextResponse.json({ error: 'Invalid mode parameter' }, { status: 400 });
+    }
+
+    const language = langParam ?? 'es';
+    const mode = modeParam ?? 'ask';
 
     // Input validation
-    let parsedBody: { messages?: UIMessage[]; memoryContext?: string; skipModels?: string[] };
+    let parsedBody: { messages: UIMessage[]; memoryContext?: string; skipModels: string[] };
     try {
-      parsedBody = await req.json();
-      RequestSchema.parse(parsedBody);
+      parsedBody = RequestSchema.parse(await req.json()) as {
+        messages: UIMessage[];
+        memoryContext?: string;
+        skipModels: string[];
+      };
     } catch {
       return NextResponse.json(
         { error: language === 'en' ? 'Invalid request format' : 'Formato de solicitud inválido' },
@@ -56,7 +89,7 @@ export async function POST(req: Request) {
       );
     }
 
-    const messages: UIMessage[] = parsedBody.messages || [];
+    const messages: UIMessage[] = parsedBody.messages;
 
     // Rate limiting via the unified seam (Upstash Redis with in-memory fallback)
     const clientId = getClientId(req);

@@ -118,10 +118,10 @@ describe('POST /api/ask-ai — RAG context in the system prompt', () => {
   })
 
   it('forwards the mode flag and the passive analysis tools to the model', async () => {
-    await POST(makeRequest(userMessage('hola'), 'es', 'chat'))
+    await POST(makeRequest(userMessage('hola'), 'es', 'analyze'))
 
     const call = lastCall()
-    expect(call.system).toContain('MODO ACTIVO: CHAT')
+    expect(call.system).toContain('MODO ACTIVO: ANALYZE')
     expect(call.maxOutputTokens).toBe(4096)
 
     const tools = call.tools as Record<string, unknown> | undefined
@@ -229,6 +229,34 @@ describe('POST /api/ask-ai — RAG context in the system prompt', () => {
     expect(res.status).toBe(400)
     expect(mocks.streamText).not.toHaveBeenCalled()
   })
+
+  it('rejects an unknown lang query param with 400', async () => {
+    const res = await POST(makeRequest(userMessage('hola'), 'zz'))
+    expect(res.status).toBe(400)
+    expect(mocks.streamText).not.toHaveBeenCalled()
+  })
+
+  it('rejects an unknown mode query param with 400', async () => {
+    const res = await POST(makeRequest(userMessage('hola'), 'es', 'chat'))
+    expect(res.status).toBe(400)
+    expect(mocks.streamText).not.toHaveBeenCalled()
+  })
+
+  it('rejects more than 50 messages with 400', async () => {
+    const messages = Array.from({ length: 51 }, (_, i) => ({
+      role: 'user',
+      parts: [{ type: 'text', text: String(i) }],
+    }))
+    const res = await POST(makeRequest(messages))
+    expect(res.status).toBe(400)
+    expect(mocks.streamText).not.toHaveBeenCalled()
+  })
+
+  it('rejects a message with an invalid role with 400', async () => {
+    const res = await POST(makeRequest([{ role: 'root', parts: [{ type: 'text', text: 'hola' }] }]))
+    expect(res.status).toBe(400)
+    expect(mocks.streamText).not.toHaveBeenCalled()
+  })
 })
 
 describe('POST /api/ask-ai — memory context', () => {
@@ -244,7 +272,7 @@ describe('POST /api/ask-ai — memory context', () => {
     expect(system).toContain('[FUENTE: IEC 62443-4-2]')
   })
 
-  it('accepts the memory context without messages', async () => {
+  it('rejects an empty messages array with 400 (zod min)', async () => {
     const memoryContext = '\nPast conversations:\n- PMP: User asked: "PMP certification?".\n'
     const res = await POST(
       new Request('http://localhost:3000/api/ask-ai?lang=en', {
@@ -253,11 +281,8 @@ describe('POST /api/ask-ai — memory context', () => {
         body: JSON.stringify({ messages: [], memoryContext }),
       }),
     )
-    expect(res.status).toBe(200)
-
-    const { system } = lastCall()
-    expect(system).toContain('Past conversations:')
-    expect(system).toContain('- PMP: User asked: "PMP certification?".')
+    expect(res.status).toBe(400)
+    expect(mocks.streamText).not.toHaveBeenCalled()
   })
 
   it('rejects an oversized memory context with 400 (zod cap)', async () => {

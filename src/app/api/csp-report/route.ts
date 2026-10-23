@@ -38,15 +38,17 @@ export async function POST(request: Request) {
     // - PostHog: posthog.capture('csp_violation', violation)
     // - Custom endpoint: fetch('https://your-logging-service.com/csp', { body: violation })
 
-    return NextResponse.json({ success: true }, { status: 204 })
+    // 204 must never carry a body: `NextResponse.json(..., { status: 204 })`
+    // throws inside the Response constructor (→ 500), so return a null body.
+    return new NextResponse(null, { status: 204 })
   } catch (error) {
     // Don't let CSP reporting errors break the app
     console.error('[CSP Report Error]', error)
-    return NextResponse.json({ success: true }, { status: 204 })
+    return new NextResponse(null, { status: 204 })
   }
 }
 
 // Also handle GET requests gracefully (some browsers send GET for reporting)
 export async function GET() {
-  return NextResponse.json({ success: true }, { status: 204 })
+  return new NextResponse(null, { status: 204 })
 }
