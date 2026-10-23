@@ -110,7 +110,11 @@ async function settleAnimations(page: Page) {
  * weakening the threshold: what survives all three is what fails.
  */
 async function scanAxe(page: Page) {
-  await page.waitForLoadState('networkidle');
+  // `networkidle` is not a valid gate here: the home page polls
+  // `/api/threat-intel` (60s) and that route may spend several seconds on
+  // external feeds, so the network never looks idle. `load` + the scroll/fade
+  // settle below is the stable hydration gate.
+  await page.waitForLoadState('load');
   await settleAnimations(page);
 
   const scan = () =>

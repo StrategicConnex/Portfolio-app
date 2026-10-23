@@ -17,17 +17,21 @@ async function openPanel(page: Page) {
   const launcher = page.locator(launcherSel);
   const panel = page.locator(panelInputSel);
 
-  // Let the client bundle finish loading before interacting (hydration gate)
-  await page.waitForLoadState('networkidle');
+  // Hydration gate: `load` (not `networkidle` — the home polls the threat
+  // feed, so the network never idles). The retry loop below covers clicks
+  // that land before the client bundle attaches.
+  await page.waitForLoadState('load');
+  await page.waitForTimeout(500);
   await expect(launcher).toBeVisible();
 
-  for (let attempt = 0; attempt < 3; attempt++) {
+  for (let attempt = 0; attempt < 6; attempt++) {
     await launcher.click();
     try {
-      await expect(panel).toBeVisible({ timeout: 5_000 });
+      await expect(panel).toBeVisible({ timeout: 3_000 });
       return;
     } catch {
-      // Click may have landed pre-hydration — retry
+      // Click may have landed pre-hydration — wait a beat and retry.
+      await page.waitForTimeout(700);
     }
   }
   await expect(panel).toBeVisible();

@@ -36,7 +36,8 @@ test.describe('Contact Section', () => {
 
   test('should scroll to contact section when clicking contact nav link', async ({ page }) => {
     await page.goto('/');
-    await page.waitForLoadState('networkidle');
+    // `load` instead of `networkidle`: the home has a 60s threat-feed poll.
+    await page.waitForLoadState('load');
     
     // Find the nav link that leads to #contacto — the text depends on current language
     const navLink = page.locator('nav a[href="#contacto"]').first();

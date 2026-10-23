@@ -11,8 +11,10 @@ test.describe('Landing Page', () => {
 
     await page.goto('/');
     
-    // Wait for page to fully load
-    await page.waitForLoadState('networkidle');
+    // Wait for the document to load and the client bundle to hydrate.
+    // (`networkidle` can never settle: the home polls the threat feed.)
+    await page.waitForLoadState('load');
+    await page.waitForTimeout(1_500);
     
     // No console errors should be present
     expect(consoleErrors.length).toBe(0);

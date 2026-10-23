@@ -32,6 +32,11 @@ const USER_AGENT = 'StrategicAudit-SIEM/1.0'
 const TOP_IP_COUNT = 8
 /** Timeout por petición a un proveedor externo. */
 const REQUEST_TIMEOUT_MS = 8_000
+/**
+ * Presupuesto total de la ruta (ver `GET`): nunca mantener la respuesta del
+ * home colgada detrás de los feeds externos.
+ */
+const TOTAL_BUDGET_MS = 12_000
 
 type Severity = 'low' | 'medium' | 'high' | 'critical'
 
@@ -351,16 +356,31 @@ const getKevIntel = cachedData<KevFeed>(
 )
 
 export async function GET() {
-  const [dshield, kev] = await Promise.all([
-    coalesce('dshield', getDshieldIntel),
-    // Un feed caído no tumba la respuesta: se publica lo que hay y el
-    // estado por fuente deja claro qué falta.
-    coalesce('kev', getKevIntel).catch(
-      (): KevFeed => ({ events: [], available: false }),
-    ),
-  ])
+  // Presupuesto total de la ruta: en una petición fría los feeds externos
+  // pueden encadenar varios timeouts de 8 s (ASN + geolocalización por IP) y
+  // dejar al home esperando. Pasado el límite se responde degradado.
+  let budgetTimer: ReturnType<typeof setTimeout> | undefined
+  const budget = new Promise<never>((_, reject) => {
+    budgetTimer = setTimeout(
+      () => reject(new Error('threat-intel: time budget exceeded')),
+      TOTAL_BUDGET_MS,
+    )
+  })
 
-  return NextResponse.json({
+  try {
+    const [dshield, kev] = await Promise.race([
+      Promise.all([
+        coalesce('dshield', getDshieldIntel),
+        // Un feed caído no tumba la respuesta: se publica lo que hay y el
+        // estado por fuente deja claro qué falta.
+        coalesce('kev', getKevIntel).catch(
+          (): KevFeed => ({ events: [], available: false }),
+        ),
+      ]),
+      budget,
+    ])
+
+    return NextResponse.json({
     events: [...dshield.events, ...kev.events],
     lastUpdated: dshield.generatedAt,
     /** 'live' = IPs reales geolocalizadas; 'degraded' = muestra sin atribución. */
@@ -377,5 +397,19 @@ export async function GET() {
     },
     /** TTLs aplicados, para que el comportamiento de caché sea auditable. */
     cacheTtlSeconds: { dshield: DSHIELD_TTL_SECONDS, kev: KEV_TTL_SECONDS },
-  })
+    })
+  } catch {
+    // Feed lento o caído: degradar rápido y dejar que el mapa use su muestra.
+    return NextResponse.json({
+      events: [],
+      lastUpdated: new Date().toISOString(),
+      dataSource: 'degraded' as const,
+      geolocatedCount: 0,
+      sources: ['DShield (SANS ISC)', 'CISA KEV', 'ipwho.is (respaldo de geolocalización)'],
+      sourceStatus: { dshield: 'degraded' as const, kev: 'unavailable' as const },
+      cacheTtlSeconds: { dshield: DSHIELD_TTL_SECONDS, kev: KEV_TTL_SECONDS },
+    })
+  } finally {
+    if (budgetTimer) clearTimeout(budgetTimer)
+  }
 }
