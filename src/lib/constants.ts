@@ -28,6 +28,9 @@ export const SITE = {
   },
   scaudit: {
     projectId: '7c9945ad-c235-484d-98fa-1d8fe7e9ee40',
+    /** Proxy same-origin que usa el navegador (`/api/rum`). */
+    proxyUrl: '/api/rum',
+    /** Endpoint upstream de SCAudit; solo lo llama el proxy server-side. */
     apiUrl: 'https://scaudit.vercel.app/api/telemetry/vitals',
     scriptUrl: 'https://scaudit.vercel.app/scripts/vitals.js',
     appUrl: 'https://scaudit.vercel.app',

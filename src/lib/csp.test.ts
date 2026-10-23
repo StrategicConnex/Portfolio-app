@@ -69,6 +69,15 @@ describe('Content-Security-Policy', () => {
     expect(fontSrc).toContain("'self'")
     expect(fontSrc).not.toContain('https:')
   })
+
+  it('routes SCAudit telemetry through the same-origin proxy', () => {
+    const policy = cspValue()
+
+    // El script se sigue sirviendo desde SCAudit…
+    expect(directive(policy, 'script-src')).toContain('https://scaudit.vercel.app')
+    // …pero el navegador ya no lo llama para enviar métricas: `/api/rum` es 'self'.
+    expect(directive(policy, 'connect-src')).not.toContain('scaudit.vercel.app')
+  })
 })
 
 describe('recursos estáticos del mapa', () => {

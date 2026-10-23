@@ -29,7 +29,7 @@ const securityHeaders = [
     // directiva, `worker-src` permite crear el worker pero el módulo que
     // importa dentro queda bloqueado, el worker no inicializa y la
     // excepción tumba el <Canvas> entero.
-    value: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' blob: https://*.vercel-scripts.com https://scaudit.vercel.app https://*.posthog.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:; connect-src 'self' https://scaudit.vercel.app https://*.vercel-scripts.com https://vitals.vercel-insights.com https://openrouter.ai https://*.posthog.com https://*.sentry.io wss://*.posthog.com; worker-src 'self' blob:; frame-ancestors 'self'; report-uri /api/csp-report; report-to csp-endpoint;",
+    value: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' blob: https://*.vercel-scripts.com https://scaudit.vercel.app https://*.posthog.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:; connect-src 'self' https://*.vercel-scripts.com https://vitals.vercel-insights.com https://openrouter.ai https://*.posthog.com https://*.sentry.io wss://*.posthog.com; worker-src 'self' blob:; frame-ancestors 'self'; report-uri /api/csp-report; report-to csp-endpoint;",
   },
   {
     key: 'Report-To',

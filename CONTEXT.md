@@ -98,6 +98,18 @@ Domain code lives in **feature modules**, not in the shared roots:
   `vitals.js` changes, recompute the hash (command in `constants.ts`); a stale
   hash fails closed — telemetry stops, the site keeps working. Never load the
   RUM script directly from the layout again.
+- **RUM proxy seam** (`src/app/api/rum/route.ts`): `RumScript` gets
+  `data-api-url="/api/rum"` (`SITE.scaudit.proxyUrl`), so the browser never
+  posts to `scaudit.vercel.app`. The route validates the real `vitals.js` v2
+  envelope (the `projectId` is pinned to `SITE.scaudit.projectId`), rejects
+  bodies over 32 KB and rate-limits 60 req/min per trusted edge IP. It then
+  forwards the validated payload server-side with `Origin: SITE.scaudit.appUrl` —
+  SCAudit's telemetry allowlist rejects every other origin, including the
+  portfolio's own. Responses: 204 success; 400/413/415/429 rejected locally;
+  502/503/504 upstream failure. This is why `connect-src` no longer lists
+  `scaudit.vercel.app` (only `script-src` needs it, for the SRI-hashed script).
+  Tests: `src/app/api/rum/route.test.ts`, `e2e/rum-proxy.spec.ts` and the CSP
+  guard in `src/lib/csp.test.ts`.
 - Tests: `src/lib/consent.test.ts`, `ConsentBanner.test.tsx`,
   `ObservabilityProvider.test.tsx` and `e2e/consent.spec.ts` pin the gate.
 

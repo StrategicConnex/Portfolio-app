@@ -24,6 +24,10 @@ interface RumScriptProps {
  * persisted `granted` cookie) the script is injected with Subresource
  * Integrity: if the remote file changes without updating the hash, the browser
  * blocks it (fail-closed) and the rest of the site is unaffected.
+ *
+ * `apiUrl` is the same-origin `/api/rum` proxy, not SCAudit's telemetry
+ * endpoint: the server validates/rate-limits the payload and forwards it, so
+ * the browser never needs `scaudit.vercel.app` in `connect-src`.
  */
 export function RumScript({ src, projectId, apiUrl, integrity }: RumScriptProps) {
   const [consent, setConsent] = useState<ConsentState>('unknown')

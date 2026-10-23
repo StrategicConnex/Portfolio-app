@@ -195,10 +195,9 @@ export default async function RootLayout({
   // before first paint; the provider hydrates to the same value.
   const initialTheme = detectThemeServer(themeCookie?.value)
 
-  // The RUM telemetry API only accepts deployed origins, so it must never
-  // fire from localhost — including `next start` runs of the production
-  // build (e.g. the CI e2e job), where the CORS rejection would surface
-  // as console errors.
+  // RUM stays off localhost even in `next start` runs of the production
+  // build: local dev traffic must not land in the production SCAudit
+  // dataset. The same-origin `/api/rum` proxy would accept it.
   const host = headersStore.get('host') ?? ''
   const isLocalHost =
     host.startsWith('localhost') ||
@@ -237,13 +236,14 @@ export default async function RootLayout({
               <AskAICopilotShell />
               <Footer />
               <ConsentBanner />
-              {/* SCAudit RUM: consent-gated + SRI. Localhost never loads it
-                  (the telemetry API only allows deployed origins). */}
+              {/* SCAudit RUM: consent-gated + SRI. Localhost never loads it.
+                  The script posts to the same-origin `/api/rum` proxy, so the
+                  browser never talks to scaudit.vercel.app. */}
               {process.env.NODE_ENV === 'production' && !isLocalHost && (
                 <RumScript
                   src={SITE.scaudit.scriptUrl}
                   projectId={SITE.scaudit.projectId}
-                  apiUrl={SITE.scaudit.apiUrl}
+                  apiUrl={SITE.scaudit.proxyUrl}
                   integrity={SITE.scaudit.integrity}
                 />
               )}
