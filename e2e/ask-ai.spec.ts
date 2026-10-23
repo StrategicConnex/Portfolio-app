@@ -25,12 +25,18 @@ async function openPanel(page: Page) {
   await expect(launcher).toBeVisible();
 
   for (let attempt = 0; attempt < 6; attempt++) {
-    await launcher.click();
+    // The launcher unmounts as soon as the panel opens, so an otherwise
+    // successful click can time out waiting for actionability. Swallow that
+    // and let the visibility check below decide whether the panel opened.
+    try {
+      await launcher.click({ timeout: 5_000 });
+    } catch {
+      // Click may have landed pre-hydration or the launcher detached on open.
+    }
     try {
       await expect(panel).toBeVisible({ timeout: 3_000 });
       return;
     } catch {
-      // Click may have landed pre-hydration — wait a beat and retry.
       await page.waitForTimeout(700);
     }
   }

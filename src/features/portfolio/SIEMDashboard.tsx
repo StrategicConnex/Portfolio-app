@@ -6,7 +6,7 @@ import SectionHeader from '@/components/ui/SectionHeader'
 import FadeIn from '@/components/ui/FadeIn'
 import Icon from '@/components/ui/Icon'
 import { useLanguage } from '@/context/LanguageContext'
-import CyberAttackMap3D from './CyberAttackMap3D'
+import LazyCyberAttackMap from './LazyCyberAttackMap'
 import WebGLBoundary, { WebGLFallback } from './WebGLBoundary'
 import { 
   LOG_LINES, 
@@ -247,7 +247,7 @@ export default function SIEMDashboard() {
               </a>
             </div>
             <WebGLBoundary fallback={<WebGLFallback message={t('siem.map.unavailable')} />}>
-              <CyberAttackMap3D />
+              <LazyCyberAttackMap />
             </WebGLBoundary>
           </div>
         </FadeIn>

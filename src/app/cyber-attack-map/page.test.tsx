@@ -49,22 +49,29 @@ const EN: Record<string, string> = {
   'threatmap.controls.auto': 'Auto-rotation on',
 }
 
-let currentLang: 'es' | 'en' = 'es'
+const langState = vi.hoisted(() => ({ current: 'es' as 'es' | 'en' }))
 
 vi.mock('@/lib/server-i18n', () => ({
   getServerT: async () => {
-    const dict = currentLang === 'es' ? ES : EN
+    const lang = langState.current
+    const dict = lang === 'es' ? ES : EN
     return {
-      language: currentLang,
+      language: lang,
       t: (key: string) => dict[key] || key,
       dict,
     }
   },
 }))
 
+// Metadata is built through the shared SEO seam, which resolves the locale on
+// the server via `getServerLocale()`.
+vi.mock('@/lib/i18n-server', () => ({
+  getServerLocale: async () => langState.current,
+}))
+
 describe('/cyber-attack-map', () => {
   beforeEach(() => {
-    currentLang = 'es'
+    langState.current = 'es'
   })
 
   it('paints the copy of the resolved language and mounts the map', async () => {
@@ -73,11 +80,11 @@ describe('/cyber-attack-map', () => {
 
     expect(screen.getByText('Mapa Global de Ciberataques en Tiempo Real')).toBeDefined()
     expect(screen.getByText('Fuentes de Datos Reales')).toBeDefined()
-    expect(screen.getByTestId('threat-map')).toBeDefined()
+    expect(await screen.findByTestId('threat-map')).toBeDefined()
   })
 
   it('paints the English copy when the seam resolves English', async () => {
-    currentLang = 'en'
+    langState.current = 'en'
     const ui = await CyberAttackMapPage()
     render(ui)
 
@@ -103,8 +110,9 @@ describe('/cyber-attack-map', () => {
     )
     expect(meta.openGraph?.url).toBe('https://juanpalacios.vercel.app/cyber-attack-map')
 
-    currentLang = 'en'
+    langState.current = 'en'
     const metaEn = await generateMetadata()
     expect(metaEn.title).toContain('Global Real-Time Cyber Attack Map')
   })
 })
+

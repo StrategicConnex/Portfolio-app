@@ -1,8 +1,7 @@
-import type { Metadata } from 'next'
-import CyberAttackMap3D from '@/features/portfolio/CyberAttackMap3D'
+import LazyCyberAttackMap from '@/features/portfolio/LazyCyberAttackMap'
 import WebGLBoundary, { WebGLFallback } from '@/features/portfolio/WebGLBoundary'
 import { getServerT } from '@/lib/server-i18n'
-import { SITE } from '@/lib/constants'
+import { buildPageMetadata } from '@/lib/seo'
 
 /**
  * Página a pantalla completa del mapa de ciberataques.
@@ -12,23 +11,7 @@ import { SITE } from '@/lib/constants'
  * ya sale en el idioma correcto y el metadata (title/description) coincide
  * con lo que se ve.
  */
-export async function generateMetadata(): Promise<Metadata> {
-  const { language, t } = await getServerT()
-  const title = `${t('threatmap.title')} — ${SITE.name}`
-  const description = t('threatmap.subtitle')
-  return {
-    title,
-    description,
-    alternates: { canonical: `${SITE.url}/cyber-attack-map` },
-    openGraph: {
-      title,
-      description,
-      url: `${SITE.url}/cyber-attack-map`,
-      type: 'website',
-      locale: language === 'es' ? 'es_AR' : 'en_US',
-    },
-  }
-}
+export const generateMetadata = () => buildPageMetadata('cyber-attack-map')
 
 export default async function CyberAttackMapPage() {
   const { t } = await getServerT()
@@ -46,7 +29,7 @@ export default async function CyberAttackMapPage() {
           </p>
         </div>
         <WebGLBoundary fallback={<WebGLFallback message={t('threatmap.webgl.unavailable')} />}>
-          <CyberAttackMap3D />
+          <LazyCyberAttackMap immediate />
         </WebGLBoundary>
         <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="bg-gray-900/50 border border-blue-500/30 rounded-lg p-4">
