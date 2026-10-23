@@ -13,8 +13,8 @@ const mockT = vi.fn((key: string) => {
     'blog.title': 'Inteligencia',
     'blog.highlight': 'Aplicada',
     'blog.description': 'Análisis y tendencias en ciberseguridad industrial',
-    'blog.view_all': 'Ver todos',
-    'blog.read_more': 'Leer más',
+    'blog.status.draft': 'En preparación',
+    'blog.status.pending': 'Próximamente',
   }
   return m[key] || key
 })
@@ -44,9 +44,10 @@ describe('Blog', () => {
     expect(screen.getByText('Análisis y tendencias en ciberseguridad industrial')).toBeDefined()
   })
 
-  it('should render the view all button', () => {
+  it('should mark every post as unpublished instead of showing a read time', () => {
     render(<Blog />)
-    expect(screen.getByText('Ver todos')).toBeDefined()
+    expect(screen.queryByText('Read more')).toBeNull()
+    expect(screen.getAllByText('En preparación')).toHaveLength(3)
   })
 
   it('should render with id blog', () => {

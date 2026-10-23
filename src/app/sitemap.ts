@@ -52,6 +52,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'daily',
       priority: 0.5,
     },
+    {
+      url: `${SITE.url}/cyber-attack-map`,
+      lastModified: new Date(),
+      changeFrequency: 'daily',
+      priority: 0.6,
+    },
     ...VOLUMES.map((v) => ({
       url: `${SITE.url}/recursos/${v.slug}`,
       lastModified: new Date(),

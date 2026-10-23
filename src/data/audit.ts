@@ -65,6 +65,5 @@ export const AUDIT_SUMMARY = {
   passed: 131,
   failed: 4,
   inWarnings: 7,
-  lastAuditDate: '2024-Q1',
-  nextAuditDate: '2024-Q3'
+  lastAuditDate: '2024-Q1'
 }

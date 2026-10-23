@@ -142,9 +142,8 @@ export function useAskAIChat({ language, mode }: UseAskAIChatOptions) {
       language,
       mode,
       viewport: `${window.innerWidth}x${window.innerHeight}`,
-    });       
-   
-  }, []);
+    });
+  }, [language, mode]);
 
   // Persist messages to localStorage (skip during streaming)
   useEffect(() => {

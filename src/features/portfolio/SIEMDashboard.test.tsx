@@ -18,13 +18,18 @@ const mockT = vi.fn((key: string) => {
     'siem.label': 'Security Operations',
     'siem.title': 'SIEM',
     'siem.highlight': 'Dashboard',
-    'siem.map_desc': 'Live threat data based on Radware Live Threat Map',
+    'siem.map_desc': 'Mapa de amenazas con datos reales de DShield y CISA KEV',
+    'siem.demo_badge': 'MAPA EN VIVO · PANEL SIMULADO',
+    'siem.map.title': 'Mapa de Ciberataques en Tiempo Real',
+    'siem.map.open_full': 'Abrir en pantalla completa',
     'siem.hover_hint': 'Hover over an ALERT event',
     'siem.incident_btn': 'Simular Incidente Industrial',
     'siem.incident_btn_active': 'ANALIZANDO EVENTO...',
     'siem.ui.event_stream': 'Event Stream - IT/OT Level',
+    'siem.ui.stream_aria': 'Real-time security event stream',
     'siem.ui.availability': 'Purdue Zone Availability',
     'siem.ui.threat_summary': 'Threat Summary',
+    'siem.ui.threat_summary_aria': 'Threat summary',
     'siem.ui.operational_kpis': 'Operational KPIs',
     'siem.ui.top_attackers': 'Top Attackers',
     'siem.ui.top_attacked': 'Top Attacked',
@@ -36,7 +41,7 @@ const mockT = vi.fn((key: string) => {
     'siem.zone.control': 'Level 2 - Process Control',
     'siem.zone.operations': 'Level 3 - Plant Operations',
     'siem.zone.idmz': 'Industrial DMZ',
-    'siem.zone.enterprise': 'Level 4/5 - Enterprise Network',
+    'siem.zone.enterprise': 'Level 4 - Enterprise Network (+ Level 5 Cloud)',
     'siem.ui.auto_response': 'Respuesta automatica',
     'siem.ui.mttr': 'MTTR',
     'siem.ui.incident_title': 'SIMULATED INCIDENT',
@@ -51,6 +56,13 @@ vi.mock('@/context/LanguageContext', () => ({
     setLanguage: vi.fn(),
     t: mockT,
   }),
+}))
+
+// El mapa 3D se sustituye por un stub: en jsdom no hay WebGL y el componente
+// real dispara un fetch a /api/threat-intel que no puede resolverse. Lo que
+// se verifica aquí es el panel y el bloque que lo aloja.
+vi.mock('./CyberAttackMap3D', () => ({
+  default: () => <div data-testid="threat-map" />,
 }))
 
 vi.mock('@/components/ui/Icon', () => ({
@@ -92,9 +104,22 @@ describe('SIEMDashboard', () => {
     expect(screen.getByText('SIEM Dashboard')).toBeDefined()
   })
 
-  it('should render the dashboard title RADWARE LIVE THREAT MAP', () => {
+  it('should label the dashboard honestly: live map, simulated panel', () => {
     renderDashboard()
-    expect(screen.getByText(/RADWARE LIVE THREAT MAP/)).toBeDefined()
+    // El badge distingue lo real (el mapa) de lo simulado (el panel). No puede
+    // afirmar que todo el panel es inteligencia en vivo.
+    expect(screen.getByText(/MAPA EN VIVO · PANEL SIMULADO/)).toBeDefined()
+    expect(screen.queryByText(/EN VIVO · INTELIGENCIA REAL/)).toBeNull()
+    expect(screen.queryByText(/RADWARE/i)).toBeNull()
+  })
+
+  it('should embed the real-time map with a link to the full-screen page', () => {
+    renderDashboard()
+    expect(screen.getByText('Mapa de Ciberataques en Tiempo Real')).toBeDefined()
+
+    const link = screen.getByRole('link', { name: /Abrir en pantalla completa/ })
+    expect(link.getAttribute('href')).toBe('/cyber-attack-map')
+    expect(link.getAttribute('rel')).toBe('noopener noreferrer')
   })
 
   it('should render the simulate incident button', () => {

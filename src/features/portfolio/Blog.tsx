@@ -4,7 +4,7 @@ import { motion } from 'framer-motion'
 import SectionHeader from '@/components/ui/SectionHeader'
 import { BLOG_POSTS, BlogPost } from '@/data/blog'
 import { useLanguage } from '@/context/LanguageContext'
-import { ArrowRight, BookOpen, Clock, Tag } from 'lucide-react'
+import { Tag } from 'lucide-react'
 
 const BlogCard = ({ post, index }: { post: BlogPost; index: number }) => {
   const { t } = useLanguage()
@@ -23,7 +23,7 @@ const BlogCard = ({ post, index }: { post: BlogPost; index: number }) => {
             {post.category}
           </span>
           <div className="flex-1 h-[1px] bg-[var(--surface-fill)]" />
-          <span className="text-[10px] text-[var(--text-subtle)] font-mono">{t(post.dateKey)}</span>
+          <span className="text-[10px] font-mono tracking-wider text-amber-500/80">{t('blog.status.draft')}</span>
         </div>
 
         <h3 className="text-lg font-bold mb-3 group-hover:text-blue-400 transition-colors leading-tight" style={{ color: 'var(--text-primary)' }}>
@@ -35,21 +35,14 @@ const BlogCard = ({ post, index }: { post: BlogPost; index: number }) => {
         </p>
 
         <div className="flex items-center justify-between mt-auto pt-6 border-t border-[var(--surface-border)]">
-          <div className="flex items-center gap-4 text-[var(--text-subtle)]">
-            <div className="flex items-center gap-1.5">
-              <Clock size={12} className="text-blue-500/60" />
-              <span className="text-[11px] font-medium">{t(post.readTimeKey)}</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <Tag size={12} className="text-blue-500/60" />
-              <span className="text-[11px] font-medium">{t(post.tagsKeys[0])}</span>
-            </div>
+          <div className="flex items-center gap-1.5 text-[var(--text-subtle)]">
+            <Tag size={12} className="text-blue-500/60" />
+            <span className="text-[11px] font-medium">{t(post.tagsKeys[0])}</span>
           </div>
 
-          <button className="flex items-center gap-2 text-blue-500 group/btn">
-            <span className="text-[11px] font-bold uppercase tracking-widest group-hover/btn:mr-1 transition-all">{t('blog.read_more')}</span>
-            <ArrowRight size={14} className="group-hover/btn:translate-x-1 transition-transform" />
-          </button>
+          <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-subtle)]">
+            {t('blog.status.pending')}
+          </span>
         </div>
       </div>
     </motion.div>
@@ -74,14 +67,12 @@ export default function Blog() {
               {t('blog.description')}
             </p>
           </div>
-          <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            className="px-6 py-3 rounded-xl bg-[var(--surface-fill)] border border-[var(--border-interactive)] text-[11px] font-bold uppercase tracking-[2px] hover:bg-[var(--surface-fill-strong)] transition-all flex items-center gap-3 w-fit" style={{ color: 'var(--text-secondary)' }}
+          <span
+            className="px-6 py-3 rounded-xl bg-[var(--surface-fill)] border border-[var(--border-interactive)] text-[11px] font-bold uppercase tracking-[2px] flex items-center gap-3 w-fit"
+            style={{ color: 'var(--text-subtle)' }}
           >
-            <BookOpen size={16} className="text-blue-500" />
-            {t('blog.view_all')}
-          </motion.button>
+            {t('blog.status.pending')}
+          </span>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">

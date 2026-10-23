@@ -42,3 +42,19 @@ export function hexToRgba(hex: string, alpha: number) {
   const b = parseInt(hex.slice(5, 7), 16)
   return `rgba(${r}, ${g}, ${b}, ${alpha})`
 }
+
+/**
+ * Sustituye marcadores `{nombre}` por su valor.
+ *
+ * Los textos de la interfaz que llevan variables (cuantías, nombres de
+ * proveedor) viven en los diccionarios de traducción, que solo guardan
+ * cadenas: este helper es el puente entre la plantilla y el dato.
+ */
+export function interpolate(
+  template: string,
+  vars: Record<string, string | number>,
+): string {
+  return template.replace(/\{(\w+)\}/g, (match, key: string) =>
+    key in vars ? String(vars[key]) : match,
+  )
+}

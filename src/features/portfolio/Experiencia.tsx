@@ -171,6 +171,13 @@ export default function Experiencia() {
             ))}
           </div>
         </div>
+
+        <p
+          className="mt-10 text-[10px] leading-relaxed border-l-2 pl-3"
+          style={{ color: 'var(--text-subtle)', borderColor: 'var(--border)' }}
+        >
+          {t('experience.metrics.disclaimer')}
+        </p>
       </div>
     </section>
   )

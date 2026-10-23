@@ -282,6 +282,9 @@ export default function Proyecto() {
                 </div>
 
                 <div className="mt-8 pt-8 border-t border-[var(--surface-border)] flex flex-wrap gap-4 items-center justify-between">
+                  <p className="w-full text-[10px] leading-relaxed text-[var(--text-subtle)] border-l-2 border-[var(--border-interactive)] pl-3">
+                    {t('projects.disclaimer')}
+                  </p>
                   <div className="flex gap-6">
                     <div className="flex items-center gap-2 text-[var(--text-subtle)]">
                       <Lock size={14} className="text-blue-500/50" />

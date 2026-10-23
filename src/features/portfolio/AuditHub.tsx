@@ -153,7 +153,7 @@ const AuditHub = () => {
           <div className="xl:col-span-3 grid grid-cols-2 xl:grid-cols-1 gap-4 order-2 xl:order-1">
             <StatCard label={t('audit.stats.controls')} value={`${AUDIT_SUMMARY.passed}/${AUDIT_SUMMARY.totalControls}`} color="#3B82F6" />
             <StatCard label={t('audit.stats.risk_gap')} value={`${Math.round(((AUDIT_SUMMARY.totalControls - AUDIT_SUMMARY.passed) / AUDIT_SUMMARY.totalControls) * 100)}%`} color="#EF4444" />
-            <StatCard label={t('audit.stats.next_cycle')} value={AUDIT_SUMMARY.nextAuditDate} color="#8B5CF6" />
+            <StatCard label={t('audit.stats.next_cycle')} value={AUDIT_SUMMARY.lastAuditDate} color="#8B5CF6" />
             <StatCard label={t('audit.stats.global_compliance')} value={`${Math.round(COMPLIANCE_MARCOS.reduce((a, b) => a + b.progress, 0) / COMPLIANCE_MARCOS.length)}%`} color="#10B981" />
           </div>
 
@@ -192,10 +192,16 @@ const AuditHub = () => {
                   <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
                     {/* Marcos Detail */}
                     <div className="lg:col-span-7">
-                      <div className="text-[0.65rem] text-blue-500 font-mono mb-6 flex items-center gap-2">
+                      <div className="text-[0.65rem] text-blue-500 font-mono mb-2 flex flex-wrap items-center gap-2">
                         <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
                         {t('audit.ui.monitoring')}
+                        <span className="px-2 py-0.5 rounded-full border border-amber-500/30 bg-amber-500/10 text-amber-400 text-[0.6rem] font-bold tracking-wider">
+                          {t('audit.ui.demo_badge')}
+                        </span>
                       </div>
+                      <p className="text-[0.65rem] text-[var(--text-subtle)] leading-relaxed mb-6 max-w-md">
+                        {t('audit.ui.demo_note')}
+                      </p>
                       {COMPLIANCE_MARCOS.map((marco, i) => (
                         <ComplianceBar key={i} {...marco} />
                       ))}

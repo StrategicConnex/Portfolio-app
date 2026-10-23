@@ -19,6 +19,7 @@ import { shell } from './shell'
 import { theme } from './theme'
 import { recursos } from './recursos'
 import { stats } from './stats'
+import { threatmap } from './threatmap'
 
 export interface TranslationModule {
   es: Record<string, string>
@@ -29,7 +30,7 @@ const modules: TranslationModule[] = [
   nav, hero, profile, experience, projects, siem,
   architecture, audit, stack, certs, blog, trust,
   ai, contact, scaudit, footer, tools, shell, theme,
-  recursos, stats,
+  recursos, stats, threatmap,
 ]
 
 function mergeModules(modules: TranslationModule[], lang: 'es' | 'en'): Record<string, string> {

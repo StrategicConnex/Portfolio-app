@@ -6,6 +6,7 @@ import SectionHeader from '@/components/ui/SectionHeader'
 import FadeIn from '@/components/ui/FadeIn'
 import Icon from '@/components/ui/Icon'
 import { useLanguage } from '@/context/LanguageContext'
+import CyberAttackMap3D from './CyberAttackMap3D'
 import { 
   LOG_LINES, 
   PURDUE_ZONES, 
@@ -221,9 +222,31 @@ export default function SIEMDashboard() {
           <p className="text-[var(--text-muted)] mb-2 text-sm max-w-2xl">
             {t('siem.map_desc')}
           </p>
-          <p className="text-[10px] tracking-wider mb-8 font-mono" style={{ color: 'var(--danger)' }}>
+          <p className="text-[10px] tracking-wider mb-6 font-mono" style={{ color: 'var(--danger)' }}>
             {t('siem.hover_hint')}
           </p>
+        </FadeIn>
+
+        <FadeIn delay={0.12} variant="blur">
+          <div className="mb-8">
+            <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
+              <h3 className="text-lg md:text-xl font-bold text-white flex items-center gap-2">
+                {t('siem.map.title')}
+              </h3>
+              <a
+                href="/cyber-attack-map"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold rounded-lg transition-colors flex items-center gap-2"
+              >
+                {t('siem.map.open_full')}
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                </svg>
+              </a>
+            </div>
+            <CyberAttackMap3D />
+          </div>
         </FadeIn>
 
         <FadeIn delay={0.15} variant="clip" duration={0.8}>
@@ -236,7 +259,7 @@ export default function SIEMDashboard() {
                 className="w-2 h-2 rounded-full bg-emerald-500"
               />
               <span className="font-mono text-[10px] md:text-xs text-emerald-500 font-bold uppercase tracking-tight">
-                RADWARE LIVE THREAT MAP — 1H
+                {t('siem.demo_badge')}
               </span>
             </div>
             
@@ -286,7 +309,11 @@ export default function SIEMDashboard() {
                 <h4 className="text-[10px] text-blue-400 tracking-[2px] uppercase mb-4 font-bold">
                   ▶ {t('siem.ui.event_stream')}
                 </h4>
-                <div className="bg-black/60 border border-blue-500/10 rounded-xl p-4 overflow-visible shadow-inner backdrop-blur-md">
+                <div 
+                  className="bg-black/60 border border-blue-500/10 rounded-xl p-4 overflow-visible shadow-inner backdrop-blur-md"
+                  aria-live="polite"
+                  aria-label={t('siem.ui.stream_aria')}
+                >
                   <LogScroller />
                 </div>
               </div>
@@ -308,7 +335,7 @@ export default function SIEMDashboard() {
                 <h4 className="text-[10px] text-red-500 tracking-[2px] uppercase mb-4 font-bold">
                   {t('siem.ui.threat_summary')}
                 </h4>
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid grid-cols-2 gap-2" aria-live="polite" aria-label={t('siem.ui.threat_summary_aria')}>
                   {liveThreats.map(threat => (
                     <div key={threat.label} className="bg-black/30 border border-[var(--surface-border)] rounded-lg p-3 flex justify-between items-center transition-hover hover:border-[var(--surface-border)]">
                       <span style={{ color: threat.color }} className="text-[10px] font-bold font-mono">{threat.label}</span>

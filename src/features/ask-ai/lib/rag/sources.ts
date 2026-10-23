@@ -104,7 +104,7 @@ const MANUAL_STACK: KnowledgeSource[] = [
   {
     id: 'stack-cloud',
     title: 'Stack - Cloud e Infraestructura',
-    content: 'Azure, AWS, VMware VCA-DCV, Virtualización, Docker, SQL Server, Power BI, Python, PowerShell, Bash. Infraestructura híbrida y automatización.',
+    content: 'Azure, AWS, VMware vSphere/ESXi, Virtualización, Docker, SQL Server, Power BI, Python, PowerShell, Bash. Infraestructura híbrida y automatización.',
     tags: ['cloud', 'azure', 'aws', 'vmware', 'virtualización', 'docker', 'sql server', 'power bi', 'python', 'powershell'],
     locale: 'es',
     type: 'stack',
@@ -112,7 +112,7 @@ const MANUAL_STACK: KnowledgeSource[] = [
   {
     id: 'stack-cloud-en',
     title: 'Stack - Cloud & Infrastructure',
-    content: 'Azure, AWS, VMware VCA-DCV, Virtualization, Docker, SQL Server, Power BI, Python, PowerShell, Bash. Hybrid infrastructure and automation.',
+    content: 'Azure, AWS, VMware vSphere/ESXi, Virtualization, Docker, SQL Server, Power BI, Python, PowerShell, Bash. Hybrid infrastructure and automation.',
     tags: ['cloud', 'azure', 'aws', 'vmware', 'virtualization', 'docker', 'sql server', 'power bi', 'python', 'powershell'],
     locale: 'en',
     type: 'stack',
@@ -123,7 +123,7 @@ const MANUAL_CERTS: KnowledgeSource[] = [
   {
     id: 'certs-main',
     title: 'Certificaciones Principales',
-    content: 'PMP (Project Management Professional), CCNA Routing & Switching, Microsoft MCSE, VMware VCA-DCV, Cisco Cybersecurity Analyst. Certificaciones en ciberseguridad, cloud y gestión de proyectos.',
+    content: 'PMP (Project Management Professional), Cisco CCNA (Automatización y programación de redes), Cisco Cybersecurity Analyst, Inglés B2. Marcos de cumplimiento aplicados: IEC 62443, NIST CSF, ISO 27001, SOX, PMI/PMBOK.',
     tags: ['certificaciones', 'pmp', 'ccna', 'mcse', 'vmware', 'cisco', 'microsoft'],
     locale: 'es',
     type: 'certification',
@@ -131,7 +131,7 @@ const MANUAL_CERTS: KnowledgeSource[] = [
   {
     id: 'certs-main-en',
     title: 'Main Certifications',
-    content: 'PMP (Project Management Professional), CCNA Routing & Switching, Microsoft MCSE, VMware VCA-DCV, Cisco Cybersecurity Analyst. Certifications in cybersecurity, cloud and project management.',
+    content: 'PMP (Project Management Professional), Cisco CCNA (Network Automation & Programming), Cisco Cybersecurity Analyst, English B2. Compliance frameworks applied: IEC 62443, NIST CSF, ISO 27001, SOX, PMI/PMBOK.',
     tags: ['certifications', 'pmp', 'ccna', 'mcse', 'vmware', 'cisco', 'microsoft'],
     locale: 'en',
     type: 'certification',
@@ -167,6 +167,41 @@ const MANUAL_CERTS: KnowledgeSource[] = [
     tags: ['ai', 'data', 'power bi', 'azure ml', 'python', 'sql server', 'machine learning', 'power automate', 'copilot'],
     locale: 'en',
     type: 'certification',
+  },
+]
+
+const MANUAL_CYBER_THREATS: KnowledgeSource[] = [
+  {
+    id: 'cyber-threats-map',
+    title: 'Mapa de Ciberataques en Tiempo Real',
+    content: 'Mapa interactivo 3D de ciberataques en tiempo real con datos reales de DShield (SANS Internet Storm Center) y CISA KEV (Known Exploited Vulnerabilities). Muestra ataques globales con arcos animados entre origen y destino, satélites en órbita, y tipos de ataques: DDoS, Malware, Brute Force, SQL Injection, APT, Scan/Probe, Exploits. Actualización automática con inteligencia de amenazas pública.',
+    tags: ['mapa', 'ciberataques', 'tiempo real', 'dshield', 'cisa', 'kev', 'threat intelligence', 'ddos', 'malware', 'apt', 'globo 3d'],
+    locale: 'es',
+    type: 'siem',
+  },
+  {
+    id: 'cyber-threats-map-en',
+    title: 'Real-Time Cyber Attack Map',
+    content: 'Interactive 3D cyber attack map with real-time data from DShield (SANS Internet Storm Center) and CISA KEV (Known Exploited Vulnerabilities). Shows global attacks with animated arcs between source and destination, orbiting satellites, and attack types: DDoS, Malware, Brute Force, SQL Injection, APT, Scan/Probe, Exploits. Auto-updates with public threat intelligence.',
+    tags: ['map', 'cyber attacks', 'real-time', 'dshield', 'cisa', 'kev', 'threat intelligence', 'ddos', 'malware', 'apt', '3d globe'],
+    locale: 'en',
+    type: 'siem',
+  },
+  {
+    id: 'cyber-attack-types',
+    title: 'Tipos de Ataques Cibernéticos',
+    content: 'DDoS (Distributed Denial of Service): Sobrecarga de servidores con tráfico masivo. Malware: Software malicioso (virus, ransomware, trojans). Brute Force: Intentos masivos de autenticación. SQL Injection: Inyección de código SQL malicioso. APT (Advanced Persistent Threat): Amenazas persistentes avanzadas. Scan/Probe: Escaneo de puertos y vulnerabilidades. Exploits: Aprovechamiento de vulnerabilidades conocidas (CISA KEV).',
+    tags: ['tipos ataques', 'ddos', 'malware', 'brute force', 'sql injection', 'apt', 'exploit', 'cve', 'vulnerabilidades'],
+    locale: 'es',
+    type: 'siem',
+  },
+  {
+    id: 'cyber-attack-types-en',
+    title: 'Types of Cyber Attacks',
+    content: 'DDoS (Distributed Denial of Service): Overwhelming servers with massive traffic. Malware: Malicious software (viruses, ransomware, trojans). Brute Force: Mass authentication attempts. SQL Injection: Malicious SQL code injection. APT (Advanced Persistent Threat): Advanced persistent threats. Scan/Probe: Port and vulnerability scanning. Exploits: Exploitation of known vulnerabilities (CISA KEV).',
+    tags: ['attack types', 'ddos', 'malware', 'brute force', 'sql injection', 'apt', 'exploit', 'cve', 'vulnerabilities'],
+    locale: 'en',
+    type: 'siem',
   },
 ]
 
@@ -352,8 +387,8 @@ function projectCompliance(lang: Locale): KnowledgeSource[] {
     // The ISO 27001 SGSI entry also carries the controls summary.
     if (i === 0) {
       content += lang === 'en'
-        ? ` Controls: ${AUDIT_SUMMARY.totalControls} total, ${AUDIT_SUMMARY.passed} passed, ${AUDIT_SUMMARY.failed} failed, ${AUDIT_SUMMARY.inWarnings} in warning. Last audit: ${AUDIT_SUMMARY.lastAuditDate}. Next audit: ${AUDIT_SUMMARY.nextAuditDate}.`
-        : ` Controles: ${AUDIT_SUMMARY.totalControls} totales, ${AUDIT_SUMMARY.passed} pasados, ${AUDIT_SUMMARY.failed} fallados, ${AUDIT_SUMMARY.inWarnings} en advertencia. Auditoría última: ${AUDIT_SUMMARY.lastAuditDate}. Auditoría próxima: ${AUDIT_SUMMARY.nextAuditDate}.`
+        ? ` Controls: ${AUDIT_SUMMARY.totalControls} total, ${AUDIT_SUMMARY.passed} passed, ${AUDIT_SUMMARY.failed} failed, ${AUDIT_SUMMARY.inWarnings} in warning. Audited cycle: ${AUDIT_SUMMARY.lastAuditDate}. Reference dataset with anonymized findings and composite figures; it does not correspond to a published client report.`
+        : ` Controles: ${AUDIT_SUMMARY.totalControls} totales, ${AUDIT_SUMMARY.passed} pasados, ${AUDIT_SUMMARY.failed} fallados, ${AUDIT_SUMMARY.inWarnings} en advertencia. Ciclo auditado: ${AUDIT_SUMMARY.lastAuditDate}. Dataset de referencia con hallazgos anonimizados y cifras compuestas; no corresponde a un informe de cliente publicado.`
     }
     return {
       id: projectId(lang, baseId),
@@ -381,7 +416,7 @@ function projectBlog(lang: Locale): KnowledgeSource[] {
     return {
       id: projectId(lang, baseId),
       title,
-      content: `${title}. ${tr(lang, post.excerptKey)} (Categoría: ${post.category}).`,
+      content: `${title}. ${tr(lang, post.excerptKey)} (${lang === 'en' ? 'Category' : 'Categoría'}: ${post.category}. ${lang === 'en' ? 'Draft — not yet published.' : 'Borrador — aún no publicado.'})`,
       tags: lang === 'en'
         ? ['blog', post.category.toLowerCase(), 'oil & gas']
         : ['blog', post.category.toLowerCase(), 'oil & gas'],
@@ -517,6 +552,7 @@ export const ALL_SOURCES: KnowledgeSource[] = [
   ...projectCases('en'),
   projectSiem('es'),
   projectSiem('en'),
+  ...MANUAL_CYBER_THREATS,
   ...MANUAL_SERVICES,
   ...projectCompliance('es'),
   ...projectCompliance('en'),

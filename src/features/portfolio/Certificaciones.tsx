@@ -7,15 +7,30 @@ import SectionHeader from '@/components/ui/SectionHeader'
 import Icon from '@/components/ui/Icon'
 import { useLanguage } from '@/context/LanguageContext'
 
+/**
+ * Only credentials backed by an artifact in `/public/cursos` or by a degree.
+ * MCSE (retired 2021-01-31) and VCA-DCV (discontinued) were removed: with no
+ * PDF on file they cannot be evidenced. If the historical PDFs surface, they
+ * can be re-added explicitly marked as retired.
+ */
 const certs = [
   { icon: 'certificate', text: 'certs.analyst', tier: 'gold' },
   { icon: 'document', text: 'certs.pm', tier: 'gold' },
-  { icon: 'cloud', text: 'VMware Certified Associate – VCA-DCV', tier: 'blue' },
-  { icon: 'network', text: 'Cisco CCNA Routing & Switching', tier: 'blue' },
-  { icon: 'security', text: 'Cisco CyberSecurity', tier: 'blue' },
-  { icon: 'windows', text: 'Microsoft MCSE', tier: 'blue' },
-  { icon: 'compliance', text: 'SOX · NIST · ISO 27001 · IEC 62443', tier: 'gold' },
+  { icon: 'network', text: 'certs.ccna', tier: 'blue' },
+  { icon: 'security', text: 'certs.cisco_cyber', tier: 'blue' },
   { icon: 'world', text: 'certs.english', tier: 'muted' },
+]
+
+/**
+ * Compliance frameworks and standards applied in projects — deliberately NOT
+ * credentials. Rendered in their own block so they never read as certifications.
+ */
+const frameworks = [
+  { code: 'IEC 62443', icon: 'security', descKey: 'certs.framework.iec' },
+  { code: 'NIST CSF', icon: 'search', descKey: 'certs.framework.nist' },
+  { code: 'ISO 27001', icon: 'document', descKey: 'certs.framework.iso' },
+  { code: 'SOX', icon: 'compliance', descKey: 'certs.framework.sox' },
+  { code: 'PMI · PMBOK', icon: 'results', descKey: 'certs.framework.pmi' },
 ]
 
 export type CategoryKey = 'all' | 'cybersecurity' | 'data_ai' | 'cloud_dev' | 'soft_skills' | 'other'
@@ -300,6 +315,41 @@ export default function Certificaciones() {
                 </span>
               </motion.div>
             ))}
+          </div>
+
+          {/* Compliance frameworks — explicitly not credentials */}
+          <div className="mb-16">
+            <h3
+              className="text-lg font-semibold flex items-center gap-2 mb-1"
+              style={{ color: 'var(--text-primary)' }}
+            >
+              <Icon name="compliance" label={t('certs.frameworks_title')} size={20} />
+              {t('certs.frameworks_title')}
+            </h3>
+            <p className="text-xs leading-relaxed mb-5 max-w-2xl" style={{ color: 'var(--text-muted)' }}>
+              {t('certs.frameworks_desc')}
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              {frameworks.map((f) => (
+                <div
+                  key={f.code}
+                  className="flex items-start gap-3 p-4 rounded-xl"
+                  style={{ background: 'var(--surface-fill)', border: '1px solid var(--border)' }}
+                >
+                  <span className="flex-shrink-0 mt-0.5" style={{ color: 'var(--text-subtle)' }}>
+                    <Icon name={f.icon} label={f.code} size={18} />
+                  </span>
+                  <div className="min-w-0">
+                    <div className="text-[0.78rem] font-mono font-bold tracking-wide mb-1" style={{ color: 'var(--text-primary)' }}>
+                      {f.code}
+                    </div>
+                    <div className="text-[0.72rem] leading-snug" style={{ color: 'var(--text-muted)' }}>
+                      {t(f.descKey)}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
 
           {/* Course Files Gallery */}

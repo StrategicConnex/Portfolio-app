@@ -129,6 +129,10 @@ flowchart TD
 | **Panel privado** | `src/features/stats/panel-auth.ts` | Cookie de sesión HMAC-SHA256 (`panel_auth`, httpOnly, 30 días) emitida por `/estadisticas-privadas/sesion`; la clave de firma **es** `DOWNLOAD_STATS_TOKEN` (sin env configurada el panel responde 404) |
 | **Registro de descargas** | `src/features/stats/download-stats.ts` | Backends Upstash Redis REST (durable en Vercel) o NDJSON local (`.data/descargas.ndjson`); log acotado a los últimos 10.000 eventos |
 | **Biblioteca / recursos** | `src/features/recursos/recursos-volumes.ts` + `src/data/recursos.ts` | 61 documentos en 7 categorías: **5 volúmenes** con página de detalle (`/recursos/[volumen]`) + 2 colecciones sin volumen (estándares, proyecto). El texto se extrae con `scripts/extract-recursos-text.mjs` → `src/data/recursos-text.json` y alimenta el corpus del copilot |
+| **Inteligencia de amenazas** | `src/app/api/threat-intel/route.ts` | Agrega **DShield (SANS ISC)** y **CISA KEV** en una sola respuesta con el estado real por fuente (`live` / `degraded` / `unavailable`). TTL 300 s (DShield) y 3600 s (KEV), coalesce de peticiones concurrentes y caché de datos de Next |
+| **Caché de datos** | `src/lib/next-cache.ts` | `cachedData()` envuelve `unstable_cache` y degrada a cálculo directo cuando no hay contexto de Next (tests, scripts), en vez de lanzar el invariante `incrementalCache missing` |
+| **Geometría del mapa** | `src/features/portfolio/attackArc.ts` + `src/data/countryCoords.ts` | Traduce eventos de amenazas en arcos: tipo de ataque por palabras clave, destino por pesos (5% Neuquén · 20% Argentina · 75% global ilustrativo) y separación explícita entre `hub` real e `illustrative` |
+| **Rotación del globo** | `src/features/portfolio/globeRotation.ts` | Velocidad en radianes/segundo con delta real del frame (clamp a 100 ms). Garantiza que globo, etiquetas, pin y arcos roten **como una unidad** |
 
 ---
 
@@ -253,10 +257,12 @@ src/
 │   ├── estadisticas/             # Métricas públicas de descargas (trend, sparkline)
 │   ├── estadisticas-privadas/    # Panel privado (login/sesion/logout + cookie HMAC)
 │   ├── recursos/                 # Biblioteca + volúmenes (/recursos/[volumen])
+│   ├── cyber-attack-map/         # Mapa 3D a pantalla completa (SSR i18n + metadata)
 │   ├── test-error/               # Solo con NEXT_PUBLIC_E2E_ERROR_ROUTE=1
 │   └── api/
 │       ├── ask-ai/route.ts       # Copilot (streaming + RAG + tools + pool)
 │       ├── contact/route.ts      # Formulario → Resend (rate limit 5/min)
+│       ├── threat-intel/route.ts # Inteligencia de amenazas (DShield + CISA KEV)
 │       ├── track/download/route.ts # Registra descargas (rate limit 30/min) + 307
 │       ├── csp-report/route.ts   # Reportes CSP (POST) + health (GET)
 │       └── chat/route.ts         # Fallback legacy → reenvía a /api/ask-ai
@@ -275,20 +281,33 @@ src/
 │                                 #   Blog, Stack, Certificaciones, Proyecto,
 │                                 #   CaseStudyDetail, Contacto, Footer, Navbar,
 │                                 #   HtmlLangUpdater, MindMap3D, ParticleCanvas,
-│                                 #   PurdueModel2D, RadarSweep
+│                                 #   PurdueModel2D, RadarSweep,
+│                                 #   CyberAttackMap3D (globo WebGL + arcos),
+│                                 #   ArcTooltipPanel + arcTooltip (detalle del arco),
+│                                 #   attackArc (geometría) + globeRotation (giro)
 ├── components/                   # Kernel compartido
 │   ├── observability/            # ObservabilityProvider (PostHog + Sentry)
 │   └── ui/                       # shadcn/ui primitives + SectionHeader/FadeIn/Icon
 ├── context/
 │   ├── LanguageContext.tsx       # Proveedor i18n (usa el seam de idioma)
-│   └── translations/             # Diccionarios ES/EN por sección (22 archivos)
+│   └── translations/             # Diccionarios ES/EN por sección (23 archivos)
 ├── data/                         # Contenido: siem, audit, blog, experiencia,
 │                                 #   mindmap, caseStudyData, recursos* (lo genera
-│                                 #   scripts/extract-recursos-text.mjs)
+│                                 #   scripts/extract-recursos-text.mjs),
+│                                 #   countryCoords (geocodificación del mapa)
 ├── lib/                          # Seams compartidos: language, rate-limit,
 │                                 #   server-i18n, constants, theme, utils,
-│                                 #   observability/, design-tokens test
+│                                 #   next-cache, observability/,
+│                                 #   design-tokens test
 └── test-utils/                   # Mocks de framer-motion y next/image
+
+public/
+├── fonts/DMMono-Regular.ttf      # Fuente local de las etiquetas 3D (CSP: font-src 'self')
+└── textures/                     # Texturas del globo servidas en local (CSP: img-src 'self')
+    ├── earth-blue-marble.jpg     #   color diurno (NASA Blue Marble)
+    ├── earth-topology.jpg        #   relieve / bumpMap
+    ├── earth-water.jpg           #   máscara de océanos / specularMap
+    └── NOTICE.md                 #   procedencia y licencia
 ```
 
 ---
@@ -433,12 +452,74 @@ Para evitar hardcoding que rompa en light theme:
 
 ---
 
+## Mapa global de ciberataques (`/cyber-attack-map`)
+
+Visualización 3D de ataques en vivo con **datos reales de dos proveedores públicos**. La ruta es un Server Component: el idioma se resuelve en el servidor con el mismo seam que el resto del sitio (`cookie → Accept-Language → default`), de modo que el primer paint y el metadata ya salen en el idioma correcto.
+
+### De dónde salen los datos
+
+| Fuente | Qué aporta | TTL |
+|---|---|---|
+| **DShield (SANS ISC)** `topips` | IPs que más reportes generan contra los sensores de la red | 300 s |
+| **DShield (SANS ISC)** `ip/<ip>` | ASN, país del ASN y en cuántas listas de bloqueo aparece la IP | 3600 s |
+| **CISA KEV** | Vulnerabilidades con explotación confirmada (**sin atribución de origen**) | 3600 s |
+| **ipwho.is** | Geolocalización de respaldo cuando SANS no conoce el país del ASN | 3600 s |
+
+La ruta `/api/threat-intel` agrega las tres fuentes y publica el **estado real de cada una** (`live` / `degraded` / `unavailable`) junto con los TTLs aplicados. Si un feed falla, la respuesta lo dice: no se sustituye un origen caído por datos inventados.
+
+### La regla de honestidad del mapa
+
+Esta es la restricción de diseño central de la funcionalidad, y hay tests que la fijan:
+
+1. **El origen del arco es un dato del proveedor.** Solo los eventos con `originIp` y `originCountry` reales pueden originar un arco; el resto se dibuja atenuado y marcado como `illustrative`.
+2. **El destino no es un dato del proveedor.** DShield no publica a quién ataca. El extremo derecho del arco es la infraestructura que el autor dice proteger (Argentina / Neuquén) o un país global elegido al azar, y el mapa lo distingue visualmente.
+3. **CISA KEV no tiene país de origen.** Publicarlo sin atribución es correcto; inventar un país convertiría un dato real en una afirmación falsa.
+4. **El pie dice en qué modo está el feed.** «✓ Datos de inteligencia de amenazas reales» o «⚠ Feed sin datos: origen de los arcos ilustrativo» — nunca ambos a la vez.
+5. **El tooltip distingue lo real de lo hueco.** Los campos que el proveedor no publicó se muestran como «—», no como un cero ni como un valor inventado.
+
+**Versión Mermaid** (renderiza en GitHub):
+
+```mermaid
+flowchart LR
+    DS["DShield / SANS ISC<br/>topips + ip/&lt;ip&gt;"] --> API["/api/threat-intel<br/>coalesce + caché de Next"]
+    KEV["CISA KEV<br/>sin atribución de origen"] --> API
+    IPWHO["ipwho.is<br/>geolocalización de respaldo"] --> API
+    API -->|"events[] + sourceStatus{}"| MAP["CyberAttackMap3D<br/>globo WebGL + arcos"]
+    MAP --> TOOL["ArcTooltipPanel<br/>IP · ASN · reportes · país"]
+    MAP --> SIEM["SIEMDashboard<br/>mapa embebido"]
+    MAP --> PAGE["/cyber-attack-map<br/>pantalla completa"]
+```
+
+### Componentes y seams
+
+| Pieza | Archivo | Responsabilidad |
+|---|---|---|
+| Escena 3D | `src/features/portfolio/CyberAttackMap3D.tsx` | Globo, etiquetas de país, pin protegido, arcos, explosiones, leyenda y barra de estadísticas. Todo su texto sale del diccionario `threatmap.*` (la escena se dibuja en WebGL: no hay DOM que traducir) |
+| Geometría del arco | `src/features/portfolio/attackArc.ts` | Tipo de ataque por palabras clave, elección de destino por pesos, flags `illustrative` / `destinationKind` |
+| Geocodificación | `src/data/countryCoords.ts` | Coordenadas de ~110 países + ISO→nombre; toda posición del mapa sale de aquí |
+| Rotación | `src/features/portfolio/globeRotation.ts` | Velocidad en rad/s con delta real del frame (clamp a 100 ms) |
+| Tooltip | `src/features/portfolio/arcTooltip.ts` + `ArcTooltipPanel.tsx` | Lógica pura del tooltip (sin React) y panel que lo pinta con las etiquetas del diccionario |
+| Caché | `src/lib/next-cache.ts` | `cachedData()`: `unstable_cache` con degradación a cálculo directo fuera de contexto Next |
+
+### Detalles de implementación que importan
+
+- **Rotación unificada.** El globo, las etiquetas, el pin, los arcos y las explosiones viven dentro del mismo grupo que gira (`RotatingEarth`). El defecto original —el globo rotando sobre su malla mientras los marcadores se quedaban quietos— hacía que los puntos flotaran sobre países que no les correspondían. `cyberAttackMap3D.guard.test.ts` fija el invariante sobre el árbol de JSX (no se puede montar WebGL en jsdom).
+- **Velocidad independiente del framerate.** La rotación se aplica con el delta real del frame, no con `rotation.y += k`: en una máquina lenta el giro no puede descuadrarse de los marcadores.
+- **Fuente local.** Las etiquetas 3D usan `/fonts/DMMono-Regular.ttf` (servida por la propia app). La CSP del proyecto solo permite `font-src 'self' data:`, y la fuente por defecto de troika (`fonts.gstatic.com`) quedaría bloqueada.
+- **Texturas locales.** El globo usa `/textures/earth-*.jpg`, servidas por la app (`public/textures/`). La primera versión las pedía a `unpkg.com` en runtime, lo que contradecía ADR-001 y obligaba a dejar `img-src https:` abierto; ahora la directiva es `img-src 'self' data:` y ninguna visita sale a un host externo. Procedencia y licencia en `public/textures/NOTICE.md` (three-globe MIT; imágenes de la NASA, dominio público).
+- **`blob:` en `script-src`.** Troika genera el SDF de las fuentes en un worker creado con `new Worker(URL.createObjectURL(blob))`. Sin esa directiva el worker se crea pero su módulo importado queda bloqueado y la excepción tumba el `<Canvas>` entero.
+- **Tooltip con objetivo de puntero.** El arco visible tiene radio 0.008 (una línea de un píxel): un tubo de captura más ancho (`ARC_HIT_RADIUS`) es lo que hace que el hover funcione.
+- **Barra de estadísticas accesible.** Lleva `role="group"` y una etiqueta `aria-label` traducida; el mapa no usa `aria-hidden`.
+
+---
+
 ## API Routes
 
 | Ruta | Método | Descripción | Protección |
 |---|---|---|---|
 | `/api/ask-ai` | POST | Streaming del copilot con RAG + tools + model pool | Rate limit 10/min, Zod (messages ≤ 50, `memoryContext` ≤ 3000, `skipModels` ≤ 5) |
 | `/api/contact` | POST | Envía el formulario de contacto por email (Resend) | Rate limit 5/min, Zod (`contactSchema`), escape HTML |
+| `/api/threat-intel` | GET | Inteligencia de amenazas: DShield + CISA KEV + geolocalización, con estado por fuente y TTLs | Caché de Next (300 s / 3600 s), coalesce de peticiones concurrentes, timeout 8 s por proveedor |
 | `/api/chat` | POST/GET | Fallback legacy que reenvía a `/api/ask-ai` propagando el XFF/x-real-ip del edge (H2) | Rate limit heredado del destino |
 | `/api/track/download` | GET | Registra la descarga de un documento de `/recursos/**` y redirige (307) al archivo estático | Rate limit 30/min, `isTrackableFile()` (solo rutas saneables bajo `/recursos/`) |
 | `/api/csp-report` | POST / GET | Receptor de reportes de violación de CSP (`report-uri` / `report-to`) | — |
@@ -518,7 +599,7 @@ Plantilla en `.env.example`. Las principales:
 ### Unit / Integración (Vitest — jsdom)
 
 ```bash
-npm test            # 50 archivos · 539 tests
+npm test            # 60 archivos · 624 tests
 ```
 
 Cobertura por área (los seams son el test surface):
@@ -536,8 +617,11 @@ Cobertura por área (los seams son el test surface):
 | Ruta ask-ai | Payload RAG en system prompt, mode/tools, cap memoryContext, 400/429/503 |
 | Ruta contact | Validación Zod, email HTML, rate limit |
 | Ruta chat | Fallback legacy, propagación de XFF/x-real-ip (H2) |
+| Ruta threat-intel | Agregación de feeds, degradación declarada, TTLs, coalesce |
+| CSP | `img-src` sin host remoto, sin CDN, `blob:` de troika, fuentes locales, texturas servidas en local |
 | Stats / panel | Registro de descargas, cookie HMAC, agregaciones por archivo/día/volumen/país |
 | Biblioteca | Páginas de `/recursos` y `/recursos/[volumen]` |
+| Mapa de ciberataques | Geometría del arco, rotación, tooltip, guarda estructural del JSX, render del mapa |
 | Design tokens | Contraste WCAG AA en light/dark/console (17 tests) |
 | Presupuesto Lighthouse | `lighthouserc.json` no puede debilitarse sin romper el test |
 | Componentes | Hero, Navbar, Stack, Blog, SIEM, SCAudit, Certificaciones, accesibilidad (axe) |
@@ -651,9 +735,9 @@ flowchart TD
 
 ## Deuda técnica conocida
 
-Estado verificado sobre el código de esta rama (HEAD `19d3e86`). Ningún punto de esta lista está cerrado; la documentación **no** debe afirmar que sí.
+Estado verificado sobre el código de esta rama (verificado el 22 de octubre de 2026 con `npm audit` sobre el árbol completo). Ningún punto de esta lista está cerrado; la documentación **no** debe afirmar que sí.
 
-> Inventario literal de `npm audit --audit-level=moderate --json` (37 avisos: 1 critical, 15 high, 13 moderate, 8 low). “Runtime” = llega al bundle de producción; “dev” = solo `devDependencies` (no llega al runtime, pero mantiene el gate de CI en rojo).
+> Inventario literal de `npm audit --json` sobre el árbol completo: **16 avisos (8 low, 8 high, 0 moderate, 0 critical)**. Los 8 high son un solo advisory (`braces`) replicado en 8 nodos. En la superficie de producción (`--omit=dev`): **8 low, 0 high, 0 moderate, 0 critical**. “Runtime” = llega al bundle de producción; “dev” = solo `devDependencies` (no llega al runtime, pero mantiene el gate de CI en rojo).
 
 ### Cerrado — gate P0 del audit (octubre 2026)
 
@@ -666,6 +750,7 @@ El gate volvió a verde **sin relajar la seguridad**: se separó la **exposició
 | 3 | Overrides realineados **fuera** del rango afectado: `undici 7.29.1`, `ip-address 10.7.4`, `hono 4.13.13`, `@modelcontextprotocol/sdk 1.32.1`, `proxy-addr 2.0.8`, `source-map-js 1.2.2`, `vite 8.3.4`, `postcss-selector-parser 7.1.7` | `npm audit` |
 | 4 | `brace-expansion` con overrides **scoped por rango**: `@<2.0.0 → 1.1.21` (minimatch@3) y `@>=4.0.0 → 5.0.12` (minimatch@10) | lint + 539 tests |
 | 5 | Gate de CI en dos capas: `--omit=dev --audit-level=moderate` (bloqueante) + `--audit-level=critical` en todo el árbol (bloqueante); el resto se emite como `::warning::` | reproducido localmente |
+| 6 | `vitest` `4.1.11 → 4.1.12` (cierra los 2 `moderate` de `@vitest/mocker`: inyección de código vía registro de mocks y bypass de la allowlist de redirección) | `npm audit` + 624 tests |
 
 **Resultado medido:** `npm audit` pasa de **37 avisos (1 critical, 15 high, 13 moderate, 8 low)** a **16 (8 low, 8 high)** — y los 8 high son **un solo advisory** (`braces`) replicado en 8 nodos del árbol. En la superficie de producción: **0 critical, 0 high, 0 moderate**.
 
@@ -682,6 +767,8 @@ El gate volvió a verde **sin relajar la seguridad**: se separó la **exposició
 | 7 | P2 | `vitest.config.ts` | `configLoader: 'native'` no soporta ESM en un `.ts` cargado como CommonJS | Abierto |
 | 8 | P2 | `.lighthouseci.json` | LHCI **nunca lo lee** (su lista es `lighthouserc.{js,cjs,json,yml,yaml}` y `.lighthouserc.*`); duplica y contradice `lighthouserc.json` y apunta a `./.next/standalone`, que no existe | Abierto |
 | 9 | P3 | `src/features/ask-ai/lib/rag/retriever.ts` | TF sin IDF: el corpus chico favorece documentos cortos | Abierto (limitación conocida) |
+| 10 | P2 | `src/features/portfolio/CyberAttackMap3D.tsx` | El bundle de Three.js + `@react-three/drei` se carga en la home por el mapa embebido en el panel SIEM; no hay code-splitting del chunk WebGL | Abierto — el mapa llega a `dynamic()` con `ssr: false` en la página `/cyber-attack-map`, pero el bloque del panel SIEM lo importa de forma directa |
+| 11 | P3 | `src/app/api/threat-intel/route.ts` | La caché en memoria del bloque KEV es **por instancia**: en Vercel (serverless) cada instancia tiene la suya, así que el TTL real puede ser menor que el declarado | Abierto — documentado en la propia respuesta (`cacheTtlSeconds`) |
 
 ### Reglas para futuras actualizaciones
 
@@ -713,6 +800,7 @@ npm run test:e2e          # opcional, contra build de producción
 |---|---|---|
 | `CONTEXT.md` | Glosario de dominio y seams de arquitectura | **Fuente de verdad** de los seams |
 | `docs/ask-juan-ai-copilot.md` | Detalle del copilot: prompt, tools, scoring RAG y tests golden | **Vigente** |
+| `docs/cyber-attack-map.md` | Detalle del mapa 3D: fuentes de datos, regla de honestidad, geometría del arco, seams | **Vigente** |
 | `docs/adr/ADR-001-production-hardening.md` | Decisión de hardening: seguridad, testing, performance | **Vigente** (con nota de audit actualizada) |
 | `srs_document.md` | Especificación de requerimientos del sistema | **Vigente** (arquitectura real) |
 | `AGENTS.md` / `CLAUDE.md` | Reglas y contexto para agentes de IA | Vigente |
