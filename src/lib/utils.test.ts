@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { clamp, hexToRgba } from './utils'
+import { clamp, hexToRgba, toArgentinaTime } from './utils'
 
 describe('clamp', () => {
   it('should return the value when within range', () => {
@@ -50,5 +50,23 @@ describe('hexToRgba', () => {
 
   it('should handle black color', () => {
     expect(hexToRgba('#000000', 0.1)).toBe('rgba(0, 0, 0, 0.1)')
+  })
+})
+
+describe('toArgentinaTime', () => {
+  it('should convert a UTC instant to Argentina time (UTC-3)', () => {
+    expect(toArgentinaTime(new Date('2026-03-01T15:51:39Z'))).toBe('12:51:39')
+  })
+
+  it('should wrap across midnight', () => {
+    expect(toArgentinaTime(new Date('2026-03-01T02:10:00Z'))).toBe('23:10:00')
+  })
+
+  it('should wrap across month end (non-leap year)', () => {
+    expect(toArgentinaTime(new Date('2026-03-01T01:30:00Z'))).toBe('22:30:00')
+  })
+
+  it('should always return the HH:MM:SS format', () => {
+    expect(toArgentinaTime(new Date('2026-10-24T05:07:09Z'))).toBe('02:07:09')
   })
 })

@@ -140,7 +140,7 @@ const livePayload: SiemFeedPayload = {
       reports: 150_000,
     },
   ],
-  lastUpdated: '2026-10-24T12:34:56.000Z',
+  lastUpdated: '2026-10-24T15:34:56.000Z',
   source: 'Agregación en tiempo real: Abuse.ch Feodo Tracker + DShield (SANS ISC)',
   usingLiveData: true,
   summary: {
@@ -170,7 +170,7 @@ const livePayload: SiemFeedPayload = {
 
 const degradedPayload: SiemFeedPayload = {
   logs: [],
-  lastUpdated: '2026-10-24T12:34:56.000Z',
+  lastUpdated: '2026-10-24T15:34:56.000Z',
   source: 'Agregación en tiempo real: Abuse.ch Feodo Tracker + DShield (SANS ISC)',
   usingLiveData: false,
   summary: {
@@ -219,7 +219,7 @@ describe('SIEMDashboard', () => {
     const link = screen.getByRole('link', { name: /Abrir en pantalla completa/ })
     expect(link.getAttribute('href')).toBe('/cyber-attack-map')
     expect(link.getAttribute('rel')).toBe('noopener noreferrer')
-    expect(screen.getByText(/UTC-3/)).toBeDefined()
+    expect(screen.getAllByText(/UTC-3/).length).toBeGreaterThan(0)
     expect(screen.getByText(/IEC 62443/)).toBeDefined()
   })
 
@@ -278,7 +278,7 @@ describe('SIEMDashboard', () => {
     expect(await screen.findByText('123,456')).toBeDefined()
     expect(screen.getByText('3')).toBeDefined()
     expect(screen.getByText('6')).toBeDefined()
-    expect(screen.getByText(/12:34:56 UTC/)).toBeDefined()
+    expect(screen.getByText(/12:34:56 UTC-3/)).toBeDefined()
   })
 
   it('should populate the sidebar lists from the payload', async () => {

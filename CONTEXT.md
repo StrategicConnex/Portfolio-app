@@ -256,6 +256,10 @@ Domain code lives in **feature modules**, not in the shared roots:
    entradas de `mitigation` son recomendaciones derivadas, nunca acciones ejecutadas.
 4. No re-sugerir un segundo punto de agregación ni ataques simulados/de ejemplo en el
    panel (y ni siquiera sugerir `Math.random()` para rellenar huecos).
+5. **Horario**: todas las horas del proyecto (reloj del panel, event stream,
+   KPIs, horas que reporta `querySiem`) se muestran en Argentina (UTC-3) vía
+   `toArgentinaTime()` (`src/lib/utils.ts`) — nunca la hora local del
+   visitante ni UTC puro.
 - **Data-cache seam** (`src/lib/next-cache.ts`): `cachedData()` wraps
   `unstable_cache` and degrades to a direct call when there is no Next
   request context (vitest, scripts, utilities), where `unstable_cache`

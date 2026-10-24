@@ -17,7 +17,7 @@ export const querySiemSchema = z.object({
 export type QuerySiemInput = z.infer<typeof querySiemSchema>
 
 export const SIEM_TOOL_DISCLAIMER =
-  'REAL DATA: global threat-intelligence aggregates from Abuse.ch Feodo Tracker and DShield (SANS ISC). They are NOT logs from the user\'s private network — clarify this when answering.'
+  'REAL DATA: global threat-intelligence aggregates from Abuse.ch Feodo Tracker and DShield (SANS ISC). They are NOT logs from the user\'s private network — clarify this when answering. All event times are shown in Argentina time (UTC-3).'
 
 interface SiemToolResult {
   disclaimer: string

@@ -31,3 +31,17 @@ export function interpolate(
     key in vars ? String(vars[key]) : match,
   )
 }
+
+/**
+ * Convierte un `Date` a HH:MM:SS en Argentina (UTC-3).
+ *
+ * El proyecto estandariza TODO su horario en UTC-3 (Argentina, sin DST
+ * desde 2009): reloj del SIEM, event stream, KPIs y horas que reporta el
+ * copilot. Este helper hace la conversión independiente del TZ del
+ * visitante y del servidor — siempre se muestra la hora argentina.
+ */
+export function toArgentinaTime(date: Date) {
+  return new Date(date.getTime() - 3 * 60 * 60 * 1000)
+    .toISOString()
+    .slice(11, 19)
+}

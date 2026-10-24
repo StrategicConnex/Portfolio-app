@@ -599,7 +599,7 @@ Plantilla en `.env.example`. Las principales:
 ### Unit / Integración (Vitest — jsdom)
 
 ```bash
-npm test            # 71 archivos · 668 tests
+npm test            # 71 archivos · 672 tests
 ```
 
 Cobertura por área (los seams son el test surface):

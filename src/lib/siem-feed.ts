@@ -1,5 +1,6 @@
 import { cachedData } from '@/lib/next-cache'
 import { countryNameFromIso } from '@/data/countryCoords'
+import { toArgentinaTime } from '@/lib/utils'
 
 /**
  * Seam única del feed SIEM.
@@ -66,7 +67,7 @@ export interface SIEMLog {
   id: string
   /** Momento en que el dato fue agregado (ISO). */
   at: string
-  /** HH:MM:SS derivado de `at` en UTC. */
+  /** HH:MM:SS derivado de `at` en Argentina (UTC-3). */
   time: string
   level: SIEMLevel
   /** IP real del proveedor o etiqueta agregada explícita. */
@@ -203,10 +204,6 @@ function mitigationForScan(): SiemMitigation {
   }
 }
 
-function toTime(date: Date): string {
-  return date.toISOString().slice(11, 19)
-}
-
 /** Feed de Abuse.ch Feodo → logs de infraestructura C2 real. */
 async function collectFeodoLogs(now: number): Promise<SIEMLog[]> {
   const entries = await fetchJson<FeodoEntry[]>(ABUSE_API, { revalidate: FEODO_TTL_SECONDS })
@@ -222,7 +219,7 @@ async function collectFeodoLogs(now: number): Promise<SIEMLog[]> {
       return {
         id: `feodo-${item.ip_address}`,
         at: at.toISOString(),
-        time: toTime(at),
+        time: toArgentinaTime(at),
         // C2 activo en línea: crítico. Infraestructura C2 reportada reciente:
         // alerta. Son dos realidades distintas y no se mezclan.
         level: (online ? 'CRITICAL' : 'ALERT') as SIEMLevel,
@@ -272,7 +269,7 @@ async function collectTopPorts(now: number): Promise<{
     return {
       id: `dshield-port-${item.targetport}`,
       at: at.toISOString(),
-      time: toTime(at),
+      time: toArgentinaTime(at),
       // Estadística global de volumen: WARN solo con volúmenes extremos.
       level: (records >= 1_000_000 ? 'WARN' : 'INFO') as SIEMLevel,
       // Agregado explícito: SANS no publica la IP de cada escaneo.
@@ -315,7 +312,7 @@ async function collectTopIps(now: number): Promise<SIEMLog[]> {
       return {
         id: `dshield-${item.source}`,
         at: at.toISOString(),
-        time: toTime(at),
+        time: toArgentinaTime(at),
         level: (reports >= 100_000 ? 'WARN' : 'INFO') as SIEMLevel,
         src: item.source!,
         msg: `Heavy scan/probe activity reported against SANS sensors (${reports.toLocaleString('en-US')} reports)`,

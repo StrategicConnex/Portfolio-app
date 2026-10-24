@@ -13,6 +13,7 @@ import {
   type SIEMLog,
   type SiemFeedPayload,
 } from '@/lib/siem-feed'
+import { toArgentinaTime } from '@/lib/utils'
 
 /**
  * Panel SIEM sobre datos REALES.
@@ -134,9 +135,10 @@ export default function SIEMDashboard() {
   const [logs, setLogs] = useState<SIEMLog[]>([])
   const [payload, setPayload] = useState<SiemFeedPayload | null>(null)
 
-  /* Reloj de cabecera (hora local del visitante). */
+  /* Reloj de cabecera: SIEMPRE Argentina (UTC-3), independiente del TZ
+     del visitante — el mismo horario que el event stream y los KPIs. */
   useEffect(() => {
-    const tick = () => setTimeStr(new Date().toTimeString().slice(0, 8))
+    const tick = () => setTimeStr(toArgentinaTime(new Date()))
     tick()
     const id = setInterval(tick, 1000)
     return () => clearInterval(id)
@@ -219,7 +221,7 @@ export default function SIEMDashboard() {
       },
       {
         labelKey: 'siem.kpi.updated',
-        value: payload ? `${payload.lastUpdated.slice(11, 19)} UTC` : '—',
+        value: payload ? `${toArgentinaTime(new Date(payload.lastUpdated))} UTC-3` : '-',
       },
     ],
     [payload],
