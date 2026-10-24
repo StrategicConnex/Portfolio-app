@@ -560,7 +560,7 @@ npm run dev
 | `npm run typecheck` | `tsc --noEmit` |
 | `npm test` | Vitest (unit/integration) |
 | `npm run test:watch` | Vitest en watch |
-| `npm run test:e2e` | Playwright e2e (9 specs · 38 tests) |
+| `npm run test:e2e` | Playwright e2e (11 specs · 45 tests) |
 | `npm run extract:recursos` | Regenera `src/data/recursos-text.json` desde los documentos de `public/recursos/` |
 | `npx lhci autorun` | Lighthouse CI: budgets de perf / a11y / best-practices / SEO (ver `lighthouserc.json`) |
 
@@ -599,7 +599,7 @@ Plantilla en `.env.example`. Las principales:
 ### Unit / Integración (Vitest — jsdom)
 
 ```bash
-npm test            # 60 archivos · 624 tests
+npm test            # 71 archivos · 668 tests
 ```
 
 Cobertura por área (los seams son el test surface):
@@ -618,6 +618,7 @@ Cobertura por área (los seams son el test surface):
 | Ruta contact | Validación Zod, email HTML, rate limit |
 | Ruta chat | Fallback legacy, propagación de XFF/x-real-ip (H2) |
 | Ruta threat-intel | Agregación de feeds, degradación declarada, TTLs, coalesce |
+| Ruta siem-feed + tool querySiem | Agregación Feodo/DShield (envelope `topports` indexado, sin IPs inventadas), degradación por feed y por presupuesto, TTLs, disclaimer de privacidad |
 | CSP | `img-src` sin host remoto, sin CDN, `blob:` de troika, fuentes locales, texturas servidas en local |
 | Stats / panel | Registro de descargas, cookie HMAC, agregaciones por archivo/día/volumen/país |
 | Biblioteca | Páginas de `/recursos` y `/recursos/[volumen]` |
@@ -633,7 +634,7 @@ npm run test:e2e                    # contra dev server (reusa el puerto 3000)
 npm run build && PORT=3100 E2E_PROD_SERVER=1 npm run test:e2e   # contra build prod
 ```
 
-**9 specs · 38 tests**: `landing`, `nav`, `hero`, `app-shell` (loading/error/not-found), `ask-ai` (panel), `contact` (sección), `contact-api` (contrato de validación de `/api/contact`), `accessibility` (gate axe: falla ante violaciones critical/serious) y `theme` (no-flash, persistencia de la cookie y ciclo light/dark/system).
+**11 specs · 45 tests**: `landing`, `nav`, `hero`, `app-shell` (loading/error/not-found), `ask-ai` (panel), `contact` (sección), `contact-api` (contrato de validación de `/api/contact`), `accessibility` (gate axe: falla ante violaciones critical/serious), `theme` (no-flash, persistencia de la cookie y ciclo light/dark/system), `consent` (banner y persistencia granular del consentimiento) y `rum-proxy` (contrato del proxy SCAudit vía `/api/rum`).
 
 ### CI/CD (GitHub Actions — `.github/workflows/ci.yml`)
 
@@ -769,6 +770,7 @@ El gate volvió a verde **sin relajar la seguridad**: se separó la **exposició
 | 9 | P3 | `src/features/ask-ai/lib/rag/retriever.ts` | TF sin IDF: el corpus chico favorece documentos cortos | Abierto (limitación conocida) |
 | 10 | P2 | `src/features/portfolio/CyberAttackMap3D.tsx` | El bundle de Three.js + `@react-three/drei` se carga en la home por el mapa embebido en el panel SIEM; no hay code-splitting del chunk WebGL | Abierto — el mapa llega a `dynamic()` con `ssr: false` en la página `/cyber-attack-map`, pero el bloque del panel SIEM lo importa de forma directa |
 | 11 | P3 | `src/app/api/threat-intel/route.ts` | La caché en memoria del bloque KEV es **por instancia**: en Vercel (serverless) cada instancia tiene la suya, así que el TTL real puede ser menor que el declarado | Abierto — documentado en la propia respuesta (`cacheTtlSeconds`) |
+| 12 | P3 | `/estadisticas-privadas` (producción) | Sin sesión responde **soft-404** (HTTP 200 + contenido 404) — quirk de Next 16; sin fuga de datos ni render de información sensible | Abierto — deuda técnica cosmética de bajo riesgo; la seguridad no depende del status code |
 
 ### Reglas para futuras actualizaciones
 

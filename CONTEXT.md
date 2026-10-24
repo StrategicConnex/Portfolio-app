@@ -231,17 +231,31 @@ Domain code lives in **feature modules**, not in the shared roots:
   declared, never replaced with invented data. `coalesce()` collapses
   concurrent bursts into a single upstream query per source. Do not
   re-suggest a per-component feed fetch or a second aggregation point.
-- **SIEM-feed seam** (`src/lib/siem-feed.ts`): the single aggregation for the
-  SIEM dashboard (`src/app/api/siem-feed/route.ts` is transport only). The
-  public panel and the `querySiem` copilot tool both call
-  `getSiemFeedData()`, so panel, API and chatbot always report the same
-  data. Sources: the Abuse.ch Feodo Tracker IP blocklist (real botnet C2
-  entries: IP, port, status, malware, country) and DShield/SANS ISC
-  `topports` (indexed object — published as `SANS ISC (aggregate)`, no
-  origin IP invented) and `topips`. Each provider degrades separately and
-  `mitigation` entries are derived recommendations, never executed actions.
-  Do not re-suggest a second aggregation point or simulated/sample attacks
-  in the panel.
+### Seam: SIEM Feed en Tiempo Real (`src/lib/siem-feed.ts`)
+
+**Propósito**: agregación de inteligencia de amenazas reales para el dashboard SIEM
+(`src/app/api/siem-feed/route.ts` es solo transporte) y el copilot (`querySiem`).
+
+**Fuentes**:
+
+- Abuse.ch Feodo Tracker — IPs C2 en vivo (IP, puerto, status, malware, país)
+- DShield (SANS ISC) — `topports`/`topips` (escaneos de puertos; `topports` llega como
+  objeto indexado y se publica como `SANS ISC (aggregate)`, sin IP de origen inventada)
+
+**Reglas estrictas**:
+
+1. **CERO datos simulados**: si las fuentes externas fallan, el endpoint
+   `/api/siem-feed` debe devolver un estado `degraded()` honesto. Nunca generar IPs,
+   puertos o alertas con `Math.random()`. Cada proveedor se degrada por separado y la
+   respuesta declara `feedsStatus`/`cacheTtlSeconds`.
+2. **Consistencia**: tanto `SIEMDashboard.tsx` como la herramienta del copilot
+   `querySiem` consumen exclusivamente `getSiemFeedData()` — panel, API y chatbot
+   reportan siempre los mismos datos.
+3. **Transparencia**: el UI muestra el badge "FEED GLOBAL · DATOS REALES" y aclara que
+   son amenazas globales observadas, no logs de una red privada específica. Las
+   entradas de `mitigation` son recomendaciones derivadas, nunca acciones ejecutadas.
+4. No re-sugerir un segundo punto de agregación ni ataques simulados/de ejemplo en el
+   panel (y ni siquiera sugerir `Math.random()` para rellenar huecos).
 - **Data-cache seam** (`src/lib/next-cache.ts`): `cachedData()` wraps
   `unstable_cache` and degrades to a direct call when there is no Next
   request context (vitest, scripts, utilities), where `unstable_cache`
