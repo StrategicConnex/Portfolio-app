@@ -5,6 +5,7 @@ import { analyzeHttpHeaders, httpHeadersSchema } from './http-headers';
 import { whoisLookup, whoisSchema } from './whois-lookup';
 import { detectTechStack, techStackSchema } from './tech-stack-detector';
 import { analyzePort, portAnalyzerSchema } from './port-analyzer';
+import { querySiem, querySiemSchema } from './query-siem';
 
 function getErrorMessage(err: unknown): string {
   if (err instanceof Error) return err.message;
@@ -58,6 +59,14 @@ export const askAiTools: ToolSet = {
     execute: async (input: Record<string, unknown>) => {
       try { return await analyzePort(input as Parameters<typeof analyzePort>[0]); }
       catch (err: unknown) { return { service: input.service as string, ports: [], error: getErrorMessage(err) }; }
+    },
+  },
+  querySiem: {
+    description: 'Read the live aggregated threat-intelligence feed that powers the SIEM dashboard (Abuse.ch Feodo Tracker botnet C2 infrastructure + DShield/SANS ISC most-attacked ports and reported IPs). Use when the user asks about current threats, the SIEM panel, active botnets, or targeted ports. IMPORTANT: this is global intelligence, not the user\'s private network logs.',
+    inputSchema: querySiemSchema,
+    execute: async (input: Record<string, unknown>) => {
+      try { return await querySiem(input as Parameters<typeof querySiem>[0]); }
+      catch (err: unknown) { return { disclaimer: 'REAL DATA: global threat-intelligence aggregates (Abuse.ch Feodo + DShield). Not the user\'s private network logs.', focus: input.focus as string, error: getErrorMessage(err) }; }
     },
   },
 };

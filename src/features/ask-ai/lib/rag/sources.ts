@@ -18,7 +18,6 @@
  */
 import { translations } from '@/context/translations'
 import { JOBS } from '@/data/experiencia'
-import { ATTACK_VECTORS, OPERATIONAL_KPIS, PURDUE_ZONES, TOP_ATTACKERS } from '@/data/siem'
 import { AUDIT_SUMMARY, COMPLIANCE_MARCOS } from '@/data/audit'
 import { BLOG_POSTS } from '@/data/blog'
 import { RECURSO_FILES, type RecursoDocMeta } from '@/data/recursos'
@@ -319,39 +318,27 @@ function projectExperience(lang: Locale): KnowledgeSource[] {
   })
 }
 
-// ─── Projected: SIEM dashboard (from siem.ts + siem.ts translations) ────────
+// ─── Projected: SIEM dashboard (aggregated live feed, described not mirrored) ─
 
 function projectSiem(lang: Locale): KnowledgeSource {
-  const vectors = ATTACK_VECTORS.map((v) => `${v.label} (${v.pct}%)`).join(', ')
-  const attackers = TOP_ATTACKERS.map((a) => `${a.label} (${a.pct}%)`).join(', ')
-  const zones = PURDUE_ZONES.map(
-    (z) => `${tr(lang, z.labelKey)} (${z.pct}% ${lang === 'en' ? 'effectiveness' : 'efectividad'})`,
-  ).join(', ')
-  const kpis = OPERATIONAL_KPIS.map(
-    (k) => `${tr(lang, k.labelKey)} ${tr(lang, k.valKey)}`,
-  ).join(', ')
   const labels = lang === 'en'
     ? {
-        intro: 'Interactive SIEM simulation dashboard. Real-time threat monitoring with ALERT, WARN, INFO levels.',
-        vectors: 'Vectors:',
-        attackers: 'Top attackers:',
-        zones: 'Protected Purdue zones:',
-        kpis: 'KPIs:',
-        outro: 'DDoS mitigation with Radware DefensePro.',
+        intro:
+          'Live SIEM panel with real aggregated threat intelligence (Abuse.ch Feodo Tracker + DShield/SANS ISC): botnet C2 infrastructure, the most attacked ports worldwide and the scan sources generating the most reports.',
+        outro:
+          'The querySiem copilot tool reads this same feed. The dashboard log lines are provider-published global data, not logs from a private network.',
       }
     : {
-        intro: 'Dashboard interactivo de simulación SIEM. Monitoreo de amenazas en tiempo real con niveles ALERT, WARN, INFO.',
-        vectors: 'Vectores de ataque:',
-        attackers: 'Top atacantes:',
-        zones: 'Zonas Purdue protegidas:',
-        kpis: 'KPIs:',
-        outro: 'Mitigación DDoS con Radware DefensePro.',
+        intro:
+          'Panel SIEM en vivo con inteligencia de amenazas agregada real (Abuse.ch Feodo Tracker + DShield/SANS ISC): infraestructura C2 de botnets, puertos más atacados del mundo e IPs con más reportes.',
+        outro:
+          'La herramienta querySiem del copilot lee este mismo feed. Las líneas del panel son datos globales publicados por los proveedores, no logs de una red propia.',
       }
   return {
     id: projectId(lang, 'siem-dashboard'),
-    title: lang === 'en' ? 'SIEM Simulation - Dashboard' : 'Simulación SIEM - Dashboard',
-    content: `${labels.intro} ${labels.vectors} ${vectors}. ${labels.attackers} ${attackers}. ${labels.zones} ${zones}. ${labels.kpis} ${kpis}. ${labels.outro}`,
-    tags: ['siem', 'dashboard', 'threat', 'alerts', 'ddos', 'radware', 'tcp flood', 'purdue', 'mttr'],
+    title: lang === 'en' ? 'SIEM – Aggregated Threat Intelligence' : 'SIEM – Panel de intel agregada',
+    content: `${labels.intro} ${labels.outro}`,
+    tags: ['siem', 'dashboard', 'threat', 'ioc', 'c2', 'abuse.ch', 'feodo', 'dshield', 'sans', 'botnet'],
     locale: lang,
     type: 'siem',
   }

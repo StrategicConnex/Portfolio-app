@@ -185,11 +185,11 @@ describe('useLanguage hook', () => {
     })
     expect(result.current.t('nav.profile')).toBe('Perfil')
     expect(result.current.t('contact.form.send')).toBe('Enviar Protocolo de Contacto')
-    expect(result.current.t('siem.kpi.uptime')).toBe('Uptime Red Industrial')
+    expect(result.current.t('siem.kpi.c2_ips')).toBe('IPs C2 (Feodo)')
     act(() => { result.current.setLanguage('en') })
     expect(result.current.t('nav.profile')).toBe('Profile')
     expect(result.current.t('contact.form.send')).toBe('Send Contact Protocol')
-    expect(result.current.t('siem.kpi.uptime')).toBe('Industrial Network Uptime')
+    expect(result.current.t('siem.kpi.c2_ips')).toBe('C2 IPs (Feodo)')
   })
 
   it('should handle independent language switches', () => {

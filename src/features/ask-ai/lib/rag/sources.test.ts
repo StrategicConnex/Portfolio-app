@@ -1,7 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { ALL_SOURCES, SOURCE_COUNT } from './sources'
 import { translations } from '@/context/translations'
-import { ATTACK_VECTORS } from '@/data/siem'
 import { AUDIT_SUMMARY, COMPLIANCE_MARCOS } from '@/data/audit'
 import { JOBS } from '@/data/experiencia'
 import { BLOG_POSTS } from '@/data/blog'
@@ -12,11 +11,16 @@ const en = ALL_SOURCES.filter((s) => s.locale === 'en')
 const tr = (lang: 'es' | 'en', key: string): string => translations[lang][key] ?? key
 
 describe('corpus projection — derived, not duplicated (C2)', () => {
-  it('projects the SIEM attack vectors verbatim (no drift)', () => {
-    const siem = ALL_SOURCES.find((s) => s.id === 'siem-dashboard')
-    expect(siem).toBeDefined()
-    for (const v of ATTACK_VECTORS) {
-      expect(siem!.content).toContain(`${v.label} (${v.pct}%)`)
+  it('projects the SIEM live-feed description with the querySiem tool (no legacy simulation copy)', () => {
+    for (const locale of ['es', 'en'] as const) {
+      const siem = ALL_SOURCES.find((s) => s.locale === locale && s.id.includes('siem-dashboard'))
+      expect(siem, `missing SIEM entry for locale ${locale}`).toBeDefined()
+      expect(siem!.content).toContain('Abuse.ch Feodo Tracker + DShield/SANS ISC')
+      expect(siem!.content).toContain('querySiem')
+      // La proyección describe el feed real: ya no arrastra la simulación
+      // heredada (Radware, porcentajes inventados, KPIs ficticios).
+      expect(siem!.content).not.toContain('Radware')
+      expect(siem!.content).not.toContain('99.9%')
     }
   })
 

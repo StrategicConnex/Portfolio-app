@@ -18,7 +18,7 @@ describe('buildToolDescriptions', () => {
     expect(guide).not.toContain('Guía de Selección de Herramientas:')
   })
 
-  it('names all six passive analysis tools in both languages', () => {
+  it('names all seven analysis tools in both languages', () => {
     const tools = [
       'dnsAnalyzer',
       'sslChecker',
@@ -26,6 +26,7 @@ describe('buildToolDescriptions', () => {
       'whoisLookup',
       'techStackDetector',
       'portAnalyzer',
+      'querySiem',
     ]
     for (const lang of ['es', 'en'] as const) {
       const guide = buildToolDescriptions(lang)
@@ -33,6 +34,16 @@ describe('buildToolDescriptions', () => {
         expect(guide).toContain(tool)
       }
     }
+  })
+
+  it('states the live-feed honesty disclaimer for querySiem in both languages', () => {
+    for (const lang of ['es', 'en'] as const) {
+      const guide = buildToolDescriptions(lang)
+      // Los datos son una agregación global real, nunca logs de la red del usuario.
+      expect(guide).toContain('Abuse.ch Feodo Tracker + DShield/SANS ISC')
+    }
+    expect(buildToolDescriptions('en')).toContain("not the user's private-network logs")
+    expect(buildToolDescriptions('es')).toContain('no los logs de la red privada del usuario')
   })
 })
 

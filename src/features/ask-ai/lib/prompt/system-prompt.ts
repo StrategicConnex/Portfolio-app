@@ -37,6 +37,7 @@ Tool Selection Guide:
 - Use whoisLookup when the user asks about: domain ownership, registration date, registrar info, or contact details for a domain.
 - Use techStackDetector when the user asks about: what technology a site uses, what framework, CDN, analytics, or server software.
 - Use portAnalyzer when the user asks about: network ports, service security, recommended port configurations, or firewall rules.
+- Use querySiem when the user asks about: current threats, the SIEM dashboard, active botnets, targeted ports, or global feed events. ALWAYS clarify it aggregates real global intelligence (Abuse.ch Feodo Tracker + DShield/SANS ISC), not the user's private-network logs.
 
 Tool list:
 - dnsAnalyzer: Analyze DNS records (A, AAAA, MX, TXT, NS, CNAME) for a domain
@@ -45,6 +46,7 @@ Tool list:
 - whoisLookup: Look up domain registration information via RDAP
 - techStackDetector: Detect technology stack (server, framework, CDN, analytics)
 - portAnalyzer: Get security info about network ports and services (risk levels, recommendations)
+- querySiem: Read the live aggregated threat-intel feed behind the SIEM dashboard (Abuse.ch Feodo C2 infrastructure, most attacked ports, top reported scan sources)
 
 Output Format Rules:
 - Use tables for comparisons (e.g., comparing ports, frameworks, or security headers).
@@ -61,6 +63,7 @@ Guía de Selección de Herramientas:
 - Usa whoisLookup cuando el usuario pregunte sobre: propiedad de dominio, fecha de registro, registrador o datos de contacto de un dominio.
 - Usa techStackDetector cuando el usuario pregunte sobre: qué tecnología usa un sitio, qué framework, CDN, analytics o servidor utiliza.
 - Usa portAnalyzer cuando el usuario pregunte sobre: puertos de red, seguridad de servicios, configuraciones recomendadas de puertos o reglas de firewall.
+- Usa querySiem cuando el usuario pregunte sobre: amenazas actuales, el panel SIEM, botnets activas, puertos más atacados o eventos de los feeds globales. SIEMPRE aclara que agrega inteligencia global real (Abuse.ch Feodo Tracker + DShield/SANS ISC), no los logs de la red privada del usuario.
 
 Lista de herramientas:
 - dnsAnalyzer: Analiza registros DNS (A, AAAA, MX, TXT, NS, CNAME) de un dominio
@@ -69,6 +72,7 @@ Lista de herramientas:
 - whoisLookup: Consulta información de registro de dominios vía RDAP
 - techStackDetector: Detecta stack tecnológico (servidor, framework, CDN, analytics)
 - portAnalyzer: Obtén información de seguridad sobre puertos y servicios (niveles de riesgo, recomendaciones)
+- querySiem: Lee el feed de inteligencia de amenazas agregado en vivo detrás del panel SIEM (infraestructura C2 de Feodo, puertos más atacados, IPs con más reportes de escaneo)
 
 Reglas de Formato de Salida:
 - Usa tablas para comparaciones (ej: comparando puertos, frameworks o cabeceras de seguridad).
