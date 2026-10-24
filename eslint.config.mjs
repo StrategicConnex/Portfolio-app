@@ -29,6 +29,8 @@ const eslintConfig = defineConfig([
     "next-env.d.ts",
     // Test/utility scripts (CommonJS, not subject to TS lint rules)
     "scripts/**",
+    // Paquete hermano server/: solo se lintea su fuente, no su build
+    "server/dist/**",
   ]),
 ]);
 

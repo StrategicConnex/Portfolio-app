@@ -37,6 +37,16 @@ Domain code lives in **feature modules**, not in the shared roots:
   `LanguageContext.tsx`, `ThemeContext.tsx` and `translations/` (23
   dictionaries, one per section). Providers consume the seams; they never
   re-derive the rules.
+- `server/` — sibling package `@portfolio/api-server`: a self-contained
+  Express 5 + TypeScript API (Zod env schema, JWT auth, helmet, rate limit)
+  with its own package.json, tsconfig, vitest config and README. It never
+  ships in the Next.js bundle; run its suite with `cd server && npm test`
+  (the root `npm test` only covers `src/**`). `server/node_modules/` and
+  `server/dist/` are git-ignored.
+- `recursos/` — authoring sources of the downloadable library (.docx,
+  templates, `index.html` + `styles.css`). `public/recursos/` is the
+  canonical copy that gets served; the two trees currently differ in one
+  `.xlsx`, so keep edits in the copy you intend to publish.
 
 ## i18n
 

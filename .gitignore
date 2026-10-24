@@ -63,3 +63,11 @@ test-results/
 # capturas de pantalla y PNGs locales (sin versionar)
 screenshots/
 *.png
+
+# tooling local del agente (hooks.json contiene una API key en texto plano)
+hooks.json
+.serena/
+
+# paquete hermano server/ — dependencias y build (las fuentes sí se versionan)
+/server/node_modules/
+/server/dist/

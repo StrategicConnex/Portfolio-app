@@ -1,0 +1,83 @@
+# PLANTILLA DE INVENTARIO DE ACTIVOS DE TI
+
+**Proyecto:** EVOLUCIÓN DE IT A OT — EDICIÓN 2026  
+**Volumen:** 1 — Fundamentos de IT para OT  
+**Capítulo de referencia:** Cap. 3 — Activos de Información y Gestión de Recursos  
+**Formato:** Tabla de inventario (exportar a .xlsx)
+
+---
+
+## INSTRUCCIONES DE USO
+
+1. Complete todas las columnas obligatorias para cada activo.
+2. Asigne un **Código de Activo** único siguiendo la nomenclatura: `[ÁREA]-[TIPO]-[NÚMERO]` (ej: `PROD-SRV-001`).
+3. Clasifique la criticidad en: **Crítica**, **Alta**, **Media**, **Baja**.
+4. Actualice la tabla al menos **trimestralmente**.
+5. Para activos OT (SCADA, PLC, RTU), añada la columna adicional "Ubicación Física".
+
+---
+
+## TABLA DE INVENTARIO DE ACTIVOS
+
+| Código de Activo | Nombre del Activo | Descripción | Tipo | Fabricante | Modelo | N° de Serie | Ubicación Física | Dirección IP | Sistema Operativo / Firmware | Fecha de Adquisición | Fecha de Garantía | Estado | Criticidad | Responsable | Última Revisión |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| `PROD-SRV-001` | Servidor de Producción PRD-01 | Servidor principal de la planta de producción | Servidor | Dell | PowerEdge R750 | SN-2025-001 | Sala de Servidores - Planta 1 | 10.10.1.10 | Windows Server 2022 | 2024-01-15 | 2027-01-15 | Operativo | Crítica | Juan Pérez | 2026-01-10 |
+| `PROD-SRV-002` | Servidor de Respaldo | Servidor de backup replicación diaria | Servidor | Dell | PowerEdge R650 | SN-2024-052 | Sala de Servidores - Planta 1 | 10.10.1.11 | Windows Server 2022 | 2023-06-20 | 2026-06-20 | Operativo | Alta | Juan Pérez | 2026-01-10 |
+| `PROD-NET-001` | Switch Core Planta 1 | Switch de capa 3 para red de producción | Switch | Cisco | Catalyst 9300 | SN-2024-101 | Rack 1 - Planta 1 | 10.10.1.1 | Cisco IOS XE 17.6 | 2023-09-01 | 2028-09-01 | Operativo | Crítica | María López | 2025-12-15 |
+| `PROD-FW-001` | Firewall Principal | Firewall de borde entre IT y OT | Firewall | Palo Alto | PA-5260 | SN-2024-200 | Sala de Servidores - Planta 1 | 10.10.1.254 | PAN-OS 11.1 | 2024-03-10 | 2027-03-10 | Operativo | Crítica | María López | 2026-02-01 |
+| `OT-PLC-001` | PLC Línea Envasado 1 | Controlador principal línea de envasado | PLC | Siemens | S7-1500 | SN-PLC-001 | Planta 1 - Línea Envasado | 10.20.1.50 | TIA Portal V18 | 2024-06-01 | 2029-06-01 | Operativo | Crítica | Carlos Ruiz | 2026-01-20 |
+| `OT-SCADA-001` | Estación SCADA Principal | Terminal de monitoreo de procesos | Estación de Trabajo | Advantech | UNO-2484G | SN-SCADA-01 | Sala de Control | 10.20.1.100 | Windows 10 IoT Enterprise | 2024-02-15 | 2027-02-15 | Operativo | Crítica | Carlos Ruiz | 2026-01-15 |
+| `OT-HMI-001` | Panel HMI Línea 1 | Interfaz humano-máquina línea 1 | HMI | Siemens | TP1500 Comfort | SN-HMI-001 | Planta 1 - Línea Envasado | 10.20.1.51 | Comfort Panel V18 | 2024-06-01 | 2029-06-01 | Operativo | Alta | Carlos Ruiz | 2026-01-20 |
+| `OT-RTU-001` | RTU Estación Remota | Unidad de telemetría tanques | RTU | Schneider | M340 | SN-RTU-001 | Planta 2 - Zona Tanques | 10.20.2.10 | Unity Pro V15 | 2023-11-10 | 2028-11-10 | Operativo | Alta | Ana García | 2025-11-20 |
+| `INF-PC-001` | PC Administrativa | Estación de trabajo administración | PC | HP | EliteDesk 800 G9 | SN-PC-001 | Oficina Administrativa | 10.10.2.15 | Windows 11 Pro | 2025-01-10 | 2028-01-10 | Operativo | Media | Pedro Sánchez | 2026-01-05 |
+| `INF-IMP-001` | Impresora Red | Impresora de red multifunción | Impresora | HP | LaserJet Enterprise M611 | SN-IMP-001 | Oficina Administrativa | 10.10.2.50 | HP Web Jetadmin | 2024-08-20 | 2027-08-20 | Operativo | Baja | Pedro Sánchez | 2025-10-10 |
+| `INF-UPS-001` | UPS Sala Servidores | SAI 3kVA para sala de servidores | UPS | APC | Smart-UPS SRT 3000 | SN-UPS-001 | Sala de Servidores - Planta 1 | N/A | Network Management Card | 2023-03-15 | 2028-03-15 | Operativo | Crítica | Juan Pérez | 2026-01-10 |
+| `OT-VFD-001` | Variador de Frecuencia L1 | VFD motor transportador línea 1 | VFD | ABB | ACS580 | SN-VFD-001 | Planta 1 - Línea Envasado | 10.20.1.60 | Firmware 3.3.0 | 2024-06-01 | 2029-06-01 | Operativo | Alta | Carlos Ruiz | 2026-01-20 |
+| | | | | | | | | | | | | | | | |
+| | | | | | | | | | | | | | | | |
+| | | | | | | | | | | | | | | | |
+
+---
+
+## LEYENDA DE CRITICIDAD
+
+| Nivel | Descripción | Impacto si falla | RTO objetivo |
+|---|---|---|---|
+| **Crítica** | Proceso esencial sin redundancia | Pérdida total de producción | < 1 hora |
+| **Alta** | Proceso importante con impacto parcial | Degradación significativa | < 4 horas |
+| **Media** | Proceso soportable con alternativas | Inconveniencia moderada | < 24 horas |
+| **Baja** | Proceso no esencial | Impacto mínimo | < 72 horas |
+
+---
+
+## TIPOS DE ACTIVOS
+
+| Código Tipo | Descripción |
+|---|---|
+| `SRV` | Servidor |
+| `NET` | Dispositivo de red (switch, router, access point) |
+| `FW` | Firewall / dispositivo de seguridad |
+| `PLC` | Controlador lógico programable |
+| `SCADA` | Estación SCADA / HMI |
+| `HMI` | Panel humano-máquina |
+| `RTU` | Unidad de telemetría remota |
+| `PC` | Estación de trabajo |
+| `IMP` | Impresora / dispositivo periférico |
+| `UPS` | SAI / fuente de alimentación ininterrumpida |
+| `VFD` | Variador de frecuencia |
+| `SEN` | Sensor / instrumento de campo |
+| `ACT` | Actuador / válvula |
+
+---
+
+## REGISTRO DE CAMBIOS
+
+| Fecha | Código de Activo | Campo Modificado | Valor Anterior | Valor Nuevo | Modificado por |
+|---|---|---|---|---|---|
+| 2026-01-20 | OT-PLC-001 | Última Revisión | 2025-11-15 | 2026-01-20 | Carlos Ruiz |
+| | | | | | |
+| | | | | | |
+
+---
+
+**Nota:** Esta plantilla es parte del material complementario del libro *EVOLUCIÓN DE IT A OT — EDICIÓN 2026*. Distribución exclusiva para compradores autorizados.

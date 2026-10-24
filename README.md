@@ -133,6 +133,8 @@ flowchart TD
 | **Caché de datos** | `src/lib/next-cache.ts` | `cachedData()` envuelve `unstable_cache` y degrada a cálculo directo cuando no hay contexto de Next (tests, scripts), en vez de lanzar el invariante `incrementalCache missing` |
 | **Geometría del mapa** | `src/features/portfolio/attackArc.ts` + `src/data/countryCoords.ts` | Traduce eventos de amenazas en arcos: tipo de ataque por palabras clave, destino por pesos (5% Neuquén · 20% Argentina · 75% global ilustrativo) y separación explícita entre `hub` real e `illustrative` |
 | **Rotación del globo** | `src/features/portfolio/globeRotation.ts` | Velocidad en radianes/segundo con delta real del frame (clamp a 100 ms). Garantiza que globo, etiquetas, pin y arcos roten **como una unidad** |
+| **Controles del mapa** | `src/features/portfolio/mapControls.ts` | Barra flotante del mapa: acercar/alejar (cámara 3.5–9 · escala plana 1–2.6), girar 10° por paso, pausar/reanudar la rotación y alternar la vista plana. Funciones puras con límites acotados, testeadas sin montar WebGL |
+| **Vista plana del mapa** | `src/features/portfolio/flatProjection.ts` + `CyberAttackMapFlat.tsx` | Proyección equirectangular (viewBox 360×180) con wrap del antimeridiano; al activarla se desmonta el `<Canvas>` de three.js y los mismos arcos/etiquetas se dibujan en SVG |
 
 ---
 
@@ -284,7 +286,9 @@ src/
 │                                 #   PurdueModel2D, RadarSweep,
 │                                 #   CyberAttackMap3D (globo WebGL + arcos),
 │                                 #   ArcTooltipPanel + arcTooltip (detalle del arco),
-│                                 #   attackArc (geometría) + globeRotation (giro)
+│                                 #   attackArc (geometría) + globeRotation (giro),
+│                                 #   CyberAttackMapFlat (vista plana equirectangular),
+│                                 #   mapControls + flatProjection (controles y proyección 2D)
 ├── components/                   # Kernel compartido
 │   ├── observability/            # ObservabilityProvider (PostHog + Sentry)
 │   └── ui/                       # shadcn/ui primitives + SectionHeader/FadeIn/Icon
@@ -308,6 +312,12 @@ public/
     ├── earth-topology.jpg        #   relieve / bumpMap
     ├── earth-water.jpg           #   máscara de océanos / specularMap
     └── NOTICE.md                 #   procedencia y licencia
+
+server/                        # Paquete hermano autocontenido: API Express 5 + TS
+│                              #   (Zod + JWT + helmet; propios tests: `cd server && npm test`)
+recursos/                      # Fuentes de autoría de la biblioteca (.docx, plantillas,
+                               #   index.html + styles.css). La copia canónica que se sirve
+                               #   vive en public/recursos/ — hoy difieren en un .xlsx)
 ```
 
 ---
@@ -498,6 +508,8 @@ flowchart LR
 | Geometría del arco | `src/features/portfolio/attackArc.ts` | Tipo de ataque por palabras clave, elección de destino por pesos, flags `illustrative` / `destinationKind` |
 | Geocodificación | `src/data/countryCoords.ts` | Coordenadas de ~110 países + ISO→nombre; toda posición del mapa sale de aquí |
 | Rotación | `src/features/portfolio/globeRotation.ts` | Velocidad en rad/s con delta real del frame (clamp a 100 ms) |
+| Controles | `src/features/portfolio/mapControls.ts` | Barra flotante (acercar, alejar, izquierda, derecha, pausar rotación, vista plana / volver al globo); aritmética pura con límites acotados y tests sin WebGL |
+| Vista plana | `src/features/portfolio/CyberAttackMapFlat.tsx` + `flatProjection.ts` | Mapamundi equirectangular con la textura NASA del globo; arcos proyectados con wrap del antimeridiano (tres copias: lo que sale por un borde entra por el otro) |
 | Tooltip | `src/features/portfolio/arcTooltip.ts` + `ArcTooltipPanel.tsx` | Lógica pura del tooltip (sin React) y panel que lo pinta con las etiquetas del diccionario |
 | Caché | `src/lib/next-cache.ts` | `cachedData()`: `unstable_cache` con degradación a cálculo directo fuera de contexto Next |
 
@@ -563,6 +575,7 @@ npm run dev
 | `npm run test:e2e` | Playwright e2e (11 specs · 45 tests) |
 | `npm run extract:recursos` | Regenera `src/data/recursos-text.json` desde los documentos de `public/recursos/` |
 | `npx lhci autorun` | Lighthouse CI: budgets de perf / a11y / best-practices / SEO (ver `lighthouserc.json`) |
+| `cd server && npm test` | Tests del paquete hermano `server/` (API Express autocontenida, 29 tests) |
 
 ### Variables de Entorno
 
@@ -599,7 +612,7 @@ Plantilla en `.env.example`. Las principales:
 ### Unit / Integración (Vitest — jsdom)
 
 ```bash
-npm test            # 71 archivos · 672 tests
+npm test            # 74 archivos · 689 tests
 ```
 
 Cobertura por área (los seams son el test surface):
@@ -622,7 +635,7 @@ Cobertura por área (los seams son el test surface):
 | CSP | `img-src` sin host remoto, sin CDN, `blob:` de troika, fuentes locales, texturas servidas en local |
 | Stats / panel | Registro de descargas, cookie HMAC, agregaciones por archivo/día/volumen/país |
 | Biblioteca | Páginas de `/recursos` y `/recursos/[volumen]` |
-| Mapa de ciberataques | Geometría del arco, rotación, tooltip, guarda estructural del JSX, render del mapa |
+| Mapa de ciberataques | Geometría del arco, rotación, tooltip, guarda estructural del JSX, render del mapa, controles (zoom/giro/pausa) y vista plana |
 | Design tokens | Contraste WCAG AA en light/dark/console (17 tests) |
 | Presupuesto Lighthouse | `lighthouserc.json` no puede debilitarse sin romper el test |
 | Componentes | Hero, Navbar, Stack, Blog, SIEM, SCAudit, Certificaciones, accesibilidad (axe) |
@@ -672,7 +685,7 @@ deploy  (needs: validate + e2e — solo push a main)
 
 Cada push a `main` que pase `validate` + `e2e` despliega automáticamente a producción en Vercel (sin doble build gracias a `--prebuilt`). El job `deploy` también se puede disparar manualmente desde Actions (`workflow_dispatch`) sobre `main`.
 
-> ✅ **El gate de seguridad está verde (octubre 2026).** El audit se parte en dos capas: `--omit=dev` (superficie real de producción) bloquea, y en el árbol completo solo bloquea un advisory **crítico**. La deuda dev-only sin parche publicado (`braces@3.0.3`) se emite como `::warning::` y no frena el deploy. Ver [Deuda técnica conocida](#deuda-técnica-conocida).
+> ✅ **El gate de seguridad está verde (verificado el 24 de octubre de 2026).** El audit se parte en dos capas: `--omit=dev` (superficie real de producción) bloquea, y en el árbol completo solo bloquea un advisory **crítico**. La deuda dev-only sin parche publicado (`braces@3.0.3`) se emite como `::warning::` y no frena el deploy. Ver [Deuda técnica conocida](#deuda-técnica-conocida).
 
 **Versión Mermaid** (renderiza en GitHub):
 
@@ -730,15 +743,15 @@ flowchart TD
 - **Validación**: Zod en todas las APIs y formularios; escape HTML en el email.
 - **Accesibilidad**: `prefers-reduced-motion`, tests con axe-core, ARIA labels.
 - **Resiliencia**: ErrorBoundary del copilot, model pool con fallback real, 503 cuando todo el pool falla.
-- **`npm audit`**: **producción en cero** — `npm audit --omit=dev --audit-level=moderate` sale con código 0 (quedan 8 avisos **low** en la cadena `streamdown`/`katex`, que no bloquean). En el árbol completo persisten **1 high dev-only** (`braces@3.0.3` vía `shadcn → fast-glob → micromatch`; 3.0.3 es la última versión publicada, sin parche upstream) y **1 low de runtime** (`katex`, sin fix en el rango). Overrides, rangos y racional en [ADR-001](docs/adr/ADR-001-production-hardening.md).
+- **`npm audit`**: **producción en cero** — `npm audit --omit=dev --audit-level=moderate` sale con código 0 (quedan 7 avisos **low** en la cadena `streamdown`/`katex`, que no bloquean). En el árbol completo persisten **1 high dev-only** (`braces@3.0.3` vía `shadcn → fast-glob → micromatch`; 3.0.3 es la última versión publicada, sin parche upstream) y **7 low de runtime** (la cadena `katex`, un solo advisory replicado, sin fix en el rango). Overrides, rangos y racional en [ADR-001](docs/adr/ADR-001-production-hardening.md).
 
 ---
 
 ## Deuda técnica conocida
 
-Estado verificado sobre el código de esta rama (verificado el 22 de octubre de 2026 con `npm audit` sobre el árbol completo). Ningún punto de esta lista está cerrado; la documentación **no** debe afirmar que sí.
+Estado verificado sobre el código de esta rama (verificado el 24 de octubre de 2026 con `npm audit` sobre el árbol completo). Ningún punto de esta lista está cerrado; la documentación **no** debe afirmar que sí.
 
-> Inventario literal de `npm audit --json` sobre el árbol completo: **16 avisos (8 low, 8 high, 0 moderate, 0 critical)**. Los 8 high son un solo advisory (`braces`) replicado en 8 nodos. En la superficie de producción (`--omit=dev`): **8 low, 0 high, 0 moderate, 0 critical**. “Runtime” = llega al bundle de producción; “dev” = solo `devDependencies` (no llega al runtime, pero mantiene el gate de CI en rojo).
+> Inventario literal de `npm audit --json` sobre el árbol completo: **8 avisos (7 low, 1 high, 0 moderate, 0 critical)** — el high es `braces` (dev-only) y los 7 low son la cadena `katex`. En la superficie de producción (`--omit=dev`): **7 low, 0 high, 0 moderate, 0 critical** (actualizado el 24 oct 2026 tras subir los overrides `fast-uri` a 3.1.9 y `undici` a 7.30.1). “Runtime” = llega al bundle de producción; “dev” = solo `devDependencies` (no llega al runtime, pero mantiene el gate de CI en rojo).
 
 ### Cerrado — gate P0 del audit (octubre 2026)
 
@@ -752,8 +765,9 @@ El gate volvió a verde **sin relajar la seguridad**: se separó la **exposició
 | 4 | `brace-expansion` con overrides **scoped por rango**: `@<2.0.0 → 1.1.21` (minimatch@3) y `@>=4.0.0 → 5.0.12` (minimatch@10) | lint + 539 tests |
 | 5 | Gate de CI en dos capas: `--omit=dev --audit-level=moderate` (bloqueante) + `--audit-level=critical` en todo el árbol (bloqueante); el resto se emite como `::warning::` | reproducido localmente |
 | 6 | `vitest` `4.1.11 → 4.1.12` (cierra los 2 `moderate` de `@vitest/mocker`: inyección de código vía registro de mocks y bypass de la allowlist de redirección) | `npm audit` + 624 tests |
+| 7 | Overrides `fast-uri 3.1.8 → 3.1.9` y `undici 7.29.1 → 7.30.1` (24 oct 2026) — cerraron 4 advisories `moderate` de `fast-uri` (scheme spoofing / host confusion) y el `high` de `undici` (DoS en el parser de EventSource) que habían reaparecido en la superficie de producción | `npm audit --omit=dev --audit-level=moderate` → exit 0 |
 
-**Resultado medido:** `npm audit` pasa de **37 avisos (1 critical, 15 high, 13 moderate, 8 low)** a **16 (8 low, 8 high)** — y los 8 high son **un solo advisory** (`braces`) replicado en 8 nodos del árbol. En la superficie de producción: **0 critical, 0 high, 0 moderate**.
+**Resultado medido (24 oct 2026):** `npm audit` pasa de **37 avisos (1 critical, 15 high, 13 moderate, 8 low)** a **8 (7 low, 1 high)** — el high es `braces` (dev-only, sin parche) y los 7 low son la cadena `katex`. En la superficie de producción: **0 critical, 0 high, 0 moderate**.
 
 ### Deuda abierta
 
@@ -763,7 +777,7 @@ El gate volvió a verde **sin relajar la seguridad**: se separó la **exposició
 | 2 | low (runtime) | `katex@0.16.47` vía `streamdown → @streamdown/math` | Prototype pollution, rango `0.11.0–0.18.2` | Sin fix dentro del rango del advisory; no bloquea por ser `low` |
 | 3 | P1 | `src/app/api/track/download/route.ts` | La IP **registrada** en el evento usa el **primer** hop de `x-forwarded-for` (`forwarded?.split(',')[0]`, spoofeable), mientras el rate limit de esa misma función usa el **último** (`getClientId(req)`) | Abierto — métricas de descargas manipulables |
 | 4 | P2 | `next.config.ts` | Warning de Turbopack por `fs.readFile` dinámico: arrastra el proyecto completo al bundle de servidor | Abierto |
-| 5 | P2 | `src/features/stats/*` + `useAskAIChat.ts` | 3 warnings de ESLint (2 `no-unused-vars` + 1 `react-hooks/exhaustive-deps`) | Abierto |
+| 5 | P2 | `src/features/stats/*` + `useAskAIChat.ts` | 3 warnings de ESLint (2 `no-unused-vars` + 1 `react-hooks/exhaustive-deps`) | **Cerrado (24 oct 2026)** — `npm run lint` da 0 warnings en `src/`; quedan 5 warnings en `server/src` (fila 13) |
 | 6 | P2 | `accessibility.test.tsx` (2) + `AskAISuggestionBar.test.tsx` (4) | 6 warnings `act(...)` de React | Abierto |
 | 7 | P2 | `vitest.config.ts` | `configLoader: 'native'` no soporta ESM en un `.ts` cargado como CommonJS | Abierto |
 | 8 | P2 | `.lighthouseci.json` | LHCI **nunca lo lee** (su lista es `lighthouserc.{js,cjs,json,yml,yaml}` y `.lighthouserc.*`); duplica y contradice `lighthouserc.json` y apunta a `./.next/standalone`, que no existe | Abierto |
@@ -771,6 +785,7 @@ El gate volvió a verde **sin relajar la seguridad**: se separó la **exposició
 | 10 | P2 | `src/features/portfolio/CyberAttackMap3D.tsx` | El bundle de Three.js + `@react-three/drei` se carga en la home por el mapa embebido en el panel SIEM; no hay code-splitting del chunk WebGL | Abierto — el mapa llega a `dynamic()` con `ssr: false` en la página `/cyber-attack-map`, pero el bloque del panel SIEM lo importa de forma directa |
 | 11 | P3 | `src/app/api/threat-intel/route.ts` | La caché en memoria del bloque KEV es **por instancia**: en Vercel (serverless) cada instancia tiene la suya, así que el TTL real puede ser menor que el declarado | Abierto — documentado en la propia respuesta (`cacheTtlSeconds`) |
 | 12 | P3 | `/estadisticas-privadas` (producción) | Sin sesión responde **soft-404** (HTTP 200 + contenido 404) — quirk de Next 16; sin fuga de datos ni render de información sensible | Abierto — deuda técnica cosmética de bajo riesgo; la seguridad no depende del status code |
+| 13 | P3 | `server/src/**` | 5 warnings de ESLint (3 `no-unused-vars`, 2 `no-unused-expressions`) en el paquete hermano `server/` | Abierto — recién trackeado (24 oct 2026); no bloquea (`npm run lint` sale 0) |
 
 ### Reglas para futuras actualizaciones
 
@@ -804,6 +819,7 @@ npm run test:e2e          # opcional, contra build de producción
 | `docs/ask-juan-ai-copilot.md` | Detalle del copilot: prompt, tools, scoring RAG y tests golden | **Vigente** |
 | `docs/cyber-attack-map.md` | Detalle del mapa 3D: fuentes de datos, regla de honestidad, geometría del arco, seams | **Vigente** |
 | `docs/adr/ADR-001-production-hardening.md` | Decisión de hardening: seguridad, testing, performance | **Vigente** (con nota de audit actualizada) |
+| `docs/adr/ADR-002-remove-sentry-distributed-contact-rate-limit.md` | Propuesta de retirar Sentry, distribuir el rate limit de `/api/contact` y borrar `/api/chat` | **Histórico** — no aplicado tal cual; ver la nota de «Estado real» dentro del ADR |
 | `srs_document.md` | Especificación de requerimientos del sistema | **Vigente** (arquitectura real) |
 | `AGENTS.md` / `CLAUDE.md` | Reglas y contexto para agentes de IA | Vigente |
 | `ASK_AI_ENTERPRISE_IMPLEMENTATION_PLAN.md` | Plan operativo original del copilot | **Histórico** — el estado real está en `README.md` / `CONTEXT.md` |
