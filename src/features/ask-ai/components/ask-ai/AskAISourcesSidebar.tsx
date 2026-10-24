@@ -17,29 +17,39 @@ interface AskAISourcesSidebarProps {
   messageCount: number;
   mode: string;
   isLoading: boolean;
+  /** Real retrieved sources from message metadata; falls back to SOURCE_ITEMS when empty. */
+  sources?: Array<{ title: string; id?: string }>;
 }
 
-export function AskAISourcesSidebar({ messageCount, mode, isLoading }: AskAISourcesSidebarProps) {
+export function AskAISourcesSidebar({
+  messageCount,
+  mode,
+  isLoading,
+  sources = [],
+}: AskAISourcesSidebarProps) {
   const { language, t } = useLanguage();
+
+  const items = sources.length > 0
+    ? sources.map((source) => ({ title: source.title, href: '#perfil' }))
+    : SOURCE_ITEMS.map((item) => ({ title: t(item.titleKey), href: item.href }));
 
   return (
     <div className="hidden sm:flex flex-col w-60 border-l border-slate-800 bg-slate-900/30 flex-shrink-0">
       <div className="px-4 py-3 border-b border-slate-800">
         <h4 className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider flex items-center gap-2">
-          <BookOpen className="w-3.5 h-3.5" />
-          {language === 'en' ? 'Sources' : 'Fuentes'}
+          <BookOpen className="w-3.5 h-3.5" /> {language === 'en' ? 'Sources' : 'Fuentes'}
         </h4>
       </div>
       <ScrollArea className="flex-1">
         <div className="p-3 space-y-3">
           <Sources>
-            <SourcesTrigger count={SOURCE_ITEMS.length} />
+            <SourcesTrigger count={items.length} />
             <SourcesContent>
-              {SOURCE_ITEMS.map((item) => (
+              {items.map((item) => (
                 <Source
                   key={item.href}
                   href={item.href}
-                  title={t(item.titleKey)}
+                  title={item.title}
                   className="text-xs text-[var(--text-muted)] hover:text-orange-400 transition-colors"
                 />
               ))}
@@ -73,11 +83,7 @@ export function AskAISourcesSidebar({ messageCount, mode, isLoading }: AskAISour
                 </span>
                 <Badge
                   variant="outline"
-                  className={`text-[10px] h-5 ${
-                    isLoading
-                      ? 'border-orange-500/30 text-orange-400'
-                      : 'border-emerald-500/30 text-emerald-400'
-                  }`}
+                  className={`text-[10px] h-5 ${isLoading ? 'border-orange-500/30 text-orange-400' : 'border-emerald-500/30 text-emerald-400'}`}
                 >
                   {isLoading ? 'Streaming' : language === 'en' ? 'Ready' : 'Listo'}
                 </Badge>
@@ -88,4 +94,4 @@ export function AskAISourcesSidebar({ messageCount, mode, isLoading }: AskAISour
       </ScrollArea>
     </div>
   );
-}
+}
