@@ -39,7 +39,7 @@ describe('CyberAttackMap3D · escena sincronizada', () => {
   })
 
   it('rotates the earth, the labels, the pin, the arcs and the bursts as one unit', () => {
-    const rotatingEarth = sliceBetween('<RotatingEarth>', '</RotatingEarth>')
+    const rotatingEarth = sliceBetween('<RotatingEarth', '</RotatingEarth>')
 
     expect(rotatingEarth).toContain('<Globe />')
     expect(rotatingEarth).toContain('<CountryLabel')
@@ -102,11 +102,42 @@ describe('CyberAttackMap3D · escena sincronizada', () => {
     expect(Number(match![1])).toBeGreaterThanOrEqual(0.015)
   })
 
+  it('offers accessible controls for zoom, rotation and the flat view', () => {
+    // Los botones son la única forma de operar el mapa sin ratón: cada uno
+    // necesita su rótulo traducido y el panel, su propio nombre de grupo.
+    const controlKeys = [
+      'threatmap.controls.toolbar_aria',
+      'threatmap.controls.zoom_in',
+      'threatmap.controls.zoom_out',
+      'threatmap.controls.left',
+      'threatmap.controls.right',
+      'threatmap.controls.pause_rotation',
+      'threatmap.controls.resume_rotation',
+      'threatmap.controls.flat_view',
+      'threatmap.controls.globe_view',
+    ] as const
+
+    for (const key of controlKeys) {
+      expect(threatmap.es[key], `falta en español: ${key}`).toBeTruthy()
+      expect(threatmap.en[key], `falta en inglés: ${key}`).toBeTruthy()
+    }
+
+    expect(source).toContain('role="group"')
+    expect(source).toContain("t('threatmap.controls.toolbar_aria')")
+    expect(source).toContain('nextCameraDistance')
+    expect(source).toContain('nextFlatScale')
+    expect(source).toContain('<CyberAttackMapFlat')
+  })
+
   it('exposes the statistics bar to assistive technology', () => {
     // La etiqueta sale del diccionario: el mapa es bilingüe, así que el texto
     // fijo en el componente sería un texto fijo en un solo idioma.
     expect(source).toContain("t('threatmap.stats.aria')")
-    expect(source).not.toContain('aria-hidden="true"')
+
+    // La barra no se oculta a lectores de pantalla. (Los iconos de los
+    // controles sí llevan `aria-hidden`: su nombre lo pone el botón.)
+    const statsBlock = sliceBetween("t('threatmap.stats.aria')", '{statCells.map')
+    expect(statsBlock).not.toContain('aria-hidden')
   })
 
   it('only uses events with a real IP as the origin of an arc', () => {

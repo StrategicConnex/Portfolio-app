@@ -206,7 +206,27 @@ El panel (`ArcTooltipPanel`) muestra IP real, ASN, número de reportes y país d
 **etiquetas** salen del diccionario y la **lógica** vive en `arcTooltip.ts` (función pura,
 sin dependencias de React) — por eso el mismo mapa se lee igual en español y en inglés.
 
-### 5.7 Bilingüismo
+### 5.7 Controles y vista plana
+
+El mapa trae una barra de controles (acercar, alejar, izquierda, derecha, pausar la
+rotación y cambiar a mapa plano). La aritmética vive en `mapControls.ts` como funciones
+puras —límites de distancia de cámara, paso de giro manual y encuadre de la vista
+plana— para poder testearla sin montar WebGL.
+
+Los botones laterales giran el globo en 3D (el ángulo se acumula en una ref y se aplica
+en el frame siguiente, sin re-renderizar la escena) y desplazan el encuadre en la vista
+plana. En plano el desplazamiento se habilita al ampliar: a escala 1 el mapa ya está
+encajado al marco y moverlo dejaría un borde negro. La pausa detiene a la vez el giro de
+`RotatingEarth` y el `autoRotate` de `OrbitControls`; los giros manuales siguen
+funcionando.
+
+La vista plana (`CyberAttackMapFlat.tsx` + `flatProjection.ts`) es un SVG equirectangular
+360 × 180 sobre la misma textura NASA. Proyecta los arcos con la longitud más corta y los
+dibuja tres veces con desplazamientos de −360/0/+360, de modo que un arco que cruza el
+antimeridiano aparece por el borde contrario en vez de cruzar todo el mapamundi. En esa
+vista el `<Canvas>` se desmonta y se vuelve a montar al regresar al globo.
+
+### 5.8 Bilingüismo
 
 El mapa se dibuja en un canvas de WebGL: no hay DOM que traducir. Por eso **todo** su texto
 visible sale de `src/context/translations/threatmap.ts`:

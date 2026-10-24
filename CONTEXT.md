@@ -19,7 +19,9 @@ Domain code lives in **feature modules**, not in the shared roots:
   Arquitectura, Experiencia, SIEMDashboard, AuditHub, SCAudit, Blog, Stack,
   Certificaciones, Proyecto, Contacto) plus global chrome (Navbar, Footer,
   HtmlLangUpdater) and 3D/canvas visuals. The cyber-attack map lives here too:
-  `CyberAttackMap3D.tsx` (the WebGL scene), `ArcTooltipPanel.tsx` +
+  `CyberAttackMap3D.tsx` (the WebGL scene), `CyberAttackMapFlat.tsx` +
+  `flatProjection.ts` (flat equirectangular view), `mapControls.ts` (zoom,
+  manual rotation and flat-pan arithmetic), `ArcTooltipPanel.tsx` +
   `arcTooltip.ts` (arc detail), `attackArc.ts` (arc geometry),
   `globeRotation.ts` (frame-rate independent rotation).
 - `src/lib/` — **shared seams only** (language, rate-limit, server-i18n,
@@ -302,6 +304,11 @@ Domain code lives in **feature modules**, not in the shared roots:
   if a literal string is reintroduced in the component. Provider text
   (DShield attack types, ASN names) and technical nomenclature (DDoS, Botnet
   C2, SQL Injection, APT) stay untranslated on purpose.
+- **Map controls seam** (`mapControls.ts`): zoom limits, the manual-rotation
+  step and flat-pan limits live in pure functions, not inline in the scene.
+  The toolbar calls them; `mapControls.test.ts` covers the clamping without
+  mounting WebGL. The flat view is a separate DOM/SVG surface
+  (`CyberAttackMapFlat.tsx`), so the Canvas unmounts while it is active.
 - **Lazy-loading seam** (`LazyCyberAttackMap.tsx` +
   `CyberAttackMap3D.loader.tsx`): the **only** supported way to mount the 3D
   scene. three.js + `@react-three/fiber` + `drei` (~914 KB) live in a dynamic

@@ -1,8 +1,27 @@
 'use client'
 
-import { useRef, useMemo, useState, useEffect, useCallback, Suspense, type ReactNode } from 'react'
+import {
+  useRef,
+  useMemo,
+  useState,
+  useEffect,
+  useCallback,
+  Suspense,
+  type ComponentRef,
+  type ReactNode,
+} from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
 import { OrbitControls, Stars, Text, useTexture } from '@react-three/drei'
+import {
+  ChevronLeft,
+  ChevronRight,
+  Globe2,
+  Map as MapIcon,
+  Pause,
+  Play,
+  ZoomIn,
+  ZoomOut,
+} from 'lucide-react'
 import * as THREE from 'three'
 import { COUNTRY_COORDS, latLngToVector3 } from '@/data/countryCoords'
 import { useLanguage } from '@/context/LanguageContext'
@@ -16,7 +35,19 @@ import {
   type AttackType,
 } from './attackArc'
 import { advanceEarthRotation } from './globeRotation'
+import {
+  MAX_CAMERA_DISTANCE,
+  MIN_CAMERA_DISTANCE,
+  flatPanLimit,
+  manualRotationDelta,
+  nextCameraDistance,
+  nextFlatPan,
+  nextFlatScale,
+  type HorizontalDirection,
+  type ZoomDirection,
+} from './mapControls'
 import ArcTooltipPanel from './ArcTooltipPanel'
+import CyberAttackMapFlat from './CyberAttackMapFlat'
 
 /**
  * Fuente de las etiquetas: la del sistema de diseño Strata Protocol, servida
@@ -473,14 +504,67 @@ function Globe() {
  * Gira la tierra + todo lo que está anclado a ella como una sola unidad.
  * Es lo que mantiene las etiquetas, el pin y los arcos sobre sus coordenadas.
  */
-function RotatingEarth({ children }: { children: ReactNode }) {
+function RotatingEarth({
+  children,
+  paused,
+  pendingRotationRef,
+}: {
+  children: ReactNode
+  /** Detiene el giro automático; los giros manuales siguen funcionando. */
+  paused: boolean
+  /** Giro pendiente que dejan los botones izquierda/derecha. */
+  pendingRotationRef: { current: number }
+}) {
   const groupRef = useRef<THREE.Group>(null)
+
   useFrame((_, delta) => {
-    if (groupRef.current) {
-      groupRef.current.rotation.y = advanceEarthRotation(groupRef.current.rotation.y, delta)
+    const group = groupRef.current
+    if (!group) return
+
+    const pending = pendingRotationRef.current
+    if (pending !== 0) {
+      // Se aplica en el frame siguiente al clic para no competir con la
+      // rotación automática del mismo frame.
+      group.rotation.y = group.rotation.y + pending
+      pendingRotationRef.current = 0
+    }
+
+    if (!paused) {
+      group.rotation.y = advanceEarthRotation(group.rotation.y, delta)
     }
   })
+
   return <group ref={groupRef}>{children}</group>
+}
+
+/** Botón del panel de control del mapa. */
+function ControlButton({
+  label,
+  onClick,
+  pressed,
+  disabled,
+  children,
+}: {
+  label: string
+  onClick: () => void
+  /** Estado de los botones de alternancia (pausa, vista plana). */
+  pressed?: boolean
+  disabled?: boolean
+  children: ReactNode
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label={label}
+      title={label}
+      aria-pressed={pressed}
+      disabled={disabled}
+      className="flex h-9 w-9 items-center justify-center rounded-lg border border-blue-500/20 bg-black/60 text-blue-200 transition-colors hover:border-blue-400/60 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-400 cursor-pointer disabled:cursor-not-allowed disabled:opacity-40"
+    >
+      {children}
+    </button>
+  )
 }
 
 export default function CyberAttackMap3D() {
@@ -504,8 +588,17 @@ export default function CyberAttackMap3D() {
   const burstIdRef = useRef(0)
   const containerRef = useRef<HTMLDivElement>(null)
   const tooltipRef = useRef<HTMLDivElement>(null)
+  const controlsRef = useRef<ComponentRef<typeof OrbitControls>>(null)
+  /** Giro manual pendiente de aplicar en el siguiente frame. */
+  const pendingRotationRef = useRef(0)
   /** Arco que el puntero está señalando ahora mismo. */
   const [hovered, setHovered] = useState<AttackArcState | null>(null)
+  /** Rotación automática (globo y cámara) activa. */
+  const [autoRotating, setAutoRotating] = useState(true)
+  /** Vista plana en lugar del globo 3D. */
+  const [flatMode, setFlatMode] = useState(false)
+  const [flatScale, setFlatScale] = useState(1)
+  const [flatPan, setFlatPan] = useState(0)
 
   const countries = useMemo(() => Object.keys(COUNTRY_COORDS), [])
 
@@ -671,6 +764,55 @@ export default function CyberAttackMap3D() {
     ])
   }, [])
 
+  /** Acerca o aleja la cámara del globo, o escala el mapa plano. */
+  const zoomBy = useCallback(
+    (direction: ZoomDirection) => {
+      if (flatMode) {
+        const nextScale = nextFlatScale(flatScale, direction)
+        const limit = flatPanLimit(nextScale)
+        setFlatScale(nextScale)
+        // Al alejar, el encuadre anterior puede quedar fuera del nuevo tope.
+        setFlatPan((current) => Math.min(limit, Math.max(-limit, current)))
+        return
+      }
+
+      const controls = controlsRef.current
+      if (!controls) return
+
+      const camera = controls.object
+      const offset = camera.position.clone().sub(controls.target)
+      const distance = nextCameraDistance(offset.length(), direction)
+      camera.position.copy(controls.target).add(offset.setLength(distance))
+      controls.update()
+    },
+    [flatMode, flatScale],
+  )
+
+  /**
+   * Gira el globo o desplaza el encuadre plano.
+   *
+   * En 3D se acumula el ángulo en una ref y se aplica en el frame siguiente:
+   * así el botón no re-renderiza la escena ni pelea con el giro automático.
+   */
+  const moveHorizontal = useCallback(
+    (direction: HorizontalDirection) => {
+      if (flatMode) {
+        const limit = flatPanLimit(flatScale)
+        setFlatPan((current) => nextFlatPan(current, direction, limit))
+        return
+      }
+
+      pendingRotationRef.current += manualRotationDelta(direction)
+    },
+    [flatMode, flatScale],
+  )
+
+  /** Alterna globo 3D ↔ mapa plano equirectangular. */
+  const toggleFlatMode = useCallback(() => {
+    setFlatMode((current) => !current)
+    setHovered(null)
+  }, [])
+
   /**
    * Etiquetas: Argentina siempre, más los países con arcos activos.
    * Los destinos que no son infraestructura real se marcan en otro color.
@@ -755,7 +897,7 @@ export default function CyberAttackMap3D() {
       {/* Badge superior izquierdo */}
       <div className="absolute top-4 left-4 z-10 bg-black/70 backdrop-blur-md px-4 py-3 rounded-lg border border-blue-500/30">
         <div className="text-[10px] text-blue-400 font-bold tracking-[2px] mb-1">
-          {t('threatmap.badge.title')}
+          {flatMode ? t('threatmap.badge.flat') : t('threatmap.badge.title')}
         </div>
         <div
           className={`text-[10px] flex items-center gap-2 ${
@@ -817,7 +959,72 @@ export default function CyberAttackMap3D() {
         </div>
       </div>
 
-      <Canvas camera={{ position: [0, 0, 5.5], fov: 45 }} dpr={[1, 2]} gl={{ antialias: true, alpha: false }}>
+      {/* Controles: zoom, giro/desplazamiento, pausa y cambio de vista. */}
+      <div
+        role="group"
+        aria-label={t('threatmap.controls.toolbar_aria')}
+        className="absolute left-4 top-1/2 z-20 flex -translate-y-1/2 flex-col gap-1.5 rounded-xl border border-blue-500/30 bg-black/75 p-1.5 backdrop-blur-md"
+      >
+        <ControlButton label={t('threatmap.controls.zoom_in')} onClick={() => zoomBy('in')}>
+          <ZoomIn className="h-4 w-4" aria-hidden="true" />
+        </ControlButton>
+        <ControlButton label={t('threatmap.controls.zoom_out')} onClick={() => zoomBy('out')}>
+          <ZoomOut className="h-4 w-4" aria-hidden="true" />
+        </ControlButton>
+        <ControlButton
+          label={t('threatmap.controls.left')}
+          onClick={() => moveHorizontal('left')}
+          disabled={flatMode && flatPanLimit(flatScale) === 0}
+        >
+          <ChevronLeft className="h-4 w-4" aria-hidden="true" />
+        </ControlButton>
+        <ControlButton
+          label={t('threatmap.controls.right')}
+          onClick={() => moveHorizontal('right')}
+          disabled={flatMode && flatPanLimit(flatScale) === 0}
+        >
+          <ChevronRight className="h-4 w-4" aria-hidden="true" />
+        </ControlButton>
+        {!flatMode && (
+          <ControlButton
+            label={
+              autoRotating
+                ? t('threatmap.controls.pause_rotation')
+                : t('threatmap.controls.resume_rotation')
+            }
+            pressed={!autoRotating}
+            onClick={() => setAutoRotating((current) => !current)}
+          >
+            {autoRotating ? (
+              <Pause className="h-4 w-4" aria-hidden="true" />
+            ) : (
+              <Play className="h-4 w-4" aria-hidden="true" />
+            )}
+          </ControlButton>
+        )}
+        <ControlButton
+          label={
+            flatMode
+              ? t('threatmap.controls.globe_view')
+              : t('threatmap.controls.flat_view')
+          }
+          pressed={flatMode}
+          onClick={toggleFlatMode}
+        >
+          {flatMode ? (
+            <Globe2 className="h-4 w-4" aria-hidden="true" />
+          ) : (
+            <MapIcon className="h-4 w-4" aria-hidden="true" />
+          )}
+        </ControlButton>
+      </div>
+
+      {!flatMode && (
+        <Canvas
+          camera={{ position: [0, 0, 5.5], fov: 45 }}
+          dpr={[1, 2]}
+          gl={{ antialias: true, alpha: false }}
+        >
         <color attach="background" args={['#000000']} />
 
         {/* Iluminación fotorrealista */}
@@ -830,7 +1037,7 @@ export default function CyberAttackMap3D() {
 
         {/* Todo lo anclado a la superficie gira junto: es lo que evita que las
             etiquetas, el pin y los arcos se desfasen de la superficie. */}
-        <RotatingEarth>
+        <RotatingEarth paused={!autoRotating} pendingRotationRef={pendingRotationRef}>
           <Suspense fallback={null}>
             <Globe />
 
@@ -862,30 +1069,43 @@ export default function CyberAttackMap3D() {
         </RotatingEarth>
 
         <OrbitControls
+          ref={controlsRef}
           enableZoom
           enablePan={false}
-          minDistance={3.5}
-          maxDistance={9}
-          autoRotate
+          minDistance={MIN_CAMERA_DISTANCE}
+          maxDistance={MAX_CAMERA_DISTANCE}
+          autoRotate={autoRotating}
           autoRotateSpeed={0.4}
         />
-      </Canvas>
+        </Canvas>
+      )}
+
+      {flatMode && (
+        <CyberAttackMapFlat
+          attacks={attacks}
+          labels={labels}
+          scale={flatScale}
+          pan={flatPan}
+        />
+      )}
 
       {/*
         Tooltip del arco señalado: IP real, ASN, número de reportes y país de
         origen. Se posiciona por adelantado (escritura directa en el DOM) para
         que siga al puntero sin re-renderizar la escena.
       */}
-      <div
-        ref={tooltipRef}
-        role={hovered ? 'tooltip' : undefined}
-        aria-hidden={hovered ? undefined : true}
-        className={`pointer-events-none absolute top-0 left-0 z-20 w-60 rounded-lg border border-blue-500/40 bg-black/90 px-3 py-2 shadow-xl backdrop-blur-md transition-opacity duration-150 ${
-          hovered ? 'opacity-100' : 'opacity-0'
-        }`}
-      >
-        {hovered && <ArcTooltipPanel attack={hovered} />}
-      </div>
+      {!flatMode && (
+        <div
+          ref={tooltipRef}
+          role={hovered ? 'tooltip' : undefined}
+          aria-hidden={hovered ? undefined : true}
+          className={`pointer-events-none absolute top-0 left-0 z-20 w-60 rounded-lg border border-blue-500/40 bg-black/90 px-3 py-2 shadow-xl backdrop-blur-md transition-opacity duration-150 ${
+            hovered ? 'opacity-100' : 'opacity-0'
+          }`}
+        >
+          {hovered && <ArcTooltipPanel attack={hovered} />}
+        </div>
+      )}
 
       {/* Barra de estadísticas: número arriba, código abajo */}
       <div
