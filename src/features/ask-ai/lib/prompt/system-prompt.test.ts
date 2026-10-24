@@ -138,3 +138,18 @@ describe('buildSystemPrompt', () => {
     expect(prompt).not.toContain('Past conversations:')
   })
 })
+
+describe('evidence and honesty rules', () => {
+  it('documents provenance, citations and the SIEM boundary (es/en)', () => {
+    const es = buildSystemPrompt({ language: 'es', mode: 'ask', ragContext: '', sources: [] })
+    expect(es).toContain('procedencia')
+    expect(es).toContain('no inventes')
+    expect(es).toContain('SIEM')
+    const en = buildSystemPrompt({ language: 'en', mode: 'ask', ragContext: '', sources: [] })
+    expect(en).toContain('provenance')
+    // Nota: el plan escribía 'GetThreatIntel'; el id real de la tool es
+    // camelCase (`getThreatIntel`) y así debe documentarlo el prompt.
+    expect(en).toContain('do not invent')
+    expect(en).toContain('getThreatIntel')
+  })
+})

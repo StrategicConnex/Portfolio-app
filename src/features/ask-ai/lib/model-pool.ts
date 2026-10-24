@@ -107,6 +107,8 @@ export interface StreamWithFallbackOptions {
   tools: ToolSet;
   maxOutputTokens: number;
   system: string;
+  /** Optional AI SDK stop condition (e.g. `stepCountIs(4)` for tool loops). */
+  stopWhen?: Parameters<typeof streamText>[0]['stopWhen'];
   /**
    * Called with the winning model id and its 1-based index in the pool
    * (1 = the first model answered, no fallback); the returned object is
@@ -313,6 +315,7 @@ export async function streamWithFallback(
           tools: options.tools,
           maxOutputTokens: options.maxOutputTokens,
           system: options.system,
+          stopWhen: options.stopWhen,
           onFinish: (event) => {
             options.onFinish?.({
               modelId,

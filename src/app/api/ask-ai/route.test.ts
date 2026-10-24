@@ -129,6 +129,9 @@ describe('POST /api/ask-ai — RAG context in the system prompt', () => {
     for (const name of ['dnsAnalyzer', 'sslChecker', 'httpHeadersAnalyzer', 'whoisLookup', 'techStackDetector', 'portAnalyzer']) {
       expect(tools![name]).toBeDefined()
     }
+    for (const name of ['getThreatIntel', 'searchLibrary', 'generateReport']) {
+      expect(tools![name]).toBeDefined()
+    }
     // The tools are wrapped for telemetry (`withToolTelemetry`), so identity
     // differs — the surface (names, descriptions, schemas) must match.
     expect(Object.keys(tools!)).toEqual(Object.keys(askAiTools))

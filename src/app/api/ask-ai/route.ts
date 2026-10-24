@@ -1,10 +1,10 @@
-import { type UIMessage, convertToModelMessages } from 'ai';
+import { type UIMessage, convertToModelMessages, stepCountIs } from 'ai';
 import { createOpenAI } from '@ai-sdk/openai';
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { checkRateLimit, getClientId } from '@/lib/rate-limit';
 import { buildRagContext } from '@/features/ask-ai/lib/rag/retriever';
-import { askAiTools } from '@/features/ask-ai/lib/tools/registry';
+import { createAskAiTools } from '@/features/ask-ai/lib/tools/registry';
 import { buildSystemPrompt } from '@/features/ask-ai/lib/prompt/system-prompt';
 import { streamWithFallback, ModelPoolError, buildFreeModelPool } from '@/features/ask-ai/lib/model-pool';
 import { emitAskAiEvent, withToolTelemetry, hashQuery, messageOf } from '@/features/ask-ai/lib/telemetry';
@@ -159,6 +159,10 @@ export async function POST(req: Request) {
     // winning model id travels to the client as stream metadata for the
     // panel's model badge.
 
+    // Locale-bound tool registry: searchLibrary/generateReport answer in the
+    // request language (the 7 passive tools are locale-independent).
+    const tools = createAskAiTools({ locale: language as 'es' | 'en' });
+
     const provider = createProvider();
 
     try {
@@ -171,7 +175,9 @@ export async function POST(req: Request) {
           messages: modelMessages,
           // Tools wrapped for telemetry: every execution emits
           // `ask_ai_tool_called` with latency and status.
-          tools: withToolTelemetry(askAiTools),
+          tools: withToolTelemetry(tools),
+          // Tool loop: up to 4 steps so tool results can feed the answer.
+          stopWhen: stepCountIs(4),
           maxOutputTokens: 4096,
           system: systemPrompt,
           messageMetadata: (modelId, attemptIndex) => ({
@@ -179,6 +185,8 @@ export async function POST(req: Request) {
             // The client shows a fallback indicator when the first pool
             // model failed and a later one answered.
             fellBack: attemptIndex > 1,
+            // Real RAG sources for this turn — the sources sidebar renders them.
+            sources,
           }),
           // `stream_completed` fires when the committed stream ends, with
           // the token usage/finish data only the pool can observe.
