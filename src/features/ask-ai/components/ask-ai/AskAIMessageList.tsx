@@ -8,6 +8,7 @@ import { Message, MessageContent, MessageResponse, MessageActions, MessageAction
 import { ToolCallCard } from '@/features/ask-ai/components/ask-ai/tools/ToolCallCard';
 import { AskAIEmptyState } from '@/features/ask-ai/components/ask-ai/AskAIEmptyState';
 import { AskAISuggestionBar } from '@/features/ask-ai/components/ask-ai/AskAISuggestionBar';
+import { toolInvocationFromPart } from '@/features/ask-ai/lib/message-parts';
 import { getTextContent } from './hooks/useAskAIChat';
 
 const FOLLOW_UP_PROMPT_KEYS = [
@@ -62,11 +63,11 @@ export function AskAIMessageList({
         ) : (
           /* Message list */
           messages.map((m) => {
-            const hasToolParts = m.parts.some(
-              (p) =>
-                p.type === 'tool-invocation' ||
-                (p as { type?: string }).type === 'tool-invocation',
-            );
+            // El SDK actual emite `tool-<nombre>`; las conversaciones
+            // guardadas pueden traer `tool-invocation`. El normalizador acepta
+            // ambas formas y descarta lo que no sea una invocación válida.
+            const toolViews = m.parts.map((part) => toolInvocationFromPart(part));
+            const hasToolParts = toolViews.some((view) => view !== null);
             const textContent = getTextContent(m);
 
             // Message with tool invocations — render parts individually
@@ -75,26 +76,19 @@ export function AskAIMessageList({
                 <Message key={m.id} from={m.role}>
                   <MessageContent>
                     {m.parts.map((part, idx) => {
+                      const view = toolViews[idx];
+                      if (view) {
+                        return (
+                          <div key={`tool-${idx}`} className="my-2">
+                            <ToolCallCard toolInvocation={view} />
+                          </div>
+                        );
+                      }
                       if (part.type === 'text') {
                         return (
                           <MessageResponse key={`text-${idx}`}>
                             {part.text}
                           </MessageResponse>
-                        );
-                      }
-                      if (part.type === 'tool-invocation' && part.toolInvocation) {
-                        const ti = part.toolInvocation;
-                        return (
-                          <div key={`tool-${idx}`} className="my-2">
-                            <ToolCallCard
-                              toolInvocation={{
-                                toolName: ti.toolName as string,
-                                state: ti.state as 'call' | 'result',
-                                args: ti.args as Record<string, unknown> | undefined,
-                                result: ti.result as Record<string, unknown> | undefined,
-                              }}
-                            />
-                          </div>
                         );
                       }
                       return null;

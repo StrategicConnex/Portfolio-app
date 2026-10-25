@@ -32,18 +32,27 @@ test('renders and exports a generated report', async ({ page }) => {
     })
   })
 
-  await page.goto('/ask-ai')
+  // The copilot is a floating panel, not a dedicated route: open it and send
+  // a prompt so the SSE stream above is actually requested.
+  await page.goto('/')
+  await page.getByRole('button', { name: 'Tanos AI' }).click()
+  const prompt = page.getByRole('textbox').first()
+  await prompt.fill('Genera un informe del panorama de amenazas')
+  await prompt.press('Enter')
+
   // Wait for the SSE stream to complete and the report to appear
-  await page.waitForSelector('text=Panorama de amenazas', { timeout: 10000 })
-  // Check the report is rendered
-  await expect(page.getByText('Orígenes')).toBeVisible()
+  await page.waitForSelector('text=Panorama de amenazas', { timeout: 15000 })
+  // Scope the assertions to the report card: the portfolio page behind the
+  // panel also has buttons whose names contain "PDF".
+  const report = page.getByRole('region').filter({ hasText: 'Panorama de amenazas' })
+  await expect(report.getByText('Orígenes')).toBeVisible()
   // Check export buttons are available
-  await expect(page.getByRole('button', { name: /markdown/i })).toBeVisible()
-  await expect(page.getByRole('button', { name: /json/i })).toBeVisible()
+  await expect(report.getByRole('button', { name: /markdown/i })).toBeVisible()
+  await expect(report.getByRole('button', { name: /json/i })).toBeVisible()
   // PDF should be disabled
-  await expect(page.getByRole('button', { name: /pdf/i })).toBeDisabled()
+  await expect(report.getByRole('button', { name: /pdf/i })).toBeDisabled()
   // Download Markdown
-  await page.getByRole('button', { name: /markdown/i }).click()
+  await report.getByRole('button', { name: /markdown/i }).click()
   // Download JSON
-  await page.getByRole('button', { name: /json/i }).click()
+  await report.getByRole('button', { name: /json/i }).click()
 })

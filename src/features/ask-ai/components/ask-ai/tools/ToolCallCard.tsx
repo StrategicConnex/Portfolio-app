@@ -16,6 +16,9 @@ import type { HttpHeadersResult } from '@/features/ask-ai/lib/tools/http-headers
 import { TechStackResultCard } from './TechStackResultCard';
 import type { TechStackResult } from '@/features/ask-ai/lib/tools/tech-stack-detector';
 import { PortAnalyzerResultCard, type PortAnalyzerResult } from './PortAnalyzerResultCard';
+import { ReportViewer } from '../reports/ReportViewer';
+import { reportSpecSchema } from '@/features/ask-ai/lib/reports/schema';
+import { ThreatIntelCard, isThreatIntelSummary } from './ThreatIntelCard';
 
 /** Tool name → result type mapping for type-safe render dispatch */
 interface ToolResultMap {
@@ -64,6 +67,18 @@ export function ToolCallCard({ toolInvocation }: Props) {
   if (hasResult) {
     if (result.error && typeof result.error === 'string') {
       return <ErrorCard toolName={toolName} error={result.error} args={args} />;
+    }
+
+    // Informe estructurado: se valida con el mismo contrato Zod que produce la
+    // tool. Si el payload no es un ReportSpec, cae al resultado genérico.
+    if (toolName === 'generateReport') {
+      const parsed = reportSpecSchema.safeParse(result.data);
+      if (parsed.success) return <ReportViewer spec={parsed.data} />;
+    }
+
+    // Feed real del mapa: procedencia, estado de fuentes y eventos con IP.
+    if (toolName === 'getThreatIntel' && isThreatIntelSummary(result.data)) {
+      return <ThreatIntelCard summary={result.data} />;
     }
 
     // Look up the renderer; the single cast here replaces 6 per-case `as unknown as` casts

@@ -135,6 +135,8 @@ flowchart TD
 | **Rotación del globo** | `src/features/portfolio/globeRotation.ts` | Velocidad en radianes/segundo con delta real del frame (clamp a 100 ms). Garantiza que globo, etiquetas, pin y arcos roten **como una unidad** |
 | **Controles del mapa** | `src/features/portfolio/mapControls.ts` | Barra flotante del mapa: acercar/alejar (cámara 3.5–9 · escala plana 1–2.6), girar 10° por paso, pausar/reanudar la rotación y alternar la vista plana. Funciones puras con límites acotados, testeadas sin montar WebGL |
 | **Vista plana del mapa** | `src/features/portfolio/flatProjection.ts` + `CyberAttackMapFlat.tsx` | Proyección equirectangular (viewBox 360×180) con wrap del antimeridiano; al activarla se desmonta el `<Canvas>` de three.js y los mismos arcos/etiquetas se dibujan en SVG |
+| **Canal Chat-to-UI** | `src/lib/ui-command.ts` + `src/lib/map-command*.ts` / `siem-command*.ts` | Única lectura de los comandos completados de `controlMapView`/`controlSiemView`: acepta `tool-<nombre>` (SDK actual) y `tool-invocation` (heredado), valida el comando en runtime y lo entrega a la UI montada por un bus con deduplicación por `toolCallId` (un comando restaurado no se reaplica) |
+| **Partes del mensaje y tarjetas** | `src/features/ask-ai/lib/message-parts.ts` + `ask-ai/tools/ToolCallCard.tsx` | Normaliza las partes de tool (`output-available` / `output-error` / `input-available`) y delega en la tarjeta dedicada: `ReportViewer` para `generateReport` y `ThreatIntelCard` para `getThreatIntel`; un payload inválido cae al resultado genérico |
 
 ---
 
@@ -241,6 +243,10 @@ a diario).
 ### Herramientas (pasivas)
 
 `dnsAnalyzer` · `sslChecker` · `httpHeadersAnalyzer` · `whoisLookup` · `techStackDetector` · `portAnalyzer` — todas con Zod schema, `safe-fetch` (bloqueo de IPs privadas/SSRF) y tarjetas de resultado dedicadas en `src/features/ask-ai/components/ask-ai/tools/`.
+
+### Chat-to-UI y resultados ricos
+
+`controlMapView` y `controlSiemView` no describen el panel: lo controlan. La tool valida el comando, el chat lo entrega por un canal con deduplicación (`ask-ai:map-command`, `ask-ai:siem-command`) y el mapa o el SIEM lo aplica sobre datos reales; si el panel no está montado, el comando espera al montaje. En el mismo flujo, `generateReport` se renderiza como `ReportViewer` (export Markdown/JSON, PDF deshabilitado) y `getThreatIntel` como `ThreatIntelCard` con procedencia, estado de cada fuente y enlaces de solo lectura a VirusTotal. Ambos validan el payload antes de dibujarse: nunca inventan eventos, países ni conteos.
 
 ---
 

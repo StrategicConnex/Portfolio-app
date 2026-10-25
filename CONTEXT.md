@@ -243,6 +243,28 @@ Domain code lives in **feature modules**, not in the shared roots:
   declared, never replaced with invented data. `coalesce()` collapses
   concurrent bursts into a single upstream query per source. Do not
   re-suggest a per-component feed fetch or a second aggregation point.
+### Seam: Chat-to-UI (`src/lib/ui-command.ts` + `src/lib/map-command.ts` / `siem-command.ts`)
+
+**Propósito**: que una tool completada del copilot cambie el estado real de la UI
+(mapa de ciberataques y panel SIEM) sin duplicar el contrato en cada componente.
+
+**Reglas**:
+
+1. La tool valida el comando con Zod (`controlMapView`, `controlSiemView`); el
+   navegador lo vuelve a validar (`isMapCommand` / `isSiemCommand`). El output de
+   una tool es dato, nunca una instrucción ni un contrato confiable.
+2. `collectToolCommands()` es la única lectura de la conversación: acepta
+   `tool-<nombre>` (SDK actual) y `tool-invocation` (heredado), y solo toma
+   resultados completados.
+3. Cada canal (`map-command-bus`, `siem-command-bus`) deduplica por `toolCallId`;
+   al restaurar una conversación los comandos ya aplicados se marcan como
+   procesados, así que abrir el panel o recargar no repite el filtro.
+4. Si el panel no está montado, el último comando espera y el componente lo
+   aplica al montarse. Los conteos que reporta el chat salen del mismo payload
+   real que consume la UI.
+5. No re-sugerir eventos de ventana ad-hoc ni una segunda implementación de la
+   lectura de partes del mensaje.
+
 ### Seam: SIEM Feed en Tiempo Real (`src/lib/siem-feed.ts`)
 
 **Propósito**: agregación de inteligencia de amenazas reales para el dashboard SIEM
@@ -292,6 +314,13 @@ Domain code lives in **feature modules**, not in the shared roots:
   `COUNTRY_BY_ISO` are the only source of positions and country names for
   the map. Countries are resolved **by ISO code** so `originCountry` is
   always a key the map can place, never free text.
+- **Message-parts seam** (`src/features/ask-ai/lib/message-parts.ts`): the single
+  translation from SDK message parts (`tool-<nombre>` with `state` and
+  `input`/`output`) and the legacy `tool-invocation` shape into the view
+  `ToolCallCard` renders. The report card (`ReportViewer`) and the threat-intel
+  card (`ThreatIntelCard`) validate their payload against the Zod contract
+  before drawing, so a stale or malformed conversation falls back to the generic
+  card instead of showing invented data. Do not re-derive tool state per card.
 - **Globe-rotation seam** (`src/features/portfolio/globeRotation.ts`):
   `advanceEarthRotation()` applies a **rad/s** speed with the real frame
   delta (clamped to 100 ms), never `rotation.y += k`. The globe, the country
