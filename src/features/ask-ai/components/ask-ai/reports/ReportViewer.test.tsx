@@ -26,7 +26,7 @@ describe('ReportViewer', () => {
     fireEvent.click(screen.getByRole('button', { name: /markdown/i }))
     fireEvent.click(screen.getByRole('button', { name: /json/i }))
     const pdfBtn = screen.getByRole('button', { name: /pdf/i })
-    expect(pdfBtn.disabled).toBe(true)
+    expect(pdfBtn.getAttribute('disabled')).toBe('')
   })
 
   it('labels the panel for assistive technology', () => {
