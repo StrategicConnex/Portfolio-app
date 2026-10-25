@@ -1,7 +1,9 @@
 import { describe, it, expect, vi, afterEach } from 'vitest'
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+import { render, screen, fireEvent, waitFor, act } from '@testing-library/react'
 import SIEMDashboard from './SIEMDashboard'
 import type { SiemFeedPayload } from '@/lib/siem-feed'
+import { SIEM_COMMAND_EVENT } from '@/lib/siem-command'
+import { dispatchSiemCommand, resetSiemCommandBus } from '@/lib/siem-command-bus'
 
 vi.mock('framer-motion', () => ({
   motion: {
@@ -28,6 +30,12 @@ const mockT = vi.fn((key: string) => {
     'siem.hover_hint': '▸ Hover: mitigación recomendada (no ejecutada)',
     'siem.ui.event_stream': 'Event Stream – Inteligencia global',
     'siem.ui.stream_aria': 'Stream de eventos de inteligencia de amenazas global',
+    'siem.ui.filter.active':
+      'Filtro del copilot: {level} · {count} eventos en la ventana',
+    'siem.ui.filter.active_one': 'Filtro del copilot: {level} · 1 evento en la ventana',
+    'siem.ui.filter.empty':
+      'Filtro del copilot: {level} · sin eventos de ese nivel en la ventana actual',
+    'siem.ui.filter.clear': 'Quitar el filtro del SIEM',
     'siem.ui.connecting': 'Conectando con los feeds de inteligencia de amenazas…',
     'siem.ui.no_data':
       'Feed no disponible en este momento: los datos reales aparecen solo cuando los proveedores responden.',
@@ -208,6 +216,7 @@ function renderDashboard() {
 describe('SIEMDashboard', () => {
   afterEach(() => {
     vi.unstubAllGlobals()
+    resetSiemCommandBus()
   })
 
   it('should render the section header, the map link and the clock', async () => {
@@ -301,6 +310,45 @@ describe('SIEMDashboard', () => {
     ).toBeDefined()
     expect(screen.getAllByText('SIN DATOS')).toHaveLength(2)
     expect(screen.queryByText('ACTIVO')).toBeNull()
+  })
+
+  it('should filter the stream by severity when the copilot asks for it', async () => {
+    respondPayload(livePayload)
+    renderDashboard()
+    await screen.findByText('45.123.45.67')
+
+    act(() => {
+      window.dispatchEvent(
+        new CustomEvent(SIEM_COMMAND_EVENT, {
+          detail: { action: 'filter-severity', level: 'CRITICAL' },
+        }),
+      )
+    })
+
+    // Solo queda el evento CRITICAL real de la ventana.
+    expect(screen.getByText('45.123.45.67')).toBeDefined()
+    expect(screen.queryByText('103.10.11.12')).toBeNull()
+    expect(screen.queryByText('SANS ISC (aggregate)')).toBeNull()
+    expect(
+      screen.getByText('Filtro del copilot: CRITICAL · 1 evento en la ventana'),
+    ).toBeDefined()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Quitar el filtro del SIEM' }))
+    expect(await screen.findByText('103.10.11.12')).toBeDefined()
+    expect(screen.queryByText(/Filtro del copilot/)).toBeNull()
+  })
+
+  it('should apply the last copilot filter when the panel mounts later', async () => {
+    // El chat emitió la orden antes de que el panel estuviera montado.
+    dispatchSiemCommand({ action: 'filter-severity', level: 'WARN' })
+    respondPayload(livePayload)
+    renderDashboard()
+
+    expect(
+      await screen.findByText('Filtro del copilot: WARN · 2 eventos en la ventana'),
+    ).toBeDefined()
+    expect(screen.queryByText('45.123.45.67')).toBeNull()
+    expect(screen.getByText('SANS ISC (aggregate)')).toBeDefined()
   })
 
   it('should show the recommendation-not-executed tooltip on hover', async () => {

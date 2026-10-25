@@ -8,6 +8,10 @@ import { useConversationMemory } from '@/features/ask-ai/lib/memory/use-conversa
 import { loadFailedModels, persistFailedModels } from '@/features/ask-ai/lib/pool-health';
 import { trackAiEvent } from '@/lib/observability/posthog';
 import { useAskAIStore } from '@/features/ask-ai/ask-ai-store';
+import { collectMapCommands } from '@/lib/map-command';
+import { deliverMapCommands } from '@/lib/map-command-bus';
+import { collectSiemCommands } from '@/lib/siem-command';
+import { deliverSiemCommands } from '@/lib/siem-command-bus';
 
 const STORAGE_KEY = 'ask-ai-messages';
 
@@ -38,6 +42,10 @@ export function useAskAIChat({ language, mode }: UseAskAIChatOptions) {
   const lastModelRef = useRef<string | null>(null);
   const failedModelsRef = useRef<string[]>([]);
   const autoRetriesLeftRef = useRef(2);
+  /** Tool calls de mapa ya entregados: un comando no se aplica dos veces. */
+  const processedMapCommandsRef = useRef<Set<string>>(new Set());
+  /** Tool calls del SIEM ya entregados: mismo criterio que el mapa. */
+  const processedSiemCommandsRef = useRef<Set<string>>(new Set());
 
   // Conversation memory (seam)
   const { memoryContext, rememberConversation } = useConversationMemory(language);
@@ -123,6 +131,15 @@ export function useAskAIChat({ language, mode }: UseAskAIChatOptions) {
       if (stored) {
         const parsed = JSON.parse(stored);
         if (Array.isArray(parsed) && parsed.length > 0) {
+          // Un comando de mapa de la conversación restaurada ya se aplicó en
+          // su momento: se marca como procesado para no repetirlo al abrir el
+          // panel o recargar la página.
+          for (const { toolCallId } of collectMapCommands(parsed)) {
+            processedMapCommandsRef.current.add(toolCallId);
+          }
+          for (const { toolCallId } of collectSiemCommands(parsed)) {
+            processedSiemCommandsRef.current.add(toolCallId);
+          }
           setMessages(parsed);
         }
       }
@@ -130,6 +147,13 @@ export function useAskAIChat({ language, mode }: UseAskAIChatOptions) {
       // Ignore corrupt localStorage data
     }
   }, [setMessages]);
+
+  // Chat-to-UI: cada comando completado se entrega a la interfaz montada (o
+  // queda guardado para la que monte después).
+  useEffect(() => {
+    deliverMapCommands(messages, processedMapCommandsRef.current);
+    deliverSiemCommands(messages, processedSiemCommandsRef.current);
+  }, [messages]);
 
   // Restore persisted pool health-check
   useEffect(() => {

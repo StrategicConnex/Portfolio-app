@@ -56,6 +56,14 @@ const es = {
   'threatmap.legend.kev_live': '{count} CVEs confirmadas',
   'threatmap.footer.live': '✓ Datos de inteligencia de amenazas reales',
   'threatmap.footer.degraded': '⚠ Feed sin datos: origen de los arcos ilustrativo',
+  // --- Filtro aplicado por el copilot (Chat-to-UI) ---
+  'threatmap.filter.active':
+    'Filtro del copilot: {country} · {count} IPs reales en el feed',
+  'threatmap.filter.active_one':
+    'Filtro del copilot: {country} · 1 IP real en el feed',
+  'threatmap.filter.empty':
+    'Filtro del copilot: {country} · sin eventos en vivo ahora mismo',
+  'threatmap.filter.clear': 'Quitar el filtro del mapa',
   'threatmap.stats.aria':
     'Estadísticas de la sesión: arcos por tipo de ataque, IPs reales distintas, listas de bloqueo y vulnerabilidades confirmadas',
   'threatmap.stat.arcs': '{type} — arcos trazados en esta sesión',
@@ -117,6 +125,13 @@ const en: TranslationModule['en'] = {
   'threatmap.legend.kev_live': '{count} confirmed CVEs',
   'threatmap.footer.live': '✓ Real threat intelligence data',
   'threatmap.footer.degraded': '⚠ No feed data: arc origins are illustrative',
+  'threatmap.filter.active':
+    'Copilot filter: {country} · {count} real IPs in the feed',
+  'threatmap.filter.active_one':
+    'Copilot filter: {country} · 1 real IP in the feed',
+  'threatmap.filter.empty':
+    'Copilot filter: {country} · no live events right now',
+  'threatmap.filter.clear': 'Clear the map filter',
   'threatmap.stats.aria':
     'Session statistics: arcs per attack type, distinct real IPs, blocklists and confirmed vulnerabilities',
   'threatmap.stat.arcs': '{type} — arcs traced this session',

@@ -18,6 +18,15 @@ const es = {
   'siem.hover_hint': '▸ Hover: mitigación recomendada (no ejecutada)',
   'siem.ui.event_stream': 'Event Stream – Inteligencia global',
   'siem.ui.stream_aria': 'Stream de eventos de inteligencia de amenazas global',
+  // Filtro aplicado por el copilot (Chat-to-UI): dice severidad y tamaño real
+  // de la ventana, sin prometer un total que el panel no tenga en pantalla.
+  'siem.ui.filter.active':
+    'Filtro del copilot: {level} · {count} eventos en la ventana',
+  'siem.ui.filter.active_one':
+    'Filtro del copilot: {level} · 1 evento en la ventana',
+  'siem.ui.filter.empty':
+    'Filtro del copilot: {level} · sin eventos de ese nivel en la ventana actual',
+  'siem.ui.filter.clear': 'Quitar el filtro del SIEM',
   'siem.ui.connecting': 'Conectando con los feeds de inteligencia de amenazas…',
   'siem.ui.no_data':
     'Feed no disponible en este momento: los datos reales aparecen solo cuando los proveedores responden.',
@@ -54,6 +63,13 @@ const en: TranslationModule['en'] = {
   'siem.hover_hint': '▸ Hover: recommended mitigation (not executed)',
   'siem.ui.event_stream': 'Event Stream – Global Intelligence',
   'siem.ui.stream_aria': 'Real-time global threat-intelligence event stream',
+  'siem.ui.filter.active':
+    'Copilot filter: {level} · {count} events in the window',
+  'siem.ui.filter.active_one':
+    'Copilot filter: {level} · 1 event in the window',
+  'siem.ui.filter.empty':
+    'Copilot filter: {level} · no events of that severity in the current window',
+  'siem.ui.filter.clear': 'Clear the SIEM filter',
   'siem.ui.connecting': 'Connecting to the threat-intelligence feeds…',
   'siem.ui.no_data':
     'Feed unavailable right now: real data appears only when the providers respond.',

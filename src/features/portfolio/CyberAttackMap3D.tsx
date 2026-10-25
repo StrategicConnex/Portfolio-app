@@ -15,10 +15,12 @@ import { OrbitControls, Stars, Text, useTexture } from '@react-three/drei'
 import {
   ChevronLeft,
   ChevronRight,
+  Filter,
   Globe2,
   Map as MapIcon,
   Pause,
   Play,
+  X,
   ZoomIn,
   ZoomOut,
 } from 'lucide-react'
@@ -34,7 +36,12 @@ import {
   PROTECTED_DESTINATIONS,
   type AttackType,
 } from './attackArc'
-import { advanceEarthRotation } from './globeRotation'
+import {
+  MAX_FRAME_DELTA_SEC,
+  advanceEarthRotation,
+  rotationForLongitude,
+  shortestAngularDelta,
+} from './globeRotation'
 import {
   MAX_CAMERA_DISTANCE,
   MIN_CAMERA_DISTANCE,
@@ -48,6 +55,8 @@ import {
 } from './mapControls'
 import ArcTooltipPanel from './ArcTooltipPanel'
 import CyberAttackMapFlat from './CyberAttackMapFlat'
+import { MAP_COMMAND_EVENT, isMapCommand, type MapCommand } from '@/lib/map-command'
+import { getLastMapCommand } from '@/lib/map-command-bus'
 
 /**
  * Fuente de las etiquetas: la del sistema de diseño Strata Protocol, servida
@@ -508,12 +517,15 @@ function RotatingEarth({
   children,
   paused,
   pendingRotationRef,
+  focusRotationRef,
 }: {
   children: ReactNode
   /** Detiene el giro automático; los giros manuales siguen funcionando. */
   paused: boolean
   /** Giro pendiente que dejan los botones izquierda/derecha. */
   pendingRotationRef: { current: number }
+  /** Ángulo absoluto al que debe viajar el globo (comando del copilot). */
+  focusRotationRef: { current: number | null }
 }) {
   const groupRef = useRef<THREE.Group>(null)
 
@@ -527,6 +539,21 @@ function RotatingEarth({
       // rotación automática del mismo frame.
       group.rotation.y = group.rotation.y + pending
       pendingRotationRef.current = 0
+    }
+
+    const focusTarget = focusRotationRef.current
+    if (focusTarget !== null) {
+      const deltaAngle = shortestAngularDelta(group.rotation.y, focusTarget)
+      if (Math.abs(deltaAngle) < 0.01) {
+        group.rotation.y = focusTarget
+        focusRotationRef.current = null
+      } else {
+        // Suavizado exponencial: mismo viaje con cualquier tasa de refresco.
+        const smoothing = 1 - Math.exp(-6 * Math.min(delta, MAX_FRAME_DELTA_SEC))
+        group.rotation.y = group.rotation.y + deltaAngle * smoothing
+      }
+      // Mientras el copilot enfoca un país, el giro automático espera.
+      return
     }
 
     if (!paused) {
@@ -599,8 +626,20 @@ export default function CyberAttackMap3D() {
   const [flatMode, setFlatMode] = useState(false)
   const [flatScale, setFlatScale] = useState(1)
   const [flatPan, setFlatPan] = useState(0)
+  /** País por el que el copilot filtró el mapa, o `null` si no hay filtro. */
+  const [mapCountry, setMapCountry] = useState<string | null>(null)
+  /** Ángulo al que el copilot quiere llevar el globo (null = sin foco). */
+  const focusRotationRef = useRef<number | null>(null)
+  /** Espejo de `autoRotating` para leerlo desde el manejador del comando. */
+  const autoRotatingRef = useRef(true)
+  /** Estado del giro automático antes de que el copilot enfocara un país. */
+  const autoRotateBeforeFocusRef = useRef(true)
 
   const countries = useMemo(() => Object.keys(COUNTRY_COORDS), [])
+
+  useEffect(() => {
+    autoRotatingRef.current = autoRotating
+  }, [autoRotating])
 
   useEffect(() => {
     const fetchRealData = async () => {
@@ -654,12 +693,33 @@ export default function CyberAttackMap3D() {
     [feed.events],
   )
 
+  /**
+   * Eventos que pueden originar arcos: todos, o solo los del país enfocado
+   * por el copilot. Con un filtro activo no se cae al origen ilustrativo: si
+   * ese país no tiene IPs reales en el feed, el mapa no dibuja arcos.
+   */
+  const arcSourceEvents = useMemo(
+    () =>
+      mapCountry
+        ? attributableEvents.filter(
+            (event) => event.originCountry?.toLowerCase() === mapCountry.toLowerCase(),
+          )
+        : attributableEvents,
+    [attributableEvents, mapCountry],
+  )
+
+  /** IPs reales del país filtrado presentes en el feed actual. */
+  const mapCountryEventCount = mapCountry ? arcSourceEvents.length : 0
+
   /** Generación de arcos: origen = país real de la IP, destino ponderado. */
   useEffect(() => {
+    // Filtro activo sin eventos reales: se declara en el chip, no se inventa.
+    if (mapCountry && arcSourceEvents.length === 0) return
+
     const interval = setInterval(() => {
       const realEvent =
-        attributableEvents.length > 0
-          ? attributableEvents[Math.floor(Math.random() * attributableEvents.length)]
+        arcSourceEvents.length > 0
+          ? arcSourceEvents[Math.floor(Math.random() * arcSourceEvents.length)]
           : undefined
 
       const start =
@@ -694,7 +754,7 @@ export default function CyberAttackMap3D() {
       setTypeCounts((prev) => ({ ...prev, [kind.code]: (prev[kind.code] ?? 0) + 1 }))
     }, 700)
     return () => clearInterval(interval)
-  }, [attributableEvents, countries])
+  }, [arcSourceEvents, countries, mapCountry])
 
   /** Poda de arcos y explosiones expirados. */
   useEffect(() => {
@@ -812,6 +872,64 @@ export default function CyberAttackMap3D() {
     setFlatMode((current) => !current)
     setHovered(null)
   }, [])
+
+  /** Quita el filtro del copilot y devuelve el giro automático anterior. */
+  const clearMapCountry = useCallback(() => {
+    setMapCountry(null)
+    focusRotationRef.current = null
+    setAutoRotating(autoRotateBeforeFocusRef.current)
+  }, [])
+
+  /**
+   * Aplica un comando Chat-to-UI ya validado: filtra los arcos al país de
+   * origen y lleva el globo a esa longitud en el camino más corto. Los arcos
+   * de otros orígenes se retiran de inmediato para que lo que se ve coincida
+   * con el filtro.
+   */
+  const applyMapCommand = useCallback(
+    (command: MapCommand) => {
+      if (command.action === 'clear-filter') {
+        clearMapCountry()
+        return
+      }
+
+      const coords = COUNTRY_COORDS[command.country]
+      // Seam defensiva: el comando ya viene validado, pero el mapa nunca
+      // enfoca un país que no esté en su dataset.
+      if (!coords) return
+
+      autoRotateBeforeFocusRef.current = autoRotatingRef.current
+      setAutoRotating(false)
+      setFlatMode(false)
+      setHovered(null)
+      setMapCountry(command.country)
+      setAttacks((prev) => prev.filter((attack) => attack.start === command.country))
+      focusRotationRef.current = rotationForLongitude(coords[1])
+    },
+    [clearMapCountry],
+  )
+
+  // Chat-to-UI: escucha las órdenes que el panel del copilot emite.
+  useEffect(() => {
+    const onCommand = (event: Event) => {
+      const detail = (event as CustomEvent<unknown>).detail
+      if (!isMapCommand(detail)) return
+      applyMapCommand(detail)
+    }
+
+    window.addEventListener(MAP_COMMAND_EVENT, onCommand)
+    return () => window.removeEventListener(MAP_COMMAND_EVENT, onCommand)
+  }, [applyMapCommand])
+
+  // El chunk de three.js puede montar DESPUÉS de que el copilot emitiera la
+  // orden (carga diferida): se recupera el último comando una sola vez. Es una
+  // sincronización puntual desde un store externo, no un bucle de renders.
+  useEffect(() => {
+    const last = getLastMapCommand()
+    if (!last) return
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- one-shot sync from the map-command store on mount
+    applyMapCommand(last)
+  }, [applyMapCommand])
 
   /**
    * Etiquetas: Argentina siempre, más los países con arcos activos.
@@ -959,6 +1077,36 @@ export default function CyberAttackMap3D() {
         </div>
       </div>
 
+      {/* Filtro del copilot: declara el país y cuántas IPs reales lo respaldan. */}
+      {mapCountry && (
+        <div
+          role="status"
+          className="absolute top-4 left-1/2 z-10 flex max-w-[55%] -translate-x-1/2 items-center gap-2 rounded-lg border border-cyan-500/40 bg-black/80 px-3 py-2 backdrop-blur-md"
+        >
+          <Filter className="h-3.5 w-3.5 flex-shrink-0 text-cyan-300" aria-hidden="true" />
+          <span className="text-[10px] text-cyan-100">
+            {interpolate(
+              t(
+                mapCountryEventCount === 0
+                  ? 'threatmap.filter.empty'
+                  : mapCountryEventCount === 1
+                    ? 'threatmap.filter.active_one'
+                    : 'threatmap.filter.active',
+              ),
+              { country: mapCountry, count: mapCountryEventCount },
+            )}
+          </span>
+          <button
+            type="button"
+            onClick={clearMapCountry}
+            aria-label={t('threatmap.filter.clear')}
+            className="flex-shrink-0 rounded border border-cyan-500/30 p-0.5 text-cyan-200 transition-colors hover:border-cyan-300 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-400 cursor-pointer"
+          >
+            <X className="h-3 w-3" aria-hidden="true" />
+          </button>
+        </div>
+      )}
+
       {/* Controles: zoom, giro/desplazamiento, pausa y cambio de vista. */}
       <div
         role="group"
@@ -1037,7 +1185,11 @@ export default function CyberAttackMap3D() {
 
         {/* Todo lo anclado a la superficie gira junto: es lo que evita que las
             etiquetas, el pin y los arcos se desfasen de la superficie. */}
-        <RotatingEarth paused={!autoRotating} pendingRotationRef={pendingRotationRef}>
+        <RotatingEarth
+          paused={!autoRotating}
+          pendingRotationRef={pendingRotationRef}
+          focusRotationRef={focusRotationRef}
+        >
           <Suspense fallback={null}>
             <Globe />
 

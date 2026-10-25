@@ -1,7 +1,8 @@
 'use client'
 
 import { motion, AnimatePresence } from 'framer-motion'
-import { useEffect, useState, useMemo, memo } from 'react'
+import { useEffect, useState, useMemo, useCallback, memo } from 'react'
+import { X } from 'lucide-react'
 import SectionHeader from '@/components/ui/SectionHeader'
 import FadeIn from '@/components/ui/FadeIn'
 import { useLanguage } from '@/context/LanguageContext'
@@ -13,7 +14,13 @@ import {
   type SIEMLog,
   type SiemFeedPayload,
 } from '@/lib/siem-feed'
-import { toArgentinaTime } from '@/lib/utils'
+import { interpolate, toArgentinaTime } from '@/lib/utils'
+import {
+  SIEM_COMMAND_EVENT,
+  isSiemCommand,
+  type SiemCommand,
+} from '@/lib/siem-command'
+import { getLastSiemCommand } from '@/lib/siem-command-bus'
 
 /**
  * Panel SIEM sobre datos REALES.
@@ -134,6 +141,8 @@ export default function SIEMDashboard() {
   const [timeStr, setTimeStr] = useState('')
   const [logs, setLogs] = useState<SIEMLog[]>([])
   const [payload, setPayload] = useState<SiemFeedPayload | null>(null)
+  /** Severidad por la que el copilot filtró el stream, o `null`. */
+  const [levelFilter, setLevelFilter] = useState<SIEMLevel | null>(null)
 
   /* Reloj de cabecera: SIEMPRE Argentina (UTC-3), independiente del TZ
      del visitante — el mismo horario que el event stream y los KPIs. */
@@ -175,7 +184,45 @@ export default function SIEMDashboard() {
     }
   }, [])
 
+  /* ─── Chat-to-UI: el copilot filtra el stream por severidad ─── */
+
+  const clearLevelFilter = useCallback(() => setLevelFilter(null), [])
+
+  const applySiemCommand = useCallback((command: SiemCommand) => {
+    if (command.action === 'clear-filter') {
+      setLevelFilter(null)
+      return
+    }
+    setLevelFilter(command.level)
+  }, [])
+
+  useEffect(() => {
+    const onCommand = (event: Event) => {
+      const detail = (event as CustomEvent<unknown>).detail
+      if (!isSiemCommand(detail)) return
+      applySiemCommand(detail)
+    }
+
+    window.addEventListener(SIEM_COMMAND_EVENT, onCommand)
+    return () => window.removeEventListener(SIEM_COMMAND_EVENT, onCommand)
+  }, [applySiemCommand])
+
+  // El panel puede montar después de que el copilot emitiera la orden: se
+  // recupera el último comando una sola vez (sincronización, no bucle).
+  useEffect(() => {
+    const last = getLastSiemCommand()
+    if (!last) return
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- one-shot sync from the siem-command store on mount
+    applySiemCommand(last)
+  }, [applySiemCommand])
+
   /* ─── Métricas derivadas del payload real ─── */
+
+  /** Eventos que la ventana muestra: todos, o solo los de la severidad filtrada. */
+  const visibleLogs = useMemo(
+    () => (levelFilter ? logs.filter((log) => log.level === levelFilter) : logs),
+    [logs, levelFilter],
+  )
 
   const levels = useMemo(
     () =>
@@ -308,16 +355,48 @@ export default function SIEMDashboard() {
                 <h4 className="text-[10px] text-blue-400 tracking-[2px] uppercase mb-4 font-bold">
                   ▶ {t('siem.ui.event_stream')}
                 </h4>
+                {levelFilter && (
+                  <div
+                    role="status"
+                    className="mb-3 flex flex-wrap items-center gap-2 rounded-lg border border-amber-500/40 bg-black/60 px-3 py-2"
+                  >
+                    <span
+                      aria-hidden="true"
+                      className="h-2 w-2 flex-shrink-0 rounded-full"
+                      style={{ background: LEVEL_COLORS[levelFilter] }}
+                    />
+                    <span className="font-mono text-[10px] text-[var(--text-secondary)]">
+                      {interpolate(
+                        t(
+                          visibleLogs.length === 1
+                            ? 'siem.ui.filter.active_one'
+                            : 'siem.ui.filter.active',
+                        ),
+                        { level: levelFilter, count: visibleLogs.length },
+                      )}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={clearLevelFilter}
+                      aria-label={t('siem.ui.filter.clear')}
+                      className="ml-auto flex-shrink-0 rounded border border-amber-500/30 p-0.5 text-amber-300 transition-colors hover:border-amber-300 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-400 cursor-pointer"
+                    >
+                      <X className="h-3 w-3" aria-hidden="true" />
+                    </button>
+                  </div>
+                )}
                 <div
                   className="bg-black/60 border border-blue-500/10 rounded-xl p-4 overflow-visible shadow-inner backdrop-blur-md"
                   aria-live="polite"
                   aria-label={t('siem.ui.stream_aria')}
                 >
-                  {logs.length > 0 ? (
-                    <LogScroller logs={logs} />
+                  {visibleLogs.length > 0 ? (
+                    <LogScroller logs={visibleLogs} />
                   ) : (
                     <p className="text-[0.72rem] text-[var(--text-muted)] font-mono py-2">
-                      {emptyState}
+                      {levelFilter
+                        ? interpolate(t('siem.ui.filter.empty'), { level: levelFilter })
+                        : emptyState}
                     </p>
                   )}
                 </div>

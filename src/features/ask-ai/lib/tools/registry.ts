@@ -9,6 +9,8 @@ import { querySiem, querySiemSchema } from './query-siem';
 import { threatIntelTool } from './threat-intel';
 import { createLibraryTool } from './library';
 import { createGenerateReportTool } from './report';
+import { mapControlTool } from './map-control';
+import { siemControlTool } from './siem-control';
 
 function getErrorMessage(err: unknown): string {
   if (err instanceof Error) return err.message;
@@ -74,6 +76,8 @@ function buildTools({ locale }: { locale: 'es' | 'en' }): ToolSet {
       },
     },
     getThreatIntel: threatIntelTool,
+    controlMapView: mapControlTool,
+    controlSiemView: siemControlTool,
     searchLibrary: createLibraryTool(locale),
     generateReport: createGenerateReportTool(locale),
   };

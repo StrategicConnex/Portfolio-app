@@ -36,6 +36,14 @@ describe('buildToolDescriptions', () => {
     }
   })
 
+  it('documents the Chat-to-UI tools in both languages', () => {
+    for (const lang of ['es', 'en'] as const) {
+      const guide = buildToolDescriptions(lang)
+      expect(guide).toContain('controlMapView')
+      expect(guide).toContain('controlSiemView')
+    }
+  })
+
   it('states the live-feed honesty disclaimer for querySiem in both languages', () => {
     for (const lang of ['es', 'en'] as const) {
       const guide = buildToolDescriptions(lang)
@@ -151,5 +159,15 @@ describe('evidence and honesty rules', () => {
     // camelCase (`getThreatIntel`) y así debe documentarlo el prompt.
     expect(en).toContain('do not invent')
     expect(en).toContain('getThreatIntel')
+  })
+
+  it('describes the real SIEM panel instead of the old simulation caveat', () => {
+    const es = buildSystemPrompt({ language: 'es', mode: 'ask', ragContext: '', sources: [] })
+    expect(es).toContain('inteligencia global real')
+    expect(es).not.toContain('demo/simulación')
+
+    const en = buildSystemPrompt({ language: 'en', mode: 'ask', ragContext: '', sources: [] })
+    expect(en).toContain('real global intelligence')
+    expect(en).not.toMatch(/demo\/simulation/i)
   })
 })

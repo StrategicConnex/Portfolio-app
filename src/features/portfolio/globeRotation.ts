@@ -10,6 +10,11 @@
  *
  * Aquí la regla es explícita: el delta se clampa para que una pestaña en
  * segundo plano no teletransporte el globo al volver al foco.
+ *
+ * El mismo módulo resuelve el encuadre del chat: `rotationForLongitude`
+ * calcula el ángulo que pone un país de frente a la cámara y
+ * `shortestAngularDelta` da el camino más corto para llegar sin dar vueltas
+ * de más. Ambas son aritmética pura, así que se prueban sin WebGL.
  */
 
 /**
@@ -37,4 +42,38 @@ export const MAX_FRAME_DELTA_SEC = 0.1
 export function advanceEarthRotation(current: number, delta: number): number {
   const safeDelta = Math.min(Math.max(delta, 0), MAX_FRAME_DELTA_SEC)
   return current + EARTH_ROTATION_RAD_PER_SEC * safeDelta
+}
+
+/**
+ * Ángulo de rotación del grupo de la Tierra que deja una longitud dada de
+ * frente a la cámara.
+ *
+ * La cámara mira al globo desde `+z` y `latLngToVector3` usa
+ * `theta = (lng + 180)`. Con esa convención, la longitud que encara la cámara
+ * sin rotar es `-90°`; para llevar otra longitud al frente hay que girar el
+ * grupo `-90° - lng`. El resultado se normaliza a `(-π, π]` para que el
+ * suavizado elija siempre el camino más corto.
+ *
+ * @param lng Longitud en grados decimales.
+ * @returns Ángulo de rotación en radianes, normalizado.
+ */
+export function rotationForLongitude(lng: number): number {
+  return normalizeAngle(-Math.PI / 2 - (lng * Math.PI) / 180)
+}
+
+/** Normaliza un ángulo a `(-π, π]`. */
+export function normalizeAngle(angle: number): number {
+  const twoPi = Math.PI * 2
+  const wrapped = (((angle + Math.PI) % twoPi) + twoPi) % twoPi - Math.PI
+  // `-π` y `π` son el mismo punto; se prefiere `π` para no invertir el signo.
+  return wrapped === -Math.PI ? Math.PI : wrapped
+}
+
+/**
+ * Diferencia angular más corta entre dos orientaciones, en radianes.
+ * El resultado cae en `(-π, π]`: girar por ese camino nunca da más de media
+ * vuelta y evita que un foco cercano dé una vuelta completa al globo.
+ */
+export function shortestAngularDelta(current: number, target: number): number {
+  return normalizeAngle(target - current)
 }

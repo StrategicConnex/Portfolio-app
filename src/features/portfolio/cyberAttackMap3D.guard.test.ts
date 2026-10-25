@@ -222,4 +222,26 @@ describe('CyberAttackMap3D · escena sincronizada', () => {
     expect(source).toContain("role={hovered ? 'tooltip' : undefined}")
     expect(source).toContain('aria-hidden={hovered ? undefined : true}')
   })
+
+  it('accepts the copilot Chat-to-UI command and labels the filter', () => {
+    // El chat filtra el mapa por país de origen y gira el globo. El filtro
+    // tiene que ser visible, bilingüe y removible con teclado.
+    const filterKeys = [
+      'threatmap.filter.active',
+      'threatmap.filter.active_one',
+      'threatmap.filter.empty',
+      'threatmap.filter.clear',
+    ] as const
+
+    for (const key of filterKeys) {
+      expect(threatmap.es[key], `falta en español: ${key}`).toBeTruthy()
+      expect(threatmap.en[key], `falta en inglés: ${key}`).toBeTruthy()
+    }
+
+    expect(source).toContain('MAP_COMMAND_EVENT')
+    expect(source).toContain('isMapCommand')
+    expect(source).toContain('focusRotationRef')
+    expect(source).toContain("t('threatmap.filter.clear')")
+    expect(source).toContain('role="status"')
+  })
 })
